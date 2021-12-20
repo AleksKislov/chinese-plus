@@ -1,0 +1,53 @@
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+const TextSchema = new Schema({
+  user: { type: Schema.Types.ObjectId, ref: "users" },
+  title: { type: String, required: true },
+  belongsToLongText: { type: Schema.Types.ObjectId, ref: "longtexts" },
+  description: { type: String },
+  origintext: [{ type: String }],
+  translation: [{ type: String }],
+  chinese_arr: [{ type: String }],
+  tags: [{ type: String, lowercase: true }],
+  length: { type: Number },
+  level: { type: Number, required: true },
+  name: { type: String }, // user name
+  pic_url: { type: String },
+  theme_word: { type: String },
+  isApproved: { type: Number }, // by admin or moderator, 1 is true, 0 is false
+  hits: { type: Number, default: 1 }, // number of visits
+  source: { type: String },
+  categoryInd: { type: Number, default: 0 }, // index for textCategories array (on frontend) below
+  comments_id: [
+    {
+      comment: {
+        type: Schema.Types.ObjectId,
+        ref: "comments"
+      }
+    }
+  ],
+  likes: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: "users"
+      },
+      name: { type: String }
+    }
+  ],
+  date: { type: Date, default: Date.now }
+});
+
+module.exports = Text = mongoose.model("text", TextSchema);
+
+// textCategories: [
+//   "Учебные и HSK",
+//   "Детское",
+//   "Документы и бизнес",
+//   "Новости",
+//   "Наука",
+//   "Лит-ра, песни и поэзия",
+//   "Познавательное",
+//   "Вэньянь"
+// ]

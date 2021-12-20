@@ -1,0 +1,59 @@
+.rcw-conversation-container > .rcw-header {
+  background-color: #2c3e50;
+}
+
+/* .rcw-message > .rcw-response {
+  background-color: black;
+  color: white;
+} */
+
+.rcw-widget-container > .rcw-launcher {
+  background-color: #2c3e50;
+}
+
+.rcw-header > .rcw-close-button {
+  background-color: #2c3e50;
+}
+
+/* FROM BKRS */
+
+.green {
+  color: rgb(49, 136, 49);
+}
+
+.m3-hide {
+  display: none;
+}
+
+.m3 {
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+  color: var(--gray);
+}
+
+#searchButton button {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+
+#showCharDiv {
+  margin-bottom: 0.8rem;
+}
+
+@media screen and (max-width: 800px) {
+  .rcw-widget-container {
+    /* height: 100%;
+    height: 80vh;  */
+    margin: 0;
+    max-width: none;
+    width: 100%;
+  }
+  .rcw-conversation-container {
+    height: 100%;
+    height: 90vh;
+  }
+}
+
+.mintippy-box {
+  min-width: 240px;
+}

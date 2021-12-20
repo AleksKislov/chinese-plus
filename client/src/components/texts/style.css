@@ -1,0 +1,22 @@
+.imgToChoose {
+  height: 160px;
+  margin: 0.5rem;
+}
+
+.imgToChooseActive {
+  -webkit-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+.imgToChoose:hover {
+  -webkit-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+.textCardImg {
+  border-radius: 8px;
+  opacity: 0.7;
+  width: 100%;
+}

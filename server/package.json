@@ -1,0 +1,39 @@
+{
+  "name": "bylh",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix ../client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "bash build-client.sh"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/dialogflow": "^3.0.0",
+    "@google-cloud/translate": "^6.1.0",
+    "axios": "^0.21.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cookie-session": "^1.4.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.6.0",
+    "gravatar": "^1.8.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.3",
+    "mysql2": "^2.2.5",
+    "passport": "^0.4.1",
+    "passport-google-oauth20": "^2.0.0",
+    "puppeteer": "^5.0.0",
+    "redis": "^3.1.0",
+    "sequelize": "^6.3.5",
+    "uuid": "^8.2.0"
+  },
+  "devDependencies": {
+    "concurrently": "^5.2.0"
+  }
+}
