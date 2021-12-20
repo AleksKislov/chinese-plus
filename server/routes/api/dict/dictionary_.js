@@ -3,7 +3,7 @@ var dictionarysimplified = {};
 var dictionarytraditional = {};
 var Segmenter = require("./segmenter.js").LongestMatchSegmenter;
 var segmenter = new Segmenter(definitionLookup);
-// const { redisClient } = require("../services");
+const { redisClient } = require("../services/redisClient");
 
 function start() {
   console.log("Hanzi is compiling dictionary...");
@@ -106,6 +106,11 @@ async function redisGet(key) {
     });
   });
 }
+
+async function test() {
+  console.log('redis here',await redisGet('好'))
+}
+test()
 
 async function definitionLookup(word, scripttype) {
   if (scripttype == null) {
