@@ -3,7 +3,7 @@ var dictionarysimplified = {};
 var dictionarytraditional = {};
 var Segmenter = require("./segmenter.js").LongestMatchSegmenter;
 var segmenter = new Segmenter(definitionLookup);
-const { redisClient } = require("../services/redisClient");
+const { redis } = require("../services/redisClient");
 
 function start() {
   console.log("Hanzi is compiling dictionary...");
@@ -97,18 +97,11 @@ function start() {
   // console.log(dictionarytraditional["全州"]);
 }
 
-async function redisGet(key) {
-  return new Promise((resolve, reject) => {
-    redisClient.get(key, (err, reply) => {
-      // console.log({ key, reply: !!reply });
-      if (err) reject(err);
-      else resolve(reply);
-    });
-  });
-}
 
 async function test() {
-  console.log('redis here',await redisGet('好'))
+  await redis.set('你', 'ты');
+  console.log('redis here',await redis.get('好'))
+  console.log('redis here',await redis.get('你'))
 }
 test()
 

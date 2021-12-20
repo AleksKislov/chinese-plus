@@ -2,12 +2,10 @@ const express = require("express");
 const connectDB = require("./src/mongo_db/db");
 const bodyParser = require("body-parser");
 const path = require("path");
+const morgan = require('morgan')
 const cookieSession = require("cookie-session");
 
 // const isDevelopment = process.env.NODE_ENV !== "production";
-// require("dotenv").config({ path: isDevelopment ? ".env.dev" : ".env.prod" });
-
-// require("dotenv").config({ path: ".env.dev" });
 require("dotenv").config({ path: ".env.prod" });
 const { passport } = require("./src/auth");
 
@@ -18,6 +16,9 @@ connectDB();
 require("./src/sql_db/connection");
 
 // Init Middleware
+morgan.token('body', (req, res) => JSON.stringify(req.body, null, 2));
+app.use(morgan(':method :url :status :response-time ms - :res[content-length] :body - :req[content-length]'));
+
 // app.use(express.json({ extended: false }));
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true, parameterLimit: 50000 }));
@@ -52,14 +53,8 @@ app.use("/api/notices", require("./routes/api/notices"));
 
 // Serve static files
 if (process.env.NODE_ENV === "production") {
-  // if (true) {
   // Set Static folder
-  // app.use("/*", express.static("build"));
   app.use(express.static(path.join(__dirname, "build")));
-
-  // app.get("/", function(req, res) {
-  //   res.send("Hello there");
-  // });
 
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "build", "index.html"));
