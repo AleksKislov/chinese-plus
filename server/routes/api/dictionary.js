@@ -1,43 +1,44 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../../middleware/auth");
-const hanzi = require("./dict/dictionary");
-// const { redisClient } = require("./services");
-const { getAllWords, segmentText } = require("./services");
+const Hanzi = require("./dict/dictionary");
+const { getAllWords } = require("./services");
+// const auth = require("../../middleware/auth");
+// const { redis } = require("./services");
 
 const Dictionary = require("../../src/models/Dictionary");
 
-setTimeout(async () => {
-  hanzi.start();
-  // let lexicon;
-  // try {
-  //   lexicon = await Dictionary.find({}, undefined, {
-  //     skip: 2400000,
-  //     limit: 100000
-  //   }).select("chinese");
-  //   console.log(lexicon.length);
-  //   console.log(lexicon[0]);
-  //   lexicon.forEach(x => {
-  //     redisClient.set(x.chinese, true);
-  //   });
-  // } catch (err) {
-  //   console.log(err);
-  // }
-  // redisClient.get("好", res => {
-  //   console.log("haoooo", res);
-  // });
+// async function setToRedis(skip, limit) {
+//   let lexicon = await Dictionary.find(
+//     {}, undefined, { skip, limit }).
+//     select("chinese russian pinyin -_id");
 
-  // redisClient.dbsize(num => {
-  //   console.log("haoooo", num);
-  // });
+//     lexicon = lexicon.map(x => {
+//       const {chinese, russian, pinyin} = x;
+//       return [chinese, JSON.stringify({russian,pinyin})];
+//     })
+
+//     console.log({skip, limit})
+//     await redis.mSet(lexicon);
+// }
+
+setTimeout(async () => {
+  try {
+    const lexicon = await Dictionary.aggregate([{$group: {_id: "$chinese"}}]);
+    Hanzi.fillDict(lexicon);
+    // console.log({len: lexicon.length, first: lexicon[50]})
+  } catch (err) {
+    console.log(err);
+  }
 
   const used = process.memoryUsage().heapUsed / 1024 / 1024;
   console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
-}, 1000);
+}, 10);
 
-// @route   GET api/dictionary?word=...
-// @desc    Search chinese word in dictionary
-// access   Public
+/**
+ * @route     GET api/dictionary?word=...
+ * @desc      Search chinese word in dictionary
+ * @access    Public
+ */
 router.get("/", async (req, res) => {
   const word = req.query.word;
   let re, lexicon;
@@ -58,9 +59,11 @@ router.get("/", async (req, res) => {
   }
 });
 
-// @route   POST api/dictionary
-// @desc    Add array of words to dictionary
-// access   Private
+/**
+ * @route     POST api/dictionary
+ * @desc      Add array of words to dictionary
+ * @access    Private
+ */
 // router.post("/", auth, async (req, res) => {
 //   const arr = req.body;
 
@@ -89,9 +92,11 @@ router.post("/allwords", async (req, res) => {
   }
 });
 
-// @route   GET api/dictionary/certain
-// @desc    GET all words that have...
-// access   public
+/**
+ * @route   GET api/dictionary/certain
+ * @desc    GET all words that have...
+ * @access  Public
+ */
 router.get("/certain/:word", async (req, res) => {
   const word = req.params.word;
   let re, lexicon;
@@ -161,15 +166,13 @@ router.get("/certain/:word", async (req, res) => {
 
 /**
  * @route     GET api/dictionary/segmenter
-// @desc      GET all words from text SEGMENTED
-// @access    Public
+ * @desc      GET all words from text SEGMENTED
+ * @access    Public
  */
 router.post("/segmenter", (req, res) => {
-  // const wordsarr = await hanzi.segment(req.body.text);
-  const wordsarr = segmentText(req.body.text);
-  console.log(wordsarr)
-
-  res.send(wordsarr);
-});
+  const used = process.memoryUsage().heapUsed / 1024 / 1024;
+  console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+  res.send(Hanzi.segment(req.body.text));
+})
 
 module.exports = router;

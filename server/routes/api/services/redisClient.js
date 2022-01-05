@@ -1,6 +1,10 @@
-// redis db
-const redis = require("redis");
-const REDIS_PORT = 6379;
-const redisClient = redis.createClient(REDIS_PORT);
+const {createClient} = require("redis");
 
-module.exports = { redisClient };
+const redis = createClient();
+(async () => {
+  redis.on('error', (err) => console.log('Redis Client Error', err));
+  await redis.connect();
+  console.log('Redis connected');
+})();
+
+module.exports = { redis };
