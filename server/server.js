@@ -2,7 +2,7 @@ const express = require("express");
 const connectDB = require("./src/mongo_db/db");
 const bodyParser = require("body-parser");
 const path = require("path");
-const morgan = require('morgan')
+// const morgan = require('morgan')
 const cookieSession = require("cookie-session");
 
 // const isDevelopment = process.env.NODE_ENV !== "production";
