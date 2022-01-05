@@ -1,94 +1,44 @@
-// var LongestMatchSegmenter;
-
-// LongestMatchSegmenter = (function() {
-//   function LongestMatchSegmenter(dict) {
-//     // dict should be a function that takes a chinese string as the
-//     // first param and returns something falsey if item is not in dict
-//     this.dict = dict;
-//   }
-
-//   // LongestMatchSegmenter.prototype.getLongestMatch = async function(input_str) {
-//   LongestMatchSegmenter.prototype.getLongestMatch = function(input_str) {
-//     var i, max_word_len, slice;
-//     max_word_len = 8;
-//     i = max_word_len > input_str.length ? max_word_len : input_str.length;
-//     while (i >= 0) {
-//       slice = input_str.substr(0, i);
-//       if (this.dict(slice)) {
-//         return slice;
-//       }
-//       i--;
-//     }
-//     // no match found, return undefined
-//     return undefined;
-//   };
-
-//   // LongestMatchSegmenter.prototype.segment = async function(input_str) {
-//   LongestMatchSegmenter.prototype.segment = function(input_str) {
-//     var seg, segments;
-//     segments = [];
-//     // loop through the input_str, slicing off each longestMatch and
-//     // appending it to the segments array
-//     while (input_str.length > 0) {
-//       // seg = await this.getLongestMatch(input_str);
-//       seg = this.getLongestMatch(input_str);
-
-//       if (!seg) {
-//         seg = input_str.substr(0, 1);
-//       }
-//       input_str = input_str.slice(seg.length);
-//       segments.push(seg);
-//     }
-//     console.log(segments);
-//     return segments;
-//   };
-
-//   return LongestMatchSegmenter;
-// })();
-
-// exports.LongestMatchSegmenter = LongestMatchSegmenter;
-
-var LongestMatchSegmenter;
-
-LongestMatchSegmenter = (function() {
-  function LongestMatchSegmenter(dict) {
+class LongestMatchSegmenter {
+  constructor(dict){
     // dict should be a function that takes a chinese string as the
     // first param and returns something falsey if item is not in dict
     this.dict = dict;
   }
 
-  LongestMatchSegmenter.prototype.getLongestMatch = function(input_str) {
-    var i, max_word_len, slice;
-    max_word_len = 8;
-    i = max_word_len > input_str.length ? max_word_len : input_str.length;
+  /**
+  * @param {string} str - input string 
+  * @returns {string|undefined}
+  */
+  getLongestMatch(str) {
+    let i, slice;
+    const maxWordLen = 8;
+    i = maxWordLen > str.length ? maxWordLen : str.length;
     while (i >= 0) {
-      slice = input_str.substr(0, i);
-      if (this.dict(slice)) {
-        return slice;
-      }
+      slice = str.substr(0, i);
+      if (this.dict(slice)) return slice;
       i--;
     }
-    // no match found, return undefined
-    return undefined;
   };
 
-  LongestMatchSegmenter.prototype.segment = function(input_str) {
-    var seg, segments;
-    segments = [];
-    // loop through the input_str, slicing off each longestMatch and
-    // appending it to the segments array
-    while (input_str.length > 0) {
-      seg = this.getLongestMatch(input_str);
-      if (!seg) {
-        seg = input_str.substr(0, 1);
-      }
-      input_str = input_str.slice(seg.length);
+  /**
+   * @description loop through the input str, slicing off each 
+   * longestMatch and appending it to the segments array
+   * @param {string} str - input string 
+   * @returns {Array}
+   */
+  segment(str) {
+    let seg;
+    let segments = [];
+
+    while (str.length > 0) {
+      seg = this.getLongestMatch(str);
+      if (!seg) seg = str.substr(0, 1);
+      
+      str = str.slice(seg.length);
       segments.push(seg);
     }
     return segments;
   };
+}
 
-  return LongestMatchSegmenter;
-})();
-
-exports.LongestMatchSegmenter = LongestMatchSegmenter;
+module.exports = { LongestMatchSegmenter };

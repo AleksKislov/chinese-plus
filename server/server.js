@@ -16,8 +16,8 @@ connectDB();
 require("./src/sql_db/connection");
 
 // Init Middleware
-morgan.token('body', (req, res) => JSON.stringify(req.body, null, 2));
-app.use(morgan(':method :url :status :response-time ms - :res[content-length] :body - :req[content-length]'));
+// morgan.token('body', (req, res) => JSON.stringify(req.body, null, 2));
+// app.use(morgan(':method :url :status :response-time ms - :res[content-length] :body - :req[content-length]'));
 
 // app.use(express.json({ extended: false }));
 app.use(bodyParser.json({ limit: "10mb" }));
