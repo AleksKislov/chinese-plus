@@ -170,8 +170,6 @@ router.get("/certain/:word", async (req, res) => {
  * @access    Public
  */
 router.post("/segmenter", (req, res) => {
-  const used = process.memoryUsage().heapUsed / 1024 / 1024;
-  console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
   res.send(Hanzi.segment(req.body.text));
 })
 
