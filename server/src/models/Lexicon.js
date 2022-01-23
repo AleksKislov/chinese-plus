@@ -1,20 +1,20 @@
 const mongoose = require("mongoose");
 const LexiconSchema = new mongoose.Schema({
   word_id: {
-    type: Number
+    type: Number,
   },
   level: {
-    type: Number
+    type: Number,
   },
   chinese: {
-    type: String
+    type: String,
   },
   translation: {
-    type: String
+    type: String,
   },
   pinyin: {
-    type: String
-  }
+    type: String,
+  },
 });
 
 module.exports = Lexicon = mongoose.model("lexicon", LexiconSchema);

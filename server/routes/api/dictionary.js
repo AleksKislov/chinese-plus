@@ -2,10 +2,11 @@ const express = require("express");
 const router = express.Router();
 const Hanzi = require("./dict/dictionary");
 const { getAllWords } = require("./services");
-// const auth = require("../../middleware/auth");
+const auth = require("../../middleware/auth");
 // const { redis } = require("./services");
 
 const Dictionary = require("../../src/models/Dictionary");
+const Hskword = require("../../src/models/Hskword");
 
 // async function setToRedis(skip, limit) {
 //   let lexicon = await Dictionary.find(
@@ -23,9 +24,8 @@ const Dictionary = require("../../src/models/Dictionary");
 
 setTimeout(async () => {
   try {
-    const lexicon = await Dictionary.aggregate([{$group: {_id: "$chinese"}}]);
-    Hanzi.fillDict(lexicon);
-    // console.log({len: lexicon.length, first: lexicon[50]})
+    // const lexicon = await Dictionary.aggregate([{ $group: { _id: "$chinese" } }]);
+    // Hanzi.fillDict(lexicon);
   } catch (err) {
     console.log(err);
   }
@@ -36,7 +36,7 @@ setTimeout(async () => {
 
 /**
  * @route     GET api/dictionary?word=...
- * @desc      Search chinese word in dictionary
+ * @desc      get chinese word from dictionary
  * @access    Public
  */
 router.get("/", async (req, res) => {
@@ -60,9 +60,10 @@ router.get("/", async (req, res) => {
 });
 
 /**
- * @route     POST api/dictionary
- * @desc      Add array of words to dictionary
- * @access    Private
+ * @route       POST api/dictionary
+ * @desc        Add array of words to dictionary
+ * @access      Private
+ * @deprecated  for private use only
  */
 // router.post("/", auth, async (req, res) => {
 //   const arr = req.body;
@@ -76,6 +77,26 @@ router.get("/", async (req, res) => {
 //       console.log(error);
 //     });
 // });
+
+/**
+ * @route     POST api/dictionary
+ * @desc      Add one word to dictionary
+ * @access    Private
+ */
+router.post("/", auth, async (req, res) => {
+  try {
+    const alreadyExists = await Dictionary.find({ chinese: req.body.chinese });
+
+    if (alreadyExists && alreadyExists[0]) {
+      return res.send(`The word ${req.body.chinese} already inserted`);
+    }
+
+    await new Dictionary(req.body).save();
+    res.send("Data inserted");
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 /**
  * @route     GET api/lexicon
@@ -106,12 +127,12 @@ router.get("/certain/:word", async (req, res) => {
     if (word === "eng") {
       re = new RegExp(/^[\p{Latin}\p{Common}]+$/);
       lexicon = await Dictionary.find({
-        russian: { $regex: re, $options: "g" }
+        russian: { $regex: re, $options: "g" },
       }).countDocuments();
     } else if (word === "pinyin") {
       re = new RegExp(/ --| _/);
       lexicon = await Dictionary.find({
-        pinyin: { $regex: re }
+        pinyin: { $regex: re },
       }).countDocuments();
     }
     // else if (word === "all") {
@@ -171,6 +192,40 @@ router.get("/certain/:word", async (req, res) => {
  */
 router.post("/segmenter", (req, res) => {
   res.send(Hanzi.segment(req.body.text));
-})
+});
+
+/**
+ * @desc        add new hsk words to db
+ * @deprecated  for inner use only
+ */
+// router.get("/add_hsk", async (req, res) => {
+//   try {
+//     for await (const x of band) {
+//       const [found] = await Dictionary.find({ chinese: x.cn });
+//       // console.log(found.chinese);
+//       if (found) {
+//         const newWord = new Hskword({
+//           id: x.id,
+//           lvl: bandNum, // aka band
+//           cn: found.chinese,
+//           ru: found.russian,
+//           py: found.pinyin,
+//           opt: x.opt,
+//         });
+
+//         await newWord.save().catch((e) => console.log("ошибка с", x));
+//       } else {
+//         console.log("не нашли", x.cn);
+//       }
+//     }
+
+//     res.json({ done: 200 });
+//   } catch (err) {
+//     console.error(err);
+//   }
+// });
+
+// [54, 108, 113, 336, 373, 476, 481, 542]
+// 长    倒   得   老   面    省   实在  头
 
 module.exports = router;

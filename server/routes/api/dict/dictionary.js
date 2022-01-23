@@ -1,17 +1,17 @@
 // const {redis} = require('../services/redisClient')
 // const definitionLookup = word => redis.exists(word);
-const {LongestMatchSegmenter} = require("./segmenter.js");
+const { LongestMatchSegmenter } = require("./segmenter.js");
 let HANZI_DICT = {};
-const checkIfWordExists = word => HANZI_DICT[word];
+const checkIfWordExists = (word) => HANZI_DICT[word];
 const segmenter = new LongestMatchSegmenter(checkIfWordExists);
 
-
 /**
- * @param {Array<{_id: string}>} arr 
+ * @description load all chinese words in memory into HANZI_DICT{word: 1}
+ * @param {Array<{_id: string}>} arr
  */
 function fillDict(arr) {
   for (let i = 0; i < arr.length; i++) {
-    if(arr[i] && arr[i]._id) HANZI_DICT[arr[i]._id] = 1;
+    if (arr[i] && arr[i]._id) HANZI_DICT[arr[i]._id] = 1;
   }
 }
 
