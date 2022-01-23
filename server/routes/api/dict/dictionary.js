@@ -5,6 +5,8 @@ let HANZI_DICT = {};
 const checkIfWordExists = (word) => HANZI_DICT[word];
 const segmenter = new LongestMatchSegmenter(checkIfWordExists);
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
 /**
  * @description load all chinese words in memory into HANZI_DICT{word: 1}
  * @param {Array<{_id: string}>} arr
@@ -16,7 +18,7 @@ function fillDict(arr) {
 }
 
 setTimeout(async () => {
-  if (process.env.NODE_ENV !== "development") {
+  if (!isDevelopment) {
     try {
       fillDict(await Dictionary.aggregate([{ $group: { _id: "$chinese" } }]));
     } catch (err) {
