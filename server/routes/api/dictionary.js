@@ -3,36 +3,9 @@ const router = express.Router();
 const Hanzi = require("./dict/dictionary");
 const { getAllWords } = require("./services");
 const auth = require("../../middleware/auth");
-// const { redis } = require("./services");
 
 const Dictionary = require("../../src/models/Dictionary");
-const Hskword = require("../../src/models/Hskword");
-
-// async function setToRedis(skip, limit) {
-//   let lexicon = await Dictionary.find(
-//     {}, undefined, { skip, limit }).
-//     select("chinese russian pinyin -_id");
-
-//     lexicon = lexicon.map(x => {
-//       const {chinese, russian, pinyin} = x;
-//       return [chinese, JSON.stringify({russian,pinyin})];
-//     })
-
-//     console.log({skip, limit})
-//     await redis.mSet(lexicon);
-// }
-
-setTimeout(async () => {
-  try {
-    // const lexicon = await Dictionary.aggregate([{ $group: { _id: "$chinese" } }]);
-    // Hanzi.fillDict(lexicon);
-  } catch (err) {
-    console.log(err);
-  }
-
-  const used = process.memoryUsage().heapUsed / 1024 / 1024;
-  console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
-}, 10);
+// const Hskword = require("../../src/models/Hskword");
 
 /**
  * @route     GET api/dictionary?word=...

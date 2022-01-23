@@ -7,7 +7,7 @@
     "start": "node server.js",
     "server": "nodemon server.js",
     "client": "npm start --prefix ../client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "NODE_ENV=development concurrently \"npm run server\" \"npm run client\"",
     "build": "bash build-client.sh"
   },
   "author": "",

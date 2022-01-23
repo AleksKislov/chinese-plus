@@ -2,10 +2,11 @@ const express = require("express");
 const connectDB = require("./src/mongo_db/db");
 const bodyParser = require("body-parser");
 const path = require("path");
-// const morgan = require('morgan')
+const morgan = require("morgan");
 const cookieSession = require("cookie-session");
 
-// const isDevelopment = process.env.NODE_ENV !== "production";
+const isDevelopment = process.env.NODE_ENV === "development";
+
 require("dotenv").config({ path: ".env.prod" });
 const { passport } = require("./src/auth");
 
@@ -16,8 +17,14 @@ connectDB();
 require("./src/sql_db/connection");
 
 // Init Middleware
-// morgan.token('body', (req, res) => JSON.stringify(req.body, null, 2));
-// app.use(morgan(':method :url :status :response-time ms - :res[content-length] :body - :req[content-length]'));
+morgan.token("body", (req, res) => JSON.stringify(req.body, null, 2));
+if (isDevelopment) {
+  app.use(
+    morgan(
+      ":method :url :status :response-time ms - :res[content-length] :body - :req[content-length]"
+    )
+  );
+}
 
 // app.use(express.json({ extended: false }));
 app.use(bodyParser.json({ limit: "10mb" }));
@@ -28,7 +35,7 @@ app.use(bodyParser.urlencoded({ limit: "10mb", extended: true, parameterLimit: 5
 app.use(
   cookieSession({
     maxAge: 24 * 60 * 60 * 1000, // milliseconds of a day
-    keys: [process.env.COOKIE_SECRET]
+    keys: [process.env.COOKIE_SECRET],
   })
 );
 app.use(passport.initialize());
@@ -52,7 +59,7 @@ app.use("/api/translation", require("./routes/api/translation"));
 app.use("/api/notices", require("./routes/api/notices"));
 
 // Serve static files
-if (process.env.NODE_ENV === "production") {
+if (!isDevelopment) {
   // Set Static folder
   app.use(express.static(path.join(__dirname, "build")));
 
@@ -63,5 +70,5 @@ if (process.env.NODE_ENV === "production") {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is up on port ${PORT}. Is this prod == ${process.env.NODE_ENV}`);
+  console.log(`Server is up on port ${PORT}. Is development MODE: ${isDevelopment}`);
 });

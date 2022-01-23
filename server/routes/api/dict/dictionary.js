@@ -15,5 +15,18 @@ function fillDict(arr) {
   }
 }
 
-exports.fillDict = fillDict;
+setTimeout(async () => {
+  if (process.env.NODE_ENV !== "development") {
+    try {
+      fillDict(await Dictionary.aggregate([{ $group: { _id: "$chinese" } }]));
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const used = process.memoryUsage().heapUsed / 1024 / 1024;
+  console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+}, 100);
+
+// exports.fillDict = fillDict;
 exports.segment = segmenter.segment.bind(segmenter);
