@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+
+// old hsk words, lvls 1 to 6
 const LexiconSchema = new mongoose.Schema({
   word_id: {
     type: Number,

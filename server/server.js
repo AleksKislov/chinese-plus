@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const morgan = require("morgan");
 const cookieSession = require("cookie-session");
+const compression = require("compression");
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -26,6 +27,7 @@ if (isDevelopment) {
   );
 }
 
+app.use(compression());
 // app.use(express.json({ extended: false }));
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true, parameterLimit: 50000 }));
@@ -48,6 +50,7 @@ app.use("/api/posts", require("./routes/api/posts"));
 app.use("/api/plans", require("./routes/api/plans"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/lexicon", require("./routes/api/lexicon"));
+app.use("/api/newhskwords", require("./routes/api/newhskwords"));
 app.use("/api/words", require("./routes/api/words"));
 app.use("/api/userwords", require("./routes/api/userwords"));
 app.use("/api/dictionary", require("./routes/api/dictionary"));
@@ -59,7 +62,8 @@ app.use("/api/translation", require("./routes/api/translation"));
 app.use("/api/notices", require("./routes/api/notices"));
 
 // Serve static files
-if (!isDevelopment) {
+// if (!isDevelopment) {
+if (true) {
   // Set Static folder
   app.use(express.static(path.join(__dirname, "build")));
 

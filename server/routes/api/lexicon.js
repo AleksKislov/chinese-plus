@@ -1,16 +1,17 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
 
 const Lexicon = require("../../src/models/Lexicon");
 
-// @route   GET api/lexicon
-// @desc    Get all the hsk words by level
-// access   Public
+/**
+ * @route     GET api/lexicon?hsk_level
+ * @desc      Get all old hsk words by level
+ * @access    Public
+ */
 router.get("/all", async (req, res) => {
-  const hsk_level = Number(req.query.hsk_level);
+  const level = Number(req.query.hsk_level) || 1;
 
   try {
-    let allLexicon = await Lexicon.find({ level: hsk_level ? hsk_level : 1 }).sort({ word_id: 1 });
+    const allLexicon = await Lexicon.find({ level }).sort({ word_id: 1 });
 
     res.json(allLexicon);
   } catch (err) {
@@ -19,55 +20,32 @@ router.get("/all", async (req, res) => {
   }
 });
 
-// @route   GET api/lexicon
-// @desc    Get all the words in a text
-// access   Public
-router.post("/allwords", async (req, res) => {
-  try {
-    let allLexicon = await Lexicon.find({ chinese: { $in: req.body } });
-
-    res.json(allLexicon);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  }
-});
-
-// @route   GET api/lexicon?query=...
-// @desc    Get words by hsk level
-// access   Public
+/**
+ * @route     GET api/lexicon?hsk_level=...
+ * @desc      Get old hsk words by hsk level with limit
+ * @access    Public
+ */
 router.get("/", async (req, res) => {
-  try {
-    const hsk_level = Number(req.query.hsk_level);
-    const limit = Number(req.query.limit);
-    let start;
-    switch (hsk_level) {
-      case 1:
-        start = 0 + limit * 200;
-        break;
-      case 2:
-        start = 150 + limit * 200;
-        break;
-      case 3:
-        start = 300 + limit * 200;
-        break;
-      case 4:
-        start = 600 + limit * 200;
-        break;
-      case 5:
-        start = 1200 + limit * 200;
-        break;
-      case 6:
-        start = 2500 + limit * 200;
-        break;
-      default:
-        break;
-    }
-    let end = start + 201;
+  const WORDS_NUM = 200;
+  const level = req.query.hsk_level || "1";
+  const limit = Number(req.query.limit) || 0;
 
-    let allLexicon = await Lexicon.find({
-      level: hsk_level,
-      word_id: { $gt: start, $lt: end }
+  const firstIdPerLvl = {
+    1: 0,
+    2: 150,
+    3: 300,
+    4: 600,
+    5: 1200,
+    6: 2500,
+  };
+
+  try {
+    const start = firstIdPerLvl[level] + WORDS_NUM * limit;
+    const end = start + WORDS_NUM + 1;
+
+    const allLexicon = await Lexicon.find({
+      level,
+      word_id: { $gt: start, $lt: end },
     }).sort({ word_id: 1 });
 
     res.json(allLexicon);
