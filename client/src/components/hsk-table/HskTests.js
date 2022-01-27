@@ -1,43 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { loadTestLexicon } from "../../actions/hskTable";
+import { loadTestLexicon, setLoading } from "../../actions/hskTable";
 import PropTypes from "prop-types";
 import { myAudioURL } from "../../constants/urls.json";
 import { Helmet } from "react-helmet";
 
-const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
-  const [level, setLevel] = useState("hsk1");
+const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => {
+  const [level, setLevel] = useState("1");
+  const [audioAnswers, setAudioAnswers] = useState([]);
 
   let translationDiv = document.querySelector("#translation");
   let pinyinDiv = document.querySelector("#pinyin");
   let audioDiv = document.querySelector("#audio");
 
   useEffect(() => {
-    loadTestLexicon(level.charAt(3));
+    if (match.params.level) {
+      setLevel(match.params.level);
+      loadTestLexicon(match.params.level);
+      makeLinkActive(Number(match.params.level) - 1, "list-group-item-action");
+    } else {
+      setLevel("1");
+      loadTestLexicon("1");
+      makeLinkActive(0, "list-group-item-action");
+    }
     setTimeout(() => {
-      if (!loading && translationDiv) {
-        init();
-      }
-    }, 500);
-  }, [loading, translationDiv]);
+      if (!loading && translationDiv) init();
+    });
+  }, [loading, level, translationDiv]);
 
   const init = () => {
-    view.displayQuestions(translationDiv, lexicons);
-    view.displayOptions(translationDiv, lexicons);
+    View.displayQuestions(translationDiv);
+    View.displayOptions(translationDiv);
 
-    view.displayPinyinQuestions(pinyinDiv, lexicons);
-    view.displayPinyinOptions(pinyinDiv, lexicons);
+    View.displayPinyinQuestions(pinyinDiv);
+    View.displayPinyinOptions(pinyinDiv);
 
-    view.displayAudioQuestionsAndOptions(audioDiv, lexicons);
+    View.displayAudioQuestionsAndOptions(audioDiv);
   };
 
-  const view = {
+  const View = {
     //display random answer options including 1 correct answer
-    displayOptions(objArr, questionsArr) {
+    displayOptions(objArr) {
       const formControls = objArr.getElementsByClassName("form-control");
       const inputGroupText = objArr.getElementsByClassName("input-group-text");
-      const questionBank = questionsArr.map(e => e.chinese);
+      const questionBank = lexicons.map((e) => e.chinese);
 
       for (let i = 0; i < formControls.length; i++) {
         formControls[i].innerHTML = "<option>Выберите правильный вариант</option>";
@@ -48,18 +55,18 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
 
         //create arr for options and put right answer in
         let options = [];
-        options.push(questionsArr[rightIndex].translation);
+        options.push(lexicons[rightIndex].translation);
 
         //put other 4 options in
         for (let j = 1; j < 5; j++) {
-          let randInd = Math.trunc(Math.random() * questionsArr.length);
+          let randInd = Math.trunc(Math.random() * lexicons.length);
 
           if (randInd !== rightIndex) {
-            options.push(questionsArr[randInd].translation);
+            options.push(lexicons[randInd].translation);
           }
         }
 
-        model.shuffle(options);
+        shuffle(options);
 
         for (let k = 0; k < options.length; k++) {
           let elem = document.createElement("option");
@@ -70,12 +77,11 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
     },
 
     // display random questions for chinese characters
-    displayQuestions(objArr, questionsArr) {
+    displayQuestions(objArr) {
       const inputGroupText = objArr.getElementsByClassName("input-group-text");
 
       for (let i = 0; i < inputGroupText.length; i++) {
-        inputGroupText[i].innerHTML =
-          questionsArr[Math.trunc(Math.random() * questionsArr.length)].chinese;
+        inputGroupText[i].innerHTML = lexicons[Math.trunc(Math.random() * lexicons.length)].chinese;
 
         //refresh its color
         inputGroupText[i].style.backgroundColor = "#f0f0f0";
@@ -85,12 +91,11 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
     },
 
     // display random questions for pinyin
-    displayPinyinQuestions(objArr, questionsArr) {
+    displayPinyinQuestions(objArr) {
       const inputGroupText = objArr.getElementsByClassName("input-group-text");
 
       for (let i = 0; i < inputGroupText.length; i++) {
-        inputGroupText[i].innerHTML =
-          questionsArr[Math.trunc(Math.random() * questionsArr.length)].pinyin;
+        inputGroupText[i].innerHTML = lexicons[Math.trunc(Math.random() * lexicons.length)].pinyin;
 
         //refresh its color
         inputGroupText[i].style.backgroundColor = "#f0f0f0";
@@ -99,10 +104,10 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
       }
     },
 
-    displayPinyinOptions(objArr, questionsArr) {
+    displayPinyinOptions(objArr) {
       const formControls = objArr.getElementsByClassName("form-control");
       const inputGroupText = objArr.getElementsByClassName("input-group-text");
-      const questionBank = questionsArr.map(e => e.pinyin);
+      const questionBank = lexicons.map((e) => e.pinyin);
 
       for (let i = 0; i < formControls.length; i++) {
         formControls[i].innerHTML = "<option>Выберите правильный вариант</option>";
@@ -113,18 +118,18 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
 
         //create arr for options and put right answer in
         let options = [];
-        options.push(questionsArr[rightIndex].translation);
+        options.push(lexicons[rightIndex].translation);
 
         //put other 4 options in
         for (let j = 1; j < 5; j++) {
-          let randInd = Math.trunc(Math.random() * questionsArr.length);
+          let randInd = Math.trunc(Math.random() * lexicons.length);
 
           if (randInd !== rightIndex) {
-            options.push(questionsArr[randInd].translation);
+            options.push(lexicons[randInd].translation);
           }
         }
 
-        model.shuffle(options);
+        shuffle(options);
 
         for (let k = 0; k < options.length; k++) {
           let elem = document.createElement("option");
@@ -134,56 +139,54 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
       }
     },
 
-    displayAudioQuestionsAndOptions(objArr, questionsArr) {
+    displayAudioQuestionsAndOptions(objArr) {
       const audioButtons = objArr.getElementsByClassName("btn-secondary");
       const formControls = objArr.getElementsByClassName("form-control");
 
       const arrLen = audioButtons.length;
-      model.audioAnswers = [];
       let answers = [];
 
       for (let i = 0; i < arrLen; i++) {
-        const randInd = Math.trunc(Math.random() * questionsArr.length);
+        const randInd = Math.trunc(Math.random() * lexicons.length);
         answers.push(randInd);
 
         audioButtons[i].outerHTML = audioButtons[i].outerHTML;
 
-        // console.log("in view" + level);
-        //add random audio to buttons
+        // add random audio to buttons
         audioButtons[i].addEventListener("click", () => {
-          const audio = new Audio(myAudioURL + level + "/" + randInd + ".mp3");
+          const audio = new Audio(`${myAudioURL}hsk${level}/${randInd}.mp3`);
           audio.play();
         });
 
-        //refresh its color
+        // refresh its color
         audioButtons[i].style.backgroundColor = "#f0f0f0";
         audioButtons[i].style.color = "#555";
         audioButtons[i].style.borderColor = "#ced4da";
       }
 
-      model.audioAnswers = answers;
+      setAudioAnswers(answers);
 
-      //add options
+      // add options
       for (let i = 0; i < formControls.length; i++) {
         formControls[i].innerHTML = "<option>Выберите правильный вариант</option>";
 
-        //right index
+        // right index
         let rightIndex = parseInt(answers[i]);
 
-        //create arr for options and put right answer in
+        // create arr for options and put right answer in
         let options = [];
-        options.push(questionsArr[rightIndex].translation);
+        options.push(lexicons[rightIndex].translation);
 
-        //put other 4 options in
+        // put other 4 options in
         for (let j = 1; j < 5; j++) {
-          let randIndex = Math.trunc(Math.random() * questionsArr.length);
+          let randIndex = Math.trunc(Math.random() * lexicons.length);
 
           if (randIndex !== rightIndex) {
-            options.push(questionsArr[randIndex].translation);
+            options.push(lexicons[randIndex].translation);
           }
         }
 
-        model.shuffle(options);
+        shuffle(options);
 
         for (let k = 0; k < options.length; k++) {
           let elem = document.createElement("option");
@@ -191,29 +194,35 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
           formControls[i].appendChild(elem);
         }
       }
+    },
+
+    turnRed(elem) {
+      elem.style.backgroundColor = "#c73636";
+      elem.style.color = "white";
+      elem.style.borderColor = "#b02323";
+    },
+
+    turnGreen(elem) {
+      elem.style.backgroundColor = "#2bad7e";
+      elem.style.color = "white";
+      elem.style.borderColor = "#2b8a67";
+    },
+  };
+
+  function shuffle(arr) {
+    for (let i = 0; i < arr.length; i++) {
+      let randInd = Math.trunc(Math.random() * arr.length);
+      let temp = arr[i];
+      arr[i] = arr[randInd];
+      arr[randInd] = temp;
     }
-  };
+  }
 
-  const model = {
-    shuffle(arr) {
-      for (let i = 0; i < arr.length; i++) {
-        let randInd = Math.trunc(Math.random() * arr.length);
-        let temp = arr[i];
-        arr[i] = arr[randInd];
-        arr[randInd] = temp;
-      }
-
-      return arr;
-    },
-
-    audioAnswers: []
-  };
-
-  const controller = {
-    checkTranslate(objArr, questionsArr) {
+  const Controller = {
+    checkTranslate(objArr) {
       const inputGroupText = objArr.getElementsByClassName("input-group-text");
-      const questionBank = questionsArr.map(e => e.chinese);
-      const answerBank = questionsArr.map(e => e.translation);
+      const questionBank = lexicons.map((e) => e.chinese);
+      const answerBank = lexicons.map((e) => e.translation);
       const formControls = objArr.getElementsByClassName("form-control");
 
       for (let i = 0; i < inputGroupText.length; i++) {
@@ -221,24 +230,20 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
         let answer = formControls[i].options[formControls[i].selectedIndex].innerHTML;
         let answerInd = answerBank.indexOf(answer);
 
-        if (formControls[i].selectedIndex !== 0) {
-          if (correctInd === answerInd) {
-            inputGroupText[i].style.backgroundColor = "#2bad7e";
-            inputGroupText[i].style.color = "white";
-            inputGroupText[i].style.borderColor = "#2b8a67";
-          } else {
-            inputGroupText[i].style.backgroundColor = "#c73636";
-            inputGroupText[i].style.color = "white";
-            inputGroupText[i].style.borderColor = "#b02323";
-          }
+        if (formControls[i].selectedIndex === 0) continue;
+
+        if (correctInd === answerInd) {
+          View.turnGreen(inputGroupText[i]);
+        } else {
+          View.turnRed(inputGroupText[i]);
         }
       }
     },
 
-    checkPinyin(objArr, questionsArr) {
+    checkPinyin(objArr) {
       const inputGroupText = objArr.getElementsByClassName("input-group-text");
-      const questionBank = questionsArr.map(e => e.pinyin);
-      const answerBank = questionsArr.map(e => e.translation);
+      const questionBank = lexicons.map((e) => e.pinyin);
+      const answerBank = lexicons.map((e) => e.translation);
       const formControls = objArr.getElementsByClassName("form-control");
 
       for (let i = 0; i < inputGroupText.length; i++) {
@@ -246,57 +251,47 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
         let answer = formControls[i].options[formControls[i].selectedIndex].innerHTML;
         let answerInd = answerBank.indexOf(answer);
 
-        if (formControls[i].selectedIndex !== 0) {
-          if (correctInd === answerInd) {
-            inputGroupText[i].style.backgroundColor = "#2bad7e";
-            inputGroupText[i].style.color = "white";
-            inputGroupText[i].style.borderColor = "#2b8a67";
-          } else {
-            inputGroupText[i].style.backgroundColor = "#c73636";
-            inputGroupText[i].style.color = "white";
-            inputGroupText[i].style.borderColor = "#b02323";
-          }
+        if (formControls[i].selectedIndex === 0) continue;
+
+        if (correctInd === answerInd) {
+          View.turnGreen(inputGroupText[i]);
+        } else {
+          View.turnRed(inputGroupText[i]);
         }
       }
     },
 
-    checkAudio(objArr, questionsArr) {
-      const answerBank = questionsArr.map(e => e.translation);
+    checkAudio(objArr) {
+      const answerBank = lexicons.map((e) => e.translation);
       const formControls = objArr.getElementsByClassName("form-control");
       const audioButtons = objArr.getElementsByClassName("btn-secondary");
 
-      for (let i = 0; i < model.audioAnswers.length; i++) {
-        let correctInd = model.audioAnswers[i];
+      for (let i = 0; i < audioAnswers.length; i++) {
+        let correctInd = audioAnswers[i];
         let answer = formControls[i].options[formControls[i].selectedIndex].innerHTML;
         let answerInd = answerBank.indexOf(answer);
 
-        if (formControls[i].selectedIndex !== 0) {
-          if (correctInd === answerInd) {
-            audioButtons[i].style.backgroundColor = "#2bad7e";
-            audioButtons[i].style.color = "white";
-            audioButtons[i].style.borderColor = "#2b8a67";
-          } else {
-            audioButtons[i].style.backgroundColor = "#c73636";
-            audioButtons[i].style.color = "white";
-            audioButtons[i].style.borderColor = "#b02323";
-          }
+        if (formControls[i].selectedIndex === 0) continue;
+
+        // console.log({ correctInd, answer, answerInd });
+        if (correctInd === answerInd) {
+          View.turnGreen(audioButtons[i]);
+        } else {
+          View.turnRed(audioButtons[i]);
         }
       }
-    }
+    },
   };
 
-  const refreshButton = mycase => {
-    switch (mycase) {
+  const refreshButton = (num) => {
+    switch (num) {
       case 1:
-        view.displayQuestions(translationDiv, lexicons);
-        view.displayOptions(translationDiv, lexicons);
+        View.displayQuestions(translationDiv);
+        View.displayOptions(translationDiv);
         break;
       case 2:
-        view.displayPinyinQuestions(pinyinDiv, lexicons);
-        view.displayPinyinOptions(pinyinDiv, lexicons);
-        break;
-      case 3:
-        window.location.reload(false);
+        View.displayPinyinQuestions(pinyinDiv);
+        View.displayPinyinOptions(pinyinDiv);
         break;
       default:
         window.location.reload(false);
@@ -304,38 +299,31 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
     }
   };
 
-  const checkButton = mycase => {
-    switch (mycase) {
+  const checkButton = (num) => {
+    switch (num) {
       case 1:
-        controller.checkTranslate(translationDiv, lexicons);
-
-        break;
+        return Controller.checkTranslate(translationDiv);
       case 2:
-        controller.checkPinyin(pinyinDiv, lexicons);
-
-        break;
+        return Controller.checkPinyin(pinyinDiv);
       case 3:
-        controller.checkAudio(audioDiv, lexicons);
-        break;
-      default:
-        break;
+        return Controller.checkAudio(audioDiv);
     }
   };
 
-  const onClick = e => {
-    let hsk_level = e.currentTarget.getElementsByTagName("a")[0].innerHTML;
-
-    setLevel(hsk_level.toLowerCase());
-    loadTestLexicon(hsk_level.toLowerCase().charAt(3));
-    makeLinkActive(Number(hsk_level.charAt(3)) - 1, "list-group-item-action");
+  const changeHskLevel = (e) => {
+    const hskLevel = e.currentTarget.getElementsByTagName("a")[0].innerHTML;
+    setLoading();
+    setLevel(hskLevel.charAt(3));
+    loadTestLexicon(hskLevel.charAt(3));
+    // makeLinkActive(Number(hskLevel.charAt(3)) - 1, "list-group-item-action");
   };
 
-  const makeLinkActive = (item, class_name) => {
-    const listItems = document.getElementsByClassName(class_name);
+  const makeLinkActive = (item, className) => {
+    const listItems = document.getElementsByClassName(className);
     const activeItem = document.getElementsByClassName("activeHSK");
 
     // if num === 0, then it is hsk item, == 1, => it is page item
-    const num = class_name === "page-item" ? 1 : 0;
+    const num = className === "page-item" ? 1 : 0;
     activeItem[num].classList.remove("activeHSK");
     listItems[item].classList.add("activeHSK");
   };
@@ -360,34 +348,49 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
           <ul className='list-group list-group-flush'>
             <li
               className='list-group-item list-group-item-action activeHSK'
-              onClick={e => onClick(e)}
+              onClick={(e) => changeHskLevel(e)}
             >
-              <Link to='#!' className='card-link'>
+              <Link to='1' className='card-link'>
                 HSK1
               </Link>
             </li>
-            <li className='list-group-item list-group-item-action' onClick={e => onClick(e)}>
-              <Link to='#!' className='card-link'>
+            <li
+              className='list-group-item list-group-item-action'
+              onClick={(e) => changeHskLevel(e)}
+            >
+              <Link to='2' className='card-link'>
                 HSK2
               </Link>
             </li>
-            <li className='list-group-item  list-group-item-action' onClick={e => onClick(e)}>
-              <Link to='#!' className='card-link'>
+            <li
+              className='list-group-item  list-group-item-action'
+              onClick={(e) => changeHskLevel(e)}
+            >
+              <Link to='3' className='card-link'>
                 HSK3
               </Link>
             </li>
-            <li className='list-group-item list-group-item-action' onClick={e => onClick(e)}>
-              <Link to='#!' className='card-link'>
+            <li
+              className='list-group-item list-group-item-action'
+              onClick={(e) => changeHskLevel(e)}
+            >
+              <Link to='4' className='card-link'>
                 HSK4
               </Link>
             </li>
-            <li className='list-group-item list-group-item-action' onClick={e => onClick(e)}>
-              <Link to='#!' className='card-link'>
+            <li
+              className='list-group-item list-group-item-action'
+              onClick={(e) => changeHskLevel(e)}
+            >
+              <Link to='5' className='card-link'>
                 HSK5
               </Link>
             </li>
-            <li className='list-group-item list-group-item-action' onClick={e => onClick(e)}>
-              <Link to='#!' className='card-link'>
+            <li
+              className='list-group-item list-group-item-action'
+              onClick={(e) => changeHskLevel(e)}
+            >
+              <Link to='6' className='card-link'>
                 HSK6
               </Link>
             </li>
@@ -605,16 +608,16 @@ const HskTests = ({ lexicons, loadTestLexicon, loading }) => {
 };
 
 const buttonStyle = {
-  marginRight: "0.5rem"
+  marginRight: "0.5rem",
 };
 
 HskTests.propTypes = {
-  lexicons: PropTypes.array.isRequired
+  lexicons: PropTypes.array.isRequired,
 };
 
-const mapPropsToState = state => ({
+const mapPropsToState = (state) => ({
   lexicons: state.hskTable.testLexicon,
-  loading: state.hskTable.loading
+  loading: state.hskTable.loading,
 });
 
-export default connect(mapPropsToState, { loadTestLexicon })(HskTests);
+export default connect(mapPropsToState, { loadTestLexicon, setLoading })(HskTests);

@@ -62,8 +62,7 @@ app.use("/api/translation", require("./routes/api/translation"));
 app.use("/api/notices", require("./routes/api/notices"));
 
 // Serve static files
-// if (!isDevelopment) {
-if (true) {
+if (!isDevelopment) {
   // Set Static folder
   app.use(express.static(path.join(__dirname, "build")));
 

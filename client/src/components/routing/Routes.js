@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import Register from "../auth/Register";
 import Login from "../auth/Login";
 import GoogleLoginSuccess from "../auth/GoogleLoginSuccess";
@@ -76,7 +76,10 @@ const Routes = () => {
           <Route exact path='/hsk-table' component={HskTable} />
           <Route exact path='/hsk-search' component={SearchHSK} />
           <Route exact path='/pinyin-tests' component={PinyinTests} />
-          <Route exact path='/hsk-tests' component={HskTests} />
+          <Route exact path='/hsk-tests' render={() => <Redirect to='/hsk-tests/1' />} />
+
+          <Route exact path='/hsk-tests/:level' component={HskTests} />
+
           <PrivateRoute exact path='/create-profile' component={CreateProfile} />
           <PrivateRoute exact path='/edit-profile' component={EditProfile} />
           <Route exact path='/pinyin' component={PinyinTable} />
