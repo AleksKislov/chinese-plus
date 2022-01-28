@@ -3,7 +3,7 @@ const router = require("express").Router();
 const Lexicon = require("../../src/models/Lexicon");
 
 /**
- * @route     GET api/lexicon?hsk_level
+ * @route     GET api/lexicon/all?hsk_level=
  * @desc      Get all old hsk words by level
  * @access    Public
  */
@@ -11,8 +11,8 @@ router.get("/all", async (req, res) => {
   const level = Number(req.query.hsk_level) || 1;
 
   try {
-    const allLexicon = await Lexicon.find({ level }).sort({ word_id: 1 });
-
+    // const allLexicon = await Lexicon.find({ level }).sort({ word_id: 1 });
+    const allLexicon = await Lexicon.aggregate([{ $match: { level } }, { $sample: { size: 100 } }]);
     res.json(allLexicon);
   } catch (err) {
     console.error(err.message);
