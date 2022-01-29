@@ -39,9 +39,9 @@ const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => 
   }, [loading, level, translationDiv]);
 
   const init = () => {
-    View.displayQuestionsForCharacters(translationDiv);
+    View.displayCharQuestions(translationDiv);
     View.displayPinyinQuestions(pinyinDiv);
-    View.displayAudioQuestionsAndOptions(audioDiv);
+    View.displayAudioQuestions(audioDiv);
   };
 
   const View = {
@@ -69,19 +69,24 @@ const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => 
       };
     },
 
+    /**
+     * @param {Array} formControls - array of nodes
+     * @param {Array<{word_id,level,chinese,pinyin,translation}>} answers
+     */
     displayOptions(formControls, answers) {
       for (let i = 0; i < formControls.length; i++) {
         formControls[i].innerHTML = "<option>Выберите правильный вариант</option>";
 
-        //create arr for options and put right answer in
+        // create arr for options and put right answer in
         const options = [];
-        const currentAnswer = answers[i].translation;
-        options.push(currentAnswer);
+        const rightAnswer = answers[i].translation;
+        options.push(rightAnswer);
 
         while (options.length < MAX_OPTIONS) {
           const randInd = Math.trunc(Math.random() * lexicons.length);
           const option = lexicons[randInd].translation;
-          if (option !== currentAnswer) options.push(option);
+          const alreadyExists = options.includes(option);
+          if (option !== rightAnswer && !alreadyExists) options.push(option);
         }
 
         shuffle(options);
@@ -95,7 +100,7 @@ const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => 
     },
 
     // display random questions for chinese characterss
-    displayQuestionsForCharacters(objArr) {
+    displayCharQuestions(objArr) {
       this.displayAbstractQuestions(questProps.chinese)(objArr);
     },
 
@@ -104,7 +109,7 @@ const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => 
       this.displayAbstractQuestions(questProps.pinyin)(objArr);
     },
 
-    displayAudioQuestionsAndOptions(objArr) {
+    displayAudioQuestions(objArr) {
       const audioButtons = objArr.getElementsByClassName("btn-secondary");
       const formControls = objArr.getElementsByClassName("form-control");
 
@@ -138,35 +143,9 @@ const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => 
       }
 
       setAudioAnswers(answers);
-      // console.log({ lexicons, answers });
 
       // add options
-      for (let i = 0; i < formControls.length; i++) {
-        formControls[i].innerHTML = "<option>Выберите правильный вариант</option>";
-
-        const rightIndex = lexicons.findIndex((x) => x.word_id === answers[i].word_id);
-
-        // create arr for options and put right answer in
-        let options = [];
-        options.push(lexicons[rightIndex].translation);
-
-        // put other 4 options in
-        for (let j = 1; j < 5; j++) {
-          const randIndex = Math.trunc(Math.random() * lexicons.length);
-
-          if (randIndex !== rightIndex) {
-            options.push(lexicons[randIndex].translation);
-          }
-        }
-
-        shuffle(options);
-
-        for (let k = 0; k < options.length; k++) {
-          const elem = document.createElement("option");
-          elem.innerHTML = options[k];
-          formControls[i].appendChild(elem);
-        }
-      }
+      this.displayOptions(formControls, answers);
     },
 
     setColor: {
@@ -256,7 +235,7 @@ const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => 
   const refreshButton = (num) => {
     switch (num) {
       case 1:
-        View.displayQuestionsForCharacters(translationDiv);
+        View.displayCharQuestions(translationDiv);
         break;
       case 2:
         View.displayPinyinQuestions(pinyinDiv);

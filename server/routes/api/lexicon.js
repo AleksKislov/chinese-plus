@@ -11,8 +11,11 @@ router.get("/all", async (req, res) => {
   const level = Number(req.query.hsk_level) || 1;
 
   try {
-    // const allLexicon = await Lexicon.find({ level }).sort({ word_id: 1 });
-    const allLexicon = await Lexicon.aggregate([{ $match: { level } }, { $sample: { size: 100 } }]);
+    const allLexicon = await Lexicon.aggregate([
+      { $match: { level } },
+      { $sample: { size: 100 } },
+      { $project: { _id: 0, __v: 0 } },
+    ]);
     res.json(allLexicon);
   } catch (err) {
     console.error(err.message);
