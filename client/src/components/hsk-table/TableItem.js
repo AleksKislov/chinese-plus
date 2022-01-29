@@ -7,21 +7,17 @@ import { myAudioURL } from "../../constants/urls.json";
 const TableItem = ({ addWord, lexicon, selected, removeWord, loadLengths, hideFlag }) => {
   let { word_id, level, chinese, pinyin, translation } = lexicon;
 
-  const onClick = e => {
-    const tagName = e.target.tagName;
-
-    if (tagName !== "BUTTON" && tagName !== "I") {
-      if (selected) {
-        removeWord(word_id);
-        setTimeout(() => {
-          loadLengths();
-        }, 100);
-      } else {
-        addWord({ word_id, level, chinese, pinyin, translation });
-        setTimeout(() => {
-          loadLengths();
-        }, 100);
-      }
+  const onClick = (e) => {
+    if (selected) {
+      removeWord(word_id);
+      setTimeout(() => {
+        loadLengths();
+      }, 100);
+    } else {
+      addWord({ word_id, level, chinese, pinyin, translation });
+      setTimeout(() => {
+        loadLengths();
+      }, 100);
     }
   };
 
@@ -54,7 +50,7 @@ const TableItem = ({ addWord, lexicon, selected, removeWord, loadLengths, hideFl
   };
 
   return (
-    <tr onClick={e => onClick(e)} className={selected ? "table-active" : ""}>
+    <tr className={selected ? "table-active" : ""}>
       <td>{word_id}</td>
       <td>
         <h4>{!hideFlag.chinese && chinese}</h4>
@@ -66,6 +62,14 @@ const TableItem = ({ addWord, lexicon, selected, removeWord, loadLengths, hideFl
           <i className='fas fa-play'></i>
         </button>
       </td>
+      <td>
+        <button
+          className={selected ? "btn btn-sm btn-warning" : "btn btn-sm btn-info"}
+          onClick={(e) => onClick(e)}
+        >
+          {selected ? <i className='fas fa-minus'></i> : <i className='fas fa-plus'></i>}
+        </button>
+      </td>
     </tr>
   );
 };
@@ -74,7 +78,7 @@ TableItem.propTypes = {
   lexicon: PropTypes.object.isRequired,
   addWord: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
-  removeWord: PropTypes.func.isRequired
+  removeWord: PropTypes.func.isRequired,
 };
 
 export default connect(null, { addWord, removeWord, loadLengths })(TableItem);

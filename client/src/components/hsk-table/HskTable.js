@@ -114,7 +114,9 @@ const HskTable = ({
           <table className='table table-hover table-responsive'>
             <thead>
               <tr className='table-info'>
-                <th>#</th>
+                <th>
+                  <i className='fab fa-slack-hash'></i>
+                </th>
                 <th>
                   <Tippy placement='bottom' content='Скрыть иероглифы'>
                     <button
@@ -152,6 +154,9 @@ const HskTable = ({
                   <div className='text-center'>
                     <i className='fas fa-headphones'></i>
                   </div>
+                </th>
+                <th>
+                  <i className='fas fa-plus'></i>
                 </th>
               </tr>
             </thead>
