@@ -1,9 +1,9 @@
 const router = require("express").Router();
 
-const { apiDecorator } = require("../../src/api/api-decorator");
 const {
   getRandomNewHskByLvl,
   getNewHskByLvlAndLimit,
+  searchNewHsk,
 } = require("../../src/api/services/newhskwords");
 
 /**
@@ -11,27 +11,20 @@ const {
  * @desc      Get all the hsk words by level
  * @access    Public
  */
-router.get("/all", apiDecorator(getRandomNewHskByLvl));
+router.get("/all", getRandomNewHskByLvl);
 
 /**
  * @route     GET api/newhskwords?query=...
  * @desc      Get new hsk words by hsk level
  * @access    Public
  */
-router.get("/", apiDecorator(getNewHskByLvlAndLimit));
+router.get("/", getNewHskByLvlAndLimit);
 
 /**
- * @route     POST api/lexicon/search
+ * @route     POST api/newhskwords/search
  * @desc      Search chinese words from hsk vocab
  * @access    Public
  */
-// router.post("/search", async (req, res) => {
-//   try {
-//     let lexicon = await Lexicon.find({ chinese: { $regex: req.body.chinese } });
-//     res.json(lexicon);
-//   } catch (err) {
-// logError(err, res);
-//   }
-// });
+router.post("/search", searchNewHsk);
 
 module.exports = router;

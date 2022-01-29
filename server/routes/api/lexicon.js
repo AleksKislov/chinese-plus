@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const { apiDecorator } = require("../../src/api/api-decorator");
 const {
   getHskByLvlAndLimit,
   getRandomHskByLvl,
@@ -11,20 +10,20 @@ const {
  * @desc      Get all old hsk words by level
  * @access    Public
  */
-router.get("/all", apiDecorator(getRandomHskByLvl));
+router.get("/all", getRandomHskByLvl);
 
 /**
  * @route     GET api/lexicon?hsk_level=...
  * @desc      Get old hsk words by hsk level with limit
  * @access    Public
  */
-router.get("/", apiDecorator(getHskByLvlAndLimit));
+router.get("/", getHskByLvlAndLimit);
 
 /**
  * @route     POST api/lexicon/search
  * @desc      Search chinese words from hsk vocab
  * @access    Public
  */
-router.post("/search", apiDecorator(searchHsk));
+router.post("/search", searchHsk);
 
 module.exports = router;
