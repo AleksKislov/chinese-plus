@@ -1,51 +1,24 @@
 const router = require("express").Router();
 
-const Hskword = require("../../src/models/Hskword");
-
-const logError = (err, res) => {
-  console.error(err.message);
-  res.status(500).send("Server error");
-};
+const { apiDecorator } = require("../../src/api/api-decorator");
+const {
+  getRandomNewHskByLvl,
+  getNewHskByLvlAndLimit,
+} = require("../../src/api/services/newhskwords");
 
 /**
  * @route     GET api/newhskwords/all
  * @desc      Get all the hsk words by level
  * @access    Public
  */
-router.get("/all", async (req, res) => {
-  const lvl = req.query.hsk_level || "1";
-
-  try {
-    const allWords = await Hskword.find({ lvl }).sort({ id: 1 });
-    res.json(allWords);
-  } catch (err) {
-    logError(err, res);
-  }
-});
+router.get("/all", apiDecorator(getRandomNewHskByLvl));
 
 /**
  * @route     GET api/newhskwords?query=...
  * @desc      Get new hsk words by hsk level
  * @access    Public
  */
-router.get("/", async (req, res) => {
-  const WORDS_NUM = 200;
-  const lvl = req.query.hsk_level;
-  const limit = Number(req.query.limit) || 0;
-  const start = 0 + limit * WORDS_NUM;
-  const end = start + WORDS_NUM + 1;
-
-  try {
-    const allLexicon = await Hskword.find({
-      lvl,
-      id: { $gt: start, $lt: end },
-    }).sort({ id: 1 });
-
-    res.json(allLexicon);
-  } catch (err) {
-    logError(err, res);
-  }
-});
+router.get("/", apiDecorator(getNewHskByLvlAndLimit));
 
 /**
  * @route     POST api/lexicon/search
