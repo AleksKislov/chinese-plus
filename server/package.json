@@ -8,6 +8,7 @@
     "server": "nodemon server.js",
     "client": "npm start --prefix ../client",
     "dev": "NODE_ENV=development concurrently \"npm run server\" \"npm run client\"",
+    "dev-clean": "concurrently \"npm run server\" \"npm run client\"",
     "build": "bash build-client.sh"
   },
   "author": "",

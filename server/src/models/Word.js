@@ -1,28 +1,29 @@
 const mongoose = require("mongoose");
+
 const WordSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user"
+    ref: "user",
   },
   word_id: {
-    type: Number
+    type: Number,
   },
   level: {
-    type: Number
+    type: Number,
   },
   chinese: {
-    type: String
+    type: String,
   },
   translation: {
-    type: String
+    type: String,
   },
   pinyin: {
-    type: String
+    type: String,
   },
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 module.exports = Word = mongoose.model("word", WordSchema);

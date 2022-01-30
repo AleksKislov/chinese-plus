@@ -3,12 +3,13 @@ import { connect } from "react-redux";
 import axios from "axios";
 import WordsItem from "../texts/WordsItem";
 import WordModal from "../translation/WordModal";
+import { parseRussian } from "../../actions/helpers";
 import {
   // puppeteerFunc,
   addWord,
-  // removeWord,
+  removeWord,
   loadUserWords,
-  loadUserWordsLen
+  loadUserWordsLen,
 } from "../../actions/userWords";
 import HanziWriter from "hanzi-writer";
 import Spinner from "../layout/Spinner";
@@ -25,10 +26,23 @@ const Search = ({
   addWord,
   loadUserWords,
   loadUserWordsLen,
-  isAuthenticated
+  isAuthenticated,
+  userWords,
+  removeWord,
   // dictResponse
   // puppeteerFunc
 }) => {
+  const [clicked, setClicked] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [wordFromSearch, setWordFromSearch] = useState(null);
+  const [wordsFromSearch, setWordsFromSearch] = useState(null);
+  const [showExamples, setShowExamples] = useState(true);
+  const [hideFlag, setHideFlag] = useState({
+    chinese: false,
+    pinyin: false,
+    translation: false,
+  });
+
   useEffect(() => {
     if (match.params.chinese) {
       document.getElementById("searchInput").value = match.params.chinese;
@@ -39,25 +53,24 @@ const Search = ({
   }, []);
 
   useEffect(() => {
+    if (userWords && wordFromSearch && userWordsInclude(wordFromSearch)) {
+      setClicked(true);
+    }
+  }, [userWords, wordFromSearch]);
+
+  function userWordsInclude({ chinese }) {
+    return userWords.some((x) => x.chinese === chinese);
+  }
+
+  useEffect(() => {
     if (isAuthenticated) loadUserWords();
   }, [isAuthenticated]);
 
-  const [clicked, setClicked] = useState(false);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [wordFromSearch, setWordFromSearch] = useState(null);
-  const [wordsFromSearch, setWordsFromSearch] = useState(null);
-  const [showExamples, setShowExamples] = useState(true);
-  const [hideFlag, setHideFlag] = useState({
-    chinese: false,
-    pinyin: false,
-    translation: false
-  });
-
-  const getWords = async words => {
+  const getWords = async (words) => {
     const config = {
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     };
 
     let res;
@@ -84,11 +97,11 @@ const Search = ({
     const showCharDiv = document.getElementById("showCharDiv");
     showCharDiv.innerHTML = "";
 
-    const segmenter = async text => {
+    const segmenter = async (text) => {
       const config = {
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       };
 
       let res;
@@ -108,7 +121,7 @@ const Search = ({
           padding: 0,
           showOutline: true,
           radicalColor: "#168F16",
-          delayBetweenLoops: 3000
+          delayBetweenLoops: 3000,
         });
         writer.loopCharacterAnimation();
       }
@@ -122,12 +135,12 @@ const Search = ({
     // searchedWords.value = "";
 
     let allwords = await segmenter(words);
-    allwords = allwords.filter(word => /\p{Script=Han}/u.test(word));
+    allwords = allwords.filter((word) => /\p{Script=Han}/u.test(word));
 
     const wordsFromDB = await getWords(allwords);
 
     // console.log(wordsFromDB);
-    let newArr = allwords.map(word => {
+    let newArr = allwords.map((word) => {
       for (let i = 0; i < wordsFromDB.length; i++) {
         if (word === wordsFromDB[i].chinese) {
           return wordsFromDB[i];
@@ -149,92 +162,72 @@ const Search = ({
     setSearchLoading(false);
   };
 
-  const onSubmit = async e => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     showSearchResult();
-  };
-
-  const markUpRussianText = text => {
-    if (text) {
-      return text
-        .replace(/\[b\]\\\[o\\\]\d\[\/b\]/g, "")
-        .replace(/\[b\]/g, "<span class='tippyBold'>")
-        .replace(/\[\/b\]/g, "</span>")
-        .replace(/\[c\]/g, "<span class='tippyColor'>")
-        .replace(/\[\/c\]/g, "</span>")
-        .replace(/\[p\]/g, "<span class='tippyColor tippyItalic'>")
-        .replace(/\[\/p\]/g, "</span>")
-        .replace(/\[i\]/g, "<span class='tippyItalic'>")
-        .replace(/\[\/i\]/g, "</span>")
-        .replace(/\[m1\]/g, "<span class='tippyParagraph'>")
-        .replace(/\[m\d\]/g, "<span class='tippyExample'>")
-        .replace(/\[\/m\]/g, "</span>")
-        .replace(/\[\*\]\[ex\]/g, "<div class='tippyExsShow'>")
-        .replace(/\[\/ex\]\[\/\*\]/g, "</div>")
-        .replace(/\\\[(.{1,})\\\]/g, "($1)")
-        .replace(/\[ref\]/g, "<span class='text-info'>")
-        .replace(/\[\/ref\]/g, "</span>");
-    } else {
-      return " ";
-    }
   };
 
   const showMoreButton = () => {
     const examples = document.getElementsByClassName("tippyExsShow");
 
     if (showExamples) {
-      Array.from(examples).forEach(el => {
+      Array.from(examples).forEach((el) => {
         el.classList.add("tippyExs");
       });
       setShowExamples(false);
     } else {
-      Array.from(examples).forEach(el => {
+      Array.from(examples).forEach((el) => {
         el.classList.remove("tippyExs");
       });
       setShowExamples(true);
     }
   };
 
-  const hideChinese = e => {
+  const hideChinese = (e) => {
     setHideFlag({
       chinese: !hideFlag.chinese,
       translation: hideFlag.translation,
-      pinyin: hideFlag.pinyin
+      pinyin: hideFlag.pinyin,
     });
     e.target.innerHTML = !hideFlag.chinese ? "Скрыто" : "Иероглифы";
   };
 
-  const hidePinyin = e => {
+  const hidePinyin = (e) => {
     setHideFlag({
       pinyin: !hideFlag.pinyin,
       translation: hideFlag.translation,
-      chinese: hideFlag.chinese
+      chinese: hideFlag.chinese,
     });
     e.target.innerHTML = !hideFlag.pinyin ? "Скрыто" : "Пиньинь";
   };
 
-  const hideFanyi = e => {
+  const hideFanyi = (e) => {
     setHideFlag({
       translation: !hideFlag.translation,
       chinese: hideFlag.chinese,
-      pinyin: hideFlag.pinyin
+      pinyin: hideFlag.pinyin,
     });
     e.target.innerHTML = !hideFlag.translation ? "Скрыто" : "Перевод";
   };
 
-  const updateVocabulary = async word => {
+  const updateVocabulary = async (word) => {
     // console.log(word);
-    if (!clicked) {
+    if (!word) return;
+
+    if (clicked) {
+      setClicked(false);
+      await removeWord(word.chinese);
+    } else {
       setClicked(true);
       await addWord(word);
-      setTimeout(() => {
-        loadUserWords();
-        loadUserWordsLen();
-      }, 100);
     }
+    setTimeout(() => {
+      loadUserWords();
+      loadUserWordsLen();
+    }, 100);
   };
 
-  const handleNewUserMessage = async newMessage => {
+  const handleNewUserMessage = async (newMessage) => {
     // console.log(`New message incoming! ${newMessage}`);
     // Now send the message throught the backend API
 
@@ -261,7 +254,7 @@ const Search = ({
       <div className='row'>
         <div className='col-sm-8'>
           <div>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={(e) => onSubmit(e)}>
               <div className='form-group'>
                 <h3 className='control-label'>Китайско-русский словарь</h3>
                 <label>
@@ -312,9 +305,17 @@ const Search = ({
           {wordFromSearch && (
             <Fragment>
               <Fragment>
-                <Tippy content={<span>Добавить слово в вокабуляр</span>}>
+                <Tippy
+                  content={
+                    clicked ? (
+                      <span>Убрать слово из вокабуляра</span>
+                    ) : (
+                      <span>Добавить слово в вокабуляр</span>
+                    )
+                  }
+                >
                   <button
-                    className='btn btn-sm btn-info mr-1'
+                    className={`btn btn-sm btn-${clicked ? "warning" : "info"} mr-1`}
                     onClick={() => updateVocabulary(wordFromSearch)}
                   >
                     {clicked ? <i className='fas fa-minus'></i> : <i className='fas fa-plus'></i>}
@@ -325,32 +326,20 @@ const Search = ({
                   content={<span>{showExamples ? "Скрыть примеры" : "Показать примеры"}</span>}
                 >
                   <button
-                    className='btn btn-sm btn-warning'
+                    className='btn btn-sm btn-info'
                     id='showMoreButton'
                     onClick={showMoreButton}
                   >
                     {showExamples ? "Меньше" : "Больше"}
                   </button>
                 </Tippy>
-
-                {
-                  // for pulling audio using puppeteer from another site
-                  //   dictResponse && (
-                  //   <button
-                  //     className='btn btn-sm btn-warning ml-2'
-                  //     dangerouslySetInnerHTML={{
-                  //       __html: dictResponse
-                  //     }}
-                  //   ></button>
-                  // )
-                }
               </Fragment>
 
               <h4 className='mt-2'>{wordFromSearch && wordFromSearch.pinyin}</h4>
               <div
                 className='mb-3'
                 dangerouslySetInnerHTML={{
-                  __html: wordFromSearch && sanitizer(markUpRussianText(wordFromSearch.russian))
+                  __html: wordFromSearch && sanitizer(parseRussian(wordFromSearch.russian)),
                 }}
               ></div>
             </Fragment>
@@ -366,7 +355,7 @@ const Search = ({
                       <button
                         type='button'
                         className='btn btn-light btn-sm'
-                        onClick={e => hideChinese(e)}
+                        onClick={(e) => hideChinese(e)}
                       >
                         Иероглифы
                       </button>
@@ -375,7 +364,7 @@ const Search = ({
                       <button
                         type='button'
                         className='btn btn-light btn-sm'
-                        onClick={e => hidePinyin(e)}
+                        onClick={(e) => hidePinyin(e)}
                       >
                         Пиньинь
                       </button>
@@ -384,7 +373,7 @@ const Search = ({
                       <button
                         type='button'
                         className='btn btn-light btn-sm'
-                        onClick={e => hideFanyi(e)}
+                        onClick={(e) => hideFanyi(e)}
                       >
                         Перевод
                       </button>
@@ -394,15 +383,15 @@ const Search = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {wordsFromSearch.map(word => (
+                  {wordsFromSearch.map((word) => (
                     <WordsItem
                       key={word._id}
                       lexicon={{
                         chinese: word.chinese,
                         pinyin: word.pinyin,
                         translation: word.russian,
-                        fromSearch: true
                       }}
+                      fromSearch={true}
                       hideFlag={hideFlag}
                     />
                   ))}
@@ -427,15 +416,16 @@ const Search = ({
 
 Search.propTypes = {};
 
-const mapStateToProps = state => ({
-  loading: state.userwords.loading,
-  isAuthenticated: state.auth.isAuthenticated
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+  userWords: state.userwords.userwords,
   // dictResponse: state.userwords.dictResponse
 });
 
 export default connect(mapStateToProps, {
   loadUserWords,
   loadUserWordsLen,
-  addWord
+  addWord,
+  removeWord,
   // puppeteerFunc
 })(Search);

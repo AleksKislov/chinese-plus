@@ -9,7 +9,7 @@ const WordModal = ({ word }) => {
 
   const [showExamples, setShowExamples] = useState(true);
 
-  let translation = russian
+  const translation = russian
     .replace(/\[b\]\\\[o\\\]\d\[\/b\]/g, "")
     .replace(/\[b\]/g, "<span class='tippyBold'>")
     .replace(/\[\/b\]/g, "</span>")
@@ -32,12 +32,12 @@ const WordModal = ({ word }) => {
     const examples = document.getElementsByClassName("tippyExsShow");
 
     if (showExamples) {
-      Array.from(examples).forEach(el => {
+      Array.from(examples).forEach((el) => {
         el.classList.add("tippyExs");
       });
       setShowExamples(false);
     } else {
-      Array.from(examples).forEach(el => {
+      Array.from(examples).forEach((el) => {
         el.classList.remove("tippyExs");
       });
       setShowExamples(true);
@@ -83,8 +83,8 @@ const WordModal = ({ word }) => {
   );
 };
 
-const mapStateToProps = state => ({
-  word: state.userwords.modalWord
+const mapStateToProps = (state) => ({
+  word: state.userwords.modalWord,
 });
 
 export default connect(mapStateToProps, { setModalWord })(WordModal);

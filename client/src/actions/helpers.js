@@ -7,7 +7,7 @@ import { symbolsToIgnore } from "../constants/consts.json";
  * @param {array} wordsFromDB
  */
 export const itirateWordsFromDB = (allwords, wordsFromDB) => {
-  return allwords.map(word => {
+  return allwords.map((word) => {
     for (let i = 0; i < wordsFromDB.length; i++) {
       if (word === wordsFromDB[i].chinese) {
         return wordsFromDB[i];
@@ -17,7 +17,7 @@ export const itirateWordsFromDB = (allwords, wordsFromDB) => {
   });
 };
 
-export const chunkArrayFunc = arr => {
+export const chunkArrayFunc = (arr) => {
   // get indexes for \n in the array of words
   let inds = [];
   for (let i = 0; i < arr.length; i++) {
@@ -41,11 +41,11 @@ export const chunkArrayFunc = arr => {
   return chunkedArr;
 };
 
-export const getWords = async words => {
+export const getWords = async (words) => {
   const config = {
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   };
 
   let res;
@@ -57,11 +57,11 @@ export const getWords = async words => {
   return res.data;
 };
 
-export const getTranslation = async text => {
+export const getTranslation = async (text) => {
   const config = {
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   };
 
   const body = JSON.stringify({ text });
@@ -78,17 +78,17 @@ export const getTranslation = async text => {
 /**
  * @param {Object} obj - text from texts or page in books
  */
-export const parseChineseWords = async obj => {
+export const parseChineseWords = async (obj) => {
   const wordsFromDB = await getWords(obj.chinese_arr);
   const newArr = itirateWordsFromDB(obj.chinese_arr, wordsFromDB);
   return chunkArrayFunc(newArr); // array of object arrays
 };
 
-export const segmenter = async text => {
+export const segmenter = async (text) => {
   const config = {
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   };
 
   let res;
@@ -100,7 +100,7 @@ export const segmenter = async text => {
   return res.data;
 };
 
-export const getPhotos = async pic_theme => {
+export const getPhotos = async (pic_theme) => {
   // console.log(pic_theme);
 
   const photosDiv = document.getElementById("photosDiv");
@@ -110,7 +110,7 @@ export const getPhotos = async pic_theme => {
     const { data } = await axios.get("/api/translation/unsplash/" + pic_theme);
     // console.log(data.results);
 
-    data.forEach(el => {
+    data.forEach((el) => {
       const img = document.createElement("img");
       img.src = el.urls.small;
       photosDiv.appendChild(img);
@@ -123,7 +123,7 @@ export const getPhotos = async pic_theme => {
   }
 };
 
-export const numberToStr = num => {
+export const numberToStr = (num) => {
   let arr = num.toString().split("");
   const length = arr.length;
   if (length < 4) {
@@ -139,9 +139,9 @@ export const numberToStr = num => {
  * @param {string} str  - Chinese text
  * @returns {number}    - number of Chinese chars in str w/o spaces
  */
-export const countZnChars = str => {
+export const countZnChars = (str) => {
   if (str) {
-    symbolsToIgnore.forEach(char => {
+    symbolsToIgnore.forEach((char) => {
       str = str.replaceAll(char, "");
     });
     return str.length;
@@ -152,13 +152,13 @@ export const countZnChars = str => {
  *
  * @param {string} href - window.location.href
  */
-export const checkBaseUrl = href =>
+export const checkBaseUrl = (href) =>
   href.includes("localhost") ? "http://localhost:5000" : "https://www.chineseplus.club";
 
 /**
  * @param {number} lvl -
  */
-export const levelStars = lvl => {
+export const levelStars = (lvl) => {
   if (lvl === 3)
     return (
       <span className='text-stars'>
@@ -206,7 +206,7 @@ export const addressToUser = (id, name) => {
   document.getElementById("textForm").value += ` @@[${id}]{${name}}@@, `;
 };
 
-export const fromNow = date => {
+export const fromNow = (date) => {
   const timestampNow = Date.now();
   const commentTimestamp = Date.parse(date);
   const seconds = parseInt((timestampNow - commentTimestamp) / 1000);
@@ -227,7 +227,8 @@ export const fromNow = date => {
   }
 };
 
-export const parseRussian = translation => {
+export const parseRussian = (translation) => {
+  if (!translation) return " ";
   let russian = translation
     .replace(/\[b\]\\\[o\\\]\d\[\/b\]/g, "")
     .replace(/\[b\]/g, "<span class='tippyBold'>")
@@ -253,7 +254,7 @@ export const parseRussian = translation => {
   return russian;
 };
 
-export const shuffleArr = arr => {
+export const shuffleArr = (arr) => {
   let newArr = [...arr];
   const len = arr.length;
   for (let i = 0; i < len; i++) {
@@ -266,10 +267,10 @@ export const shuffleArr = arr => {
 export function validURL(str) {
   const pattern = new RegExp(
     "^(https?:\\/\\/)?" +
-    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // protocol // domain name
-    "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-    "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // protocol // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
       "(\\#[-a-z\\d_]*)?$",
     "i"
   ); // fragment locator
@@ -290,7 +291,7 @@ function addProtocolIfNeeded(str) {
  * @param {string} str
  * @returns {object | string}
  */
-export const parseURL = str => {
+export const parseURL = (str) => {
   try {
     return new URL(addProtocolIfNeeded(str));
   } catch (err) {

@@ -154,7 +154,6 @@ const SearchNewHSK = ({ words, isAuthenticated }) => {
                       chinese: word.cn,
                       pinyin: word.py,
                       translation: word.ru,
-                      fromSearch: true,
                     }}
                     hideFlag={hideFlag}
                   />
