@@ -17,14 +17,14 @@ const Navbar = ({
   userWordsLen,
   user,
   getMentionsLen,
-  mentionsLen
+  mentionsLen,
 }) => {
   const [paths, setPaths] = useState({
     pinyin: "/pinyin",
     hsk: "/hsk-table",
     reading: "/texts",
     login: "/register",
-    private: "/dashboard"
+    private: "/dashboard",
   });
   const privateLinks = ["/dashboard", "/hsk-words", "userwords"];
   const [totalWordsLen, setTotalWordsLen] = useState(0);
@@ -38,7 +38,7 @@ const Navbar = ({
         pinyin: "/pinyin",
         reading: url,
         login: "/register",
-        private: "/dashboard"
+        private: "/dashboard",
       });
     } else if (url.includes("/pinyin")) {
       setPaths({
@@ -46,7 +46,7 @@ const Navbar = ({
         pinyin: url,
         reading: "/texts",
         login: "/register",
-        private: "/dashboard"
+        private: "/dashboard",
       });
     } else if (url.includes("/hsk")) {
       setPaths({
@@ -54,7 +54,7 @@ const Navbar = ({
         pinyin: "/pinyin",
         reading: "/texts",
         login: "/register",
-        private: "/dashboard"
+        private: "/dashboard",
       });
     } else if (url === "/register" || url === "/login") {
       setPaths({
@@ -62,7 +62,7 @@ const Navbar = ({
         pinyin: "/pinyin",
         reading: "/texts",
         login: url,
-        private: "/dashboard"
+        private: "/dashboard",
       });
     } else if (privateLinks.includes(url)) {
       setPaths({
@@ -70,7 +70,7 @@ const Navbar = ({
         pinyin: "/pinyin",
         reading: "/texts",
         login: "/register",
-        private: url
+        private: url,
       });
     }
     // eslint-disable-next-line
@@ -100,7 +100,7 @@ const Navbar = ({
   };
 
   // for main menu and dropdown
-  const setPathsAndCollapse = obj => {
+  const setPathsAndCollapse = (obj) => {
     collapseIt();
     setPaths(obj);
   };
@@ -305,6 +305,9 @@ const Navbar = ({
       </NavLink>
 
       <div className='dropdown-menu'>
+        <em>
+          <small className='nav-link disabled text-info pl-4'>HSK 2.0</small>
+        </em>
         <NavLink
           className='dropdown-item'
           to='/hsk-table'
@@ -326,6 +329,19 @@ const Navbar = ({
           to='/hsk-search'
           activeStyle={activeNavLink}
           onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-search" })}
+        >
+          Поиск
+        </NavLink>
+
+        <div className='dropdown-divider'></div>
+        <em>
+          <small className='nav-link disabled pl-4 text-info'>HSK 3.0</small>
+        </em>
+        <NavLink
+          className='dropdown-item'
+          to='/hsk-new-search'
+          activeStyle={activeNavLink}
+          onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-new-search" })}
         >
           Поиск
         </NavLink>
@@ -447,27 +463,27 @@ const Navbar = ({
 };
 
 const activeNavLink = {
-  color: "#18BC9C"
+  color: "#18BC9C",
 };
 
 const imgStyle = {
   width: "3.5vh",
   borderRadius: "50%",
   border: "1px solid #18BC9C",
-  marginLeft: "0.3rem"
+  marginLeft: "0.3rem",
 };
 
 Navbar.propTypes = {
   logout: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
   user: state.auth.user,
   allWordsLen: state.hskTable.allWordsLen,
   userWordsLen: state.userwords.userWordsLen,
-  mentionsLen: state.comments.mentionsLen
+  mentionsLen: state.comments.mentionsLen,
 });
 
 export default connect(mapStateToProps, { logout, loadLengths, loadUserWordsLen, getMentionsLen })(

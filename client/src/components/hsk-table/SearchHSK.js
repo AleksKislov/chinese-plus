@@ -4,6 +4,7 @@ import { loadWords } from "../../actions/hskTable";
 import { Helmet } from "react-helmet";
 import axios from "axios";
 import TablePlate from "./TablePlate.js";
+import SearchForm from "./SearchForm";
 
 const SearchHSK = ({ words, loadWords, isAuthenticated }) => {
   const [lexicons, setLexicons] = useState(null);
@@ -87,25 +88,7 @@ const SearchHSK = ({ words, loadWords, isAuthenticated }) => {
       </div>
 
       <div className='col-sm-9'>
-        <form onSubmit={(e) => onSubmit(e)}>
-          <div className='form-group'>
-            <small className='form-text text-muted'>китайское слово + Enter</small>
-            <div className='input-group'>
-              <input
-                type='text'
-                className='form-control'
-                placeholder='汉字。。。'
-                autoComplete='off'
-                onInput={(e) => setChineseWord(e.target.value)}
-              />
-              <div className='input-group-append' id='searchButton'>
-                <button className='btn btn-primary' type='submit' onClick={onSubmit}>
-                  <i className='fas fa-search'></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
+        <SearchForm onSubmit={onSubmit} setChineseWord={setChineseWord} />
 
         {lexicons && <TablePlate lexicons={lexicons} userWords={words} />}
       </div>

@@ -1,18 +1,17 @@
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { loadWords } from "../../actions/hskTable";
+// import { loadWords } from "../../actions/hskTable";
 import { Helmet } from "react-helmet";
 import axios from "axios";
-import WordsItem from "../texts/WordsItem";
-import WordModal from "../translation/WordModal";
+import SearchForm from "../hsk-table/SearchForm";
+import TablePlate from "./TablePlate.js";
 
-const SearchNewHSK = ({ words, isAuthenticated }) => {
+const SearchNewHSK = ({ isAuthenticated }) => {
   const [lexicons, setLexicons] = useState(null);
   const [chineseWord, setChineseWord] = useState("");
 
   useEffect(() => {
-    if (isAuthenticated) loadWords();
-    // eslint-disable-next-line
+    // if (isAuthenticated) loadWords();
   }, [isAuthenticated]);
 
   const onSubmit = async (e) => {
@@ -37,139 +36,46 @@ const SearchNewHSK = ({ words, isAuthenticated }) => {
     }
   };
 
-  const [hideFlag, setHideFlag] = useState({
-    chinese: false,
-    pinyin: false,
-    translation: false,
-  });
-
-  const hideChinese = (e) => {
-    setHideFlag({
-      chinese: !hideFlag.chinese,
-      translation: hideFlag.translation,
-      pinyin: hideFlag.pinyin,
-    });
-    e.target.innerHTML = !hideFlag.chinese ? "Скрыто" : "Иероглифы";
-  };
-
-  const hidePinyin = (e) => {
-    setHideFlag({
-      pinyin: !hideFlag.pinyin,
-      translation: hideFlag.translation,
-      chinese: hideFlag.chinese,
-    });
-    e.target.innerHTML = !hideFlag.pinyin ? "Скрыто" : "Пиньинь";
-  };
-
-  const hideFanyi = (e) => {
-    setHideFlag({
-      translation: !hideFlag.translation,
-      chinese: hideFlag.chinese,
-      pinyin: hideFlag.pinyin,
-    });
-    e.target.innerHTML = !hideFlag.translation ? "Скрыто" : "Перевод";
-  };
-
   return (
     <div className='row'>
       <Helmet>
         <meta charSet='utf-8' />
-        <title>Поиск слов HSK с озвучкой | Chinese+</title>
+        <title>Поиск слов HSK 3.0 | Chinese+</title>
       </Helmet>
 
       <div className='col-sm-3'>
         <div className='card bg-light mb-3'>
           <div className='card-body'>
-            <h4 className='card-title'>Поиск слов HSK</h4>
+            <h4 className='card-title'>Поиск слов HSK 3.0</h4>
             <h6 className='card-subtitle mb-2 text-muted'>Вся лексика</h6>
 
-            <p className='card-text'>Найдите нужные вам слова HSK (любые из 5 000 слов)</p>
+            <p className='card-text'>
+              Найдите нужные вам слова нового HSK 3.0
+              <br />1 band - 500 слов
+              <br />2 band - 772 слова
+              <br />3 band - 973 слова
+              <br />4 band - 1000 слов
+              <br />5 band - 1071 слово
+              <br />6 band - 1140 слов
+              <br />
+              7,8,9 bands - 5636 слов
+            </p>
           </div>
         </div>
       </div>
 
       <div className='col-sm-9'>
-        <form onSubmit={(e) => onSubmit(e)}>
-          <div className='form-group'>
-            <small className='form-text text-muted'>китайское слово + Enter</small>
-            <div className='input-group'>
-              <input
-                type='text'
-                className='form-control'
-                placeholder='汉字。。。'
-                autoComplete='off'
-                onInput={(e) => setChineseWord(e.target.value)}
-              />
-              <div className='input-group-append' id='searchButton'>
-                <button className='btn btn-primary' type='submit' onClick={onSubmit}>
-                  <i className='fas fa-search'></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
+        <SearchForm onSubmit={onSubmit} setChineseWord={setChineseWord} />
 
-        {lexicons && (
-          <Fragment>
-            <WordModal />
-            <table className='table table-hover mb-3'>
-              <thead>
-                <tr className='table-info'>
-                  <th>
-                    <button
-                      type='button'
-                      className='btn btn-light btn-sm'
-                      onClick={(e) => hideChinese(e)}
-                    >
-                      Иероглифы
-                    </button>
-                  </th>
-                  <th>
-                    <button
-                      type='button'
-                      className='btn btn-light btn-sm'
-                      onClick={(e) => hidePinyin(e)}
-                    >
-                      Пиньинь
-                    </button>
-                  </th>
-                  <th style={{ width: "60%" }}>
-                    <button
-                      type='button'
-                      className='btn btn-light btn-sm'
-                      onClick={(e) => hideFanyi(e)}
-                    >
-                      Перевод
-                    </button>
-                  </th>
-                  <th>Примеры</th>
-                  <th>Изучать</th>
-                </tr>
-              </thead>
-              <tbody>
-                {lexicons.map((word) => (
-                  <WordsItem
-                    key={word._id}
-                    lexicon={{
-                      chinese: word.cn,
-                      pinyin: word.py,
-                      translation: word.ru,
-                    }}
-                    hideFlag={hideFlag}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </Fragment>
-        )}
+        {lexicons && <TablePlate lexicons={lexicons} />}
       </div>
     </div>
   );
 };
 
 const mapPropsToState = (state) => ({
-  words: state.hskTable.words,
+  // words: state.hskTable.words,
   isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default connect(mapPropsToState, { loadWords })(SearchNewHSK);
+export default connect(mapPropsToState, {})(SearchNewHSK);

@@ -24,7 +24,6 @@ const WordsItem = ({
   userWords,
 }) => {
   const [clicked, setClicked] = useState(false);
-  // const [russian, setRussian] = useState(" ");
 
   const { chinese, pinyin, translation } = lexicon;
 

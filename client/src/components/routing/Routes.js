@@ -76,7 +76,7 @@ const Routes = () => {
           <PrivateRoute exact path='/mentions' component={Mentions} />
           <Route exact path='/hsk-table' component={HskTable} />
           <Route exact path='/hsk-search' component={SearchHSK} />
-          <Route exact path='/new-hsk-search' component={SearchNewHSK} />
+          <Route exact path='/hsk-new-search' component={SearchNewHSK} />
           <Route exact path='/pinyin-tests' component={PinyinTests} />
           <Route exact path='/hsk-tests' render={() => <Redirect to='/hsk-tests/1' />} />
 
