@@ -40,6 +40,7 @@ import Notice from "../layout/Notice";
 import SetAvatar from "../profile/SetAvatar";
 import SearchHSK from "../hsk-table/SearchHSK";
 import SearchNewHSK from "../new-hsk/SearchNewHSK";
+import NewHskTable from "../new-hsk/HskTable";
 
 import TranslationForm from "../translation/TranslateForm";
 // import TranslateForm from "../translation/TranslateForm";
@@ -77,6 +78,7 @@ const Routes = () => {
           <Route exact path='/hsk-table' component={HskTable} />
           <Route exact path='/hsk-search' component={SearchHSK} />
           <Route exact path='/hsk-new-search' component={SearchNewHSK} />
+          <Route exact path='/hsk-new-table' component={NewHskTable} />
           <Route exact path='/pinyin-tests' component={PinyinTests} />
           <Route exact path='/hsk-tests' render={() => <Redirect to='/hsk-tests/1' />} />
 
