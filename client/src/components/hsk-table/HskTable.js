@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { loadLexicon, loadWords } from "../../actions/hskTable";
-import TableItem from "./TableItem";
+import TablePlate from "./TablePlate.js";
 import PropTypes from "prop-types";
 import Spinner from "../layout/Spinner";
 import Pagination from "./Pagination";
 import TableCard from "./TableCard";
 import { Helmet } from "react-helmet";
-import Tippy from "@tippyjs/react";
 
 const HskTable = ({
   loadLexicon,
@@ -28,12 +27,6 @@ const HskTable = ({
     makeLinkActive(0);
   }, [isAuthenticated, pagesNumber]);
 
-  const [hideFlag, setHideFlag] = useState({
-    chinese: false,
-    pinyin: false,
-    translation: false,
-  });
-
   const makeLinkActive = (activeInd) => {
     const items = document.getElementsByClassName("page-item");
 
@@ -53,33 +46,6 @@ const HskTable = ({
     const limit = Number(e.target.innerHTML) - 1;
     loadLexicon(hskLevel, limit);
     makeLinkActive(limit);
-  };
-
-  const hideChinese = (e) => {
-    setHideFlag({
-      chinese: !hideFlag.chinese,
-      translation: hideFlag.translation,
-      pinyin: hideFlag.pinyin,
-    });
-    e.target.innerHTML = !hideFlag.chinese ? "Скрыто" : "Иероглифы";
-  };
-
-  const hidePinyin = (e) => {
-    setHideFlag({
-      pinyin: !hideFlag.pinyin,
-      translation: hideFlag.translation,
-      chinese: hideFlag.chinese,
-    });
-    e.target.innerHTML = !hideFlag.pinyin ? "Скрыто" : "Пиньинь";
-  };
-
-  const hideFanyi = (e) => {
-    setHideFlag({
-      translation: !hideFlag.translation,
-      chinese: hideFlag.chinese,
-      pinyin: hideFlag.pinyin,
-    });
-    e.target.innerHTML = !hideFlag.translation ? "Скрыто" : "Перевод";
   };
 
   return (
@@ -108,70 +74,7 @@ const HskTable = ({
           </ul>
         </div>
 
-        {loading && lexicons ? (
-          <Spinner />
-        ) : (
-          <table className='table table-hover table-responsive'>
-            <thead>
-              <tr className='table-info'>
-                <th>
-                  <i className='fab fa-slack-hash'></i>
-                </th>
-                <th>
-                  <Tippy placement='bottom' content='Скрыть иероглифы'>
-                    <button
-                      type='button'
-                      className='btn btn-light btn-sm'
-                      onClick={(e) => hideChinese(e)}
-                    >
-                      Иероглифы
-                    </button>
-                  </Tippy>
-                </th>
-                <th>
-                  <Tippy placement='bottom' content='Скрыть пиньинь'>
-                    <button
-                      type='button'
-                      className='btn btn-light btn-sm'
-                      onClick={(e) => hidePinyin(e)}
-                    >
-                      Пиньинь
-                    </button>
-                  </Tippy>
-                </th>
-                <th style={{ width: "70%" }}>
-                  <Tippy placement='bottom' content='Скрыть перевод'>
-                    <button
-                      type='button'
-                      className='btn btn-light btn-sm'
-                      onClick={(e) => hideFanyi(e)}
-                    >
-                      Перевод
-                    </button>
-                  </Tippy>
-                </th>
-                <th>
-                  <div className='text-center'>
-                    <i className='fas fa-headphones'></i>
-                  </div>
-                </th>
-                <th>
-                  <i className='fas fa-plus'></i>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {lexicons.map((lexicon) => (
-                <TableItem
-                  key={lexicon._id}
-                  lexicon={lexicon}
-                  selected={words.some((word) => word.word_id === lexicon.word_id)}
-                  hideFlag={hideFlag}
-                />
-              ))}
-            </tbody>
-          </table>
-        )}
+        {loading && lexicons ? <Spinner /> : <TablePlate lexicons={lexicons} userWords={words} />}
       </div>
     </div>
   );
