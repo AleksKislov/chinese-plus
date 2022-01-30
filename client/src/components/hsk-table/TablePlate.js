@@ -40,7 +40,7 @@ const TablePlate = ({ lexicons, userWords }) => {
     <table className='table table-hover table-responsive'>
       <thead>
         <tr className='table-info'>
-          <th>
+          <th className='text-center'>
             <i className='fab fa-slack-hash'></i>
           </th>
           <th>
@@ -73,7 +73,7 @@ const TablePlate = ({ lexicons, userWords }) => {
               <i className='fas fa-headphones'></i>
             </div>
           </th>
-          <th>
+          <th className='text-center'>
             <i className='fas fa-plus'></i>
           </th>
         </tr>
