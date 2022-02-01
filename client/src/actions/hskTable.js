@@ -18,39 +18,14 @@ import { setAlert } from "./alert";
 import { setAuthToken, setGoogleAuth } from "../utils/setAuthToken";
 
 // load all HSK lexicon at hsk-table
-export const loadLexicon = (hsk_level, limit) => async (dispatch) => {
+export const loadLexicon = (hskLevel, limit) => async (dispatch) => {
   dispatch({ type: SET_LOADING, payload: true });
 
-  hsk_level = Number(hsk_level);
-  let pagesNumber;
-  switch (hsk_level) {
-    case 1:
-      pagesNumber = 1;
-      break;
-    case 2:
-      pagesNumber = 1;
-      break;
-    case 3:
-      pagesNumber = 2;
-      break;
-    case 4:
-      pagesNumber = 3;
-      break;
-    case 5:
-      pagesNumber = 7;
-      break;
-    case 6:
-      pagesNumber = 13;
-      break;
-    default:
-      break;
-  }
-
   try {
-    const res = await axios.get(`/api/lexicon?hsk_level=${hsk_level}&limit=${limit}`);
+    const res = await axios.get(`/api/lexicon?hsk_level=${hskLevel}&limit=${limit}`);
     dispatch({
       type: HSK_LOADED,
-      payload: { lexicons: res.data, pagesNumber },
+      payload: { lexicons: res.data },
     });
   } catch (err) {
     dispatch({
