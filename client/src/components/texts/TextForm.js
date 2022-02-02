@@ -34,9 +34,9 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
 
   useEffect(() => {
     setTimeout(() => {
-      // console.log(textToEdit);
       if (textToEdit && location.search === "?edit") {
         setIsToEdit(true);
+
         const {
           level,
           origintext,
@@ -49,7 +49,9 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
           isApproved,
           categoryInd,
           source,
+          pic_url,
         } = textToEdit;
+        setPhotosUrls(pic_url);
         document.getElementById("description").value = description;
         document.getElementById("level").value = level;
         document.getElementById("categoryInd").value = categoryInd;
@@ -100,13 +102,12 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
     allwords: [],
     textId: "",
     pic_theme: "", // in English for pic_url
-    pic_url: defaultTextPic,
+    pic_url: "",
     theme_word: "", // rewriten usestate,
     source: "",
     categoryInd: 0,
   });
 
-  // TODO fix bug: if no photo chosen, can't process texts
   const preprocessForm = async (e) => {
     e.preventDefault();
 
@@ -115,68 +116,53 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
       const textArea = document.getElementById("textArea");
 
       if (textLen > maxTextLen) {
-        store.dispatch(
+        return store.dispatch(
           setAlert(`Максимум ${maxTextLen} знаков в китайском тексте, удалите лишние`, "danger")
         );
-      } else {
-        let originText = textArea.value.trim();
-        const translationArea = document.getElementById("translationArea");
-        originText = originText.replace(/\n\s*\n/g, "\n");
-
-        let allwords = await segmenter(originText);
-        allwords = allwords.filter((word) => word !== " ");
-        const wordsFromDB = await getWords(allwords);
-
-        let chunkedOriginText = originText.split("\n"); // array of strings
-        chunkedOriginText = chunkedOriginText.filter((chunk) => chunk);
-        chunkedOriginText = chunkedOriginText.map((chunk) => chunk.trim());
-        textArea.value = chunkedOriginText.join("\n\n");
-        let chunkedTranslation;
-        if (!isTranslated) {
-          const { translation } = await getTranslation(chunkedOriginText);
-          setIsTranslated(true);
-          // console.log(translation);
-          translationArea.value = translation.join("\n\n");
-          chunkedTranslation = translation;
-          // translationArea.disabled = false;
-        } else {
-          let translationTrimed = translationArea.value.trim();
-          chunkedTranslation = translationTrimed.split("\n"); // array of strings
-          chunkedTranslation = chunkedTranslation.filter((chunk) => chunk.length);
-        }
-
-        // console.log(wordsFromDB);
-        const newArr = itirateWordsFromDB(allwords, wordsFromDB);
-        const length = countZnChars(originText);
-        // let tags = tagsId.value.replaceAll("，", ",");
-        // tags = tags.replaceAll("、", ",");
-        // tags = tags.split(",");
-        // tags = tags.map(tag => tag.trim().toLowerCase()); // array of words
-
-        let chineseChunkedWords = chunkArrayFunc(newArr); // array of object arrays
-        chineseChunkedWords = chineseChunkedWords.filter((chunk) => chunk.length);
-        // console.log({ chineseChunkedWords });
-
-        // const title = document.getElementById("title").value; // string
-        // const description = document.getElementById("description").value; // string
-        // const pic_theme = document.getElementById("pic_theme").value;
-        // const level = parseInt(document.getElementById("level").value); // number
-        // const theme_word = document.getElementById("theme_word").value;
-
-        setFormData({
-          ...formData,
-          chineseChunkedWords,
-          chunkedTranslation,
-          // tags,
-          chunkedOriginText,
-          // title,
-          // description,
-          // level,
-          length,
-          allwords,
-          // theme_word
-        });
       }
+
+      let originText = textArea.value.trim();
+      const translationArea = document.getElementById("translationArea");
+      originText = originText.replace(/\n\s*\n/g, "\n");
+
+      let allwords = await segmenter(originText);
+      allwords = allwords.filter((word) => word !== " ");
+      const wordsFromDB = await getWords(allwords);
+
+      let chunkedOriginText = originText.split("\n"); // array of strings
+      chunkedOriginText = chunkedOriginText.filter((chunk) => chunk);
+      chunkedOriginText = chunkedOriginText.map((chunk) => chunk.trim());
+      textArea.value = chunkedOriginText.join("\n\n");
+      let chunkedTranslation;
+      if (!isTranslated) {
+        const { translation } = await getTranslation(chunkedOriginText);
+        setIsTranslated(true);
+        translationArea.value = translation.join("\n\n");
+        chunkedTranslation = translation;
+      } else {
+        let translationTrimed = translationArea.value.trim();
+        chunkedTranslation = translationTrimed.split("\n"); // array of strings
+        chunkedTranslation = chunkedTranslation.filter((chunk) => chunk.length);
+      }
+
+      const newArr = itirateWordsFromDB(allwords, wordsFromDB);
+      const length = countZnChars(originText);
+
+      const chineseChunkedWords = chunkArrayFunc(newArr).filter((chunk) => chunk.length); // arrasy of object arrays
+
+      setFormData({
+        ...formData,
+        chineseChunkedWords,
+        chunkedTranslation,
+        chunkedOriginText,
+        length,
+        allwords,
+        // tags,
+        // title,
+        // description,
+        // level,
+        // theme_word
+      });
     }
   };
 
@@ -196,18 +182,17 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
   };
 
   const choosePicUrl = (e) => {
-    // console.log(e.target);
-    if (e.target.className === "imgToChoose") {
-      const selectedImg = document.getElementsByClassName("imgToChooseActive");
-      if (selectedImg[0]) selectedImg[0].classList.remove("imgToChooseActive");
-      document.getElementById("pic_theme_url").value = e.target.src;
-      e.target.className += " imgToChooseActive";
+    if (e.target.className !== "imgToChoose") return;
 
-      setFormData({
-        ...formData,
-        pic_url: e.target.src,
-      });
-    }
+    const selectedImg = document.getElementsByClassName("imgToChooseActive");
+    if (selectedImg[0]) selectedImg[0].classList.remove("imgToChooseActive");
+    document.getElementById("pic_theme_url").value = e.target.src;
+    e.target.className += " imgToChooseActive";
+
+    setFormData({
+      ...formData,
+      pic_url: e.target.src,
+    });
   };
 
   const publishText = async (formdata) => {
@@ -353,7 +338,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
       {!photosResult && loadPicsErr}
     </Fragment>
   );
-  // const loadPicsBtnResult = photosResult ? loadPicsBtn : loadPicsErr;
+
   const loadPicsBtnClicked = !isEnglish && formData.pic_theme ? isNotEnglish : loadPicsBtn;
 
   return (
