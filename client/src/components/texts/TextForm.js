@@ -15,13 +15,13 @@ import {
   segmenter,
   itirateWordsFromDB,
   getTranslation,
-  countZnChars
+  countZnChars,
 } from "../../actions/helpers";
 import Paragraph from "./Paragraph";
 import { v4 as uuid } from "uuid";
 import "./style.css";
 import { bgTextLen, smTextLen, textCategories } from "../../constants/consts.json";
-import {  defaultTextPic } from "../../constants/urls.json";
+import { defaultTextPic } from "../../constants/urls.json";
 import { clearText } from "../../actions/texts";
 
 const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
@@ -48,7 +48,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
           theme_word,
           isApproved,
           categoryInd,
-          source
+          source,
         } = textToEdit;
         document.getElementById("description").value = description;
         document.getElementById("level").value = level;
@@ -73,7 +73,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
           isApproved,
           categoryInd,
           source,
-          textId: _id
+          textId: _id,
         });
       }
     }, 0);
@@ -86,7 +86,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
   const [okToPublish, setOkToPublish] = useState(false);
   const [isToEdit, setIsToEdit] = useState(false);
   const [textLen, setTextLen] = useState(0);
-  const [photosUrls, setPhotosUrls] = useState(false);
+  const [photosUrls, setPhotosUrls] = useState(defaultTextPic);
   const [isTranslated, setIsTranslated] = useState(false);
   const [formData, setFormData] = useState({
     chineseChunkedWords: [],
@@ -103,11 +103,11 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
     pic_url: defaultTextPic,
     theme_word: "", // rewriten usestate,
     source: "",
-    categoryInd: 0
+    categoryInd: 0,
   });
 
   // TODO fix bug: if no photo chosen, can't process texts
-  const preprocessForm = async e => {
+  const preprocessForm = async (e) => {
     e.preventDefault();
 
     // pics are loaded, so we can submit the form
@@ -124,12 +124,12 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
         originText = originText.replace(/\n\s*\n/g, "\n");
 
         let allwords = await segmenter(originText);
-        allwords = allwords.filter(word => word !== " ");
+        allwords = allwords.filter((word) => word !== " ");
         const wordsFromDB = await getWords(allwords);
 
         let chunkedOriginText = originText.split("\n"); // array of strings
-        chunkedOriginText = chunkedOriginText.filter(chunk => chunk);
-        chunkedOriginText = chunkedOriginText.map(chunk => chunk.trim());
+        chunkedOriginText = chunkedOriginText.filter((chunk) => chunk);
+        chunkedOriginText = chunkedOriginText.map((chunk) => chunk.trim());
         textArea.value = chunkedOriginText.join("\n\n");
         let chunkedTranslation;
         if (!isTranslated) {
@@ -142,7 +142,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
         } else {
           let translationTrimed = translationArea.value.trim();
           chunkedTranslation = translationTrimed.split("\n"); // array of strings
-          chunkedTranslation = chunkedTranslation.filter(chunk => chunk.length);
+          chunkedTranslation = chunkedTranslation.filter((chunk) => chunk.length);
         }
 
         // console.log(wordsFromDB);
@@ -154,7 +154,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
         // tags = tags.map(tag => tag.trim().toLowerCase()); // array of words
 
         let chineseChunkedWords = chunkArrayFunc(newArr); // array of object arrays
-        chineseChunkedWords = chineseChunkedWords.filter(chunk => chunk.length);
+        chineseChunkedWords = chineseChunkedWords.filter((chunk) => chunk.length);
         // console.log({ chineseChunkedWords });
 
         // const title = document.getElementById("title").value; // string
@@ -173,7 +173,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
           // description,
           // level,
           length,
-          allwords
+          allwords,
           // theme_word
         });
       }
@@ -181,22 +181,21 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
   };
 
   const loadPictures = async () => {
-    if (!photosUrls && formData.pic_theme) {
-      let res = await getPhotos(formData.pic_theme);
-      setPhotosResult(res);
-      setPhotosUrls(res);
-    }
+    if (!formData.pic_theme) return;
+    const res = await getPhotos(formData.pic_theme);
+    setPhotosResult(res);
+    setPhotosUrls(res);
   };
 
-  const parseTags = text => {
+  const parseTags = (text) => {
     let tags = text.replaceAll("，", ",");
     tags = tags.replaceAll("、", ",");
     tags = tags.split(",");
-    tags = tags.map(tag => tag.trim().toLowerCase()); // array of words
+    tags = tags.map((tag) => tag.trim().toLowerCase()); // array of words
     setFormData({ ...formData, tags });
   };
 
-  const choosePicUrl = e => {
+  const choosePicUrl = (e) => {
     // console.log(e.target);
     if (e.target.className === "imgToChoose") {
       const selectedImg = document.getElementsByClassName("imgToChooseActive");
@@ -206,16 +205,16 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
 
       setFormData({
         ...formData,
-        pic_url: e.target.src
+        pic_url: e.target.src,
       });
     }
   };
 
-  const publishText = async formdata => {
+  const publishText = async (formdata) => {
     const config = {
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     };
 
     const {
@@ -231,7 +230,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
       theme_word,
       isApproved,
       categoryInd,
-      source
+      source,
     } = formdata;
 
     const body = JSON.stringify({
@@ -248,7 +247,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
       isApproved,
       categoryInd,
       source,
-      name: user.name
+      name: user.name,
     });
 
     try {
@@ -262,11 +261,11 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
     }
   };
 
-  const editText = async formdata => {
+  const editText = async (formdata) => {
     const config = {
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     };
 
     const {
@@ -283,7 +282,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
       theme_word,
       isApproved,
       categoryInd,
-      source
+      source,
     } = formdata;
 
     const body = JSON.stringify({
@@ -300,7 +299,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
       theme_word,
       isApproved,
       categoryInd,
-      source
+      source,
     });
 
     try {
@@ -312,12 +311,12 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
     }
   };
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e) => {
     e.target.style.height = "inherit";
     e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
-  const noticeMe = e => {
+  const noticeMe = (e) => {
     if (!isToEdit) {
       TweenMax.fromTo(
         ".noticeMe",
@@ -327,7 +326,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
     }
   };
 
-  const testEngInput = str => setIsEnglish(/^[a-zA-Z]+$/.test(str));
+  const testEngInput = (str) => setIsEnglish(/^[a-zA-Z]+$/.test(str));
 
   if (isRedirected) return <Redirect to='/not_approved_texts' />;
 
@@ -468,21 +467,24 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                     }`}
                     role='progressbar'
                     style={{
-                      width: `${((formData.title ? 1 : 0) +
-                        (formData.description ? 1 : 0) +
-                        (formData.tags.length && formData.tags[0] !== "" ? 1 : 0) +
-                        (formData.pic_theme ? 1 : 0) +
-                        (formData.theme_word ? 1 : 0) +
-                        (formData.pic_url !== defaultTextPic ? 1 : 0) +
-                        (photosUrls ? 1 : 0) +
-                        (formData.chunkedOriginText.length && formData.chunkedOriginText[0] !== ""
-                          ? 1
-                          : 0) +
-                        (formData.chunkedTranslation.length && formData.chunkedTranslation[0] !== ""
-                          ? 1
-                          : 0) +
-                        1) *
-                        10}%`
+                      width: `${
+                        ((formData.title ? 1 : 0) +
+                          (formData.description ? 1 : 0) +
+                          (formData.tags.length && formData.tags[0] !== "" ? 1 : 0) +
+                          (formData.pic_theme ? 1 : 0) +
+                          (formData.theme_word ? 1 : 0) +
+                          (formData.pic_url !== defaultTextPic ? 1 : 0) +
+                          (photosUrls ? 1 : 0) +
+                          (formData.chunkedOriginText.length && formData.chunkedOriginText[0] !== ""
+                            ? 1
+                            : 0) +
+                          (formData.chunkedTranslation.length &&
+                          formData.chunkedTranslation[0] !== ""
+                            ? 1
+                            : 0) +
+                          1) *
+                        10
+                      }%`,
                     }}
                     aria-valuenow='25'
                     aria-valuemin='0'
@@ -496,7 +498,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
               <WordModal />
             </div>
 
-            <form onSubmit={e => preprocessForm(e)} style={{ width: "100%" }}>
+            <form onSubmit={(e) => preprocessForm(e)} style={{ width: "100%" }}>
               <fieldset>
                 {user && user.role === "admin" && isToEdit && (
                   <div className='form-row'>
@@ -505,7 +507,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                       <select
                         className='form-control'
                         id='isApproved'
-                        onChange={e =>
+                        onChange={(e) =>
                           setFormData({ ...formData, [e.target.id]: parseInt(e.target.value) })
                         }
                       >
@@ -520,10 +522,10 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                     <label htmlFor='title'>Заголовок текста</label>
                     <input
                       onBlur={noticeMe}
-                      onChange={e => {
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
-                          [e.target.id]: e.target.value
+                          [e.target.id]: e.target.value,
                         });
                       }}
                       type='text'
@@ -537,7 +539,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                     <label htmlFor='description'>Краткое описание</label>
                     <input
                       onBlur={noticeMe}
-                      onChange={e => setFormData({ ...formData, [e.target.id]: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                       type='text'
                       className={`form-control`}
                       id='description'
@@ -551,7 +553,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                     <label htmlFor='tags'>Тэги через запятую</label>
                     <input
                       onBlur={noticeMe}
-                      onChange={e => parseTags(e.target.value)}
+                      onChange={(e) => parseTags(e.target.value)}
                       type='text'
                       className={`form-control`}
                       id='tags'
@@ -563,7 +565,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                     <select
                       className='form-control'
                       id='level'
-                      onChange={e => setFormData({ ...formData, [e.target.id]: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                     >
                       <option>1</option>
                       <option>2</option>
@@ -576,7 +578,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                     <label htmlFor='pic_theme'>Тема картинки (1 слово Eng)</label>
                     <input
                       onBlur={noticeMe}
-                      onChange={e => {
+                      onChange={(e) => {
                         testEngInput(e.target.value);
                         setFormData({ ...formData, [e.target.id]: e.target.value });
                       }}
@@ -594,7 +596,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                     }
                     <input
                       onBlur={noticeMe}
-                      onChange={e => setFormData({ ...formData, [e.target.id]: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                       type='text'
                       className={`form-control`}
                       id='theme_word'
@@ -615,13 +617,13 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                   </div>
                 </div>
                 <div className='form-row' style={{ paddingLeft: "5px" }}>
-                  {photosUrls ? readyToClick : loadPicsBtnClicked}
+                  {photosUrls !== defaultTextPic ? readyToClick : loadPicsBtnClicked}
                 </div>
                 <div className='form-row'>
                   <div
                     className='form-group col-md-12'
                     id='photosDiv'
-                    onClick={e => {
+                    onClick={(e) => {
                       choosePicUrl(e);
                       noticeMe();
                     }}
@@ -634,7 +636,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                     <select
                       className='form-control'
                       id='categoryInd'
-                      onChange={e => setFormData({ ...formData, [e.target.id]: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                     >
                       {textCategories.map((x, ind) => (
                         <option value={ind} key={ind}>
@@ -648,7 +650,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                       Источник: автор, книга, журнал или домен сайта (кратко)
                     </label>
                     <input
-                      onChange={e => setFormData({ ...formData, [e.target.id]: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                       type='text'
                       className='form-control'
                       id='source'
@@ -683,7 +685,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                     <label htmlFor='textArea'>Вставьте китайский текст для обработки:</label>
                     <textarea
                       onClick={handleKeyDown}
-                      onChange={e => {
+                      onChange={(e) => {
                         setTextLen(e.target.value.length);
                         setOkToPublish(false);
                       }}
@@ -751,7 +753,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
               <div className=''>
                 <button
                   className='btn btn-primary mx-1'
-                  onClick={e => publishText(formData)}
+                  onClick={(e) => publishText(formData)}
                   disabled={
                     formData.chunkedTranslation.length !== formData.chineseChunkedWords.length
                   }
@@ -767,7 +769,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
               </div>
             )}
             {isToEdit && okToPublish && (
-              <button className='btn btn-primary mx-1' onClick={e => editText(formData)}>
+              <button className='btn btn-primary mx-1' onClick={(e) => editText(formData)}>
                 Изменить Текст
               </button>
             )}
@@ -780,14 +782,14 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
 
 TextForm.propTypes = {
   userwords: PropTypes.array.isRequired,
-  loadUserWords: PropTypes.func.isRequired
+  loadUserWords: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   userwords: state.userwords.userwords,
   wordsLoading: state.userwords.loading,
   user: state.auth.user,
-  textToEdit: state.texts.text
+  textToEdit: state.texts.text,
 });
 
 export default connect(mapStateToProps, { loadUserWords, clearText })(TextForm);

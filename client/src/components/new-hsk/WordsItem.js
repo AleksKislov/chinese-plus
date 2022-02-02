@@ -16,7 +16,7 @@ const WordsItem = ({
   // userWords,
 }) => {
   // const [clicked, setClicked] = useState(false);
-  const { chinese, pinyin, translation } = lexicon;
+  const { chinese, pinyin, translation, id } = lexicon;
   const russian = parseRussian(translation);
 
   // useEffect(() => {
@@ -78,6 +78,7 @@ const WordsItem = ({
 
   return (
     <tr>
+      <td>{id}</td>
       <td>
         <h4>{!hideFlag.chinese && chinese}</h4>
       </td>

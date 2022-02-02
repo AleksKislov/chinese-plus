@@ -339,6 +339,14 @@ const Navbar = ({
         </em>
         <NavLink
           className='dropdown-item'
+          to='/hsk-new-table'
+          activeStyle={activeNavLink}
+          onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-new-table" })}
+        >
+          Все слова
+        </NavLink>
+        <NavLink
+          className='dropdown-item'
           to='/hsk-new-search'
           activeStyle={activeNavLink}
           onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-new-search" })}

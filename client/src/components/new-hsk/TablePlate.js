@@ -42,6 +42,9 @@ const TablePlate = ({ lexicons }) => {
       <table className='table table-hover mb-3'>
         <thead>
           <tr className='table-info'>
+            <th className='text-center'>
+              <i className='fab fa-slack-hash'></i>
+            </th>
             <th>
               <button
                 type='button'
@@ -69,6 +72,7 @@ const TablePlate = ({ lexicons }) => {
             <WordsItem
               key={word._id}
               lexicon={{
+                id: word.id,
                 chinese: word.cn,
                 pinyin: word.py,
                 translation: word.ru,
