@@ -3,30 +3,14 @@ import { connect } from "react-redux";
 import { setModalWord } from "../../actions/userWords";
 import Tippy from "@tippyjs/react";
 import { sanitizer } from "../../utils/sanitizer";
+import { markUpRussianText } from "../../actions/helpers";
 
 const WordModal = ({ word }) => {
   const { chinese, pinyin, russian } = word;
 
   const [showExamples, setShowExamples] = useState(true);
 
-  const translation = russian
-    .replace(/\[b\]\\\[o\\\]\d\[\/b\]/g, "")
-    .replace(/\[b\]/g, "<span class='tippyBold'>")
-    .replace(/\[\/b\]/g, "</span>")
-    .replace(/\[c\]/g, "<span class='tippyColor'>")
-    .replace(/\[\/c\]/g, "</span>")
-    .replace(/\[p\]/g, "<span class='tippyColor tippyItalic'>")
-    .replace(/\[\/p\]/g, "</span>")
-    .replace(/\[i\]/g, "<span class='tippyItalic'>")
-    .replace(/\[\/i\]/g, "</span>")
-    .replace(/\[m1\]/g, "<span class='tippyParagraph'>")
-    .replace(/\[m\d\]/g, "<span class='tippyExample'>")
-    .replace(/\[\/m\]/g, "</span>")
-    .replace(/\[\*\]\[ex\]/g, "<div class='tippyExsShow'>")
-    .replace(/\[\/ex\]\[\/\*\]/g, "</div>")
-    .replace(/\\\[(.{1,})\\\]/g, "($1)")
-    .replace(/\[ref\]/g, "<span class='text-info'>")
-    .replace(/\[\/ref\]/g, "</span>");
+  const translation = markUpRussianText(russian, true);
 
   const showMoreButton = () => {
     const examples = document.getElementsByClassName("tippyExsShow");

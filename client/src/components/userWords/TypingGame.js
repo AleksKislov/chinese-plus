@@ -58,11 +58,11 @@ const TypingGame = ({ words, testStarted }) => {
     }
   }, [questionNum]);
 
-  const handleEnter = e => {
+  const handleEnter = (e) => {
     if (e.key === "Enter") checkIt();
   };
 
-  const checkIt = e => {
+  const checkIt = (e) => {
     if (answer === question.chinese) {
       setWrongAnswers([...wrongAnswers, false]);
       setCorrect(correct + 1);
@@ -105,9 +105,9 @@ const TypingGame = ({ words, testStarted }) => {
             type='text'
             placeholder='Ответ на кит. языке'
             id='answer'
-            onChange={e => setAnswer(e.target.value)}
+            onChange={(e) => setAnswer(e.target.value)}
             value={answer}
-            onKeyDown={e => handleEnter(e)}
+            onKeyDown={(e) => handleEnter(e)}
             autoComplete='off'
           />
         </div>
@@ -175,8 +175,8 @@ const TypingGame = ({ words, testStarted }) => {
                   <span className='card-text'>
                     {questionNum > 10
                       ? `${resultWords} ${
-                          wrongAnswers.filter(x => x).length > 0 ? "Нужно повторить " : ""
-                        } ${wrongAnswers.filter(x => x)}`
+                          wrongAnswers.filter((x) => x).length > 0 ? "Нужно повторить " : ""
+                        } ${wrongAnswers.filter((x) => x).join(", ")}`
                       : "Проверьте насколько хорошо вы знаете слова ниже"}
                   </span>
                 </div>

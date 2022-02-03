@@ -227,9 +227,14 @@ export const fromNow = (date) => {
   }
 };
 
-export const parseRussian = (translation) => {
-  if (!translation) return " ";
-  let russian = translation
+/**
+ * @param {string} translation
+ * @param {boolean} showExamples
+ * @returns {string}
+ */
+export const markUpRussianText = (text, showExamples = false) => {
+  if (!text) return " ";
+  text = text
     .replace(/\[b\]\\\[o\\\]\d\[\/b\]/g, "")
     .replace(/\[b\]/g, "<span class='tippyBold'>")
     .replace(/\[\/b\]/g, "</span>")
@@ -242,9 +247,25 @@ export const parseRussian = (translation) => {
     .replace(/\[m1\]/g, "<span class='tippyParagraph'>")
     .replace(/\[m\d\]/g, "<span class='tippyExample'>")
     .replace(/\[\/m\]/g, "</span>")
-    .replace(/\[\*\]\[ex\]/g, "<span class='tippyExs'>")
-    .replace(/\[\/ex\]\[\/\*\]/g, "</span>")
+    .replace(/\[\*\]\[ex\]/g, `<div class='tippyExs${showExamples ? "Show" : ""}'>`)
+    .replace(/\[\/ex\]\[\/\*\]/g, "</div>")
     .replace(/\\\[(.{1,})\\\]/g, "($1)");
+
+  const regex = /\[ref\](.+?)\[\/ref\]/;
+  for (let i = 0; i < 12; i++) {
+    text = text.replace(regex, `<a href="/search/$1" target="_blank">$1</a>`);
+  }
+  return text;
+};
+
+/**
+ * @param {string} translation
+ * @param {boolean} showExamples
+ * @returns {string}
+ */
+export const parseRussian = (translation, showExamples) => {
+  if (!translation) return " ";
+  let russian = markUpRussianText(translation, showExamples);
 
   if (russian.length > 2000) {
     const ind = russian.slice(800, russian.length).indexOf("<span class='tippyExample'>");

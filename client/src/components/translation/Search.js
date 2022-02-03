@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import axios from "axios";
 import WordsItem from "../texts/WordsItem";
 import WordModal from "../translation/WordModal";
-import { parseRussian } from "../../actions/helpers";
+import { markUpRussianText } from "../../actions/helpers";
 import {
   // puppeteerFunc,
   addWord,
@@ -339,7 +339,8 @@ const Search = ({
               <div
                 className='mb-3'
                 dangerouslySetInnerHTML={{
-                  __html: wordFromSearch && sanitizer(parseRussian(wordFromSearch.russian)),
+                  __html:
+                    wordFromSearch && sanitizer(markUpRussianText(wordFromSearch.russian, true)),
                 }}
               ></div>
             </Fragment>

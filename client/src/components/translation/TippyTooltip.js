@@ -9,9 +9,10 @@ import {
   removeWord,
   loadUserWords,
   setModalWord,
-  loadUserWordsLen
+  loadUserWordsLen,
 } from "../../actions/userWords";
 import { sanitizer } from "../../utils/sanitizer";
+import { parseRussian } from "../../actions/helpers";
 
 const TippyTooltip = ({
   word,
@@ -20,13 +21,13 @@ const TippyTooltip = ({
   loadUserWords,
   userwords,
   setModalWord,
-  loadUserWordsLen
+  loadUserWordsLen,
 }) => {
   const [clicked, setClicked] = useState(false);
   const { chinese, pinyin, russian } = word;
 
   useEffect(() => {
-    if (userwords.some(userword => userword.chinese === chinese)) {
+    if (userwords.some((userword) => userword.chinese === chinese)) {
       setClicked(true);
     } else {
       setClicked(false);
@@ -34,41 +35,16 @@ const TippyTooltip = ({
   }, [userwords]);
 
   let translation;
-  if (russian) {
-    translation = russian
-      .replace(/\[b\]\\\[o\\\]\d\[\/b\]/g, "")
-      .replace(/\[b\]/g, "<span class='tippyBold'>")
-      .replace(/\[\/b\]/g, "</span>")
-      .replace(/\[c\]/g, "<span class='tippyColor'>")
-      .replace(/\[\/c\]/g, "</span>")
-      .replace(/\[p\]/g, "<span class='tippyColor tippyItalic'>")
-      .replace(/\[\/p\]/g, "</span>")
-      .replace(/\[i\]/g, "<span class='tippyItalic'>")
-      .replace(/\[\/i\]/g, "</span>")
-      .replace(/\[m1\]/g, "<span class='tippyParagraph'>")
-      .replace(/\[m\d\]/g, "<span class='tippyExample'>")
-      .replace(/\[\/m\]/g, "</span>")
-      .replace(/\[\*\]\[ex\]/g, "<span class='tippyExs'>")
-      .replace(/\[\/ex\]\[\/\*\]/g, "</span>")
-      .replace(/\\\[(.{1,})\\\]/g, "($1)")
-      .replace(/\[ref\]/g, "<span class='text-info'>")
-      .replace(/\[\/ref\]/g, "</span>");
+  if (russian) translation = parseRussian(russian);
 
-    if (translation.length > 2000) {
-      const ind = translation.slice(800, translation.length).indexOf("<span class='tippyExample'>");
-      translation = translation.slice(0, ind + 800);
-    }
-  }
-
-  const showModal = e => {
-    // console.log("test");
+  const showModal = (e) => {
     setModalWord(word);
   };
 
   const moreButton = (
     <button
       className='btn btn-sm btn-warning mb-2'
-      onClick={e => showModal(e)}
+      onClick={(e) => showModal(e)}
       data-toggle='modal'
       data-target='#exampleModal'
     >
@@ -76,7 +52,7 @@ const TippyTooltip = ({
     </button>
   );
 
-  const onClick = e => {
+  const onClick = (e) => {
     if (clicked) {
       // setClicked(false);
       removeWord(chinese);
@@ -138,7 +114,7 @@ const TippyTooltip = ({
             {moreButton}
             <button
               className={`btn btn-sm float-right btn-${clicked ? "danger" : "info"}`}
-              onClick={e => onClick(e)}
+              onClick={(e) => onClick(e)}
             >
               {clicked ? <i className='fas fa-minus'></i> : <i className='fas fa-plus'></i>}
             </button>
@@ -152,11 +128,11 @@ const TippyTooltip = ({
 };
 
 TippyTooltip.propTypes = {
-  userwords: PropTypes.array.isRequired
+  userwords: PropTypes.array.isRequired,
 };
 
-const mapStateToProps = state => ({
-  userwords: state.userwords.userwords
+const mapStateToProps = (state) => ({
+  userwords: state.userwords.userwords,
 });
 
 export default connect(mapStateToProps, {
@@ -164,5 +140,5 @@ export default connect(mapStateToProps, {
   removeWord,
   loadUserWords,
   setModalWord,
-  loadUserWordsLen
+  loadUserWordsLen,
 })(TippyTooltip);

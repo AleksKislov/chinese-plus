@@ -8,7 +8,7 @@ import {
   addWord,
   loadUserWords,
 } from "../../actions/userWords";
-import { parseRussian } from "../../actions/helpers";
+import { parseRussian, markUpRussianText } from "../../actions/helpers";
 import { sanitizer } from "../../utils/sanitizer";
 
 const WordsItem = ({

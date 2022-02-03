@@ -6,3 +6,4 @@ routes/api/dict/dict.js
 .env.*
 .DS_Store
 audio
+cmd.txt
