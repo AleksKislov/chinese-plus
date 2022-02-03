@@ -4,7 +4,11 @@ const {
   getRandomNewHskByLvl,
   getNewHskByLvlAndLimit,
   searchNewHsk,
+  // getAudio,
 } = require("../../src/api/services/newhskwords");
+
+// for internal use only
+// router.get("/get-audio", getAudio);
 
 /**
  * @route     GET api/newhskwords/all

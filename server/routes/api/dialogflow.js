@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const dialogflow = require("@google-cloud/dialogflow");
 const uuid = require("uuid");
-require("dotenv").config({ path: ".env.prod" });
 
 router.get("/", async (req, res) => {
   async function runSample(text = "你好", projectId = process.env.GCLOUD_PROJECT_ID) {
@@ -11,7 +10,7 @@ router.get("/", async (req, res) => {
 
     // Create a new session
     const sessionClient = new dialogflow.SessionsClient({
-      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
+      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
     });
     const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 
@@ -24,9 +23,9 @@ router.get("/", async (req, res) => {
           // text: "你好",
           text: text,
           // The language used by the client (en-US)
-          languageCode: "zn-CN"
-        }
-      }
+          languageCode: "zn-CN",
+        },
+      },
     };
 
     // Send request and log result
@@ -51,10 +50,10 @@ router.get("/", async (req, res) => {
   const text = req.query.text;
 
   runSample(text)
-    .then(data => {
+    .then((data) => {
       res.json({ response: data });
     })
-    .catch(e => console.log(e));
+    .catch((e) => console.log(e));
 });
 
 module.exports = router;

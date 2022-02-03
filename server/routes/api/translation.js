@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const auth = require("../../middleware/auth");
-const { translateText, translateRuText } = require("./services");
+const { translateText /*translateRuText*/ } = require("./services");
 
 const axios = require("axios");
 
@@ -12,23 +12,20 @@ router.post("/", auth, async (req, res) => {
   return res.status(500).send("Server error");
 });
 
-router.post("/rus_to_zh", auth, async (req, res) => {
-  const translation = await translateRuText(req.body.text);
-  if (translation) return res.json({ translation });
-  return res.status(500).send("Server error");
-});
+// router.post("/rus_to_zh", auth, async (req, res) => {
+//   const translation = await translateRuText(req.body.text);
+//   if (translation) return res.json({ translation });
+//   return res.status(500).send("Server error");
+// });
 
 router.get("/unsplash/:pic_theme", auth, async (req, res) => {
   const config = {
-    headers: { Authorization: process.env.UNSPLASH_APIKEY }
+    headers: { Authorization: process.env.UNSPLASH_APIKEY },
   };
-  const url1 = `https://api.unsplash.com/search/photos?query=${req.params.pic_theme}&per_page=7&orientation=portrait`;
-  const url2 = `https://api.unsplash.com/photos/random?query=${req.params.pic_theme}&count=8&orientation=portrait`;
+  const url = `https://api.unsplash.com/photos/random?query=${req.params.pic_theme}&count=8&orientation=portrait`;
 
   try {
-    const { data } = await axios.get(url2, config);
-
-    // console.log(data);
+    const { data } = await axios.get(url, config);
 
     res.json(data);
   } catch (err) {

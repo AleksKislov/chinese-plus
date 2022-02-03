@@ -39,7 +39,7 @@ const TablePlate = ({ lexicons }) => {
   return (
     <Fragment>
       <WordModal />
-      <table className='table table-hover mb-3'>
+      <table className='table table-hover table-responsive'>
         <thead>
           <tr className='table-info'>
             <th className='text-center'>
@@ -65,6 +65,11 @@ const TablePlate = ({ lexicons }) => {
               </button>
             </th>
             <th>Примеры</th>
+            <th>
+              <div className='text-center'>
+                <i className='fas fa-headphones'></i>
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -76,6 +81,7 @@ const TablePlate = ({ lexicons }) => {
                 chinese: word.cn,
                 pinyin: word.py,
                 translation: word.ru,
+                lvl: word.lvl,
               }}
               hideFlag={hideFlag}
             />

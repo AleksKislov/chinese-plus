@@ -8,8 +8,6 @@ const WordsItem = ({ removeWord, lexicon, loadLengths, hideFlag }) => {
   let { word_id, chinese, pinyin, translation, level } = lexicon;
 
   const onClick = () => {
-    // console.log(word_id);
-
     removeWord(word_id);
     setTimeout(() => {
       loadLengths();
@@ -69,7 +67,7 @@ const WordsItem = ({ removeWord, lexicon, loadLengths, hideFlag }) => {
 WordsItem.propTypes = {
   lexicon: PropTypes.object.isRequired,
   removeWord: PropTypes.func.isRequired,
-  loadLengths: PropTypes.func.isRequired
+  loadLengths: PropTypes.func.isRequired,
 };
 
 export default connect(null, { removeWord, loadLengths })(WordsItem);

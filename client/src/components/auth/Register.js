@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { setAlert } from "../../actions/alert";
@@ -12,14 +12,14 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
     name: "",
     email: "",
     password: "",
-    password2: ""
+    password2: "",
   });
 
   const { name, email, password, password2 } = formData;
 
-  const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault();
     if (password !== password2) {
       setAlert("Пароли не совпадают", "danger");
@@ -45,7 +45,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
         <GoogleButton />
         <p>или</p>
 
-        <form className='form' onSubmit={e => onSubmit(e)}>
+        <form className='form' onSubmit={(e) => onSubmit(e)}>
           <div className='form-group'>
             <input
               type='text'
@@ -53,7 +53,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
               name='name'
               className='form-control'
               value={name}
-              onChange={e => onChange(e)}
+              onChange={(e) => onChange(e)}
             />
           </div>
           <div className='form-group'>
@@ -62,7 +62,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
               placeholder='Адрес Email'
               name='email'
               value={email}
-              onChange={e => onChange(e)}
+              onChange={(e) => onChange(e)}
               className='form-control'
             />
             <small className='form-text'>
@@ -77,7 +77,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
               name='password'
               minLength='6'
               value={password}
-              onChange={e => onChange(e)}
+              onChange={(e) => onChange(e)}
               className='form-control'
             />
           </div>
@@ -87,7 +87,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
               placeholder='Повторите Пароль'
               name='password2'
               value={password2}
-              onChange={e => onChange(e)}
+              onChange={(e) => onChange(e)}
               minLength='6'
               className='form-control'
             />
@@ -106,11 +106,11 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
 Register.propTypes = {
   setAlert: PropTypes.func.isRequired,
   register: PropTypes.func.isRequired,
-  isAuthenticated: PropTypes.bool
+  isAuthenticated: PropTypes.bool,
 };
 
-const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
 });
 
 export default connect(mapStateToProps, { setAlert, register })(Register);
