@@ -94,7 +94,9 @@ const WordsItem = ({
 
   return (
     <tr>
-      <td>{id}</td>
+      <td>
+        <small>{id}</small>
+      </td>
       <td>
         <h4>{!hideFlag.chinese && chinese}</h4>
       </td>

@@ -44,7 +44,9 @@ const WordsItem = ({ removeWord, lexicon, loadLengths, hideFlag }) => {
 
   return (
     <tr>
-      <td>{word_id}</td>
+      <td>
+        <small>{word_id}</small>
+      </td>
       <td>
         <h4>{!hideFlag.chinese && chinese}</h4>
       </td>
