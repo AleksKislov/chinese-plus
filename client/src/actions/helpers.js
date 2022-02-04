@@ -108,7 +108,6 @@ export const getPhotos = async (pic_theme) => {
 
   try {
     const { data } = await axios.get("/api/translation/unsplash/" + pic_theme);
-    // console.log(data.results);
 
     data.forEach((el) => {
       const img = document.createElement("img");

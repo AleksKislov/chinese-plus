@@ -51,7 +51,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
           source,
           pic_url,
         } = textToEdit;
-        setPhotosUrls(pic_url);
+
         document.getElementById("description").value = description;
         document.getElementById("level").value = level;
         document.getElementById("categoryInd").value = categoryInd;
@@ -67,6 +67,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
 
         setFormData({
           ...formData,
+          pic_url,
           level,
           tags,
           title,
@@ -88,7 +89,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
   const [okToPublish, setOkToPublish] = useState(false);
   const [isToEdit, setIsToEdit] = useState(false);
   const [textLen, setTextLen] = useState(0);
-  const [photosUrls, setPhotosUrls] = useState(defaultTextPic);
+  const [photosUrls, setPhotosUrls] = useState(false);
   const [isTranslated, setIsTranslated] = useState(false);
   const [formData, setFormData] = useState({
     chineseChunkedWords: [],
@@ -102,7 +103,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
     allwords: [],
     textId: "",
     pic_theme: "", // in English for pic_url
-    pic_url: "",
+    pic_url: defaultTextPic,
     theme_word: "", // rewriten usestate,
     source: "",
     categoryInd: 0,
@@ -111,59 +112,60 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
   const preprocessForm = async (e) => {
     e.preventDefault();
 
+    const okToProcess = formData.pic_url || isToEdit;
     // pics are loaded, so we can submit the form
-    if (photosUrls || isToEdit) {
-      const textArea = document.getElementById("textArea");
+    if (!okToProcess) return;
 
-      if (textLen > maxTextLen) {
-        return store.dispatch(
-          setAlert(`Максимум ${maxTextLen} знаков в китайском тексте, удалите лишние`, "danger")
-        );
-      }
+    const textArea = document.getElementById("textArea");
 
-      let originText = textArea.value.trim();
-      const translationArea = document.getElementById("translationArea");
-      originText = originText.replace(/\n\s*\n/g, "\n");
-
-      let allwords = await segmenter(originText);
-      allwords = allwords.filter((word) => word !== " ");
-      const wordsFromDB = await getWords(allwords);
-
-      let chunkedOriginText = originText.split("\n"); // array of strings
-      chunkedOriginText = chunkedOriginText.filter((chunk) => chunk);
-      chunkedOriginText = chunkedOriginText.map((chunk) => chunk.trim());
-      textArea.value = chunkedOriginText.join("\n\n");
-      let chunkedTranslation;
-      if (!isTranslated) {
-        const { translation } = await getTranslation(chunkedOriginText);
-        setIsTranslated(true);
-        translationArea.value = translation.join("\n\n");
-        chunkedTranslation = translation;
-      } else {
-        let translationTrimed = translationArea.value.trim();
-        chunkedTranslation = translationTrimed.split("\n"); // array of strings
-        chunkedTranslation = chunkedTranslation.filter((chunk) => chunk.length);
-      }
-
-      const newArr = itirateWordsFromDB(allwords, wordsFromDB);
-      const length = countZnChars(originText);
-
-      const chineseChunkedWords = chunkArrayFunc(newArr).filter((chunk) => chunk.length); // arrasy of object arrays
-
-      setFormData({
-        ...formData,
-        chineseChunkedWords,
-        chunkedTranslation,
-        chunkedOriginText,
-        length,
-        allwords,
-        // tags,
-        // title,
-        // description,
-        // level,
-        // theme_word
-      });
+    if (textLen > maxTextLen) {
+      return store.dispatch(
+        setAlert(`Максимум ${maxTextLen} знаков в китайском тексте, удалите лишние`, "danger")
+      );
     }
+
+    let originText = textArea.value.trim();
+    const translationArea = document.getElementById("translationArea");
+    originText = originText.replace(/\n\s*\n/g, "\n");
+
+    let allwords = await segmenter(originText);
+    allwords = allwords.filter((word) => word !== " ");
+    const wordsFromDB = await getWords(allwords);
+
+    let chunkedOriginText = originText.split("\n"); // array of strings
+    chunkedOriginText = chunkedOriginText.filter((chunk) => chunk);
+    chunkedOriginText = chunkedOriginText.map((chunk) => chunk.trim());
+    textArea.value = chunkedOriginText.join("\n\n");
+    let chunkedTranslation;
+    if (!isTranslated) {
+      const { translation } = await getTranslation(chunkedOriginText);
+      setIsTranslated(true);
+      translationArea.value = translation.join("\n\n");
+      chunkedTranslation = translation;
+    } else {
+      let translationTrimed = translationArea.value.trim();
+      chunkedTranslation = translationTrimed.split("\n"); // array of strings
+      chunkedTranslation = chunkedTranslation.filter((chunk) => chunk.length);
+    }
+
+    const newArr = itirateWordsFromDB(allwords, wordsFromDB);
+    const length = countZnChars(originText);
+
+    const chineseChunkedWords = chunkArrayFunc(newArr).filter((chunk) => chunk.length); // arrasy of object arrays
+
+    setFormData({
+      ...formData,
+      chineseChunkedWords,
+      chunkedTranslation,
+      chunkedOriginText,
+      length,
+      allwords,
+      // tags,
+      // title,
+      // description,
+      // level,
+      // theme_word
+    });
   };
 
   const loadPictures = async () => {
@@ -176,8 +178,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
   const parseTags = (text) => {
     let tags = text.replaceAll("，", ",");
     tags = tags.replaceAll("、", ",");
-    tags = tags.split(",");
-    tags = tags.map((tag) => tag.trim().toLowerCase()); // array of words
+    tags = tags.split(",").map((tag) => tag.trim().toLowerCase()); // array of words
     setFormData({ ...formData, tags });
   };
 
@@ -320,6 +321,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
   const loadPicsErr = (
     <label className='text-danger'>Упс, картинок не нашлось. Попробуйте поменять слово</label>
   );
+
   const loadPicsBtn = (
     <Fragment>
       <label className={formData.pic_theme ? "text-warning" : "text-secondary"}>
@@ -386,28 +388,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                     </Fragment>
                   )}
 
-                  {
-                    //   !formData.pic_theme && formData.title && (
-                    //   <Fragment>
-                    //     <h4 className='alert-heading'>ШАГ 2</h4>
-                    //     <p>Теперь впишите тему картинки на английском языке.</p>
-                    //   </Fragment>
-                    // )}
-                    // {formData.pic_theme && formData.title && !photosUrls && !formData.pic_url && (
-                    //   <Fragment>
-                    //     <h4 className='alert-heading'>ШАГ 3</h4>
-                    //     <p>Загрузите картинки для выбора, нажав кнопку 'Загрузить'.</p>
-                    //   </Fragment>
-                    // )}
-                    // {formData.title && photosUrls && !formData.pic_url && (
-                    //   <Fragment>
-                    //     <h4 className='alert-heading'>ШАГ 4</h4>
-                    //     <p>Кликните одну из картинок, чтобы выбрать ее</p>
-                    //   </Fragment>
-                    // )
-                  }
-
-                  {formData.title && formData.pic_url && textLen === 0 && (
+                  {formData.title && textLen === 0 && (
                     <Fragment>
                       <h4 className='alert-heading'>ШАГ 2</h4>
                       <p>Теперь вы можете вставить китайский текст</p>
@@ -602,7 +583,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                   </div>
                 </div>
                 <div className='form-row' style={{ paddingLeft: "5px" }}>
-                  {photosUrls !== defaultTextPic ? readyToClick : loadPicsBtnClicked}
+                  {photosUrls ? readyToClick : loadPicsBtnClicked}
                 </div>
                 <div className='form-row'>
                   <div
@@ -678,7 +659,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                       id='textArea'
                       rows='3'
                       placeholder='汉字。。。'
-                      disabled={(formData.pic_url && formData.title) || isToEdit ? false : true}
+                      disabled={formData.title || isToEdit ? false : true}
                     ></textarea>
                     <small className='text-muted'>
                       {textLen}/{maxTextLen}
