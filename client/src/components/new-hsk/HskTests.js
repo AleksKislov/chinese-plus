@@ -7,7 +7,7 @@ import { myAudioURL } from "../../constants/urls.json";
 import { Helmet } from "react-helmet";
 import TypingGame from "../userWords/TypingGame";
 
-const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => {
+const NewHskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => {
   const [level, setLevel] = useState("1");
   const [audioAnswers, setAudioAnswers] = useState([]);
   const [pinyinAnswers, setPinyinAnswers] = useState([]);
@@ -560,13 +560,9 @@ const buttonStyle = {
   marginRight: "0.5rem",
 };
 
-HskTests.propTypes = {
-  lexicons: PropTypes.array.isRequired,
-};
-
 const mapPropsToState = (state) => ({
   lexicons: state.hskTable.testLexicon,
   loading: state.hskTable.loading,
 });
 
-export default connect(mapPropsToState, { loadTestLexicon, setLoading })(HskTests);
+export default connect(mapPropsToState, { loadTestLexicon, setLoading })(NewHskTests);

@@ -4,7 +4,6 @@ import { useInterval } from "../../actions/customHooks";
 import badImg from "../../img/typingGame/001bad.png";
 import okImg from "../../img/typingGame/003ok.png";
 import goodImg from "../../img/typingGame/002positive.png";
-import Tippy from "@tippyjs/react";
 
 const TypingGame = ({ words, testStarted }) => {
   const [shuffledWords, setShuffledWords] = useState(null);
@@ -12,13 +11,10 @@ const TypingGame = ({ words, testStarted }) => {
   const [start, setStart] = useState(false);
   useEffect(() => {
     testStarted(false);
-    setShuffledWords(shuffleArr(words).slice(0, 10));
-    // setNewGame();
+    const newArr = shuffleArr(words).slice(0, 10);
+    setShuffledWords(newArr);
+    setQuestion(newArr[0]);
   }, [words]);
-
-  useEffect(() => {
-    if (shuffledWords) setQuestion(shuffledWords[0]);
-  }, [shuffledWords]);
 
   const [resultWords, setResultWords] = useState("");
   const [progress, setProgress] = useState(0);
@@ -82,8 +78,9 @@ const TypingGame = ({ words, testStarted }) => {
     setCorrect(0);
     setWrong(0);
     setProgress(0);
-    setShuffledWords(shuffleArr(words).slice(0, 10));
-    setQuestion(shuffledWords[0]);
+    const newArr = shuffleArr(words).slice(0, 10);
+    setShuffledWords(newArr);
+    setQuestion(newArr[0]);
   };
 
   const gameDiv = (
@@ -137,7 +134,7 @@ const TypingGame = ({ words, testStarted }) => {
             gameDiv
           ) : (
             <div className=''>
-              <h4 className='card-title'>{questionNum > 10 ? "Результат" : "Тест"}</h4>
+              <h4 className='card-title'>{questionNum > 10 ? "Результат" : "Успей напечать"}</h4>
               {questionNum > 10 && (
                 <div className='row mb-3 text-center'>
                   <div className='col-sm-4'>
@@ -177,7 +174,7 @@ const TypingGame = ({ words, testStarted }) => {
                       ? `${resultWords} ${
                           wrongAnswers.filter((x) => x).length > 0 ? "Нужно повторить " : ""
                         } ${wrongAnswers.filter((x) => x).join(", ")}`
-                      : "Проверьте насколько хорошо вы знаете слова ниже"}
+                      : "Проверьте насколько хорошо вы знаете эти слова. Впишите нужное китайское слово за 10 сек."}
                   </span>
                 </div>
               )}
@@ -186,7 +183,7 @@ const TypingGame = ({ words, testStarted }) => {
         </div>
 
         <div className='row d-flex justify-content-center'>
-          {new Array(10).fill(1).map((x, ind) => (
+          {[...new Array(10)].map((x, ind) => (
             <div
               key={ind}
               className={`col-1 questionColorDiv ${
