@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 // import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { loadTestLexicon, setLoading } from "../../actions/hskTable";
+// import { connect } from "react-redux";
+// import { loadTestLexicon, setLoading } from "../../actions/hskTable";
+import { parseRussian } from "../../actions/helpers";
 import { myAudioURL } from "../../constants/urls.json";
 import { Helmet } from "react-helmet";
 import TypingGame from "../userWords/TypingGame";
 import TableCard from "./TableCard";
+import axios from "axios";
 
-const NewHskTests = ({ lexicons, loadTestLexicon, loading, setLoading }) => {
+const NewHskTests = ({ match }) => {
   const [level, setLevel] = useState("1");
+  const [lexicons, setLexicons] = useState(null);
   const [audioAnswers, setAudioAnswers] = useState([]);
   const [pinyinAnswers, setPinyinAnswers] = useState([]);
   const [translationAnswers, setTranslationAnswers] = useState([]);
@@ -16,6 +19,30 @@ const NewHskTests = ({ lexicons, loadTestLexicon, loading, setLoading }) => {
   const translationDiv = document.querySelector("#translation");
   const pinyinDiv = document.querySelector("#pinyin");
   const audioDiv = document.querySelector("#audio");
+
+  useEffect(() => {
+    if (match.params.level) {
+      setLevel(match.params.level);
+      loadTestLexicon(match.params.level);
+    } else {
+      setLevel("1");
+      loadTestLexicon(level);
+    }
+  }, [level]);
+
+  useEffect(() => {
+    if (lexicons) init();
+  }, [lexicons]);
+
+  async function loadTestLexicon(lvl) {
+    setLexicons(null);
+    try {
+      const { data } = await axios.get(`/api/newhskwords/all?hsk_level=${lvl}`);
+      setLexicons(data.map((x) => new Word(x)));
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   const questProps = {
     chinese: "chinese",
@@ -25,8 +52,8 @@ const NewHskTests = ({ lexicons, loadTestLexicon, loading, setLoading }) => {
   const MAX_OPTIONS = 5;
 
   const init = () => {
-    View.displayCharQuestions(translationDiv);
-    View.displayPinyinQuestions(pinyinDiv);
+    // View.displayCharQuestions(translationDiv);
+    // View.displayPinyinQuestions(pinyinDiv);
     View.displayAudioQuestions(audioDiv);
   };
 
@@ -108,20 +135,9 @@ const NewHskTests = ({ lexicons, loadTestLexicon, loading, setLoading }) => {
 
         audioButtons[i].outerHTML = audioButtons[i].outerHTML;
 
-        const firstIdPerLvl = {
-          1: 0,
-          2: 150,
-          3: 300,
-          4: 600,
-          5: 1200,
-          6: 2500,
-        };
-
         // add random audio to buttons
         audioButtons[i].addEventListener("click", () => {
-          const audio = new Audio(
-            `${myAudioURL}hsk${level}/${answers[i].word_id - 1 - firstIdPerLvl[level]}.mp3`
-          );
+          const audio = new Audio(`${myAudioURL}newhsk/band${level}/${answers[i].word_id}.mp3`);
           audio.play();
         });
 
@@ -207,6 +223,7 @@ const NewHskTests = ({ lexicons, loadTestLexicon, loading, setLoading }) => {
         const correctInd = audioAnswers[i];
         const answer = formControls[i].options[formControls[i].selectedIndex].innerHTML;
 
+        console.log({ correctInd, answer });
         if (formControls[i].selectedIndex === 0) continue;
 
         if (correctInd.translation === answer) {
@@ -258,18 +275,64 @@ const NewHskTests = ({ lexicons, loadTestLexicon, loading, setLoading }) => {
         <TypingGame words={lexicons} testStarted={() => {}} level={level} />
 
         <p>пока только игра "Успей напечатать". Другие тесты добавим чуть позже</p>
+
+        <div id='audio' className='questions'>
+          <h5>... аудио</h5>
+
+          {[...new Array(5)].map((x, ind) => (
+            <div className='input-group' key={ind}>
+              <button className='btn btn-secondary'>
+                <i className='fas fa-play'></i>
+              </button>
+
+              <select className='form-control'>
+                <option>Выберите правильный вариант</option>
+              </select>
+            </div>
+          ))}
+
+          <button
+            type='button'
+            className='btn btn-primary btn-sm'
+            id='audioCheck'
+            onClick={() => checkButton(3)}
+            style={buttonStyle}
+          >
+            Проверить
+          </button>
+
+          <button
+            type='button'
+            className='btn btn-primary btn-sm'
+            id='audioButton'
+            onClick={() => refreshButton(3)}
+          >
+            <i className='fas fa-sync-alt'></i>
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
+class Word {
+  constructor({ cn, lvl, id, py, ru }) {
+    this.chinese = cn;
+    this.level = lvl;
+    this.word_id = id;
+    this.pinyin = py;
+    this.translation = parseRussian(ru);
+  }
+}
+
 const buttonStyle = {
   marginRight: "0.5rem",
 };
 
-const mapPropsToState = (state) => ({
-  lexicons: state.hskTable.testLexicon,
-  loading: state.hskTable.loading,
-});
+// const mapPropsToState = (state) => ({
+//   lexicons: state.hskTable.testLexicon,
+//   loading: state.hskTable.loading,
+// });
 
-export default connect(mapPropsToState, { loadTestLexicon, setLoading })(NewHskTests);
+// export default connect(mapPropsToState, { loadTestLexicon, setLoading })(NewHskTests);
+export default NewHskTests;

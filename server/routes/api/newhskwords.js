@@ -11,7 +11,7 @@ const {
 // router.get("/get-audio", getAudio);
 
 /**
- * @route     GET api/newhskwords/all
+ * @route     GET api/newhskwords/all?hsk_level=
  * @desc      Get all the hsk words by level
  * @access    Public
  */

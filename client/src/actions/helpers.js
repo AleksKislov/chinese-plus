@@ -248,7 +248,7 @@ export const markUpRussianText = (text, showExamples = false) => {
     .replace(/\[\/m\]/g, "</span>")
     .replace(/\[\*\]\[ex\]/g, `<div class='tippyExs${showExamples ? "Show" : ""}'>`)
     .replace(/\[\/ex\]\[\/\*\]/g, "</div>")
-    .replace(/\\\[(.{1,})\\\]/g, "($1)");
+    .replace(/\\\[(.+?)\\\]/g, "($1)");
 
   const regex = /\[ref\](.+?)\[\/ref\]/;
   for (let i = 0; i < 12; i++) {
@@ -275,6 +275,7 @@ export const parseRussian = (translation, showExamples) => {
 };
 
 export const shuffleArr = (arr) => {
+  if (!arr) return [];
   let newArr = [...arr];
   const len = arr.length;
   for (let i = 0; i < len; i++) {
