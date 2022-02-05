@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { parseRussian, shuffleArr } from "../../actions/helpers";
 import { useInterval } from "../../actions/customHooks";
 import badImg from "../../img/typingGame/001bad.png";
 import okImg from "../../img/typingGame/003ok.png";
 import goodImg from "../../img/typingGame/002positive.png";
 
-const TypingGame = ({ words, testStarted }) => {
+const TypingGame = ({ words, testStarted, level }) => {
   const [shuffledWords, setShuffledWords] = useState(null);
   const [questionNum, setQuestionNum] = useState(1);
   const [start, setStart] = useState(false);
+
   useEffect(() => {
     testStarted(false);
     const newArr = shuffleArr(words).slice(0, 10);
@@ -134,7 +135,17 @@ const TypingGame = ({ words, testStarted }) => {
             gameDiv
           ) : (
             <div className=''>
-              <h4 className='card-title'>{questionNum > 10 ? "Результат" : "Успей напечать"}</h4>
+              <h4 className='card-title'>
+                {questionNum > 10 ? (
+                  "Результат"
+                ) : level ? (
+                  <Fragment>
+                    Успей напечатать <small className='text-muted'>[ур. {level}]</small>
+                  </Fragment>
+                ) : (
+                  "Успей напечатать"
+                )}
+              </h4>
               {questionNum > 10 && (
                 <div className='row mb-3 text-center'>
                   <div className='col-sm-4'>

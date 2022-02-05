@@ -9,7 +9,7 @@ import NewHskTableCard from "../new-hsk/TableCard";
 
 import { Helmet } from "react-helmet";
 
-const HskTable = ({ loadLexicon, lexicons, loading, words, loadWords, isAuthenticated }) => {
+const HskTable = ({ loadLexicon, lexicons, loading, words, loadWords, isAuthenticated, match }) => {
   const [level, setLevel] = useState("1");
   const [limit, setLimit] = useState(0);
 
@@ -19,7 +19,13 @@ const HskTable = ({ loadLexicon, lexicons, loading, words, loadWords, isAuthenti
 
   useEffect(() => {
     setLimit(0);
-    loadLexicon(level, 0);
+    if (match.params.level) {
+      setLevel(match.params.level);
+      loadLexicon(match.params.level, 0);
+    } else {
+      setLevel("1");
+      loadLexicon(level, 0);
+    }
   }, [level]);
 
   useEffect(() => {

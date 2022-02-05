@@ -347,6 +347,14 @@ const Navbar = ({
         </NavLink>
         <NavLink
           className='dropdown-item'
+          to='/hsk-new-tests'
+          activeStyle={activeNavLink}
+          onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-new-tests" })}
+        >
+          Тесты
+        </NavLink>
+        <NavLink
+          className='dropdown-item'
           to='/hsk-new-search'
           activeStyle={activeNavLink}
           onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-new-search" })}

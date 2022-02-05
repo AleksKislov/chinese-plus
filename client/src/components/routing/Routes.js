@@ -41,6 +41,7 @@ import SetAvatar from "../profile/SetAvatar";
 import SearchHSK from "../hsk-table/SearchHSK";
 import SearchNewHSK from "../new-hsk/SearchNewHSK";
 import NewHskTable from "../new-hsk/HskTable";
+import NewHskTests from "../new-hsk/NewHskTests";
 
 import TranslationForm from "../translation/TranslateForm";
 // import TranslateForm from "../translation/TranslateForm";
@@ -75,14 +76,18 @@ const Routes = () => {
           <PrivateRoute exact path='/hsk-words' component={Words} />
           <PrivateRoute exact path='/userwords' component={UserWords} />
           <PrivateRoute exact path='/mentions' component={Mentions} />
-          <Route exact path='/hsk-table' component={HskTable} />
+          <Route exact path='/hsk-table' render={() => <Redirect to='/hsk-table/1' />} />
           <Route exact path='/hsk-search' component={SearchHSK} />
           <Route exact path='/hsk-new-search' component={SearchNewHSK} />
-          <Route exact path='/hsk-new-table' component={NewHskTable} />
+          <Route exact path='/hsk-new-table' render={() => <Redirect to='/hsk-new-table/1' />} />
           <Route exact path='/pinyin-tests' component={PinyinTests} />
           <Route exact path='/hsk-tests' render={() => <Redirect to='/hsk-tests/1' />} />
+          <Route exact path='/hsk-new-tests' render={() => <Redirect to='/hsk-new-tests/1' />} />
 
+          <Route exact path='/hsk-new-table/:level' component={NewHskTable} />
+          <Route exact path='/hsk-table/:level' component={HskTable} />
           <Route exact path='/hsk-tests/:level' component={HskTests} />
+          <Route exact path='/hsk-new-tests/:level' component={NewHskTests} />
 
           <PrivateRoute exact path='/create-profile' component={CreateProfile} />
           <PrivateRoute exact path='/edit-profile' component={EditProfile} />

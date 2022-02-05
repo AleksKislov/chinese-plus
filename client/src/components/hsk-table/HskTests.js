@@ -346,7 +346,7 @@ const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => 
       </div>
 
       <div className='col-sm-9'>
-        <TypingGame words={lexicons} testStarted={() => {}} />
+        <TypingGame words={lexicons} testStarted={() => {}} level={level} />
 
         <h3>Выберите подходящий вариант для...</h3>
 

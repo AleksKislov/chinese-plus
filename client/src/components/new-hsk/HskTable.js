@@ -15,6 +15,7 @@ const NewHskTable = ({
   // loading,
   // words,
   isAuthenticated,
+  match,
 }) => {
   const [lexicons, setLexicons] = useState(null);
   const [level, setLevel] = useState("1");
@@ -26,7 +27,14 @@ const NewHskTable = ({
 
   useEffect(() => {
     setLimit(0);
-    loadLexicon(level, 0);
+
+    if (match.params.level) {
+      setLevel(match.params.level);
+      loadLexicon(match.params.level, 0);
+    } else {
+      setLevel("1");
+      loadLexicon(level, 0);
+    }
   }, [level]);
 
   async function loadLexicon(lvl, limit) {
@@ -52,7 +60,7 @@ const NewHskTable = ({
       </Helmet>
 
       <div className='col-sm-3'>
-        <NewHskTableCard level={level} setLevel={setLevel} isOldHsk={false} />
+        <NewHskTableCard level={level} setLevel={setLevel} isOldHsk={false} isForTests={false} />
       </div>
 
       <div className='col-sm-9'>
