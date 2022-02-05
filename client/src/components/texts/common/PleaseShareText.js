@@ -10,7 +10,7 @@ const PleaseShareText = () => {
         <p className='card-text'>
           <span>И поделитесь текстами для Читалки со всем светом</span>
         </p>
-        <Link className='card-link' to='/create-text'>
+        <Link className='btn btn-sm btn-info' to='/create-text'>
           Добавить Текст
         </Link>
       </div>

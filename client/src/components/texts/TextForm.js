@@ -22,15 +22,20 @@ import { v4 as uuid } from "uuid";
 import "./style.css";
 import { bgTextLen, smTextLen, textCategories } from "../../constants/consts.json";
 import { defaultTextPic } from "../../constants/urls.json";
-import { clearText } from "../../actions/texts";
+import { NullUser, User } from "../../patterns/User";
 
-const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
+const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
+  const [user, setUser] = useState(new NullUser());
+
   useEffect(() => {
+    if (!userToCheck) return;
+    const curUser = new User(userToCheck);
+    setUser(curUser);
     loadUserWords();
 
-    if (user && (user.role === "admin" || user.role === "moderator")) setMaxTextLen(bgTextLen);
+    if (curUser.isAdmin || curUser.isModerator) setMaxTextLen(bgTextLen);
     if (!textToEdit) setTimeout(noticeMe, 1000);
-  }, [user]);
+  }, [userToCheck]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -52,24 +57,18 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
           pic_url,
         } = textToEdit;
 
-        document.getElementById("description").value = description;
-        document.getElementById("level").value = level;
-        document.getElementById("categoryInd").value = categoryInd;
-        document.getElementById("tags").value = tags.join(", ");
-        document.getElementById("title").value = title;
         document.getElementById("textArea").value = origintext.join("\n");
         document.getElementById("translationArea").value = translation.join("\n");
-        document.getElementById("theme_word").value = theme_word;
-        if (source) document.getElementById("source").value = source;
-        if (document.getElementById("isApproved"))
-          document.getElementById("isApproved").value = isApproved ? "1" : "0";
+        // if (source) document.getElementById("source").value = source;
+        // if (document.getElementById("isApproved"))
+        //   document.getElementById("isApproved").value = isApproved ? "1" : "0";
         setIsTranslated(true);
 
         setFormData({
           ...formData,
           pic_url,
           level,
-          tags,
+          tags: tags.join(", "),
           title,
           description,
           theme_word,
@@ -111,9 +110,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
 
   const preprocessForm = async (e) => {
     e.preventDefault();
-
     const okToProcess = formData.pic_url || isToEdit;
-    // pics are loaded, so we can submit the form
     if (!okToProcess) return;
 
     const textArea = document.getElementById("textArea");
@@ -124,9 +121,8 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
       );
     }
 
-    let originText = textArea.value.trim();
     const translationArea = document.getElementById("translationArea");
-    originText = originText.replace(/\n\s*\n/g, "\n");
+    const originText = textArea.value.trim().replace(/\n\s*\n/g, "\n");
 
     let allwords = await segmenter(originText);
     allwords = allwords.filter((word) => word !== " ");
@@ -160,11 +156,6 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
       chunkedOriginText,
       length,
       allwords,
-      // tags,
-      // title,
-      // description,
-      // level,
-      // theme_word
     });
   };
 
@@ -302,14 +293,14 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
     e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
-  const noticeMe = (e) => {
-    if (!isToEdit) {
-      TweenMax.fromTo(
-        ".noticeMe",
-        { backgroundColor: "#e74c3c" },
-        { duration: 2, backgroundColor: "#f39c12" }
-      );
-    }
+  const noticeMe = () => {
+    if (isToEdit) return;
+
+    TweenMax.fromTo(
+      ".noticeMe",
+      { backgroundColor: "#e74c3c" },
+      { duration: 2, backgroundColor: "#f39c12" }
+    );
   };
 
   const testEngInput = (str) => setIsEnglish(/^[a-zA-Z]+$/.test(str));
@@ -473,6 +464,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                       <select
                         className='form-control'
                         id='isApproved'
+                        valeue={formData.isApproved}
                         onChange={(e) =>
                           setFormData({ ...formData, [e.target.id]: parseInt(e.target.value) })
                         }
@@ -488,6 +480,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                     <label htmlFor='title'>Заголовок текста</label>
                     <input
                       onBlur={noticeMe}
+                      value={formData.title}
                       onChange={(e) => {
                         setFormData({
                           ...formData,
@@ -511,6 +504,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                       id='description'
                       autoComplete='off'
                       placeholder='О чем или откуда этот текст...'
+                      value={formData.description}
                     />
                   </div>
                 </div>
@@ -524,6 +518,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                       className={`form-control`}
                       id='tags'
                       placeholder='Список тэгов'
+                      value={formData.tags}
                     />
                   </div>
                   <div className='form-group col-md-6'>
@@ -532,6 +527,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                       className='form-control'
                       id='level'
                       onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
+                      value={formData.level}
                     >
                       <option>1</option>
                       <option>2</option>
@@ -557,9 +553,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                   </div>
                   <div className='form-group col-md-3'>
                     <label htmlFor='theme_word'>1 или 2 汉字 на картинку</label>
-                    {
-                      // `form-control ${!(formData.theme_word.length === 1 || formData.theme_word.length === 2) && "is-invalid"}`
-                    }
+
                     <input
                       onBlur={noticeMe}
                       onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
@@ -568,6 +562,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                       id='theme_word'
                       placeholder='汉字'
                       autoComplete='off'
+                      value={formData.theme_word}
                     />
                   </div>
                   <div className='form-group col-md-6'>
@@ -603,6 +598,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                       className='form-control'
                       id='categoryInd'
                       onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
+                      value={formData.categoryInd}
                     >
                       {textCategories.map((x, ind) => (
                         <option value={ind} key={ind}>
@@ -622,6 +618,7 @@ const TextForm = ({ loadUserWords, user, textToEdit, clearText, location }) => {
                       id='source'
                       placeholder='Источник (по желанию)'
                       autoComplete='off'
+                      value={formData.source}
                     />
                   </div>
                 </div>
@@ -754,8 +751,8 @@ TextForm.propTypes = {
 const mapStateToProps = (state) => ({
   userwords: state.userwords.userwords,
   wordsLoading: state.userwords.loading,
-  user: state.auth.user,
+  userToCheck: state.auth.user,
   textToEdit: state.texts.text,
 });
 
-export default connect(mapStateToProps, { loadUserWords, clearText })(TextForm);
+export default connect(mapStateToProps, { loadUserWords })(TextForm);

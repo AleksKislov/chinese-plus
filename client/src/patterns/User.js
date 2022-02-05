@@ -13,7 +13,7 @@ export class User {
     daily_reading_goal,
     finished_texts,
     moreWords,
-    date
+    date,
   }) {
     this._id = _id;
     this.role = role || "Изучающий";
@@ -29,11 +29,11 @@ export class User {
     this.date = date;
   }
 
-  isAdmin() {
+  get isAdmin() {
     return this.role === "admin";
   }
 
-  isModerator() {
+  get isModerator() {
     return this.role === "moderator";
   }
 
@@ -51,11 +51,11 @@ export class NullUser {
     this.role = "Ноунэйм";
   }
 
-  isAdmin() {
+  get isAdmin() {
     return false;
   }
 
-  isModerator() {
+  get isModerator() {
     return false;
   }
 }

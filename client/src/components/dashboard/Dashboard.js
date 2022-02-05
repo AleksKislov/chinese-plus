@@ -11,18 +11,18 @@ import ReadingCard from "./ReadingCard";
 import { Helmet } from "react-helmet";
 import Analytics from "./Analytics";
 import Tippy from "@tippyjs/react";
-import { NullUser, User } from "../../patterns/UserClass";
+import { NullUser, User } from "../../patterns/User";
 
 const Dashboard = ({
   clearText,
   // getCurrentProfile,
   auth: {
-    user: userToCheck
+    user: userToCheck,
     // loading: notLoaded
   },
   // profile: { loading, profile },
   allWordsLen,
-  userWordsLen
+  userWordsLen,
   // dictStats,
   // getDictStats
 }) => {
@@ -161,20 +161,20 @@ const Dashboard = ({
 
 Dashboard.propTypes = {
   // getCurrentProfile: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
   // profile: PropTypes.object.isRequired
 };
 
 const imgStyle = {
   width: "60px",
-  borderRadius: "8px"
+  borderRadius: "8px",
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
   // profile: state.profile,
   allWordsLen: state.hskTable.allWordsLen,
-  userWordsLen: state.userwords.userWordsLen
+  userWordsLen: state.userwords.userWordsLen,
   // dictStats: state.profile.dictStats
 });
 
