@@ -92,7 +92,7 @@ const NewHskTests = ({ match }) => {
 
         // create arr for options and put right answer in
         const options = [];
-        const rightAnswer = answers[i].translation;
+        const rightAnswer = `<span class="#caiduile#"></span> ${answers[i].translation}`;
         options.push(rightAnswer);
 
         while (options.length < MAX_OPTIONS) {
@@ -223,10 +223,10 @@ const NewHskTests = ({ match }) => {
         const correctInd = audioAnswers[i];
         const answer = formControls[i].options[formControls[i].selectedIndex].innerHTML;
 
-        console.log({ correctInd, answer });
+        // console.log({ correctInd, answer, ctr: formControls[i] });
         if (formControls[i].selectedIndex === 0) continue;
 
-        if (correctInd.translation === answer) {
+        if (answer.includes("#caiduile#")) {
           View.setColor.green(audioButtons[i]);
         } else {
           View.setColor.red(audioButtons[i]);
