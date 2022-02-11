@@ -1,16 +1,16 @@
 const router = require("express").Router();
-const auth = require("../../middleware/auth");
-const { translateText /*translateRuText*/ } = require("./services");
-
 const axios = require("axios");
 
-router.post("/", auth, async (req, res) => {
-  const translation = await translateText(req.body.text);
-  // console.log("HEREEEE 222");
+const auth = require("../../middleware/auth");
+const { getTranslation } = require("../../src/api/services/translation/get-translation");
 
-  if (translation) return res.json({ translation });
-  return res.status(500).send("Server error");
-});
+/**
+ * @method    POST
+ * @route     api/translation
+ * @desc      Get google translation for Chinese txt
+ * @access    Private
+ */
+router.post("/", auth, getTranslation);
 
 // router.post("/rus_to_zh", auth, async (req, res) => {
 //   const translation = await translateRuText(req.body.text);
@@ -18,6 +18,12 @@ router.post("/", auth, async (req, res) => {
 //   return res.status(500).send("Server error");
 // });
 
+/**
+ * @method    GET
+ * @route     api/translation/unsplash/:pic_theme
+ * @desc      Get pictures for the text from unsplash
+ * @access    Private
+ */
 router.get("/unsplash/:pic_theme", auth, async (req, res) => {
   const config = {
     headers: { Authorization: process.env.UNSPLASH_APIKEY },

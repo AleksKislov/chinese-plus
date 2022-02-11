@@ -6,7 +6,7 @@ const translate = new Translate();
  * a single piece of text, or an array of strings for translating
  * multiple texts.
  */
-const translateText = async (text) => {
+const googleTranslate = async (text) => {
   let [translations] = await translate
     .translate(text, "ru")
     .catch((err) => console.log("ОШИБКА GCLOUD TRANSLATE", err));
@@ -15,4 +15,4 @@ const translateText = async (text) => {
   return translations;
 };
 
-module.exports = { translateText };
+module.exports = { googleTranslate };
