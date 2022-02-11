@@ -16,6 +16,7 @@ import {
 import axios from "axios";
 import { setAlert } from "./alert";
 import { setAuthToken, setGoogleAuth } from "../utils/setAuthToken";
+import { users } from "../constants/consts.json";
 
 // load all HSK lexicon at hsk-table
 export const loadLexicon = (hskLevel, limit) => async (dispatch) => {
@@ -108,24 +109,13 @@ export const addWord =
   async (dispatch) => {
     loadLengths();
 
-    let maxWordsNum = 50;
-
     if (localStorage.token) {
       setAuthToken(localStorage.token);
     } else if (localStorage.userid) {
       setGoogleAuth(localStorage.userid);
     }
 
-    try {
-      const { data } = await axios.get("/api/auth"); // user object
-      // console.log(data);
-
-      if (data && data.moreWords) maxWordsNum += 100;
-    } catch (err) {
-      console.log(err);
-    }
-
-    if (allWordsLen < maxWordsNum) {
+    if (allWordsLen < users.vocabSize) {
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -159,7 +149,7 @@ export const addWord =
         type: ADD_WORD_ERR,
       });
       dispatch(
-        setAlert(`Можно добавлять не больше ${maxWordsNum} слов в свой вокабуляр`, "danger")
+        setAlert(`Можно добавлять не больше ${users.vocabSize} слов в свой вокабуляр`, "danger")
       );
     }
   };

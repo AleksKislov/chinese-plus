@@ -1415,5 +1415,8 @@
       "6": 2500
     }
   },
-  "maxWordsPerPage": 200
+  "maxWordsPerPage": 200,
+  "users": {
+    "vocabSize": 150
+  }
 }

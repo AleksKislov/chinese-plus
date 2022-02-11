@@ -3,9 +3,10 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { loadWords, loadWordsByLevel, loadLengths } from "../../actions/hskTable";
 import PropTypes from "prop-types";
+import { users } from "../../constants/consts.json";
 
 const WordsCard = ({ loadWords, loadWordsByLevel, allWordsLen, hskLen }) => {
-  const onClick = e => {
+  const onClick = (e) => {
     let hsk_level = e.currentTarget.getElementsByTagName("a")[0];
     if (hsk_level) {
       hsk_level = hsk_level.innerHTML.charAt(3);
@@ -21,7 +22,7 @@ const WordsCard = ({ loadWords, loadWordsByLevel, allWordsLen, hskLen }) => {
     }
   };
 
-  const makeLinkActive = item => {
+  const makeLinkActive = (item) => {
     const listItems = document.getElementsByClassName("list-group-item-action");
     const activeItem = document.getElementsByClassName("activeHSK");
 
@@ -41,41 +42,46 @@ const WordsCard = ({ loadWords, loadWordsByLevel, allWordsLen, hskLen }) => {
         </p>
       </div>
       <ul className='list-group list-group-flush'>
-        <li className='list-group-item list-group-item-action' onClick={e => onClick(e)}>
+        <li className='list-group-item list-group-item-action' onClick={(e) => onClick(e)}>
           <Link to='#!' className='card-link'>
             HSK1 <span className='badge badge-pill badge-warning float-right'>{hskLen[0]}</span>
           </Link>
         </li>
-        <li className='list-group-item list-group-item-action' onClick={e => onClick(e)}>
+        <li className='list-group-item list-group-item-action' onClick={(e) => onClick(e)}>
           <Link to='#!' className='card-link'>
             HSK2 <span className='badge badge-pill badge-warning float-right'>{hskLen[1]}</span>
           </Link>
         </li>
-        <li className='list-group-item  list-group-item-action' onClick={e => onClick(e)}>
+        <li className='list-group-item  list-group-item-action' onClick={(e) => onClick(e)}>
           <Link to='#!' className='card-link'>
             HSK3 <span className='badge badge-pill badge-warning float-right'>{hskLen[2]}</span>
           </Link>
         </li>
-        <li className='list-group-item list-group-item-action' onClick={e => onClick(e)}>
+        <li className='list-group-item list-group-item-action' onClick={(e) => onClick(e)}>
           <Link to='#!' className='card-link'>
             HSK4 <span className='badge badge-pill badge-warning float-right'>{hskLen[3]}</span>
           </Link>
         </li>
-        <li className='list-group-item list-group-item-action' onClick={e => onClick(e)}>
+        <li className='list-group-item list-group-item-action' onClick={(e) => onClick(e)}>
           <Link to='#!' className='card-link'>
             HSK5 <span className='badge badge-pill badge-warning float-right'>{hskLen[4]}</span>
           </Link>
         </li>
-        <li className='list-group-item list-group-item-action' onClick={e => onClick(e)}>
+        <li className='list-group-item list-group-item-action' onClick={(e) => onClick(e)}>
           <Link to='#!' className='card-link'>
             HSK6 <span className='badge badge-pill badge-warning float-right'>{hskLen[5]}</span>
           </Link>
         </li>
 
-        <li className='list-group-item list-group-item-action activeHSK' onClick={e => onClick(e)}>
+        <li
+          className='list-group-item list-group-item-action activeHSK'
+          onClick={(e) => onClick(e)}
+        >
           <Link to='#!' className='card-link'>
             Все слова{" "}
-            <span className='badge badge-pill badge-warning float-right'>{allWordsLen}</span>
+            <span className='badge badge-pill badge-warning float-right'>
+              {allWordsLen} / {users.vocabSize}
+            </span>
           </Link>
         </li>
       </ul>
@@ -87,12 +93,12 @@ WordsCard.propTypes = {
   loadWords: PropTypes.func.isRequired,
   loadWordsByLevel: PropTypes.func.isRequired,
   allWordsLen: PropTypes.number.isRequired,
-  hskLen: PropTypes.array.isRequired
+  hskLen: PropTypes.array.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   allWordsLen: state.hskTable.allWordsLen,
-  hskLen: state.hskTable.hskLen
+  hskLen: state.hskTable.hskLen,
 });
 
 export default connect(mapStateToProps, { loadWords, loadWordsByLevel, loadLengths })(WordsCard);

@@ -12,6 +12,7 @@ import { Helmet } from "react-helmet";
 import Analytics from "./Analytics";
 import Tippy from "@tippyjs/react";
 import { NullUser, User } from "../../patterns/User";
+import { users } from "../../constants/consts.json";
 
 const Dashboard = ({
   clearText,
@@ -85,7 +86,9 @@ const Dashboard = ({
               <h6 className='card-subtitle mb-2 text-muted'>Личный список слов HSK</h6>
               <p className='card-text'>
                 Сейчас для повторения вы отобрали столько слов:{" "}
-                <span className='badge badge-pill badge-warning'>{allWordsLen}</span>
+                <span className='badge badge-pill badge-warning'>
+                  {allWordsLen} / {users.vocabSize}
+                </span>
               </p>
               <Link to='/hsk-table' className='card-link'>
                 Весь HSK
@@ -102,7 +105,9 @@ const Dashboard = ({
               <h6 className='card-subtitle mb-2 text-muted'>Список слов из текстов</h6>
               <p className='card-text'>
                 Сейчас для повторения вы отобрали столько слов:{" "}
-                <span className='badge badge-pill badge-warning'>{userWordsLen}</span>
+                <span className='badge badge-pill badge-warning'>
+                  {userWordsLen} / {users.vocabSize}
+                </span>
               </p>
               <Link to='/userwords' className='card-link'>
                 Мои Слова
