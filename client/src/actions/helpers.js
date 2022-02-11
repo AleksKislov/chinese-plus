@@ -100,18 +100,21 @@ export const segmenter = async (text) => {
   return res.data;
 };
 
-export const getPhotos = async (pic_theme) => {
-  // console.log(pic_theme);
-
+/**
+ *
+ * @param {string} picTheme - theme word, e.g. "forest"
+ * @returns {boolean}
+ */
+export const getPhotos = async (picTheme) => {
   const photosDiv = document.getElementById("photosDiv");
   photosDiv.innerHTML = "";
 
   try {
-    const { data } = await axios.get("/api/translation/unsplash/" + pic_theme);
+    const { data } = await axios.get("/api/translation/unsplash/" + picTheme);
 
     data.forEach((el) => {
       const img = document.createElement("img");
-      img.src = el.urls.small;
+      img.src = el.small;
       photosDiv.appendChild(img);
       img.classList.add("imgToChoose");
     });

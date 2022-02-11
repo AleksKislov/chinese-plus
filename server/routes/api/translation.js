@@ -1,8 +1,7 @@
 const router = require("express").Router();
-const axios = require("axios");
 
 const auth = require("../../middleware/auth");
-const { getTranslation } = require("../../src/api/services/translation/get-translation");
+const { getPics, getTranslation } = require("../../src/api/services/translation");
 
 /**
  * @method    POST
@@ -24,20 +23,6 @@ router.post("/", auth, getTranslation);
  * @desc      Get pictures for the text from unsplash
  * @access    Private
  */
-router.get("/unsplash/:pic_theme", auth, async (req, res) => {
-  const config = {
-    headers: { Authorization: process.env.UNSPLASH_APIKEY },
-  };
-  const url = `https://api.unsplash.com/photos/random?query=${req.params.pic_theme}&count=8&orientation=portrait`;
-
-  try {
-    const { data } = await axios.get(url, config);
-
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
-});
+router.get("/unsplash/:pic_theme", auth, getPics);
 
 module.exports = router;
