@@ -8,13 +8,20 @@ import WordModal from "../translation/WordModal";
 import { Link } from "react-router-dom";
 import TypingGame from "./TypingGame";
 import Tippy from "@tippyjs/react";
+import { users } from "../../constants/consts.json";
 
 const UserWords = ({ loadUserWords, words, wordsLoading }) => {
   const [hideFlag, setHideFlag] = useState({
     chinese: false,
     pinyin: false,
-    translation: false
+    translation: false,
   });
+
+  const [allWordsLen, setAllWordsLen] = useState(0);
+
+  useEffect(() => {
+    if (words && Array.isArray(words)) setAllWordsLen(words.length);
+  }, [words]);
 
   const [testStarted, setTestStarted] = useState(false);
 
@@ -23,29 +30,29 @@ const UserWords = ({ loadUserWords, words, wordsLoading }) => {
     // eslint-disable-next-line
   }, []);
 
-  const hideChinese = e => {
+  const hideChinese = (e) => {
     setHideFlag({
       chinese: !hideFlag.chinese,
       translation: hideFlag.translation,
-      pinyin: hideFlag.pinyin
+      pinyin: hideFlag.pinyin,
     });
     e.target.innerHTML = !hideFlag.chinese ? "Скрыто" : "Иероглифы";
   };
 
-  const hidePinyin = e => {
+  const hidePinyin = (e) => {
     setHideFlag({
       pinyin: !hideFlag.pinyin,
       translation: hideFlag.translation,
-      chinese: hideFlag.chinese
+      chinese: hideFlag.chinese,
     });
     e.target.innerHTML = !hideFlag.pinyin ? "Скрыто" : "Пиньинь";
   };
 
-  const hideFanyi = e => {
+  const hideFanyi = (e) => {
     setHideFlag({
       translation: !hideFlag.translation,
       chinese: hideFlag.chinese,
-      pinyin: hideFlag.pinyin
+      pinyin: hideFlag.pinyin,
     });
     e.target.innerHTML = !hideFlag.translation ? "Скрыто" : "Перевод";
   };
@@ -66,6 +73,16 @@ const UserWords = ({ loadUserWords, words, wordsLoading }) => {
               <Link to='/books'>книг</Link> и <Link to='/search'>словаря</Link>
             </p>
           </div>
+          <ul className='list-group list-group-flush'>
+            <li className='list-group-item list-group-item-action'>
+              <Link to='#!' className='card-link'>
+                Все слова{" "}
+                <span className='badge badge-pill badge-warning float-right'>
+                  {allWordsLen} / {users.vocabSize}
+                </span>
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -81,7 +98,7 @@ const UserWords = ({ loadUserWords, words, wordsLoading }) => {
                     <button
                       type='button'
                       className='btn btn-light btn-sm'
-                      onClick={e => hideChinese(e)}
+                      onClick={(e) => hideChinese(e)}
                     >
                       Иероглифы
                     </button>
@@ -92,7 +109,7 @@ const UserWords = ({ loadUserWords, words, wordsLoading }) => {
                     <button
                       type='button'
                       className='btn btn-light btn-sm'
-                      onClick={e => hidePinyin(e)}
+                      onClick={(e) => hidePinyin(e)}
                     >
                       Пиньинь
                     </button>
@@ -103,7 +120,7 @@ const UserWords = ({ loadUserWords, words, wordsLoading }) => {
                     <button
                       type='button'
                       className='btn btn-light btn-sm'
-                      onClick={e => hideFanyi(e)}
+                      onClick={(e) => hideFanyi(e)}
                     >
                       Перевод
                     </button>
@@ -114,7 +131,7 @@ const UserWords = ({ loadUserWords, words, wordsLoading }) => {
               </tr>
             </thead>
             <tbody>
-              {words.map(word => (
+              {words.map((word) => (
                 <WordsItem key={word._id} lexicon={word} hideFlag={hideFlag} />
               ))}
             </tbody>
@@ -127,12 +144,12 @@ const UserWords = ({ loadUserWords, words, wordsLoading }) => {
 
 UserWords.propTypes = {
   words: PropTypes.array.isRequired,
-  loadUserWords: PropTypes.func.isRequired
+  loadUserWords: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   words: state.userwords.userwords,
-  wordsLoading: state.userwords.loading
+  wordsLoading: state.userwords.loading,
 });
 
 export default connect(mapStateToProps, { loadUserWords })(UserWords);
