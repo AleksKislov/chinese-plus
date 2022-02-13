@@ -16,13 +16,9 @@ router.post(
   [
     auth,
     [
-      check("text", "Нужен текст")
-        .not()
-        .isEmpty(),
-      check("title", "Нужен заголовок")
-        .not()
-        .isEmpty()
-    ]
+      check("text", "Нужен текст").not().isEmpty(),
+      check("title", "Нужен заголовок").not().isEmpty(),
+    ],
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -34,12 +30,12 @@ router.post(
       const { text, title, tag } = req.body;
 
       const newPost = new Post({
-        text: text,
-        title: title,
-        tag: tag,
+        text,
+        title,
+        tag,
         name: user.name,
         avatar: user.avatar,
-        user: req.user.id
+        user: req.user.id,
       });
 
       const post = await newPost.save();
@@ -56,26 +52,30 @@ router.post(
 // @route   GET api/posts
 // @desc    Get all posts
 // access   Public
-router.get("/", async (req, res) => {
-  try {
-    const posts = await Post.find().sort({ date: -1 });
+// router.get("/", async (req, res) => {
+//   try {
+//     const posts = await Post.find().sort({ date: -1 });
 
-    res.json(posts);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
-});
+//     res.json(posts);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Server error");
+//   }
+// });
 
 /**
- * @route   GET api/posts/infinite?skip=...
- * @desc    Get posts using inifinite scroll
+ * @route   GET api/posts/infinite?skip=...tag=...
+ * @desc    Get posts using inifinite scroll by tag
  * @access  Public
  */
 router.get("/infinite", async (req, res) => {
+  const { skip, tag } = req.query;
   try {
-    const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
-    const posts = await Post.find({}, undefined, { skip, limit: 5 }).sort({ date: -1 });
+    const searshQuery = tag ? { tag } : {};
+    const skipNum = skip && /^\d+$/.test(skip) ? Number(skip) : 0;
+    const posts = await Post.find(searshQuery, undefined, { skip: skipNum, limit: 5 }).sort({
+      date: -1,
+    });
 
     res.json(posts);
   } catch (err) {
@@ -171,9 +171,9 @@ router.put("/dislike/:id", auth, async (req, res) => {
     const post = await Post.findById(req.params.id);
 
     // check if already liked
-    if (post.dislikes.filter(dislike => dislike.user.toString() === req.user.id).length > 0) {
+    if (post.dislikes.filter((dislike) => dislike.user.toString() === req.user.id).length > 0) {
       // return res.status(400).json({ msg: "Уже поставили дизлайк" });
-      post.dislikes = post.dislikes.filter(dislike => dislike.user.toString() !== req.user.id);
+      post.dislikes = post.dislikes.filter((dislike) => dislike.user.toString() !== req.user.id);
     } else {
       post.dislikes.unshift({ user: req.user.id });
     }
@@ -192,14 +192,7 @@ router.put("/dislike/:id", auth, async (req, res) => {
 // access   Private
 router.post(
   "/comment/:id",
-  [
-    auth,
-    [
-      check("text", "Text is requierd")
-        .not()
-        .isEmpty()
-    ]
-  ],
+  [auth, [check("text", "Text is requierd").not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
 
@@ -213,7 +206,7 @@ router.post(
         text: req.body.text,
         name: user.name,
         avatar: user.avatar,
-        user: req.user.id
+        user: req.user.id,
       };
 
       post.comments.unshift(newComment);
@@ -252,7 +245,7 @@ router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
 
     // post.comments_id.splice(removeIndex, 1);
 
-    post.comments_id = post.comments_id.filter(comment => comment.id !== req.params.comment_id);
+    post.comments_id = post.comments_id.filter((comment) => comment.id !== req.params.comment_id);
 
     await post.save();
     await comment.remove();

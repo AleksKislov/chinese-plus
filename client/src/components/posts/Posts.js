@@ -7,12 +7,12 @@ import { setAlert } from "../../actions/alert";
 import Spinner from "../layout/Spinner";
 import { Helmet } from "react-helmet";
 import { commentLength, commentEmojis } from "../../constants/consts.json";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, morePosts }) => {
-  useEffect(() => {
-    if (posts.length === 0) loadPosts(0);
-  }, []);
+  // useEffect(() => {
+  //   // if (posts.length === 0) loadPosts(0);
+  // }, []);
 
   const [formData, setFormData] = useState({
     text: "",
@@ -25,6 +25,13 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
     bug: true,
     news: true,
   });
+
+  const [curTag, setCurTag] = useState("");
+
+  useEffect(() => {
+    loadPosts(posts.length, curTag);
+  }, [curTag]);
+
   let { title, text } = formData;
   const [postTag, setPostTag] = useState("wish");
   const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -91,6 +98,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
     const currentTag = e.target.id.split("-")[0];
     switch (currentTag) {
       case "wish":
+        setCurTag("wish");
         setHideFlag({
           wish: true,
           bug: false,
@@ -98,6 +106,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
         });
         break;
       case "news":
+        setCurTag("news");
         setHideFlag({
           wish: false,
           bug: false,
@@ -105,6 +114,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
         });
         break;
       case "bug":
+        setCurTag("bug");
         setHideFlag({
           wish: false,
           bug: true,
@@ -112,6 +122,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
         });
         break;
       default:
+        setCurTag("");
         setHideFlag({
           wish: true,
           bug: true,
@@ -289,7 +300,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
                   <button
                     type='button'
                     className='btn btn-info btn-sm mb-1'
-                    onClick={() => loadPosts(posts.length)}
+                    onClick={() => loadPosts(posts.length, curTag)}
                   >
                     Загрузить Ещё
                   </button>

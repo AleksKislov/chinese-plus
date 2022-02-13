@@ -4,53 +4,54 @@ const Schema = mongoose.Schema;
 const PostSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: "users"
+    ref: "users",
   },
   title: {
     type: String,
-    required: true
+    required: true,
   },
   text: {
     type: String,
-    required: true
+    required: true,
   },
   tag: {
-    type: String
+    type: String, // wish, bug or news
+    enum: ["wish", "bug", "news"],
   },
   name: {
-    type: String
+    type: String,
   },
   avatar: {
-    type: String
+    type: String,
   },
   likes: [
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "users"
-      }
-    }
+        ref: "users",
+      },
+    },
   ],
   dislikes: [
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "users"
-      }
-    }
+        ref: "users",
+      },
+    },
   ],
   comments_id: [
     {
       comment: {
         type: Schema.Types.ObjectId,
-        ref: "comments"
-      }
-    }
+        ref: "comments",
+      },
+    },
   ],
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 module.exports = Post = mongoose.model("post", PostSchema);
