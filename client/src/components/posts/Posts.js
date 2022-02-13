@@ -16,20 +16,20 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
 
   const [formData, setFormData] = useState({
     text: "",
-    title: ""
+    title: "",
   });
   const [emoji, setEmoji] = useState("");
 
   const [hideFlag, setHideFlag] = useState({
     wish: true,
     bug: true,
-    news: true
+    news: true,
   });
   let { title, text } = formData;
   const [postTag, setPostTag] = useState("wish");
-  const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const onClick = e => {
+  const onClick = (e) => {
     const badges = [...document.getElementsByClassName("badge")];
     setPostTag(e.currentTarget.id);
     for (let i = 0; i < badges.length; i++) {
@@ -42,7 +42,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
     e.currentTarget.classList.add("badge-warning");
   };
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault();
 
     if (isAuthenticated) {
@@ -73,17 +73,17 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
     textForm.value = "";
     setFormData({
       text: "",
-      title: ""
+      title: "",
     });
     document.getElementById("inputEmo").selectedIndex = 0;
     setEmoji("");
   };
 
-  const displayTags = e => {
+  const displayTags = (e) => {
     const tagButtonsDiv = document.getElementById("tagButtons");
     const buttons = [...tagButtonsDiv.getElementsByClassName("btn-outline-info")];
 
-    buttons.forEach(el => {
+    buttons.forEach((el) => {
       el.classList.remove("active");
     });
     e.target.classList.add("active");
@@ -94,34 +94,34 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
         setHideFlag({
           wish: true,
           bug: false,
-          news: false
+          news: false,
         });
         break;
       case "news":
         setHideFlag({
           wish: false,
           bug: false,
-          news: true
+          news: true,
         });
         break;
       case "bug":
         setHideFlag({
           wish: false,
           bug: true,
-          news: false
+          news: false,
         });
         break;
       default:
         setHideFlag({
           wish: true,
           bug: true,
-          news: true
+          news: true,
         });
         break;
     }
   };
 
-  const onSelect = e => {
+  const onSelect = (e) => {
     const selectedEmo = e.target.options[e.target.options.selectedIndex].innerHTML;
     setEmoji(selectedEmo);
   };
@@ -158,10 +158,12 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
             </a>
           </span>
         </div>
-        <div className='alert alert-success'>
-          У проекта свой <Link to='/kanban'>канбан</Link> с текущими задачами. Здесь вы можете
-          влиять на него, оставляя свои пожелания или сообщая о багах.
-        </div>
+        {
+          // <div className='alert alert-success'>
+          //   У проекта свой <Link to='/kanban'>канбан</Link> с текущими задачами. Здесь вы можете
+          //   влиять на него, оставляя свои пожелания или сообщая о багах.
+          // </div>
+        }
 
         <div className='card'>
           <div className='card-body'>
@@ -171,7 +173,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
               <span
                 className='badge badge-warning'
                 id='wish'
-                onClick={e => onClick(e)}
+                onClick={(e) => onClick(e)}
                 style={badgeStyle}
               >
                 пожеланием
@@ -179,7 +181,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
               <span
                 className='badge badge-primary mx-2'
                 id='bug'
-                onClick={e => onClick(e)}
+                onClick={(e) => onClick(e)}
                 style={badgeStyle}
               >
                 багом
@@ -188,7 +190,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
                 <span
                   className='badge badge-primary'
                   id='news'
-                  onClick={e => onClick(e)}
+                  onClick={(e) => onClick(e)}
                   style={badgeStyle}
                 >
                   новостями
@@ -196,10 +198,10 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
               )}
             </div>
 
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={(e) => onSubmit(e)}>
               <div className='form-row'>
                 <div className='form-group col-md-2'>
-                  <select id='inputEmo' className='custom-select' onChange={e => onSelect(e)}>
+                  <select id='inputEmo' className='custom-select' onChange={(e) => onSelect(e)}>
                     <option>..</option>
                     {commentEmojis.map((emo, ind) => (
                       <option key={ind}>{emo}</option>
@@ -213,7 +215,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
                     id='titleForm'
                     className='form-control'
                     placeholder='Тема сообщения'
-                    onChange={e => {
+                    onChange={(e) => {
                       checkAuthorized();
                       onChange(e);
                     }}
@@ -233,7 +235,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
                   className='form-control'
                   rows='3'
                   id='textForm'
-                  onChange={e => {
+                  onChange={(e) => {
                     checkAuthorized();
                     onChange(e);
                   }}
@@ -256,7 +258,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
         </div>
       </div>
       <div className='col-sm-6'>
-        <div className='my-3' id='tagButtons' onClick={e => displayTags(e)}>
+        <div className='my-3' id='tagButtons' onClick={(e) => displayTags(e)}>
           <strong>Фильтр:</strong>
           <button
             type='button'
@@ -280,7 +282,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
             <Spinner />
           ) : (
             <div className=''>
-              {posts.map(post => hideFlag[post.tag] && <Post key={post._id} post={post} />)}
+              {posts.map((post) => hideFlag[post.tag] && <Post key={post._id} post={post} />)}
 
               <div className='text-center'>
                 {morePosts ? (
@@ -308,15 +310,15 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
 Posts.propTypes = {};
 
 const badgeStyle = {
-  cursor: "pointer"
+  cursor: "pointer",
 };
 
-const mapPropsToState = state => ({
+const mapPropsToState = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
   posts: state.posts.posts,
   morePosts: state.posts.morePosts,
   loading: state.posts.loading,
-  user: state.auth.user
+  user: state.auth.user,
 });
 
 export default connect(mapPropsToState, { loadPosts, addPost })(Posts);
