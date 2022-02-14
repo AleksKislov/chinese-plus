@@ -18,16 +18,10 @@ router.post(
   [
     auth,
     [
-      check("origintext", "Нужен текст")
-        .not()
-        .isEmpty(),
-      check("title", "Нужен заголовок")
-        .not()
-        .isEmpty(),
-      check("level", "Нужно указать уровень")
-        .not()
-        .isEmpty()
-    ]
+      check("origintext", "Нужен текст").not().isEmpty(),
+      check("title", "Нужен заголовок").not().isEmpty(),
+      check("level", "Нужно указать уровень").not().isEmpty(),
+    ],
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -50,7 +44,7 @@ router.post(
       name,
       isApproved,
       categoryInd,
-      source
+      source,
     } = req.body;
 
     if (textId) {
@@ -74,7 +68,7 @@ router.post(
         const newText = await Text.findByIdAndUpdate(
           textId,
           {
-            $set: newFields
+            $set: newFields,
           },
           { new: true }
         );
@@ -101,7 +95,7 @@ router.post(
           isApproved,
           categoryInd,
           source,
-          user: req.user.id
+          user: req.user.id,
         });
 
         const text = await newText.save();
@@ -142,9 +136,7 @@ router.get("/", async (req, res) => {
  */
 router.get("/statistics", async (req, res) => {
   try {
-    const texts = await Text.find()
-      .sort({ date: -1 })
-      .select("user name length");
+    const texts = await Text.find().sort({ date: -1 }).select("user name length");
 
     let result = {};
 
@@ -157,7 +149,7 @@ router.get("/statistics", async (req, res) => {
           num: 1,
           name: texts[i].name,
           userid: texts[i].user,
-          length: texts[i].length
+          length: texts[i].length,
         };
       }
     }
@@ -180,7 +172,7 @@ router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
     const post = await Text.findById(req.params.id);
     const comment = await Comment.findById(req.params.comment_id);
 
-    post.comments_id = post.comments_id.filter(comment => comment.id !== req.params.comment_id);
+    post.comments_id = post.comments_id.filter((comment) => comment.id !== req.params.comment_id);
 
     await post.save();
     await comment.remove();
@@ -193,16 +185,19 @@ router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
 });
 
 /**
- * @route   GET api/texts/infinite?skip=...
- * @desc    Get texts using inifinite scroll
+ * @method  GET
+ * @route   api/texts/infinite?skip=...categoryInd=...
+ * @desc    Get texts using inifinite scroll and category index
  * @access  Public
  */
 router.get("/infinite", async (req, res) => {
   try {
-    const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
-    const texts = await Text.find({ $or: [{ name: "admin" }, { isApproved: 1 }] }, undefined, {
-      skip,
-      limit: 10
+    const { skip, categoryInd } = req.query;
+    const searchQuery = categoryInd ? { isApproved: 1, categoryInd } : { isApproved: 1 };
+    const skipNum = skip && /^\d+$/.test(skip) ? Number(skip) : 0;
+    const texts = await Text.find(searchQuery, undefined, {
+      skip: skipNum,
+      limit: 10,
     })
       .sort({ date: -1 })
       .select("-origintext -translation -chinese_arr");
@@ -222,7 +217,7 @@ router.get("/not_approved", async (req, res) => {
       undefined,
       {
         skip,
-        limit: 10
+        limit: 10,
       }
     )
       .sort({ date: -1 })
@@ -230,7 +225,7 @@ router.get("/not_approved", async (req, res) => {
 
     const longTexts = await LongText.find({ isApproved: { $ne: 1 } }, undefined, {
       skip,
-      limit: 10
+      limit: 10,
     }).sort({ date: -1 });
 
     const texts = [...shortTexts, ...longTexts].sort((a, b) => b.date - a.date);
@@ -250,7 +245,7 @@ router.get("/approved_num", async (req, res) => {
   try {
     const allTexts = await Text.find().select("isApproved belongsToLongText");
 
-    const approvedTexts = allTexts.filter(x => x.isApproved);
+    const approvedTexts = allTexts.filter((x) => x.isApproved);
 
     const total = allTexts.length;
     const approved = approvedTexts.length;
@@ -337,7 +332,7 @@ router.post("/mark_finished_texts/:id", auth, async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       user_id,
       {
-        $addToSet: { finished_texts: text_id }
+        $addToSet: { finished_texts: text_id },
       },
       { new: true }
     ).select("-password");
@@ -356,7 +351,7 @@ router.post("/unmark_finished_texts/:id", auth, async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       user_id,
       {
-        $pull: { finished_texts: text_id }
+        $pull: { finished_texts: text_id },
       },
       { new: true }
     ).select("-password");
@@ -378,9 +373,9 @@ router.put("/like/:id", auth, async (req, res) => {
     const post = await Text.findById(req.params.id);
 
     // check if already liked
-    if (post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
+    if (post.likes.filter((like) => like.user.toString() === req.user.id).length > 0) {
       // return res.status(400).json({ msg: "Уже поставили лайк" });
-      post.likes = post.likes.filter(like => like.user.toString() !== req.user.id);
+      post.likes = post.likes.filter((like) => like.user.toString() !== req.user.id);
     } else {
       post.likes.unshift({ user: req.user.id, name: userName.name });
     }
@@ -440,16 +435,10 @@ router.post(
   [
     auth,
     [
-      check("origintext", "Нужен текст")
-        .not()
-        .isEmpty(),
-      check("title", "Нужен заголовок")
-        .not()
-        .isEmpty(),
-      check("level", "Нужно указать уровень")
-        .not()
-        .isEmpty()
-    ]
+      check("origintext", "Нужен текст").not().isEmpty(),
+      check("title", "Нужен заголовок").not().isEmpty(),
+      check("level", "Нужно указать уровень").not().isEmpty(),
+    ],
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -472,7 +461,7 @@ router.post(
       name,
       isApproved,
       categoryInd,
-      source
+      source,
     } = req.body;
 
     if (textId) {
@@ -496,7 +485,7 @@ router.post(
         const newText = await Text.findByIdAndUpdate(
           textId,
           {
-            $set: newFields
+            $set: newFields,
           },
           { new: true }
         );
@@ -523,7 +512,7 @@ router.post(
           isApproved,
           categoryInd,
           source,
-          user: req.user.id
+          user: req.user.id,
         });
 
         const text = await newText.save();
@@ -548,16 +537,10 @@ router.post(
   [
     auth,
     [
-      check("origintext", "Нужен текст")
-        .not()
-        .isEmpty(),
-      check("title", "Нужен заголовок")
-        .not()
-        .isEmpty(),
-      check("level", "Нужно указать уровень")
-        .not()
-        .isEmpty()
-    ]
+      check("origintext", "Нужен текст").not().isEmpty(),
+      check("title", "Нужен заголовок").not().isEmpty(),
+      check("level", "Нужно указать уровень").not().isEmpty(),
+    ],
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -581,7 +564,7 @@ router.post(
       source,
       // textId,
       // isApproved,
-      chinese_arr
+      chinese_arr,
     } = req.body;
 
     try {
@@ -596,7 +579,7 @@ router.post(
         name,
         categoryInd,
         source,
-        user
+        user,
         // translation,
         // chinese_arr,
         // origintext,
@@ -622,7 +605,7 @@ router.post(
           user,
           translation: [translation[i]],
           chinese_arr,
-          origintext: [origintext[i]]
+          origintext: [origintext[i]],
           // isApproved,
         });
 
@@ -632,17 +615,17 @@ router.post(
       const pages = await Promise.all(promises);
 
       const newField = {
-        pages: pages.map(x => {
+        pages: pages.map((x) => {
           return {
-            page: x._id
+            page: x._id,
           };
-        })
+        }),
       };
 
       await LongText.findByIdAndUpdate(
         longText._id,
         {
-          $set: newField
+          $set: newField,
         },
         { new: true }
       );
