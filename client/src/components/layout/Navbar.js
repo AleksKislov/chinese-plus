@@ -7,6 +7,7 @@ import { loadLengths } from "../../actions/hskTable";
 import { loadUserWordsLen } from "../../actions/userWords";
 import { appVersion } from "../../constants/consts.json";
 import { getMentionsLen } from "../../actions/comments";
+import { users } from "../../constants/consts.json";
 
 const Navbar = ({
   logout,
@@ -173,7 +174,10 @@ const Navbar = ({
             activeStyle={activeNavLink}
             onClick={() => setPathsAndCollapse({ ...paths, private: "/hsk-words" })}
           >
-            Мой HSK <span className='badge badge-pill badge-warning'>{allWordsLen}</span>
+            Мой HSK{" "}
+            <span className='badge badge-pill badge-warning'>
+              {allWordsLen} / {users.vocabSize}
+            </span>
           </NavLink>
 
           <NavLink
@@ -182,7 +186,10 @@ const Navbar = ({
             activeStyle={activeNavLink}
             onClick={() => setPathsAndCollapse({ ...paths, private: "/userwords" })}
           >
-            Мои Слова <span className='badge badge-pill badge-warning'>{userWordsLen}</span>
+            Мои Слова{" "}
+            <span className='badge badge-pill badge-warning'>
+              {userWordsLen} / {users.vocabSize}
+            </span>
           </NavLink>
 
           {user && (
