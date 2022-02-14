@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { loadTexts, clearText } from "../../actions/texts";
+import { loadTexts, clearText, clearTexts } from "../../actions/texts";
 import Spinner from "../layout/Spinner";
 import TextCard from "./TextCard";
 import ReadingCard from "../dashboard/ReadingCard";
@@ -12,26 +12,33 @@ import ReadFilter from "./common/ReadFilter";
 import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
 import TextsInfoCard from "./common/TextsInfoCard";
 
-const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, user }) => {
-  useEffect(() => {
-    clearText();
-    if (texts.length === 0) loadTexts(0);
-  }, []);
+const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, clearTexts }) => {
+  // useEffect(() => {
+  //   clearText();
+  //   if (texts.length === 0) loadTexts(0);
+  // }, []);
 
   const [categoryFlag, setCategoryFlag] = useState(0);
   const [hideReadFlag, setHideReadFlag] = useState(0);
   const [hideLevelFlag, setHideLevelFlag] = useState(0);
-  const onLevelSelect = e =>
+
+  useEffect(() => {
+    loadTexts(texts.length, Number(categoryFlag) - 1);
+  }, [categoryFlag]);
+
+  const onLevelSelect = (e) =>
     setHideLevelFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
 
-  const onReadSelect = e =>
+  const onReadSelect = (e) =>
     setHideReadFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
 
-  const onCategorySelect = e => {
+  const onCategorySelect = (e) => {
+    clearTexts();
     setCategoryFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
   };
 
   const clearFilters = () => {
+    clearTexts();
     setCategoryFlag(0);
     setHideReadFlag(0);
     setHideLevelFlag(0);
@@ -67,7 +74,7 @@ const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, user }) => {
           <Spinner />
         ) : (
           <div className=''>
-            {texts.map(text => (
+            {texts.map((text) => (
               <TextCard
                 key={text._id}
                 text={text}
@@ -98,11 +105,11 @@ const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, user }) => {
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   texts: state.texts.texts,
   loading: state.texts.loading,
   moreTexts: state.texts.moreTexts,
-  user: state.auth.user
+  user: state.auth.user,
 });
 
-export default connect(mapStateToProps, { loadTexts, clearText })(Texts);
+export default connect(mapStateToProps, { loadTexts, clearText, clearTexts })(Texts);

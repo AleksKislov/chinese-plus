@@ -5,6 +5,7 @@ import {
   LOAD_TEXT_ERR,
   SET_LOADING,
   CLEAR_TEXT,
+  CLEAR_TEXTS,
   LOAD_NOT_APPROVED,
   LIKE_TEXT,
   LOAD_LONG_TEXT,
@@ -12,32 +13,16 @@ import {
 import axios from "axios";
 import { setAlert } from "./alert";
 
-// export const loadAllTexts = () => async dispatch => {
-//   try {
-//     const { data } = await axios.get("/api/texts");
-//     dispatch({
-//       type: LOAD_TEXTS,
-//       payload: data
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     dispatch({
-//       type: LOAD_TEXTS_ERR
-//     });
-//   }
-// };
-
 /**
- *
- * @param {number} len  - current length of posts array
+ * @param {number} skip  - current length of posts array
+ * @param {number|undefined} categoryInd - text theme / category
  */
 export const loadTexts =
-  (skip = 0, categoryInd = "") =>
+  (skip = 0, categoryInd) =>
   async (dispatch) => {
     try {
-      const { data } = await axios.get(
-        `/api/texts/infinite?skip=${skip}&categoryInd=${categoryInd}`
-      );
+      const category = categoryInd === -1 ? "" : categoryInd;
+      const { data } = await axios.get(`/api/texts/infinite?skip=${skip}&categoryInd=${category}`);
       dispatch({
         type: LOAD_TEXTS,
         payload: data,
@@ -101,6 +86,10 @@ export const setLoading = (_) => async (dispatch) => {
 
 export const clearText = (_) => async (dispatch) => {
   dispatch({ type: CLEAR_TEXT });
+};
+
+export const clearTexts = (_) => async (dispatch) => {
+  dispatch({ type: CLEAR_TEXTS });
 };
 
 export const likeText = (id) => async (dispatch) => {

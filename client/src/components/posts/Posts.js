@@ -19,10 +19,6 @@ const Posts = ({
   morePosts,
   clearPosts,
 }) => {
-  // useEffect(() => {
-  //   // if (posts.length === 0) loadPosts(0);
-  // }, []);
-
   const [formData, setFormData] = useState({
     text: "",
     title: "",

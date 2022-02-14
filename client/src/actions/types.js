@@ -70,6 +70,7 @@ export const LOAD_TEXTS_ERR = "LOAD_TEXTS_ERR";
 export const LOAD_TEXT = "LOAD_TEXT";
 export const LOAD_TEXT_ERR = "LOAD_TEXT_ERR";
 export const CLEAR_TEXT = "CLEAR_TEXT";
+export const CLEAR_TEXTS = "CLEAR_TEXTS";
 export const LOAD_NOT_APPROVED = "LOAD_NOT_APPROVED";
 export const LIKE_TEXT = "LIKE_TEXT";
 export const LOAD_LONG_TEXT = "LOAD_LONG_TEXT";

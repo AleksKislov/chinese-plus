@@ -5,11 +5,12 @@ import {
   LOAD_TEXT_ERR,
   SET_LOADING,
   CLEAR_TEXT,
+  CLEAR_TEXTS,
   LOAD_NOT_APPROVED,
   GET_COMMENTS,
   ADD_COMMENT,
   LIKE_TEXT,
-  LOAD_LONG_TEXT
+  LOAD_LONG_TEXT,
 } from "../actions/types";
 
 const initialState = {
@@ -20,10 +21,10 @@ const initialState = {
   text: null,
   longText: null,
   loading: true,
-  currentComments: []
+  currentComments: [],
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   const { type, payload } = action;
   switch (type) {
     case LOAD_TEXTS:
@@ -32,33 +33,39 @@ export default function(state = initialState, action) {
         text: null,
         loading: false,
         texts: [...state.texts, ...payload],
-        moreTexts: payload.length === 10 ? true : false
+        moreTexts: payload.length === 10 ? true : false,
       };
     case GET_COMMENTS:
       return {
         ...state,
         currentComments: payload,
-        loading: false
+        loading: false,
       };
     case ADD_COMMENT:
       return {
         ...state,
-        currentComments: payload
+        currentComments: payload,
       };
     case LIKE_TEXT:
       return {
         ...state,
-        texts: state.texts.map(text =>
+        texts: state.texts.map((text) =>
           text._id === payload.id ? { ...text, likes: payload.likes } : text
         ),
-        text: state.text ? { ...state.text, likes: payload.likes } : state.text
+        text: state.text ? { ...state.text, likes: payload.likes } : state.text,
       };
     case CLEAR_TEXT:
       return {
         ...state,
         text: null,
         longText: null,
-        currentComments: []
+        currentComments: [],
+      };
+    case CLEAR_TEXTS:
+      return {
+        ...state,
+        texts: [],
+        loading: true,
       };
     case LOAD_NOT_APPROVED:
       return {
@@ -66,37 +73,37 @@ export default function(state = initialState, action) {
         text: null,
         loading: false,
         not_approved: [...state.not_approved, ...payload],
-        moreNotApproved: payload.length >= 10 ? true : false
+        moreNotApproved: payload.length >= 10 ? true : false,
       };
     case SET_LOADING:
       return {
         ...state,
         text: null,
         currentComments: [],
-        loading: payload
+        loading: payload,
       };
     case LOAD_TEXTS_ERR:
     case LOAD_TEXT_ERR:
       return {
         ...state,
-        loading: false
+        loading: false,
       };
 
     case LOAD_TEXT:
       return {
         ...state,
         text: payload,
-        loading: false
+        loading: false,
       };
     case LOAD_LONG_TEXT:
       return {
         ...state,
         longText: payload,
-        loading: false
+        loading: false,
       };
     default:
       return {
-        ...state
+        ...state,
       };
   }
 }
