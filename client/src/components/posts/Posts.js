@@ -2,14 +2,23 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Post from "./Post";
 import store from "../../store";
-import { loadPosts, addPost } from "../../actions/posts";
+import { loadPosts, addPost, clearPosts } from "../../actions/posts";
 import { setAlert } from "../../actions/alert";
 import Spinner from "../layout/Spinner";
 import { Helmet } from "react-helmet";
 import { commentLength, commentEmojis } from "../../constants/consts.json";
 // import { Link } from "react-router-dom";
 
-const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, morePosts }) => {
+const Posts = ({
+  loadPosts,
+  posts,
+  loading,
+  isAuthenticated,
+  addPost,
+  user,
+  morePosts,
+  clearPosts,
+}) => {
   // useEffect(() => {
   //   // if (posts.length === 0) loadPosts(0);
   // }, []);
@@ -96,6 +105,7 @@ const Posts = ({ loadPosts, posts, loading, isAuthenticated, addPost, user, more
     e.target.classList.add("active");
 
     const currentTag = e.target.id.split("-")[0];
+    clearPosts();
     switch (currentTag) {
       case "wish":
         setCurTag("wish");
@@ -332,4 +342,4 @@ const mapPropsToState = (state) => ({
   user: state.auth.user,
 });
 
-export default connect(mapPropsToState, { loadPosts, addPost })(Posts);
+export default connect(mapPropsToState, { loadPosts, addPost, clearPosts })(Posts);
