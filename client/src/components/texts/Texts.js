@@ -13,11 +13,6 @@ import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
 import TextsInfoCard from "./common/TextsInfoCard";
 
 const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, clearTexts }) => {
-  // useEffect(() => {
-  //   clearText();
-  //   if (texts.length === 0) loadTexts(0);
-  // }, []);
-
   const [categoryFlag, setCategoryFlag] = useState(0);
   const [hideReadFlag, setHideReadFlag] = useState(0);
   const [hideLevelFlag, setHideLevelFlag] = useState(0);
@@ -88,7 +83,7 @@ const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, clearTexts }) 
                 <button
                   type='button'
                   className='btn btn-info btn-sm mb-1'
-                  onClick={() => loadTexts(texts.length)}
+                  onClick={() => loadTexts(texts.length, Number(categoryFlag) - 1)}
                 >
                   Загрузить Ещё
                 </button>
