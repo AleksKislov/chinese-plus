@@ -52,8 +52,8 @@ const NewHskTests = ({ match }) => {
   const MAX_OPTIONS = 5;
 
   const init = () => {
-    // View.displayCharQuestions(translationDiv);
-    // View.displayPinyinQuestions(pinyinDiv);
+    View.displayCharQuestions(translationDiv);
+    View.displayPinyinQuestions(pinyinDiv);
     View.displayAudioQuestions(audioDiv);
   };
 
@@ -76,7 +76,9 @@ const NewHskTests = ({ match }) => {
         }
 
         if (prop === questProps.chinese) setTranslationAnswers(answers);
-        if (prop === questProps.pinyin) setPinyinAnswers(answers);
+        if (prop === questProps.pinyin) {
+          setPinyinAnswers(answers);
+        }
 
         this.displayOptions(formControls, answers);
       };
@@ -181,55 +183,24 @@ const NewHskTests = ({ match }) => {
   }
 
   const Controller = {
-    checkTranslate(objArr) {
-      const inputGroupText = objArr.getElementsByClassName("input-group-text");
+    checkAnswers(objArr, isAudio) {
       const formControls = objArr.getElementsByClassName("form-control");
+      let inputGroupText;
+      if (isAudio) {
+        inputGroupText = objArr.getElementsByClassName("btn-secondary");
+      } else {
+        inputGroupText = objArr.getElementsByClassName("input-group-text");
+      }
 
       for (let i = 0; i < inputGroupText.length; i++) {
         const answer = formControls[i].options[formControls[i].selectedIndex].innerHTML;
 
-        if (formControls[i].selectedIndex === 0) continue;
-
-        if (answer === translationAnswers[i].translation) {
-          View.setColor.green(inputGroupText[i]);
-        } else {
-          View.setColor.red(inputGroupText[i]);
-        }
-      }
-    },
-
-    checkPinyin(objArr) {
-      const inputGroupText = objArr.getElementsByClassName("input-group-text");
-      const formControls = objArr.getElementsByClassName("form-control");
-
-      for (let i = 0; i < inputGroupText.length; i++) {
-        const answer = formControls[i].options[formControls[i].selectedIndex].innerHTML;
-
-        if (formControls[i].selectedIndex === 0) continue;
-
-        if (answer === pinyinAnswers[i].translation) {
-          View.setColor.green(inputGroupText[i]);
-        } else {
-          View.setColor.red(inputGroupText[i]);
-        }
-      }
-    },
-
-    checkAudio(objArr) {
-      const formControls = objArr.getElementsByClassName("form-control");
-      const audioButtons = objArr.getElementsByClassName("btn-secondary");
-
-      for (let i = 0; i < audioAnswers.length; i++) {
-        const correctInd = audioAnswers[i];
-        const answer = formControls[i].options[formControls[i].selectedIndex].innerHTML;
-
-        // console.log({ correctInd, answer, ctr: formControls[i] });
         if (formControls[i].selectedIndex === 0) continue;
 
         if (answer.includes("#caiduile#")) {
-          View.setColor.green(audioButtons[i]);
+          View.setColor.green(inputGroupText[i]);
         } else {
-          View.setColor.red(audioButtons[i]);
+          View.setColor.red(inputGroupText[i]);
         }
       }
     },
@@ -252,11 +223,11 @@ const NewHskTests = ({ match }) => {
   const checkButton = (num) => {
     switch (num) {
       case 1:
-        return Controller.checkTranslate(translationDiv);
+        return Controller.checkAnswers(translationDiv);
       case 2:
-        return Controller.checkPinyin(pinyinDiv);
+        return Controller.checkAnswers(pinyinDiv);
       case 3:
-        return Controller.checkAudio(audioDiv);
+        return Controller.checkAnswers(audioDiv, true);
     }
   };
 
@@ -274,7 +245,75 @@ const NewHskTests = ({ match }) => {
       <div className='col-sm-9'>
         <TypingGame words={lexicons} testStarted={() => {}} level={level} />
 
-        <p>пока только игра "Успей напечатать". Другие тесты добавим чуть позже</p>
+        <h3>Выберите подходящий вариант для...</h3>
+
+        <div id='translation' className='questions'>
+          <h5>... иероглифов</h5>
+
+          {[...new Array(5)].map((x, ind) => (
+            <div className='input-group' key={ind}>
+              <div className='input-group-text'>@</div>
+
+              <select className='form-control'>
+                <option>Выберите правильный вариант</option>
+              </select>
+            </div>
+          ))}
+
+          <button
+            type='button'
+            className='btn btn-primary btn-sm'
+            id='translationCheck'
+            onClick={() => checkButton(1)}
+            style={buttonStyle}
+          >
+            Проверить
+          </button>
+          <button
+            type='button'
+            className='btn btn-primary btn-sm'
+            id='translationButton'
+            onClick={() => refreshButton(1)}
+          >
+            <i className='fas fa-sync-alt'></i>
+          </button>
+        </div>
+        <hr />
+
+        <div id='pinyin' className='questions'>
+          <h5>... пиньиня</h5>
+
+          {[...new Array(5)].map((x, ind) => (
+            <div className='input-group' key={ind}>
+              <div className='input-group-text'>@</div>
+
+              <select className='form-control'>
+                <option>Выберите правильный вариант</option>
+              </select>
+            </div>
+          ))}
+
+          <button
+            type='button'
+            className='btn btn-primary btn-sm'
+            id='pinyinCheck'
+            onClick={() => checkButton(2)}
+            style={buttonStyle}
+          >
+            Проверить
+          </button>
+
+          <button
+            type='button'
+            className='btn btn-primary btn-sm'
+            id='pinyinButton'
+            onClick={() => refreshButton(2)}
+          >
+            <i className='fas fa-sync-alt'></i>
+          </button>
+        </div>
+
+        <hr />
 
         <div id='audio' className='questions'>
           <h5>... аудио</h5>
