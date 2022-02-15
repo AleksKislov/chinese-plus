@@ -1,18 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { addLike, addDislike } from "../../actions/posts";
+// import {  clearPosts } from "../../actions/posts";
 import { Helmet } from "react-helmet";
 import { dateToStr, addressToUser } from "../../actions/helpers";
 import Tippy from "@tippyjs/react";
 import { sanitizer } from "../../utils/sanitizer";
 
-const Post = ({ post, addLike, addDislike, comments, isPage }) => {
+const Post = ({ post, comments, isPage }) => {
   const { text, name, avatar, date, title, _id, tag, comments_id, likes, dislikes, user } = post;
   const tagTheme = {
     wish: "Пожелание",
     bug: "Баг",
-    news: "Новости"
+    news: "Новости",
   };
 
   const dateAndTime = dateToStr(date);
@@ -77,15 +77,15 @@ const Post = ({ post, addLike, addDislike, comments, isPage }) => {
 
 const imgStyle = {
   width: "40px",
-  borderRadius: "8px"
+  borderRadius: "8px",
 };
 
 const customStyle = {
-  display: "flex"
+  display: "flex",
 };
 
-const mapStateToProps = state => ({
-  comments: state.comments.currentComments
+const mapStateToProps = (state) => ({
+  comments: state.comments.currentComments,
 });
 
-export default connect(mapStateToProps, { addDislike, addLike })(Post);
+export default connect(mapStateToProps, {})(Post);
