@@ -15,7 +15,7 @@ const TextSchema = new Schema({
   name: { type: String }, // user name
   pic_url: { type: String },
   theme_word: { type: String },
-  isApproved: { type: Number }, // by admin or moderator, 1 is true, 0 is false
+  isApproved: { type: Number }, // by admin or moderator, 1 or 0
   hits: { type: Number, default: 1 }, // number of visits
   source: { type: String },
   categoryInd: { type: Number, default: 0 }, // index for textCategories array (on frontend) below
@@ -23,20 +23,26 @@ const TextSchema = new Schema({
     {
       comment: {
         type: Schema.Types.ObjectId,
-        ref: "comments"
-      }
-    }
+        ref: "comments",
+      },
+    },
   ],
   likes: [
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
       },
-      name: { type: String }
-    }
+      name: { type: String },
+    },
   ],
-  date: { type: Date, default: Date.now }
+  pages: [
+    {
+      chinese_arr: [{ type: String }],
+      translation: [{ type: String }],
+    },
+  ],
+  date: { type: Date, default: Date.now },
 });
 
 module.exports = Text = mongoose.model("text", TextSchema);

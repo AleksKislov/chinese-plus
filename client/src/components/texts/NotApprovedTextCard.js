@@ -21,10 +21,10 @@ const NotApprovedTextCard = ({ text, user, hide, category }) => {
     theme_word,
     hits,
     categoryInd,
-    pages
+    pages,
   } = text;
 
-  const [textLink, setTextLink] = useState(!pages ? _id : `${pages[0].page}/${_id}`);
+  const [textLink, setTextLink] = useState(_id);
 
   const dateAndTime = dateToStr(date);
   return (
@@ -98,11 +98,11 @@ const imgText = {
   // left: "25%",
   // transform: "translate(-50%, -50%)"
   marginTop: "-3.5rem",
-  marginLeft: "1rem"
+  marginLeft: "1rem",
 };
 
-const mapStateToProps = state => ({
-  user: state.auth.user
+const mapStateToProps = (state) => ({
+  user: state.auth.user,
 });
 
 export default connect(mapStateToProps, {})(NotApprovedTextCard);

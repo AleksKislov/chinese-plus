@@ -19,7 +19,8 @@ const Paragraph = ({
   readToday,
   unreadToday,
   toEdit,
-  fontsize
+  fontsize,
+  toPostLongText,
 }) => {
   const numOfChars = countZnChars(originTxt);
   const [alreadyRead, setAlreadyRead] = useState(false);
@@ -67,7 +68,7 @@ const Paragraph = ({
       x: rect.left - newRect.left,
       y: rect.top - newRect.top,
       ease: Back.easeOut,
-      onComplete: fadeIt
+      onComplete: fadeIt,
     });
 
     function fadeIt() {
@@ -87,7 +88,7 @@ const Paragraph = ({
       width: "0.9rem",
       height: "0.9rem",
       color: "#18BC9C",
-      opacity: "0.5"
+      opacity: "0.5",
     });
     const newRect = box.getBoundingClientRect();
 
@@ -95,7 +96,7 @@ const Paragraph = ({
       x: rect.left - newRect.left,
       y: rect.top - newRect.top,
       ease: Back.easeOut,
-      onComplete: fadeOthers
+      onComplete: fadeOthers,
     });
 
     function fadeOthers() {
@@ -133,9 +134,11 @@ const Paragraph = ({
           style={{ height: "100%" }}
         >
           <p className='card-text textPadding'>
-            {chunk.map(word => (
-              <TippyTooltip word={word} key={uuid()} />
-            ))}
+            {toPostLongText ? (
+              <span>{chunk}</span>
+            ) : (
+              chunk.map((word) => <TippyTooltip word={word} key={uuid()} />)
+            )}
           </p>
           {paragraphNum}
           {paragraphPlus}
@@ -152,12 +155,12 @@ const Paragraph = ({
 };
 
 const hidden = {
-  display: "none"
+  display: "none",
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   user: state.auth.user,
-  fontsize: state.profile.fontsize
+  fontsize: state.profile.fontsize,
 });
 
 export default connect(mapStateToProps, { readToday, unreadToday })(Paragraph);

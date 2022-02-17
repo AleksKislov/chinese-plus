@@ -45,7 +45,11 @@ router.post(
       isApproved,
       categoryInd,
       source,
+      isLongText,
     } = req.body;
+
+    if (isLongText) {
+    }
 
     if (textId) {
       // Build new text object TO CHANGE previous data
@@ -425,108 +429,6 @@ router.put("/like/:id", auth, async (req, res) => {
 //   }
 // });
 
-/**
- * @route     POST api/texts
- * @desc      Create a text
- * @access    Private
- */
-router.post(
-  "/",
-  [
-    auth,
-    [
-      check("origintext", "Нужен текст").not().isEmpty(),
-      check("title", "Нужен заголовок").not().isEmpty(),
-      check("level", "Нужно указать уровень").not().isEmpty(),
-    ],
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    // console.log(errors);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-    // console.log(req.body);
-
-    const {
-      origintext,
-      title,
-      description,
-      level,
-      tags,
-      translation,
-      length,
-      pic_url,
-      chinese_arr,
-      theme_word,
-      textId,
-      name,
-      isApproved,
-      categoryInd,
-      source,
-    } = req.body;
-
-    if (textId) {
-      // Build new text object TO CHANGE previous data
-      const newFields = {};
-      if (origintext) newFields.origintext = origintext;
-      if (title) newFields.title = title;
-      if (description) newFields.description = description;
-      if (level) newFields.level = level;
-      if (tags) newFields.tags = tags;
-      if (translation) newFields.translation = translation;
-      if (length) newFields.length = length;
-      if (chinese_arr) newFields.chinese_arr = chinese_arr;
-      if (pic_url) newFields.pic_url = pic_url;
-      if (theme_word) newFields.theme_word = theme_word;
-      if (isApproved) newFields.isApproved = isApproved;
-      if (categoryInd) newFields.categoryInd = categoryInd;
-      if (source) newFields.source = source;
-
-      try {
-        const newText = await Text.findByIdAndUpdate(
-          textId,
-          {
-            $set: newFields,
-          },
-          { new: true }
-        );
-
-        return res.json(newText);
-      } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server error");
-      }
-    } else {
-      try {
-        const newText = new Text({
-          theme_word,
-          pic_url,
-          origintext,
-          title,
-          description,
-          level,
-          length,
-          tags,
-          translation,
-          chinese_arr,
-          name,
-          isApproved,
-          categoryInd,
-          source,
-          user: req.user.id,
-        });
-
-        const text = await newText.save();
-
-        notifyMe(`New TEXT from ${name}. Title: ${title}`);
-
-        res.json(text);
-      } catch (err) {
-        console.error(err);
-        res.status(500).send("Server error");
-      }
-    }
-  }
-);
 /**
  * @route     POST api/texts/post_longtext
  * @desc      Create a long text

@@ -18,7 +18,7 @@ import {
   countZnChars,
 } from "../../actions/helpers";
 import Paragraph from "./Paragraph";
-import { v4 as uuid } from "uuid";
+import { parse, v4 as uuid } from "uuid";
 import "./style.css";
 import { bgTextLen, smTextLen, textCategories } from "../../constants/consts.json";
 import { defaultTextPic } from "../../constants/urls.json";
@@ -81,6 +81,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     }, 0);
   }, [textToEdit]);
 
+  const [isLongText, setIsLongText] = useState(true);
   const [maxTextLen, setMaxTextLen] = useState(smTextLen);
   const [photosResult, setPhotosResult] = useState(true);
   const [isEnglish, setIsEnglish] = useState(false);
@@ -97,7 +98,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     title: "", // rewriten usestate
     level: 1, // rewriten usestate
     chunkedOriginText: [],
-    tags: [], // rewriten usestate
+    tags: "",
     length: 0,
     allwords: [],
     textId: "",
@@ -108,6 +109,13 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     categoryInd: 0,
   });
 
+  useEffect(() => {
+    if (textLen > 10) {
+      console.log("here");
+      setIsLongText(true);
+    }
+  }, [textLen]);
+
   const preprocessForm = async (e) => {
     e.preventDefault();
     const okToProcess = formData.pic_url || isToEdit;
@@ -115,23 +123,31 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
 
     const textArea = document.getElementById("textArea");
 
-    if (textLen > maxTextLen) {
-      return store.dispatch(
-        setAlert(`Максимум ${maxTextLen} знаков в китайском тексте, удалите лишние`, "danger")
-      );
-    }
+    // if (textLen > maxTextLen) {
+    //   return store.dispatch(
+    //     setAlert(`Максимум ${maxTextLen} знаков в китайском тексте, удалите лишние`, "danger")
+    //   );
+    // }
 
     const translationArea = document.getElementById("translationArea");
     const originText = textArea.value.trim().replace(/\n\s*\n/g, "\n");
-
-    let allwords = await segmenter(originText);
-    allwords = allwords.filter((word) => word !== " ");
-    const wordsFromDB = await getWords(allwords);
 
     let chunkedOriginText = originText.split("\n"); // array of strings
     chunkedOriginText = chunkedOriginText.filter((chunk) => chunk);
     chunkedOriginText = chunkedOriginText.map((chunk) => chunk.trim());
     textArea.value = chunkedOriginText.join("\n\n");
+
+    let allwords, chineseChunkedWords;
+    if (!isLongText) {
+      allwords = await segmenter(originText);
+      allwords = allwords.filter((word) => word !== " ");
+      const wordsFromDB = await getWords(allwords);
+      const newArr = itirateWordsFromDB(allwords, wordsFromDB);
+      chineseChunkedWords = chunkArrayFunc(newArr).filter((chunk) => chunk.length);
+    } else {
+      chineseChunkedWords = chunkedOriginText;
+    }
+
     let chunkedTranslation;
     if (!isTranslated) {
       const { translation } = await getTranslation(chunkedOriginText);
@@ -144,10 +160,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       chunkedTranslation = chunkedTranslation.filter((chunk) => chunk.length);
     }
 
-    const newArr = itirateWordsFromDB(allwords, wordsFromDB);
     const length = countZnChars(originText);
-
-    const chineseChunkedWords = chunkArrayFunc(newArr).filter((chunk) => chunk.length); // arrasy of object arrays
 
     setFormData({
       ...formData,
@@ -169,8 +182,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
   const parseTags = (text) => {
     let tags = text.replaceAll("，", ",");
     tags = tags.replaceAll("、", ",");
-    tags = tags.split(",").map((tag) => tag.trim().toLowerCase()); // array of words
-    setFormData({ ...formData, tags });
+    return tags.split(",").map((tag) => tag.trim().toLowerCase()); // array of words
   };
 
   const choosePicUrl = (e) => {
@@ -215,7 +227,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       title,
       description,
       level,
-      tags,
+      tags: parseTags(tags),
       translation: chunkedTranslation,
       chinese_arr: allwords,
       length,
@@ -225,6 +237,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       categoryInd,
       source,
       name: user.name,
+      isLongText,
     });
 
     try {
@@ -268,7 +281,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       title,
       description,
       level,
-      tags,
+      tags: parseTags(tags),
       translation: chunkedTranslation,
       chinese_arr: allwords,
       length,
@@ -513,7 +526,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                     <label htmlFor='tags'>Тэги через запятую</label>
                     <input
                       onBlur={noticeMe}
-                      onChange={(e) => parseTags(e.target.value)}
+                      onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
                       type='text'
                       className={`form-control`}
                       id='tags'
@@ -706,6 +719,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                   key={uuid()}
                   translation={formData.chunkedTranslation[ind]}
                   toEdit={true}
+                  toPostLongText={isLongText}
                 />
               ))}
           </div>

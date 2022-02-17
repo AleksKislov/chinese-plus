@@ -36,12 +36,12 @@ const TextPage = ({
   currentUser,
   getComments,
   comments,
-  longText
+  longText,
 }) => {
   useEffect(() => {
     setLoading();
     loadText(match.params.id);
-    if (match.params.longtextid) loadLongText(match.params.longtextid);
+    // if (match.params.longtextid) loadLongText(match.params.longtextid);
     getComments("text", match.params.id);
   }, [setLoading, getComments]);
 
@@ -180,7 +180,7 @@ const TextPage = ({
             <div className='my-2'>
               <h4>Комментарии:</h4>
               {comments.length > 0 &&
-                comments.map(comment => <Comment key={comment._id} comment={comment} />)}
+                comments.map((comment) => <Comment key={comment._id} comment={comment} />)}
               <LeaveComment _id={text._id} where={"text"} />
             </div>
           </div>
@@ -190,13 +190,13 @@ const TextPage = ({
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   text: state.texts.text,
   loading: state.texts.loading,
   isAuthenticated: state.auth.isAuthenticated,
   currentUser: state.auth.user,
   comments: state.comments.currentComments,
-  longText: state.texts.longText
+  longText: state.texts.longText,
 });
 
 export default connect(mapStateToProps, {
@@ -204,5 +204,5 @@ export default connect(mapStateToProps, {
   loadUserWords,
   setLoading,
   getComments,
-  loadLongText
+  loadLongText,
 })(TextPage);
