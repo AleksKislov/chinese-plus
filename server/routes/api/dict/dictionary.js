@@ -1,5 +1,3 @@
-// const {redis} = require('../services/redisClient')
-// const definitionLookup = word => redis.exists(word);
 const { LongestMatchSegmenter } = require("./segmenter.js");
 let HANZI_DICT = {};
 const checkIfWordExists = (word) => HANZI_DICT[word];

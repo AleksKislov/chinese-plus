@@ -20,11 +20,9 @@ const Comment = require("../../src/models/Comment");
 router.post(
   "/",
   [
-    check("name", "Name is required")
-      .not()
-      .isEmpty(),
+    check("name", "Name is required").not().isEmpty(),
     check("email", "Please include a valid email").isEmail(),
-    check("password", "Please enter a password with 6 or more characters").isLength({ min: 6 })
+    check("password", "Please enter a password with 6 or more characters").isLength({ min: 6 }),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -45,29 +43,24 @@ router.post(
       const avatar = gravatar.url(email, {
         s: "200",
         r: "pg",
-        d: "mm"
+        d: "mm",
       });
 
       user = new User({
         name,
         email,
         avatar,
-        password
+        password,
       });
 
       // Encrypt password
       const salt = await bcrypt.genSalt(10);
 
       user.password = await bcrypt.hash(password, salt);
-
       await user.save();
 
       // return jwt
-      const payload = {
-        user: {
-          id: user.id
-        }
-      };
+      const payload = { user: { id: user.id } };
 
       jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
         if (err) throw err;
@@ -121,7 +114,7 @@ router.post("/read_today", auth, async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       user_id,
       {
-        $set: { read_today_num: user.read_today_num + num, read_today_arr: newObj }
+        $set: { read_today_num: user.read_today_num + num, read_today_arr: newObj },
       },
       { new: true }
     ).select("-password");
@@ -129,7 +122,7 @@ router.post("/read_today", auth, async (req, res) => {
     updateOrCreate({
       user_id,
       have_read: updatedUser.read_today_num,
-      daily_goal: updatedUser.daily_reading_goal
+      daily_goal: updatedUser.daily_reading_goal,
     });
 
     res.json(updatedUser);
@@ -164,7 +157,7 @@ router.post("/unread_today", auth, async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       user_id,
       {
-        $set: { read_today_num: user.read_today_num - num, read_today_arr: newObj }
+        $set: { read_today_num: user.read_today_num - num, read_today_arr: newObj },
       },
       { new: true }
     ).select("-password");
@@ -172,7 +165,7 @@ router.post("/unread_today", auth, async (req, res) => {
     updateOrCreate({
       user_id,
       have_read: updatedUser.read_today_num,
-      daily_goal: updatedUser.daily_reading_goal
+      daily_goal: updatedUser.daily_reading_goal,
     });
 
     res.json(updatedUser);
@@ -195,7 +188,7 @@ router.post("/daily_reading_goal/:num", auth, async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       user_id,
       {
-        $set: { daily_reading_goal }
+        $set: { daily_reading_goal },
       },
       { new: true }
     ).select("-password");
@@ -203,7 +196,7 @@ router.post("/daily_reading_goal/:num", auth, async (req, res) => {
     updateOrCreate({
       user_id,
       have_read: updatedUser.read_today_num,
-      daily_goal: daily_reading_goal
+      daily_goal: daily_reading_goal,
     });
 
     res.json(updatedUser);
@@ -235,7 +228,7 @@ router.post("/reset_reading", async (req, res) => {
     await User.updateMany(
       {},
       {
-        $set: { read_today_num: 0, read_today_arr: {} }
+        $set: { read_today_num: 0, read_today_arr: {} },
       }
     );
     res.json({ ok: "200 OK" });
