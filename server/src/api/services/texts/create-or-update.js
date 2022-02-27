@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const { notifyMe } = require("../_misc");
+const Hanzi = require("../../../../routes/api/dict/dictionary");
 
 const Text = require("../../../models/Text");
 
@@ -7,17 +8,9 @@ const createOrUpdate = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  // if (isLongText) {
-  // }
-
-  if (req.body.textId) {
-    await update(req, res);
-  } else {
-    await create(req, res);
-  }
+  if (req.body.textId) return await update(req, res);
+  return await create(req, res);
 };
-
-module.exports = { createOrUpdate };
 
 async function create(req, res) {
   const {
@@ -38,6 +31,11 @@ async function create(req, res) {
     isLongText,
   } = req.body;
 
+  let pages;
+  if (isLongText) {
+    pages = getPagesForLngTxt(origintext, translation);
+  }
+
   const newText = new Text({
     theme_word,
     pic_url,
@@ -47,20 +45,19 @@ async function create(req, res) {
     level,
     length,
     tags,
-    translation,
+    translation: isLongText ? "" : translation,
     chinese_arr,
     name,
     isApproved,
     categoryInd,
     source,
+    pages,
     user: req.user.id,
   });
 
   const text = await newText.save();
-
   notifyMe(`New TEXT from ${name}. Title: ${title}`);
-
-  res.json(text);
+  return res.json(text);
 }
 
 async function update(req, res) {
@@ -97,13 +94,84 @@ async function update(req, res) {
   if (categoryInd) newFields.categoryInd = categoryInd;
   if (source) newFields.source = source;
 
-  const newText = await Text.findByIdAndUpdate(
-    textId,
-    {
-      $set: newFields,
-    },
-    { new: true }
-  );
+  const newText = await Text.findByIdAndUpdate(textId, { $set: newFields }, { new: true });
 
   return res.json(newText);
+}
+
+/**
+ * @param {Array<string>} origintext
+ * @param {Array<string>} translation
+ * @return {Array<Page>}
+ */
+function getPagesForLngTxt(origintext, translation) {
+  let pageText = "";
+  let pageTranslation = [];
+  let pages = [];
+
+  for (let i = 0; i < origintext.length; i++) {
+    if (pageText.length < 1200) {
+      pageText += origintext[i] + "\n";
+      pageTranslation.push(translation[i]);
+    } else {
+      pages.push(new Page(Hanzi.segment(pageText.trim()), pageTranslation));
+      pageText = "";
+      pageTranslation = [];
+    }
+  }
+  pages.push(new Page(Hanzi.segment(pageText.trim()), pageTranslation));
+  return pages;
+  // return pageTexts.map((parag, ind) => {
+  //   return new Page(Hanzi.segment(parag), translation[ind]);
+  // });
+}
+
+/**
+ * @param {Array<string>} origintext
+ * @returns {Array<string>}
+ */
+function getPageTexts(origintext) {}
+
+module.exports = { createOrUpdate };
+
+/**
+ * 0] POST /api/texts 200 29.587 ms - 626 {
+[0]   "origintext": [
+[0]     "汉语很好",
+[0]     "这里好"
+[0]   ],
+[0]   "title": "ffsf",
+[0]   "description": "",
+[0]   "level": 1,
+[0]   "tags": [
+[0]     ""
+[0]   ],
+[0]   "translation": [
+[0]     "sfdsf",
+[0]     "sdfsd"
+[0]   ],
+[0]   "chinese_arr": [
+[0]     "汉",
+[0]     "语",
+[0]     "很",
+[0]     "好",
+[0]     "\n",
+[0]     "这",
+[0]     "里",
+[0]     "好"
+[0]   ],
+[0]   "length": 8,
+[0]   "pic_url": "https://images.unsplash.com/photo-1523730205978-59fd1b2965e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxNjE4ODV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MjAzOTY4NjU&ixlib=rb-1.2.1&q=80&w=400",
+[0]   "theme_word": "",
+[0]   "categoryInd": 0,
+[0]   "source": "",
+[0]   "name": "Aleksandr Kislov"
+[0] } - 469
+ */
+
+class Page {
+  constructor(cnArr, ruTxt) {
+    this.chinese_arr = cnArr;
+    this.translation = ruTxt;
+  }
 }

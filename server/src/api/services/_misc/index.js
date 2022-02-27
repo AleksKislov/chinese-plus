@@ -1,3 +1,3 @@
-const { notifyMe } = require("../../../../routes/api/services");
+const { notifyMe } = require("./notify-me");
 
 module.exports = { notifyMe };

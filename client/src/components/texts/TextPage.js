@@ -1,6 +1,6 @@
 import React, { useEffect, Fragment, useState } from "react";
 import { connect } from "react-redux";
-import { loadText, setLoading, loadLongText } from "../../actions/texts";
+import { loadText, setLoading } from "../../actions/texts";
 import { getComments } from "../../actions/comments";
 import { parseChineseWords } from "../../actions/helpers";
 import Spinner from "../layout/Spinner";
@@ -20,14 +20,12 @@ import ReadSwitch from "./ReadSwitch";
 import ConfirmModal from "../comments/ConfirmModal";
 import LikeTextBtn from "./LikeTextBtn";
 import TextSource from "./common/TextSource";
-import Pages from "./longText/Pages";
-
-// (currentUser._id === text.user || currentUser.role === "admin") && (
+import Pagination from "./Pagination";
 
 const TextPage = ({
   text,
   loadText,
-  loadLongText,
+  // loadLongText,
   match,
   loading,
   setLoading,
@@ -36,7 +34,6 @@ const TextPage = ({
   currentUser,
   getComments,
   comments,
-  longText,
 }) => {
   useEffect(() => {
     setLoading();
@@ -47,10 +44,21 @@ const TextPage = ({
 
   useEffect(() => {
     if (text) {
+      let txt = text;
+      let givenPage = 0;
+      const pagesNum = text.pages.length;
+      if (match.params.page) givenPage = +match.params.page;
+
+      if (pagesNum) {
+        txt = text.pages[givenPage];
+        setCurPage(givenPage);
+        setPagesNum(pagesNum);
+      }
+
       setTimeout(async () => {
-        const chineseChunkedWords = await parseChineseWords(text);
+        const chineseChunkedWords = await parseChineseWords(txt);
         setChineseChunkedArr(chineseChunkedWords);
-      }, 0);
+      });
     }
   }, [text]);
 
@@ -73,6 +81,8 @@ const TextPage = ({
     }
   }, [text, isAuthenticated]);
 
+  const [curPage, setCurPage] = useState(0);
+  const [pagesNum, setPagesNum] = useState(0);
   const [chineseChunkedArr, setChineseChunkedArr] = useState([]);
   const [hideFlag, setHideFlag] = useState(false);
   const [isOkToEdit, setIsOkToEdit] = useState(false);
@@ -131,9 +141,7 @@ const TextPage = ({
                   <span className='text-muted'>Описание: </span>
                   {text.description}
                 </h6>
-                {
-                  // (currentUser._id === text.user || currentUser.role === "admin") && (
-                }
+
                 {isAuthenticated && isOkToEdit && (
                   <Link to='/create-text?edit'>
                     <button className='btn btn-sm btn-outline-warning'>Edit</button>
@@ -154,16 +162,21 @@ const TextPage = ({
               </small>
             </h2>
 
-            {longText && (
-              <Pages pages={longText.pages} longTextId={longText._id} currentPageId={text._id} />
-            )}
+            <Pagination
+              pagesNum={pagesNum}
+              curPage={curPage}
+              setCurPage={setCurPage}
+              textId={text._id}
+            />
 
             <Link to='/texts'>
               <div className='btn btn-sm btn-outline-info'>Назад</div>
             </Link>
+
             <div className='btn btn-sm btn-outline-info float-right' onClick={onClick}>
               {hideFlag ? "Показать Перевод" : "Скрыть Перевод"}
             </div>
+
             <div className='row'>
               {chineseChunkedArr.map((chunk, ind) => (
                 <Paragraph
@@ -171,7 +184,11 @@ const TextPage = ({
                   originTxt={text.origintext[ind]}
                   index={ind}
                   key={uuid()}
-                  translation={text.translation[ind]}
+                  translation={
+                    !text.pages.length
+                      ? text.translation[ind]
+                      : text.pages[curPage].translation[ind]
+                  }
                   hideFlag={hideFlag}
                 />
               ))}
@@ -196,7 +213,7 @@ const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
   currentUser: state.auth.user,
   comments: state.comments.currentComments,
-  longText: state.texts.longText,
+  // longText: state.texts.longText,
 });
 
 export default connect(mapStateToProps, {
@@ -204,5 +221,4 @@ export default connect(mapStateToProps, {
   loadUserWords,
   setLoading,
   getComments,
-  loadLongText,
 })(TextPage);

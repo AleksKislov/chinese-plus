@@ -81,7 +81,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     }, 0);
   }, [textToEdit]);
 
-  const [isLongText, setIsLongText] = useState(true);
+  const [isLongText, setIsLongText] = useState(false);
   const [maxTextLen, setMaxTextLen] = useState(smTextLen);
   const [photosResult, setPhotosResult] = useState(true);
   const [isEnglish, setIsEnglish] = useState(false);
@@ -110,9 +110,15 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
   });
 
   useEffect(() => {
-    if (textLen > 10) {
+    if (textLen > maxTextLen) {
       console.log("here");
       setIsLongText(true);
+      store.dispatch(
+        setAlert(
+          `У вас большой текст (превышает ${maxTextLen}字). Автоперевод недоступен`,
+          "danger"
+        )
+      );
     }
   }, [textLen]);
 
@@ -124,8 +130,8 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     const textArea = document.getElementById("textArea");
 
     // if (textLen > maxTextLen) {
-    //   return store.dispatch(
-    //     setAlert(`Максимум ${maxTextLen} знаков в китайском тексте, удалите лишние`, "danger")
+    //   store.dispatch(
+    //     setAlert(`У вас большой текст (превышает ${maxTextLen}字) `, "danger")
     //   );
     // }
 
@@ -147,6 +153,8 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     } else {
       chineseChunkedWords = chunkedOriginText;
     }
+
+    // console.log({ chineseChunkedWords, allwords, isLongText });
 
     let chunkedTranslation;
     if (!isTranslated) {

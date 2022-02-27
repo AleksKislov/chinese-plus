@@ -106,7 +106,7 @@ const Routes = () => {
           <Route exact path='/not_approved_texts' component={NotAppovedTexts} />
           <Route exact path='/statistics' component={ActiveUserTable} />
           <Route exact path='/books' component={Books} />
-          <Route exact path='/texts/:id/:longtextid' component={TextPage} />
+          <Route exact path='/texts/:id/:page' component={TextPage} />
           <Route exact path='/texts/:id' component={TextPage} />
           <Route exact path='/books/:id' component={BookCardPage} />
           <Route exact path='/user/:id' component={UserProfile} />
