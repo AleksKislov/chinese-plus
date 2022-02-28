@@ -1326,8 +1326,8 @@
     "zha1",
     "yi2"
   ],
-  "bgTextLen": 2000,
-  "smTextLen": 1000,
+  "bgTextLen": 16000,
+  "smTextLen": 1200,
   "symbolsToIgnore": [
     " ",
     "．",

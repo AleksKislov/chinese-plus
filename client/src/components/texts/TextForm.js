@@ -18,7 +18,7 @@ import {
   countZnChars,
 } from "../../actions/helpers";
 import Paragraph from "./Paragraph";
-import { parse, v4 as uuid } from "uuid";
+import { v4 as uuid } from "uuid";
 import "./style.css";
 import { bgTextLen, smTextLen, textCategories } from "../../constants/consts.json";
 import { defaultTextPic } from "../../constants/urls.json";
@@ -33,13 +33,13 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     setUser(curUser);
     loadUserWords();
 
-    if (curUser.isAdmin || curUser.isModerator) setMaxTextLen(bgTextLen);
+    // if (curUser.isAdmin || curUser.isModerator) setMaxTextLen(bgTextLen);
     if (!textToEdit) setTimeout(noticeMe, 1000);
   }, [userToCheck]);
 
   useEffect(() => {
     setTimeout(() => {
-      if (textToEdit && location.search === "?edit") {
+      if (textToEdit && location.search.includes("?edit")) {
         setIsToEdit(true);
 
         const {
@@ -55,13 +55,26 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
           categoryInd,
           source,
           pic_url,
+          pages,
         } = textToEdit;
 
-        document.getElementById("textArea").value = origintext.join("\n");
-        document.getElementById("translationArea").value = translation.join("\n");
-        // if (source) document.getElementById("source").value = source;
-        // if (document.getElementById("isApproved"))
-        //   document.getElementById("isApproved").value = isApproved ? "1" : "0";
+        let pageNum;
+        let isLong = false;
+        if (pages && pages.length > 1 && location.search.includes("page=")) {
+          isLong = true;
+          pageNum = +location.search.slice(-1);
+          setPageToEdit(pageNum);
+          setIsLongText(true);
+        }
+
+        let origTxt = origintext;
+        let transTxt = translation;
+        if (isLong) {
+          origTxt = pages[pageNum].origintext;
+          transTxt = pages[pageNum].translation;
+        }
+        document.getElementById("textArea").value = origTxt.join("\n");
+        document.getElementById("translationArea").value = transTxt.join("\n");
         setIsTranslated(true);
 
         setFormData({
@@ -78,11 +91,12 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
           textId: _id,
         });
       }
-    }, 0);
+    });
   }, [textToEdit]);
 
+  const [pageToEdit, setPageToEdit] = useState(null);
   const [isLongText, setIsLongText] = useState(false);
-  const [maxTextLen, setMaxTextLen] = useState(smTextLen);
+  // const [maxTextLen, setMaxTextLen] = useState(smTextLen);
   const [photosResult, setPhotosResult] = useState(true);
   const [isEnglish, setIsEnglish] = useState(false);
   const [isRedirected, setIsRedirected] = useState(false);
@@ -110,14 +124,11 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
   });
 
   useEffect(() => {
-    if (textLen > maxTextLen) {
-      console.log("here");
+    if (textLen > smTextLen) {
+      // console.log("here");
       setIsLongText(true);
       store.dispatch(
-        setAlert(
-          `У вас большой текст (превышает ${maxTextLen}字). Автоперевод недоступен`,
-          "danger"
-        )
+        setAlert(`У вас большой текст (превышает ${smTextLen}字). Автоперевод недоступен`, "danger")
       );
     }
   }, [textLen]);
@@ -129,11 +140,14 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
 
     const textArea = document.getElementById("textArea");
 
-    // if (textLen > maxTextLen) {
-    //   store.dispatch(
-    //     setAlert(`У вас большой текст (превышает ${maxTextLen}字) `, "danger")
-    //   );
-    // }
+    if (textLen > bgTextLen) {
+      return store.dispatch(
+        setAlert(
+          `Слишком большой текст (превышает ${bgTextLen}字). Разбейте, пожалуйста, на части`,
+          "danger"
+        )
+      );
+    }
 
     const translationArea = document.getElementById("translationArea");
     const originText = textArea.value.trim().replace(/\n\s*\n/g, "\n");
@@ -680,7 +694,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                       disabled={formData.title || isToEdit ? false : true}
                     ></textarea>
                     <small className='text-muted'>
-                      {textLen}/{maxTextLen}
+                      {textLen}/{smTextLen}
                     </small>
                   </div>
                   <div className='form-group col-md-6'>

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const TextSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "users" },
   title: { type: String, required: true },
-  belongsToLongText: { type: Schema.Types.ObjectId, ref: "longtexts" },
+  // belongsToLongText: { type: Schema.Types.ObjectId, ref: "longtexts" },
   description: { type: String },
   origintext: [{ type: String }],
   translation: [{ type: String }],
@@ -38,6 +38,7 @@ const TextSchema = new Schema({
   ],
   pages: [
     {
+      origintext: [{ type: String }],
       chinese_arr: [{ type: String }],
       translation: [{ type: String }],
     },

@@ -34,14 +34,14 @@ async function createTxt(req, res) {
   const newText = new Text({
     theme_word,
     pic_url,
-    origintext,
+    origintext: isLongText ? [] : origintext,
     title,
     description,
     level,
     length,
     tags,
-    translation: isLongText ? "" : translation,
-    chinese_arr,
+    translation: isLongText ? [] : translation,
+    chinese_arr: isLongText ? [] : chinese_arr,
     name,
     isApproved,
     categoryInd,
@@ -63,16 +63,19 @@ async function createTxt(req, res) {
 function getPagesForLngTxt(origintext, translation) {
   let pageText = "";
   let pageTranslation = [];
+  let pageOriginTxt = [];
   let pages = [];
 
   for (let i = 0; i < origintext.length; i++) {
     if (pageText.length < 1200) {
       pageText += origintext[i] + "\n";
       pageTranslation.push(translation[i]);
+      pageOriginTxt.push(origintext[i]);
     } else {
-      pages.push(new Page(Hanzi.segment(pageText.trim()), pageTranslation));
+      pages.push(new Page(Hanzi.segment(pageText.trim()), pageTranslation, pageOriginTxt));
       pageText = "";
       pageTranslation = [];
+      pageOriginTxt = [];
     }
   }
   pages.push(new Page(Hanzi.segment(pageText.trim()), pageTranslation));
@@ -117,8 +120,9 @@ module.exports = { createTxt };
  */
 
 class Page {
-  constructor(cnArr, ruTxt) {
+  constructor(cnArr, ruTxt, origin) {
     this.chinese_arr = cnArr;
     this.translation = ruTxt;
+    this.origintext = origin;
   }
 }

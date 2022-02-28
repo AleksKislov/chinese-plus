@@ -46,7 +46,11 @@ const TextPage = ({
     if (text) {
       let txt = text;
       let givenPage = 0;
-      const pagesNum = text.pages.length;
+      let pagesNum = text.pages.length;
+      if (text.pages && text.pages.length) {
+        pagesNum = text.pages.length;
+        setIsLngTxt(true);
+      }
       if (match.params.page) givenPage = +match.params.page;
 
       if (pagesNum) {
@@ -81,6 +85,7 @@ const TextPage = ({
     }
   }, [text, isAuthenticated]);
 
+  const [isLngTxt, setIsLngTxt] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [pagesNum, setPagesNum] = useState(0);
   const [chineseChunkedArr, setChineseChunkedArr] = useState([]);
@@ -143,7 +148,7 @@ const TextPage = ({
                 </h6>
 
                 {isAuthenticated && isOkToEdit && (
-                  <Link to='/create-text?edit'>
+                  <Link to={`/create-text?edit${isLngTxt ? `${`&page=${curPage}`}` : ""}`}>
                     <button className='btn btn-sm btn-outline-warning'>Edit</button>
                   </Link>
                 )}
@@ -185,9 +190,7 @@ const TextPage = ({
                   index={ind}
                   key={uuid()}
                   translation={
-                    !text.pages.length
-                      ? text.translation[ind]
-                      : text.pages[curPage].translation[ind]
+                    !isLngTxt ? text.translation[ind] : text.pages[curPage].translation[ind]
                   }
                   hideFlag={hideFlag}
                 />
