@@ -249,7 +249,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     });
 
     try {
-      await axios.post(`/api/texts`, body, config);
+      await axios.post(`/api/texts/create`, body, config);
       alert(
         "Текст отправлен на проверку и в течение суток будет опубликован. СПАСИБО, что вносите свой вклад!"
       );
@@ -301,7 +301,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     });
 
     try {
-      await axios.post(`/api/texts`, body, config);
+      await axios.post(`/api/texts/update`, body, config);
       alert("Текст успешно изменен!");
       setIsRedirected(true);
     } catch (err) {

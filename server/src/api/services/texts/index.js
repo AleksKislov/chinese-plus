@@ -1,5 +1,6 @@
 const { apiDecorator } = require("../../api-decorator");
 
-const { createOrUpdate } = require("./create-or-update");
+const { updateTxt } = require("./update");
+const { createTxt } = require("./create");
 
-module.exports = { createOrUpdate: apiDecorator(createOrUpdate) };
+module.exports = { createTxt: apiDecorator(createTxt), updateTxt: apiDecorator(updateTxt) };

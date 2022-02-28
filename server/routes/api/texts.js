@@ -2,7 +2,7 @@ const router = require("express").Router();
 const auth = require("../../middleware/auth");
 const { check } = require("express-validator");
 
-const { createOrUpdate } = require("../../src/api/services/texts/create-or-update");
+const { createTxt, updateTxt } = require("../../src/api/services/texts");
 
 const User = require("../../src/models/User");
 const Text = require("../../src/models/Text");
@@ -10,12 +10,12 @@ const LongText = require("../../src/models/LongText");
 
 /**
  * @method    POST
- * @route     api/texts
+ * @route     api/texts/create
  * @desc      Create a text
  * @access    Private
  */
 router.post(
-  "/",
+  "/create",
   [
     auth,
     [
@@ -24,8 +24,16 @@ router.post(
       check("level", "Нужно указать уровень").not().isEmpty(),
     ],
   ],
-  createOrUpdate
+  createTxt
 );
+
+/**
+ * @method    POST
+ * @route     api/texts/update
+ * @desc      Update a text
+ * @access    Private
+ */
+router.post("/update", auth, updateTxt);
 
 // @route   GET api/texts
 // @desc    Get ALL the texts

@@ -105,7 +105,7 @@ const Paragraph = ({
   };
 
   const paragraphNum = (
-    <Tippy content='Параграф №'>
+    <Tippy content={`Параграф №${index + 1}`}>
       <div className='paragraphNum'>{index + 1}</div>
     </Tippy>
   );

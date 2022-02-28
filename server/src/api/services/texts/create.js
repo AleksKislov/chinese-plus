@@ -4,15 +4,10 @@ const Hanzi = require("../../../../routes/api/dict/dictionary");
 
 const Text = require("../../../models/Text");
 
-const createOrUpdate = async (req, res) => {
+async function createTxt(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  if (req.body.textId) return await update(req, res);
-  return await create(req, res);
-};
-
-async function create(req, res) {
   const {
     origintext,
     title,
@@ -60,45 +55,6 @@ async function create(req, res) {
   return res.json(text);
 }
 
-async function update(req, res) {
-  const {
-    origintext,
-    title,
-    description,
-    level,
-    tags,
-    translation,
-    length,
-    pic_url,
-    chinese_arr,
-    theme_word,
-    textId,
-    isApproved,
-    categoryInd,
-    source,
-    isLongText,
-  } = req.body;
-
-  const newFields = {};
-  if (origintext) newFields.origintext = origintext;
-  if (title) newFields.title = title;
-  if (description) newFields.description = description;
-  if (level) newFields.level = level;
-  if (tags) newFields.tags = tags;
-  if (translation) newFields.translation = translation;
-  if (length) newFields.length = length;
-  if (chinese_arr) newFields.chinese_arr = chinese_arr;
-  if (pic_url) newFields.pic_url = pic_url;
-  if (theme_word) newFields.theme_word = theme_word;
-  if (isApproved) newFields.isApproved = isApproved;
-  if (categoryInd) newFields.categoryInd = categoryInd;
-  if (source) newFields.source = source;
-
-  const newText = await Text.findByIdAndUpdate(textId, { $set: newFields }, { new: true });
-
-  return res.json(newText);
-}
-
 /**
  * @param {Array<string>} origintext
  * @param {Array<string>} translation
@@ -121,18 +77,9 @@ function getPagesForLngTxt(origintext, translation) {
   }
   pages.push(new Page(Hanzi.segment(pageText.trim()), pageTranslation));
   return pages;
-  // return pageTexts.map((parag, ind) => {
-  //   return new Page(Hanzi.segment(parag), translation[ind]);
-  // });
 }
 
-/**
- * @param {Array<string>} origintext
- * @returns {Array<string>}
- */
-function getPageTexts(origintext) {}
-
-module.exports = { createOrUpdate };
+module.exports = { createTxt };
 
 /**
  * 0] POST /api/texts 200 29.587 ms - 626 {
