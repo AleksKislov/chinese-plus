@@ -24,7 +24,13 @@ async function updateTxt(req, res) {
     categoryInd,
     source,
     isLongText,
+    pageToEdit,
   } = req.body;
+
+  if (isLongText && (pageToEdit || pageToEdit === 0)) {
+    console.log("апдейт", JSON.stringify(req.body, null, 2));
+  }
+  return res.send("ok");
 
   const newFields = {};
   if (origintext) newFields.origintext = origintext;

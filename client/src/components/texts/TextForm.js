@@ -126,10 +126,14 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
   useEffect(() => {
     if (textLen > smTextLen) {
       // console.log("here");
+      setIsTranslated(true);
       setIsLongText(true);
       store.dispatch(
         setAlert(`У вас большой текст (превышает ${smTextLen}字). Автоперевод недоступен`, "danger")
       );
+    } else {
+      setIsTranslated(false);
+      setIsLongText(false);
     }
   }, [textLen]);
 
@@ -158,7 +162,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     textArea.value = chunkedOriginText.join("\n\n");
 
     let allwords, chineseChunkedWords;
-    if (!isLongText) {
+    if (!isLongText || isToEdit) {
       allwords = await segmenter(originText);
       allwords = allwords.filter((word) => word !== " ");
       const wordsFromDB = await getWords(allwords);
@@ -167,8 +171,6 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     } else {
       chineseChunkedWords = chunkedOriginText;
     }
-
-    // console.log({ chineseChunkedWords, allwords, isLongText });
 
     let chunkedTranslation;
     if (!isTranslated) {
@@ -312,6 +314,8 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       isApproved,
       categoryInd,
       source,
+      isLongText,
+      pageToEdit,
     });
 
     try {
@@ -669,9 +673,10 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                           id='needGoogle'
                           checked={!isTranslated}
                           onChange={() => setIsTranslated(!isTranslated)}
+                          disabled={isLongText}
                         />
                         <label className='custom-control-label text-danger' htmlFor='needGoogle'>
-                          {!isTranslated ? "Мне нужен гугл-перевод" : "У меня свой перевод"}
+                          {!isTranslated ? "Нужен гугл-перевод" : "Вставьте свой перевод"}
                         </label>
                       </div>
                     </div>
@@ -741,7 +746,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                   key={uuid()}
                   translation={formData.chunkedTranslation[ind]}
                   toEdit={true}
-                  toPostLongText={isLongText}
+                  toPostLongText={isLongText && !isToEdit}
                 />
               ))}
           </div>

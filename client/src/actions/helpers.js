@@ -66,13 +66,13 @@ export const getTranslation = async (text) => {
 
   const body = JSON.stringify({ text });
 
-  let res;
   try {
-    res = await axios.post("/api/translation", body, config);
+    const { data } = await axios.post("/api/translation", body, config);
+    return data;
   } catch (err) {
     console.log(err);
+    return { translation: [""] };
   }
-  return res.data;
 };
 
 /**
