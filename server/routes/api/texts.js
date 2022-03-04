@@ -2,7 +2,13 @@ const router = require("express").Router();
 const auth = require("../../middleware/auth");
 const { check } = require("express-validator");
 
-const { createTxt, updateTxt } = require("../../src/api/services/texts");
+const {
+  createTxt,
+  updateTxt,
+  getTextsPerUserStats,
+  getAllApprovedTexts,
+  deleteComment,
+} = require("../../src/api/services/texts");
 
 const User = require("../../src/models/User");
 const Text = require("../../src/models/Text");
@@ -35,78 +41,29 @@ router.post(
  */
 router.post("/update", auth, updateTxt);
 
-// @route   GET api/texts
-// @desc    Get ALL the texts
-// access   Public
-router.get("/", async (req, res) => {
-  try {
-    const texts = await Text.find({ isApproved: 1 })
-      .sort({ date: -1 })
-      .select("date title level categoryInd likes hits user name _id comments_id");
-
-    res.json(texts);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
-});
+/**
+ * @route     GET api/texts
+ * @desc      Get ALL approved texts
+ * @access    Public
+ */
+router.get("/", getAllApprovedTexts);
 
 /**
- * @return {object array} - sorted array
+ * @route   GET api/texts/statistics
+ * @desc    Get texts per user statistics info, who publish how many texts and chars
  * @example
  * [{ num: 16, name: "admin", userid: "5f301a8f0aa547478da68c18" },
  * { num: 9, name: "Aleksandr Kislov",userid: "5ee31c7847fd670ce93b83cc" },
  * { num: 7, name: "Sergei Guer", userid: "600728cd4c87149d9552bba7" }]
  */
-router.get("/statistics", async (req, res) => {
-  try {
-    const texts = await Text.find().sort({ date: -1 }).select("user name length");
+router.get("/statistics", getTextsPerUserStats);
 
-    let result = {};
-
-    for (let i = 0; i < texts.length; i++) {
-      if (result[texts[i].user]) {
-        result[texts[i].user].num++;
-        result[texts[i].user].length += texts[i].length;
-      } else {
-        result[texts[i].user] = {
-          num: 1,
-          name: texts[i].name,
-          userid: texts[i].user,
-          length: texts[i].length,
-        };
-      }
-    }
-    const sorted = Object.values(result).sort((a, b) =>
-      b.num - a.num === 0 ? b.length - a.length : b.num - a.num
-    );
-
-    res.json(sorted);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
-});
-
-// @route   DELETE api/texts/comment/:id/:comment_id
-// @desc    Delete a Comment of a text
-// access   Private
-router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
-  try {
-    const post = await Text.findById(req.params.id);
-    const comment = await Comment.findById(req.params.comment_id);
-
-    post.comments_id = post.comments_id.filter((comment) => comment.id !== req.params.comment_id);
-
-    await post.save();
-    await comment.remove();
-
-    res.json(post.comments_id);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
-});
+/**
+ * @route     DELETE api/texts/comment/:id/:comment_id
+ * @desc      Delete a Comment of a text
+ * @access    Private
+ */
+router.delete("/comment/:id/:comment_id", auth, deleteComment);
 
 /**
  * @method  GET

@@ -33,11 +33,11 @@ async function updateTxt(req, res) {
   if (origintext && !isLngTxtEdit) newFields.origintext = origintext;
   if (chinese_arr && !isLngTxtEdit) newFields.chinese_arr = chinese_arr;
   if (translation && !isLngTxtEdit) newFields.translation = translation;
+  if (length && !isLngTxtEdit) newFields.length = length;
   if (title) newFields.title = title;
   if (description) newFields.description = description;
   if (level) newFields.level = level;
   if (tags) newFields.tags = tags;
-  if (length) newFields.length = length;
   if (pic_url) newFields.pic_url = pic_url;
   if (theme_word) newFields.theme_word = theme_word;
   if (isApproved) newFields.isApproved = isApproved;
