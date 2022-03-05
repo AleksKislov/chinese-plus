@@ -18,9 +18,6 @@ const {
   markAsNotRead,
 } = require("../../src/api/services/texts");
 
-const User = require("../../src/models/User");
-const Text = require("../../src/models/Text");
-
 /**
  * @method    POST
  * @route     api/texts/create
