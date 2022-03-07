@@ -128,9 +128,14 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       // console.log("here");
       setIsTranslated(true);
       setIsLongText(true);
-      store.dispatch(
-        setAlert(`У вас большой текст (превышает ${smTextLen}字). Автоперевод недоступен`, "danger")
-      );
+      if (!isToEdit) {
+        store.dispatch(
+          setAlert(
+            `У вас большой текст (превышает ${smTextLen}字). Автоперевод недоступен`,
+            "danger"
+          )
+        );
+      }
     } else {
       setIsTranslated(false);
       setIsLongText(false);
@@ -352,6 +357,11 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     <label className='text-danger'>Упс, картинок не нашлось. Попробуйте поменять слово</label>
   );
 
+  const textForEditing = isLongText
+    ? `Режим редактирования для страницы №${pageToEdit} длинного текста.`
+    : `Режим редактирования: меняйте любые поля, затем нажмите "ПРЕДОБРАБОТКА",
+      только потом появится кнопка "Изменить текст"`;
+
   const loadPicsBtn = (
     <Fragment>
       <label className={formData.pic_theme ? "text-warning" : "text-secondary"}>
@@ -387,11 +397,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
             <h4>следуя шагам ниже</h4>
             {isToEdit ? (
               <div className='alert alert-info'>
-                <div className='mb-3'>
-                  🙏🏻 Если вы редактируете, то меняйте любые поля, затем нажмите "ПРЕДОБРАБОТКА",
-                  только потом появится кнопка "Изменить текст" <br />
-                  Поле с картинкой заполнять ТОЛЬКО, если хотите ее поменять
-                </div>
+                <div className='mb-3'>{textForEditing}</div>
               </div>
             ) : (
               <p>

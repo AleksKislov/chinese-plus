@@ -1,6 +1,5 @@
 const { validationResult } = require("express-validator");
 // const { notifyMe } = require("../_misc");
-// const Hanzi = require("../../../../routes/api/dict/dictionary");
 
 const Text = require("../../../models/Text");
 

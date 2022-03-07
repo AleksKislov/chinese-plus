@@ -71,7 +71,7 @@ const ActiveUserTable = ({}) => {
             </thead>
             <tbody>
               {data ? (
-                data.map((user, ind) => <RatingItem key={user.userid} user={user} ind={ind} />)
+                data.map((user, ind) => <RatingItem key={ind} user={user} ind={ind} />)
               ) : (
                 <tr>
                   <td colSpan='4'>
