@@ -10,8 +10,8 @@ const {
   deleteComment,
   getById,
   getByUserId,
-  getApprovedTextsNum,
-  getNotApprovedTextsNum,
+  getTextsNum,
+  getNotApprovedTexts,
   getTextsInChunks,
   likeText,
   markAsRead,
@@ -77,14 +77,14 @@ router.delete("/comment/:id/:comment_id", auth, deleteComment);
  */
 router.get("/infinite", getTextsInChunks);
 
-router.get("/not_approved", getNotApprovedTextsNum);
+router.get("/not_approved", getNotApprovedTexts);
 
 /**
  *  @route   GET api/texts/approved_num
- *  @desc    Get the number of approved texts
+ *  @desc    Get the number of texts, approved and not
  *  @access  Public
  */
-router.get("/approved_num", getApprovedTextsNum);
+router.get("/approved_num", getTextsNum);
 
 /**
  * @method  GET

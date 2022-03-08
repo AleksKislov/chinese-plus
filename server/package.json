@@ -35,7 +35,8 @@
     "puppeteer": "^5.0.0",
     "redis": "^4.0.1",
     "sequelize": "^6.3.5",
-    "uuid": "^8.2.0"
+    "uuid": "^8.2.0",
+    "youtube-captions-scraper": "^2.0.0"
   },
   "devDependencies": {
     "concurrently": "^5.2.0"

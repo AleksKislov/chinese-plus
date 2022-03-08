@@ -1,6 +1,6 @@
 const Text = require("../../../models/Text");
 
-async function getNotApprovedTextsNum(req, res) {
+async function getNotApprovedTexts(req, res) {
   const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
   const foundTexts = await Text.find(
     { name: { $ne: "admin" }, isApproved: { $ne: 1 } },
@@ -17,4 +17,4 @@ async function getNotApprovedTextsNum(req, res) {
   return res.json(texts);
 }
 
-module.exports = { getNotApprovedTextsNum };
+module.exports = { getNotApprovedTexts };

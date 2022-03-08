@@ -1,6 +1,6 @@
 const Text = require("../../../models/Text");
 
-async function getApprovedTextsNum(req, res) {
+async function getTextsNum(req, res) {
   const allTexts = await Text.find().select("isApproved");
   const approvedTexts = allTexts.filter((x) => x.isApproved);
   const total = allTexts.length;
@@ -9,4 +9,4 @@ async function getApprovedTextsNum(req, res) {
   return res.json({ total, approved, notApproved });
 }
 
-module.exports = { getApprovedTextsNum };
+module.exports = { getTextsNum };

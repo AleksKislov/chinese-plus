@@ -7,8 +7,8 @@ const { getAllApprovedTexts } = require("./get-all-approved-texts");
 const { deleteComment } = require("./delete-comment");
 const { getById } = require("./get-by-id");
 const { getByUserId } = require("./get-by-user-id");
-const { getApprovedTextsNum } = require("./get-approved-texts-num");
-const { getNotApprovedTextsNum } = require("./get-not-approved-texts-num");
+const { getTextsNum } = require("./get-texts-num");
+const { getNotApprovedTexts } = require("./get-not-approved-texts");
 const { getTextsInChunks } = require("./get-texts-in-chunks");
 const { likeText } = require("./like-text");
 const { markAsRead } = require("./mark-as-read");
@@ -18,8 +18,8 @@ module.exports = {
   markAsRead: apiDecorator(markAsRead),
   likeText: apiDecorator(likeText),
   getTextsInChunks: apiDecorator(getTextsInChunks),
-  getNotApprovedTextsNum: apiDecorator(getNotApprovedTextsNum),
-  getApprovedTextsNum: apiDecorator(getApprovedTextsNum),
+  getNotApprovedTexts: apiDecorator(getNotApprovedTexts),
+  getTextsNum: apiDecorator(getTextsNum),
   createTxt: apiDecorator(createTxt),
   updateTxt: apiDecorator(updateTxt),
   getTextsPerUserStats: apiDecorator(getTextsPerUserStats),
