@@ -18,14 +18,9 @@ const WordsItem = ({
   // isAuthenticated,
   // userWords,
 }) => {
-  const [isReady, setIsReady] = useState(true);
   // const [clicked, setClicked] = useState(false);
   const { chinese, pinyin, translation, id, lvl } = lexicon;
   const russian = parseRussian(translation);
-
-  useEffect(() => {
-    setIsReady(lvl !== "789");
-  }, [lexicon]);
 
   // useEffect(() => {
   //   if (isAuthenticated) loadUserWords();
@@ -85,8 +80,6 @@ const WordsItem = ({
   );
 
   const playIt = (word) => {
-    if (!isReady) return setAlert("Сюда аудио еще не добавлено", "warning");
-
     const { id, lvl } = word;
     new Audio(`${myAudioURL}newhsk/band${lvl}/${id}.mp3`).play();
     return false;
@@ -106,10 +99,7 @@ const WordsItem = ({
       ></td>
       <td>{moreButton}</td>
       <td>
-        <button
-          className={`btn btn-sm btn-info ${isReady ? "" : "disabled"}`}
-          onClick={() => playIt(lexicon)}
-        >
+        <button className='btn btn-sm btn-info' onClick={() => playIt(lexicon)}>
           <i className='fas fa-play'></i>
         </button>
       </td>
