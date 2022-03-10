@@ -509,7 +509,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                       <select
                         className='form-control'
                         id='isApproved'
-                        valeue={formData.isApproved}
+                        value={formData.isApproved}
                         onChange={(e) =>
                           setFormData({ ...formData, [e.target.id]: parseInt(e.target.value) })
                         }

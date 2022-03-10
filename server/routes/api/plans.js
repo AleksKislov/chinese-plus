@@ -5,8 +5,6 @@ const { check, validationResult } = require("express-validator");
 const User = require("../../src/models/User");
 const Plan = require("../../src/models/Plan");
 
-const { getSubtitles } = require("youtube-captions-scraper");
-
 /**
  * @route     POST api/plans
  * @desc      Create a plan
@@ -61,15 +59,5 @@ router.get("/", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
-// router.get("/video", async (req, res) => {
-//   getSubtitles({
-//     videoID: "6hWz05iCKls", // youtube video id
-//     lang: "en", // default: `en`
-//   }).then((captions) => {
-//     // console.log(captions);
-//     res.json(captions);
-//   });
-// });
 
 module.exports = router;

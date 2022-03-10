@@ -60,6 +60,7 @@ app.use("/api/texts", require("./routes/api/texts"));
 app.use("/api/books", require("./routes/api/books"));
 app.use("/api/translation", require("./routes/api/translation"));
 app.use("/api/notices", require("./routes/api/notices"));
+app.use("/api/videos", require("./routes/api/videos"));
 
 // Serve static files
 if (!isDevelopment) {
