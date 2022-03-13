@@ -6,7 +6,14 @@ const VideoSchema = new Schema({
   userName: { type: String }, // user name
   title: { type: String, required: true },
   desc: { type: String },
-  cnSubs: [{ type: String }],
+  cnSubs: [
+    {
+      start: String,
+      dur: String,
+      text: String,
+    },
+  ],
+  pySubs: [{ type: String }], // pinyin
   ruSubs: [{ type: String }],
   chineseArr: [{ type: String }],
   tags: [{ type: String, lowercase: true }],
@@ -15,7 +22,7 @@ const VideoSchema = new Schema({
   picUrl: { type: String },
   isApproved: { type: Number }, // by admin or moderator, 1 or 0
   hits: { type: Number, default: 1 }, // number of visits
-  categoryInd: { type: Number, default: 0 }, // index for textCategories array (on frontend) below
+  categoryInd: { type: Number, default: 0 },
   commentsId: [
     {
       comment: {
