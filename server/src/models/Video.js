@@ -6,6 +6,11 @@ const VideoSchema = new Schema({
   userName: { type: String }, // user name
   title: { type: String, required: true },
   desc: { type: String },
+  category: {
+    type: String,
+    enum: ["misc", "song", "cartoon", "ads", "documentary", "science"],
+    default: "misc",
+  },
   cnSubs: [
     {
       start: String,
@@ -15,14 +20,14 @@ const VideoSchema = new Schema({
   ],
   pySubs: [{ type: String }], // pinyin
   ruSubs: [{ type: String }],
-  chineseArr: [{ type: String }],
+  chineseArr: [{ type: String }], // ['你好', '吗', '?', '\n']
   tags: [{ type: String, lowercase: true }],
   length: { type: Number },
   lvl: { type: Number, required: true },
-  picUrl: { type: String },
+  picUrl: { type: String }, // youtube preview pic
+  source: { type: String }, // youtube id
   isApproved: { type: Number }, // by admin or moderator, 1 or 0
   hits: { type: Number, default: 1 }, // number of visits
-  categoryInd: { type: Number, default: 0 },
   commentsId: [
     {
       comment: {
