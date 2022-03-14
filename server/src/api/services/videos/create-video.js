@@ -1,3 +1,5 @@
+const { validationResult } = require("express-validator");
+
 const Video = require("../../../models/Video");
 const { notifyMe } = require("../_misc");
 
@@ -10,6 +12,7 @@ async function createVideo(req, res) {
     desc,
     lvl,
     tags,
+    cnSubs,
     pySubs,
     ruSubs,
     length,

@@ -20,7 +20,6 @@ async function createTxt(req, res) {
     chinese_arr,
     theme_word,
     name,
-    // isApproved,
     categoryInd,
     source,
     isLongText,

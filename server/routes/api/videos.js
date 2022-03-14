@@ -1,9 +1,16 @@
 const router = require("express").Router();
 const auth = require("../../middleware/auth");
-const { getSubtitles } = require("youtube-captions-scraper");
 const { check } = require("express-validator");
 
-const { getById, createVideo } = require("../../src/api/services/videos");
+const { getSubtitles } = require("youtube-captions-scraper");
+
+const {
+  getById,
+  createVideo,
+  getAllApprovedVids,
+  getNotApprovedVids,
+  likeVideo,
+} = require("../../src/api/services/videos");
 
 /**
  * @method    POST
@@ -25,21 +32,37 @@ router.post(
 );
 
 /**
+ * @route     GET api/videos
+ * @desc      Get ALL approved videos
+ * @access    Public
+ */
+router.get("/", getAllApprovedVids);
+
+router.get("/not_approved", getNotApprovedVids);
+
+/**
  * @method  GET
  * @route   GET api/videos/:id
  * @desc    Get the video by ID
  * @access  Public
  */
-// router.get("/:id", getById);
+router.get("/:id", getById);
 
-router.get("/vids", async (req, res) => {
-  getSubtitles({
-    videoID: "6hWz05iCKls", // youtube video id
-    lang: "zh-CN", // default: `en` zh-CN, ru
-  }).then((captions) => {
-    // console.log(captions);
-    res.json(captions);
-  });
-});
+/**
+ *  @route    PUT api/videos/like/:id
+ *  @desc     Like a video
+ *  @access   Private
+ */
+router.put("/like/:id", auth, likeVideo);
+
+// router.get("/vids", async (req, res) => {
+//   getSubtitles({
+//     videoID: "6hWz05iCKls", // youtube video id
+//     lang: "zh-CN", // default: `en` zh-CN, ru
+//   }).then((captions) => {
+//     // console.log(captions);
+//     res.json(captions);
+//   });
+// });
 
 module.exports = router;
