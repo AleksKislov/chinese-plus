@@ -28,7 +28,7 @@ const VideoSchema = new Schema({
   source: { type: String }, // youtube id
   isApproved: { type: Number }, // by admin or moderator, 1 or 0
   hits: { type: Number, default: 1 }, // number of visits
-  commentsId: [
+  comments_id: [
     {
       comment: {
         type: Schema.Types.ObjectId,
