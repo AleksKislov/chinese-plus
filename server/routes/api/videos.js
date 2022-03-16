@@ -10,6 +10,8 @@ const {
   getAllApprovedVids,
   getNotApprovedVids,
   likeVideo,
+  deleteComment,
+  markAsSeen,
 } = require("../../src/api/services/videos");
 
 /**
@@ -30,6 +32,8 @@ router.post(
   ],
   createVideo
 );
+
+router.post("/mark_as_seen/:id", auth, markAsSeen);
 
 /**
  * @route     GET api/videos
@@ -54,6 +58,13 @@ router.get("/:id", getById);
  *  @access   Private
  */
 router.put("/like/:id", auth, likeVideo);
+
+/**
+ * @route     DELETE api/videos/comment/:id/:comment_id
+ * @desc      Delete a Comment of a video
+ * @access    Private
+ */
+router.delete("/comment/:id/:comment_id", auth, deleteComment);
 
 // router.get("/vids", async (req, res) => {
 //   getSubtitles({

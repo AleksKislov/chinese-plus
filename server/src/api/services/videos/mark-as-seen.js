@@ -1,13 +1,13 @@
 const User = require("../../../models/User");
 
-async function markAsRead(req, res) {
+async function markAsSeen(req, res) {
   const userId = req.user.id;
-  const textId = req.params.id;
+  const videoId = req.params.id;
 
   const updatedUser = await User.findByIdAndUpdate(
     userId,
     {
-      $addToSet: { finished_texts: textId },
+      $addToSet: { seenVideos: videoId },
     },
     { new: true }
   ).select("-password");
@@ -15,4 +15,4 @@ async function markAsRead(req, res) {
   return res.json(updatedUser);
 }
 
-module.exports = { markAsRead };
+module.exports = { markAsSeen };
