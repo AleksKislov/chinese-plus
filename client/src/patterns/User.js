@@ -12,6 +12,7 @@ export class User {
     read_today_arr,
     daily_reading_goal,
     finished_texts,
+    seenVideos,
     date,
   }) {
     this._id = _id;
@@ -24,6 +25,7 @@ export class User {
     this.read_today_num = read_today_num;
     this.daily_reading_goal = daily_reading_goal;
     this.finished_texts = finished_texts;
+    this.seenVideos = seenVideos;
     this.date = date;
   }
 
