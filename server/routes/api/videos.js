@@ -34,13 +34,14 @@ router.post(
 );
 
 router.post("/mark_as_seen/:id", auth, markAsSeen);
+router.post("/unmark_as_seen/:id", auth, markAsSeen);
 
 /**
  * @route     GET api/videos
  * @desc      Get ALL approved videos
  * @access    Public
  */
-router.get("/", getAllApprovedVids);
+router.get("/approved", getAllApprovedVids);
 
 router.get("/not_approved", getNotApprovedVids);
 
