@@ -1,7 +1,8 @@
 const Video = require("../../../models/Video");
 
 async function getNotApprovedVids(req, res) {
-  const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
+  const querySkip = req.query.skip;
+  const skip = querySkip && /^\d+$/.test(querySkip) ? Number(querySkip) : 0;
   const foundVideos = await Video.find({ isApproved: { $ne: 1 } }, undefined, {
     skip,
     limit: 10,

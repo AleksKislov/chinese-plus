@@ -7,8 +7,9 @@ const { getById } = require("./get-by-id");
 const { getNotApprovedVids } = require("./get-not-approved-vids");
 const { likeVideo } = require("./like-video");
 const { markAsSeen } = require("./mark-as-seen");
-
+const { getVidsInChunks } = require("./get-vids-in-chunks");
 module.exports = {
+  getVidsInChunks: apiDecorator(getVidsInChunks),
   markAsSeen: apiDecorator(markAsSeen),
   deleteComment: apiDecorator(deleteComment),
   likeVideo: apiDecorator(likeVideo),

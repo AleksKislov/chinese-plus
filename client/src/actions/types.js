@@ -90,3 +90,12 @@ export const READ_TODAY_ERR = "READ_TODAY_ERR";
 
 export const MARK_TEXT_READ = "MARK_TEXT_READ";
 export const MARK_TEXT_UNREAD = "MARK_TEXT_UNREAD";
+
+export const LOAD_VIDEOS = "LOAD_VIDEOS";
+export const LOAD_VIDEO = "LOAD_VIDEO";
+export const LOAD_VIDEOS_ERR = "LOAD_VIDEOS_ERR";
+export const LOAD_VIDEO_ERR = "LOAD_VIDEO_ERR";
+export const CLEAR_VIDEO = "CLEAR_VIDEO";
+export const CLEAR_VIDEOS = "CLEAR_VIDEOS";
+export const LOAD_NOT_APPROVED_VIDS = "LOAD_NOT_APPROVED_VIDS";
+export const LIKE_VIDEO = "LIKE_VIDEO";

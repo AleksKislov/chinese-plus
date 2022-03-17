@@ -12,6 +12,7 @@ const {
   likeVideo,
   deleteComment,
   markAsSeen,
+  getVidsInChunks,
 } = require("../../src/api/services/videos");
 
 /**
@@ -37,11 +38,19 @@ router.post("/mark_as_seen/:id", auth, markAsSeen);
 router.post("/unmark_as_seen/:id", auth, markAsSeen);
 
 /**
+ * @method  GET
+ * @route   api/videos/infinite?skip=...category=...
+ * @desc    Get videos using inifinite scroll and category string
+ * @access  Public
+ */
+router.get("/infinite", getVidsInChunks);
+
+/**
  * @route     GET api/videos
  * @desc      Get ALL approved videos
  * @access    Public
  */
-router.get("/approved", getAllApprovedVids);
+router.get("/all_approved", getAllApprovedVids);
 
 router.get("/not_approved", getNotApprovedVids);
 
