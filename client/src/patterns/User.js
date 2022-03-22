@@ -1,5 +1,4 @@
-//password
-//  и еще одно поле для особенных role / moreWords
+// -password
 export class User {
   constructor({
     _id,
@@ -50,6 +49,7 @@ export class NullUser {
     this.name = "Ноунэйм";
     this.role = "Ноунэйм";
     this.seenVideos = [];
+    this.finished_texts = [];
   }
 
   get isAdmin() {
