@@ -26,6 +26,7 @@ import PostPage from "../posts/PostPage";
 import TextForm from "../texts/TextForm";
 import Texts from "../texts/Texts";
 import TextPage from "../texts/TextPage";
+import VideoPage from "../videos/VideoPage";
 import Books from "../books/Books";
 import BookCardPage from "../books/BookCardPage";
 import PageForm from "../books/PageForm";
@@ -110,6 +111,7 @@ const Routes = () => {
           <Route exact path='/books' component={Books} />
           <Route exact path='/texts/:id/:page' component={TextPage} />
           <Route exact path='/texts/:id' component={TextPage} />
+          <Route exact path='/videos/:id' component={VideoPage} />
           <Route exact path='/books/:id' component={BookCardPage} />
           <Route exact path='/user/:id' component={UserProfile} />
           <Route exact path='/contacts' component={Contacts} />

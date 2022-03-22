@@ -124,6 +124,7 @@ router.get("/", async (req, res) => {
     let destination;
     if (where === "post") destination = await Post.findById(id);
     if (where === "text") destination = await Text.findById(id);
+    if (where === "video") destination = await Video.findById(id);
     if (where === "book") destination = await Chapterpage.findById(id);
 
     const comments = await Comment.find({

@@ -46,6 +46,7 @@ const VideoCard = ({
   const [rightLevel, setRightLevel] = useState(true);
 
   const dateAndTime = dateToStr(date);
+  const linkTo = `/videos/${_id}`;
 
   return (
     !hideIt &&
@@ -62,13 +63,13 @@ const VideoCard = ({
 
         <div className='card-body row'>
           <div style={{ position: "relative" }} className='col-md-3'>
-            <Link to={`/texts/${_id}`}>
+            <Link to={linkTo}>
               <img className='mr-3 textCardImg' src={`${picUrl}`} alt='video pic' />
             </Link>
           </div>
           <div className='col-md-9'>
             <h4 className='card-title'>
-              <Link to={`/texts/${_id}`}>{title}</Link>{" "}
+              <Link to={linkTo}>{title}</Link>{" "}
               <Tippy content={`просмотров: ${hits}`}>
                 <small className='text-muted extra-smtext'>
                   <i className='fas fa-eye'></i> {hits}
@@ -104,20 +105,12 @@ const VideoCard = ({
               <span className='text-muted'>Кол-во знаков: </span>
               {length}
             </h6>
-            {
-              //   source && (
-              //   <h6 className='card-subtitle mb-2'>
-              //     <span className='text-muted'>Источник: </span>
-              //     {source}
-              //   </h6>
-              // )
-            }
-            <TextSource textSource={source} />
 
+            <TextSource textSource={source} />
             <TextDescription description={desc} />
 
             <div className=''>
-              <Link to={`/texts/${_id}`}>
+              <Link to={linkTo}>
                 <button className='btn btn-sm btn-outline-info mr-2'>
                   Комментарии {comments_id.length > 0 && <span>{comments_id.length}</span>}
                 </button>
