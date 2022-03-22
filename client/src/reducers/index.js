@@ -8,6 +8,7 @@ import posts from "./posts";
 import texts from "./texts";
 import books from "./books";
 import comments from "./comments";
+import videos from "./videos";
 
 export default combineReducers({
   alert,
@@ -18,5 +19,6 @@ export default combineReducers({
   posts,
   texts,
   books,
-  comments
+  comments,
+  videos,
 });

@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { levelStars, dateToStr } from "../../actions/helpers";
 import Tippy from "@tippyjs/react";
 import { connect } from "react-redux";
-// import { textCategories } from "../../constants/consts.json";
-import LikeTextBtn from "./LikeTextBtn";
-import TextDescription from "./common/TextDescription";
-import TextSource from "./common/TextSource";
+import { textCategories } from "../../constants/consts.json";
+import LikeTextBtn from "../texts/LikeTextBtn";
+import TextDescription from "../texts/common/TextDescription";
+import TextSource from "../texts/common/TextSource";
 import { NullUser, User } from "../../patterns/User";
 
 const VideoCard = ({
@@ -64,7 +64,6 @@ const VideoCard = ({
           <div style={{ position: "relative" }} className='col-md-3'>
             <Link to={`/texts/${_id}`}>
               <img className='mr-3 textCardImg' src={`${picUrl}`} alt='video pic' />
-              <div style={imgText}>{theme_word}</div>
             </Link>
           </div>
           <div className='col-md-9'>
@@ -99,7 +98,7 @@ const VideoCard = ({
             </h6>
             <h6 className='card-subtitle mb-2'>
               <span className='text-muted'>Категория: </span>
-              {textCategories[categoryInd]}
+              {textCategories[0]}
             </h6>
             <h6 className='card-subtitle mb-2'>
               <span className='text-muted'>Кол-во знаков: </span>
@@ -147,7 +146,7 @@ const imgText = {
 };
 
 const mapStateToProps = (state) => ({
-  user: new User(state.auth.user),
+  user: state.auth.user ? new User(state.auth.user) : new NullUser(state.auth.user),
 });
 
 export default connect(mapStateToProps, {})(VideoCard);

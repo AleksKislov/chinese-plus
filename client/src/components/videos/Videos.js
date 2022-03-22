@@ -74,7 +74,7 @@ const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
             {videos.map((video) => (
               <VideoCard
                 key={video._id}
-                text={video}
+                video={video}
                 hide={hideReadFlag}
                 category={categoryFlag}
                 hideLevel={hideLevelFlag}

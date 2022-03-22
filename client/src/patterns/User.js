@@ -49,6 +49,7 @@ export class NullUser {
     this.googleId = "-1";
     this.name = "Ноунэйм";
     this.role = "Ноунэйм";
+    this.seenVideos = [];
   }
 
   get isAdmin() {
