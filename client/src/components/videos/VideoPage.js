@@ -5,7 +5,7 @@ import { getComments } from "../../actions/comments";
 import { parseChineseWords } from "../../actions/helpers";
 import Spinner from "../layout/Spinner";
 import { v4 as uuid } from "uuid";
-import Paragraph from "../texts/Paragraph";
+import Subs from "./Subs";
 import { Link } from "react-router-dom";
 import WordModal from "../translation/WordModal";
 import { loadUserWords } from "../../actions/userWords";
@@ -42,10 +42,10 @@ const VideoPage = ({
 
   useEffect(() => {
     if (video) {
-      // setTimeout(async () => {
-      //   const chineseChunkedWords = await parseChineseWords(txt);
-      //   setChineseChunkedArr(chineseChunkedWords);
-      // });
+      setTimeout(async () => {
+        // const chineseChunkedWords = await parseChineseWords(txt);
+        setChineseWordsArr(video.chineseArr);
+      });
     }
   }, [video]);
 
@@ -71,20 +71,20 @@ const VideoPage = ({
   const [isLngTxt, setIsLngTxt] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [pagesNum, setPagesNum] = useState(0);
-  const [chineseChunkedArr, setChineseChunkedArr] = useState([]);
+  const [chineseWordsArr, setChineseWordsArr] = useState([["很", "好"]]);
   const [hideFlag, setHideFlag] = useState(false);
   const [isOkToEdit, setIsOkToEdit] = useState(false);
   const onClick = () => setHideFlag(!hideFlag);
 
   return (
     <Fragment>
-      {loading || !video || chineseChunkedArr.length === 0 ? (
+      {loading || !video ? (
         <Spinner />
       ) : (
         <div className='row'>
           <Helmet>
             <meta charSet='utf-8' />
-            <title>Тексты на китайском языке с переводом | Chinese+</title>
+            <title>Видео на китайском языке с переводом | Chinese+</title>
           </Helmet>
 
           <WordModal />
@@ -159,20 +159,17 @@ const VideoPage = ({
             </div>
 
             <div className='row'>
-              {
-                //   chineseChunkedArr.map((chunk, ind) => (
-                //   <Paragraph
-                //     chunk={chunk}
-                //     originTxt={text.origintext[ind]}
-                //     index={ind}
-                //     key={uuid()}
-                //     translation={
-                //       !isLngTxt ? text.translation[ind] : text.pages[curPage].translation[ind]
-                //     }
-                //     hideFlag={hideFlag}
-                //   />
-                // ))
-              }
+              {chineseWordsArr.map((lineArr, ind) => (
+                <Subs
+                  lineArr={lineArr}
+                  originTxt={video.cnSubs[ind]}
+                  translation={video.ruSubs[ind]}
+                  pinyin={video.pySubs[ind]}
+                  index={ind}
+                  key={uuid()}
+                  hideFlag={hideFlag}
+                />
+              ))}
             </div>
 
             <div className='my-2'>

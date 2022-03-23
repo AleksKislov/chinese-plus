@@ -20,7 +20,7 @@ const VideoSchema = new Schema({
   ],
   pySubs: [{ type: String }], // pinyin
   ruSubs: [{ type: String }],
-  chineseArr: [{ type: String }], // ['你好', '吗', '?', '\n']
+  chineseArr: [{ type: Array }], // [['你好', '吗', '?', '\n'], ['很', '好']]
   tags: [{ type: String, lowercase: true }],
   length: { type: Number },
   lvl: { type: Number, required: true },
