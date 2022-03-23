@@ -34,6 +34,15 @@ const VideoPage = ({
   getComments,
   comments,
 }) => {
+  const [isLngTxt, setIsLngTxt] = useState(false);
+  const [curSubIndex, setSurSubIndex] = useState(0);
+
+  const [currentMainSub, setCurrentMainSub] = useState(["很", "好"]);
+  const [hideCn, setHideCn] = useState(false);
+  const [hideRu, setHideRu] = useState(false);
+  const [hidePinyin, setHidePinyin] = useState(false);
+  const [isOkToEdit, setIsOkToEdit] = useState(false);
+
   useEffect(() => {
     setLoading();
     loadVideo(match.params.id);
@@ -44,7 +53,7 @@ const VideoPage = ({
     if (video) {
       setTimeout(async () => {
         // const chineseChunkedWords = await parseChineseWords(txt);
-        setChineseWordsArr(video.chineseArr);
+        setCurrentMainSub(video.chineseArr[curSubIndex]);
       });
     }
   }, [video]);
@@ -68,13 +77,13 @@ const VideoPage = ({
     }
   }, [video, isAuthenticated]);
 
-  const [isLngTxt, setIsLngTxt] = useState(false);
-  const [curPage, setCurPage] = useState(0);
-  const [pagesNum, setPagesNum] = useState(0);
-  const [chineseWordsArr, setChineseWordsArr] = useState([["很", "好"]]);
-  const [hideFlag, setHideFlag] = useState(false);
-  const [isOkToEdit, setIsOkToEdit] = useState(false);
-  const onClick = () => setHideFlag(!hideFlag);
+  const onClick = (e) => {
+    const id = e.target.id;
+
+    if (id === "ru") setHideRu(!hideRu);
+    if (id === "py") setHidePinyin(!hidePinyin);
+    if (id === "cn") setHideCn(!hideCn);
+  };
 
   return (
     <Fragment>
@@ -154,22 +163,63 @@ const VideoPage = ({
               <div className='btn btn-sm btn-outline-info'>Назад</div>
             </Link>
 
-            <div className='btn btn-sm btn-outline-info float-right' onClick={onClick}>
-              {hideFlag ? "Показать Перевод" : "Скрыть Перевод"}
+            <div className='row'>
+              <div className='col-sm-12'>
+                <iframe src='' frameborder='0' width='100%'></iframe>
+              </div>
             </div>
 
             <div className='row'>
-              {chineseWordsArr.map((lineArr, ind) => (
-                <Subs
-                  lineArr={lineArr}
-                  originTxt={video.cnSubs[ind]}
-                  translation={video.ruSubs[ind]}
-                  pinyin={video.pySubs[ind]}
-                  index={ind}
-                  key={uuid()}
-                  hideFlag={hideFlag}
-                />
-              ))}
+              <div className='col-sm-12'>
+                <div className=''>
+                  <span className='mr-1'>Скрыть</span>
+                  <span className='btn-group mb-1' role='group'>
+                    <button
+                      className={`btn btn-sm btn-${hideCn ? "" : "outline-"}info`}
+                      type='button'
+                      id='cn'
+                      onClick={(e) => onClick(e)}
+                    >
+                      Иероглифы
+                    </button>
+                    <button
+                      type='button'
+                      className={`btn btn-sm btn-${hidePinyin ? "" : "outline-"}info`}
+                      id='py'
+                      onClick={(e) => onClick(e)}
+                    >
+                      Пиньинь
+                    </button>
+                    <button
+                      type='button'
+                      className={`btn btn-sm btn-${hideRu ? "" : "outline-"}info`}
+                      id='ru'
+                      onClick={(e) => onClick(e)}
+                    >
+                      Перевод
+                    </button>
+                  </span>
+                  <span className='ml-1'>из субтитров</span>
+                </div>
+
+                {
+                  // <div className='btn btn-sm btn-outline-info float-right' onClick={onClick}>
+                  //   {hideCn ? "Показать Перевод" : "Скрыть Перевод"}
+                  // </div>
+                }
+              </div>
+            </div>
+
+            <div className='row'>
+              <Subs
+                mainSub={currentMainSub}
+                originTxt={video.cnSubs[curSubIndex]}
+                translation={video.ruSubs[curSubIndex]}
+                pinyin={video.pySubs[curSubIndex]}
+                hidePinyin={hidePinyin}
+                hideCn={hideCn}
+                hideRu={hideRu}
+              />
             </div>
 
             <div className='my-2'>

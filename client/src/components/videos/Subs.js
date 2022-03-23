@@ -10,10 +10,12 @@ import store from "../../store";
 import { setAlert } from "../../actions/alert";
 
 const Subs = ({
-  lineArr,
+  mainSub,
   translation,
   pinyin,
-  hideFlag,
+  hidePinyin,
+  hideCn,
+  hideRu,
   index,
   user,
   originTxt,
@@ -129,14 +131,16 @@ const Subs = ({
   return (
     <Fragment>
       <div className='col-sm-12 my-1'>
-        <div className={`card border-secondary`} style={{ height: "100%" }}>
-          <span className={`result${fontsize} card-text`}>
-            {lineArr.map((word) => (
-              <TippyTooltip word={word} key={uuid()} />
-            ))}
-          </span>
-          <span className='card-text'>{pinyin}</span>
-          <p className='card-text'>{translation}</p>
+        <div className='card border-secondary text-center' style={{ height: "100%" }}>
+          {!hideCn && (
+            <span className={`result${fontsize} card-text`}>
+              {mainSub.map((word) => (
+                <TippyTooltip word={word} key={uuid()} />
+              ))}
+            </span>
+          )}
+          {!hidePinyin && <span className='card-text'>{pinyin}</span>}
+          {!hideRu && <span className='card-text'>{translation}</span>}
         </div>
       </div>
     </Fragment>
