@@ -20,6 +20,7 @@ import ReadSwitch from "../texts/ReadSwitch";
 import ConfirmModal from "../comments/ConfirmModal";
 import LikeTextBtn from "../texts/LikeTextBtn";
 import TextSource from "../texts/common/TextSource";
+import YouTubeIframeLoader from "youtube-iframe";
 
 const VideoPage = ({
   video,
@@ -42,6 +43,7 @@ const VideoPage = ({
   const [hideRu, setHideRu] = useState(false);
   const [hidePinyin, setHidePinyin] = useState(false);
   const [isOkToEdit, setIsOkToEdit] = useState(false);
+  const [player, setPlayer] = useState(null);
 
   useEffect(() => {
     setLoading();
@@ -54,6 +56,13 @@ const VideoPage = ({
       setTimeout(async () => {
         // const chineseChunkedWords = await parseChineseWords(txt);
         setCurrentMainSub(video.chineseArr[curSubIndex]);
+
+        YouTubeIframeLoader.load((YT) => {
+          const ytPlayer = new YT.Player("player", {
+            videoId: video.source,
+          });
+          setPlayer(ytPlayer);
+        });
       });
     }
   }, [video]);
@@ -83,6 +92,10 @@ const VideoPage = ({
     if (id === "ru") setHideRu(!hideRu);
     if (id === "py") setHidePinyin(!hidePinyin);
     if (id === "cn") setHideCn(!hideCn);
+  };
+
+  const ytClick = () => {
+    alert(player.playerInfo.currentTime);
   };
 
   return (
@@ -152,7 +165,7 @@ const VideoPage = ({
           </div>
 
           <div className='col-sm-9'>
-            <h2>
+            <h2 onClick={ytClick}>
               {video.title}{" "}
               <small className='text-muted extra-smtext'>
                 <i className='fas fa-eye'></i> {video.hits}
@@ -163,13 +176,25 @@ const VideoPage = ({
               <div className='btn btn-sm btn-outline-info'>Назад</div>
             </Link>
 
-            <div className='row'>
+            <div className='row my-2'>
               <div className='col-sm-12'>
-                <iframe src='' frameborder='0' width='100%'></iframe>
+                <div id='player' className='embed-responsive embed-responsive-16by9'></div>
               </div>
             </div>
 
             <div className='row'>
+              <Subs
+                mainSub={currentMainSub}
+                originTxt={video.cnSubs[curSubIndex]}
+                translation={video.ruSubs[curSubIndex]}
+                pinyin={video.pySubs[curSubIndex]}
+                hidePinyin={hidePinyin}
+                hideCn={hideCn}
+                hideRu={hideRu}
+              />
+            </div>
+
+            <div className='row mt-1'>
               <div className='col-sm-12'>
                 <div className=''>
                   <span className='mr-1'>Скрыть</span>
@@ -199,27 +224,8 @@ const VideoPage = ({
                       Перевод
                     </button>
                   </span>
-                  <span className='ml-1'>из субтитров</span>
                 </div>
-
-                {
-                  // <div className='btn btn-sm btn-outline-info float-right' onClick={onClick}>
-                  //   {hideCn ? "Показать Перевод" : "Скрыть Перевод"}
-                  // </div>
-                }
               </div>
-            </div>
-
-            <div className='row'>
-              <Subs
-                mainSub={currentMainSub}
-                originTxt={video.cnSubs[curSubIndex]}
-                translation={video.ruSubs[curSubIndex]}
-                pinyin={video.pySubs[curSubIndex]}
-                hidePinyin={hidePinyin}
-                hideCn={hideCn}
-                hideRu={hideRu}
-              />
             </div>
 
             <div className='my-2'>
