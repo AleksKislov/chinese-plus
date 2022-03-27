@@ -48,13 +48,31 @@ export const getWords = async (words) => {
     },
   };
 
-  let res;
   try {
-    res = await axios.post("/api/dictionary/allwords", words, config);
+    const { data } = await axios.post("/api/dictionary/allwords", words, config);
+    return data;
   } catch (err) {
     console.log(err);
   }
-  return res.data;
+};
+
+/**
+ * @param {Array<[string]>} wordsArr
+ * @returns
+ */
+export const getWordsForVideo = async (wordsArr) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  try {
+    const { data } = await axios.post("/api/dictionary/allWordsForVideo", wordsArr, config);
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export const getTranslation = async (text) => {
@@ -83,6 +101,15 @@ export const parseChineseWords = async (obj) => {
   const newArr = itirateWordsFromDB(obj.chinese_arr, wordsFromDB);
   return chunkArrayFunc(newArr); // array of object arrays
 };
+
+export async function parseWordsForVideo(wordsArr) {
+  const wordsArrFromDB = await getWordsForVideo(wordsArr);
+  let readyArr = [];
+  for (let i = 0; i < wordsArr.length; i++) {
+    readyArr.push(itirateWordsFromDB(wordsArr[i], wordsArrFromDB[i]));
+  }
+  return readyArr;
+}
 
 export const segmenter = async (text) => {
   const config = {

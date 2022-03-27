@@ -2,9 +2,9 @@ import React, { useEffect, Fragment, useState } from "react";
 import { connect } from "react-redux";
 import { loadVideo, setLoading } from "../../actions/videos";
 import { getComments } from "../../actions/comments";
-import { parseChineseWords } from "../../actions/helpers";
+import { parseWordsForVideo } from "../../actions/helpers";
 import Spinner from "../layout/Spinner";
-import { v4 as uuid } from "uuid";
+// import { v4 as uuid } from "uuid";
 import Subs from "./Subs";
 import { Link } from "react-router-dom";
 import WordModal from "../translation/WordModal";
@@ -21,6 +21,7 @@ import ConfirmModal from "../comments/ConfirmModal";
 import LikeTextBtn from "../texts/LikeTextBtn";
 import TextSource from "../texts/common/TextSource";
 import YouTubeIframeLoader from "youtube-iframe";
+import { useInterval } from "../../actions/customHooks";
 
 const VideoPage = ({
   video,
@@ -35,15 +36,15 @@ const VideoPage = ({
   getComments,
   comments,
 }) => {
-  const [isLngTxt, setIsLngTxt] = useState(false);
   const [curSubIndex, setSurSubIndex] = useState(0);
 
-  const [currentMainSub, setCurrentMainSub] = useState(["很", "好"]);
+  const [currentMainSub, setCurrentMainSub] = useState(["好"]);
+  const [fullChineseSubs, setFullChineseSubs] = useState([["好"]]);
   const [hideCn, setHideCn] = useState(false);
   const [hideRu, setHideRu] = useState(false);
   const [hidePinyin, setHidePinyin] = useState(false);
   const [isOkToEdit, setIsOkToEdit] = useState(false);
-  const [player, setPlayer] = useState(null);
+  const [player, setPlayer] = useState({ playerInfo: null });
 
   useEffect(() => {
     setLoading();
@@ -51,11 +52,24 @@ const VideoPage = ({
     getComments("video", match.params.id);
   }, [setLoading, getComments]);
 
+  useInterval(() => {
+    if (player && player.playerInfo && video) {
+      const curTime = player.playerInfo.currentTime;
+      const ind = video.cnSubs.findIndex((x) => {
+        return +x.start < curTime && +x.start + +x.dur > curTime;
+      });
+
+      if (ind >= 0) {
+        setSurSubIndex(ind);
+        setCurrentMainSub(fullChineseSubs[ind]);
+      }
+    }
+  }, 100);
+
   useEffect(() => {
     if (video) {
       setTimeout(async () => {
-        // const chineseChunkedWords = await parseChineseWords(txt);
-        setCurrentMainSub(video.chineseArr[curSubIndex]);
+        setFullChineseSubs(await parseWordsForVideo(video.chineseArr));
 
         YouTubeIframeLoader.load((YT) => {
           const ytPlayer = new YT.Player("player", {

@@ -78,8 +78,18 @@ router.post("/", auth, async (req, res) => {
  */
 router.post("/allwords", async (req, res) => {
   try {
-    const allLexicon = await getAllWords(req.body);
-    res.json(allLexicon);
+    res.json(await getAllWords(req.body));
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// @todo сделать в виде одного запроса
+router.post("/allWordsForVideo", async (req, res) => {
+  try {
+    const promises = req.body.map((arr) => getAllWords(arr));
+    res.json(await Promise.all(promises));
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");

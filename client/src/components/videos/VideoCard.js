@@ -16,7 +16,6 @@ const VideoCard = ({
 }) => {
   const {
     title,
-    picUrl,
     tags,
     length,
     desc,
@@ -64,7 +63,11 @@ const VideoCard = ({
         <div className='card-body row'>
           <div style={{ position: "relative" }} className='col-md-3'>
             <Link to={linkTo}>
-              <img className='mr-3 textCardImg' src={`${picUrl}`} alt='video pic' />
+              <img
+                className='mr-3 videoCardImg'
+                src={`https://img.youtube.com/vi/${source}/0.jpg`}
+                alt='video pic'
+              />
             </Link>
           </div>
           <div className='col-md-9'>

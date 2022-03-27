@@ -95,7 +95,7 @@ const TippyTooltip = ({
         visible={open}
         onClickOutside={hideIt}
         content={
-          <div>
+          <div className='text-left'>
             <div className='tippyPinyin'>
               <span className='onlyPinyin text-info'>{chinese}</span>
               <span className='onlyPinyin'>{pinyin}</span>
