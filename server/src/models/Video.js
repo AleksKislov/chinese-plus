@@ -24,7 +24,6 @@ const VideoSchema = new Schema({
   tags: [{ type: String, lowercase: true }],
   length: { type: Number },
   lvl: { type: Number, required: true },
-  picUrl: { type: String }, // youtube preview pic
   source: { type: String }, // youtube id
   isApproved: { type: Number }, // by admin or moderator, 1 or 0
   hits: { type: Number, default: 1 }, // number of visits
