@@ -15,6 +15,16 @@ const {
   getVidsInChunks,
 } = require("../../src/api/services/videos");
 
+// router.get("/vids", async (req, res) => {
+//   getSubtitles({
+//     videoID: "6hWz05iCKls", // youtube video id
+//     lang: "en", // default: `en` zh-CN, ru
+//   }).then((captions) => {
+//     // console.log(captions);
+//     res.json(captions);
+//   });
+// });
+
 /**
  * @method    POST
  * @route     api/videos/create
@@ -75,15 +85,5 @@ router.put("/like/:id", auth, likeVideo);
  * @access    Private
  */
 router.delete("/comment/:id/:comment_id", auth, deleteComment);
-
-// router.get("/vids", async (req, res) => {
-//   getSubtitles({
-//     videoID: "6hWz05iCKls", // youtube video id
-//     lang: "zh-CN", // default: `en` zh-CN, ru
-//   }).then((captions) => {
-//     // console.log(captions);
-//     res.json(captions);
-//   });
-// });
 
 module.exports = router;
