@@ -20,13 +20,17 @@ const Navbar = ({
   getMentionsLen,
   mentionsLen,
 }) => {
-  const [paths, setPaths] = useState({
+  const initialPaths = {
     pinyin: "/pinyin",
     hsk: "/hsk-table",
     reading: "/texts",
     login: "/register",
     private: "/dashboard",
-  });
+    videos: "/videos",
+  };
+  Object.freeze(initialPaths);
+
+  const [paths, setPaths] = useState(initialPaths);
   const privateLinks = ["/dashboard", "/hsk-words", "userwords"];
   const [totalWordsLen, setTotalWordsLen] = useState(0);
   const [mentions, setMentions] = useState(mentionsLen > 0);
@@ -35,42 +39,32 @@ const Navbar = ({
     const url = window.location.pathname;
     if (url.includes("/books") || url.includes("/texts")) {
       setPaths({
-        hsk: "/hsk-table",
-        pinyin: "/pinyin",
+        ...initialPaths,
         reading: url,
-        login: "/register",
-        private: "/dashboard",
+      });
+    } else if (url.includes("/videos")) {
+      setPaths({
+        ...initialPaths,
+        videos: url,
       });
     } else if (url.includes("/pinyin")) {
       setPaths({
-        hsk: "/hsk-table",
+        ...initialPaths,
         pinyin: url,
-        reading: "/texts",
-        login: "/register",
-        private: "/dashboard",
       });
     } else if (url.includes("/hsk")) {
       setPaths({
+        ...initialPaths,
         hsk: url,
-        pinyin: "/pinyin",
-        reading: "/texts",
-        login: "/register",
-        private: "/dashboard",
       });
     } else if (url === "/register" || url === "/login") {
       setPaths({
-        hsk: "/hsk-table",
-        pinyin: "/pinyin",
-        reading: "/texts",
+        ...initialPaths,
         login: url,
-        private: "/dashboard",
       });
     } else if (privateLinks.includes(url)) {
       setPaths({
-        hsk: "/hsk-table",
-        pinyin: "/pinyin",
-        reading: "/texts",
-        login: "/register",
+        ...initialPaths,
         private: url,
       });
     }
@@ -300,6 +294,30 @@ const Navbar = ({
     </li>
   );
 
+  const videosNav = (
+    <li className='nav-item dropdown'>
+      <NavLink
+        className='nav-link dropdown-toggle'
+        data-toggle='dropdown'
+        to={paths.videos}
+        activeStyle={activeNavLink}
+      >
+        Видео
+      </NavLink>
+
+      <div className='dropdown-menu'>
+        <NavLink
+          className='dropdown-item'
+          to='/videos'
+          activeStyle={activeNavLink}
+          onClick={() => setPathsAndCollapse({ ...paths, videos: "/videos" })}
+        >
+          Видео
+        </NavLink>
+      </div>
+    </li>
+  );
+
   const hskNav = (
     <li className='nav-item dropdown'>
       <NavLink
@@ -448,6 +466,7 @@ const Navbar = ({
     <Fragment>
       <ul className='navbar-nav text-center mr-auto'>
         {readingNav}
+        {videosNav}
         {pinyinNav}
         {hskNav}
         {translationNav}
