@@ -4,7 +4,6 @@ import { loadVideo, setLoading } from "../../actions/videos";
 import { getComments } from "../../actions/comments";
 import { parseWordsForVideo } from "../../actions/helpers";
 import Spinner from "../layout/Spinner";
-// import { v4 as uuid } from "uuid";
 import Subs from "./Subs";
 import { Link } from "react-router-dom";
 import WordModal from "../translation/WordModal";
@@ -16,17 +15,16 @@ import { Helmet } from "react-helmet";
 import { levelStars } from "../../actions/helpers";
 import FontSize from "../common/FontSize";
 import PleaseShareText from "../texts/common/PleaseShareText";
-import ReadSwitch from "../texts/ReadSwitch";
+// import ReadSwitch from "../texts/ReadSwitch";
 import ConfirmModal from "../comments/ConfirmModal";
 import LikeTextBtn from "../texts/LikeTextBtn";
-import TextSource from "../texts/common/TextSource";
 import YouTubeIframeLoader from "youtube-iframe";
 import { useInterval } from "../../actions/customHooks";
+import { YoutubeService } from "../../patterns/YoutubeService";
 
 const VideoPage = ({
   video,
   loadVideo,
-  // loadLongText,
   match,
   loading,
   setLoading,
@@ -38,8 +36,8 @@ const VideoPage = ({
 }) => {
   const [curSubIndex, setSurSubIndex] = useState(0);
 
-  const [currentMainSub, setCurrentMainSub] = useState(["好"]);
-  const [fullChineseSubs, setFullChineseSubs] = useState([["好"]]);
+  const [currentMainSub, setCurrentMainSub] = useState(["."]);
+  const [fullChineseSubs, setFullChineseSubs] = useState([["."]]);
   const [hideCn, setHideCn] = useState(false);
   const [hideRu, setHideRu] = useState(false);
   const [hidePinyin, setHidePinyin] = useState(false);
@@ -128,7 +126,11 @@ const VideoPage = ({
 
           <div className='col-sm-3'>
             <div className='card bg-light mb-3'>
-              <img className='mr-3 cardImageStyle' src={`${video.picUrl}`} alt='video pic' />
+              <img
+                className='mr-3 cardImageStyle'
+                src={YoutubeService.getVideoPicUrl(video.source)}
+                alt='video pic'
+              />
               <div className='card-body'>
                 <p className='card-text text-center'>
                   {video.tags.map((tag, ind) => (
@@ -138,12 +140,9 @@ const VideoPage = ({
                   ))}
                 </p>
 
-                <h6 className='card-subtitle mb-2'>
-                  <span className='text-muted'>Благодарности: </span>
-                  <LikeTextBtn likes={video.likes} id={video._id} />
-                </h6>
-
-                <ReadSwitch id={video._id} />
+                {
+                  // <ReadSwitch id={video._id} />
+                }
 
                 <h6 className='card-subtitle mb-2'>
                   <span className='text-muted'>Опубликовал/а: </span>
@@ -158,12 +157,16 @@ const VideoPage = ({
                   {video.length}
                 </h6>
 
-                <TextSource textSource={video.source} />
                 <FontSize />
 
                 <h6 className='card-subtitle mb-2'>
                   <span className='text-muted'>Описание: </span>
                   {video.desc}
+                </h6>
+
+                <h6 className='card-subtitle mb-2'>
+                  <span className='text-muted'>Благодарности: </span>
+                  <LikeTextBtn likes={video.likes} id={video._id} />
                 </h6>
 
                 {isAuthenticated && isOkToEdit && (
@@ -198,7 +201,7 @@ const VideoPage = ({
 
             <div className='row'>
               <Subs
-                mainSub={currentMainSub}
+                mainSub={fullChineseSubs[curSubIndex]}
                 originTxt={video.cnSubs[curSubIndex]}
                 translation={video.ruSubs[curSubIndex]}
                 pinyin={video.pySubs[curSubIndex]}

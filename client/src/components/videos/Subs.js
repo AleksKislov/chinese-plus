@@ -139,7 +139,11 @@ const Subs = ({
               ))}
             </span>
           )}
-          {!hidePinyin && <span className='card-text'>{pinyin}</span>}
+          {!hidePinyin && (
+            <span className='card-text text-info' style={{ fontSize: 18 }}>
+              {pinyin}
+            </span>
+          )}
           {!hideRu && <span className='card-text'>{translation}</span>}
         </div>
       </div>

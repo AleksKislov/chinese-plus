@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import { levelStars, dateToStr } from "../../actions/helpers";
 import Tippy from "@tippyjs/react";
 import { connect } from "react-redux";
-import { textCategories } from "../../constants/consts.json";
+import { videoCategories } from "../../constants/consts.json";
 import LikeTextBtn from "../texts/LikeTextBtn";
 import TextDescription from "../texts/common/TextDescription";
-import TextSource from "../texts/common/TextSource";
 import { NullUser, User } from "../../patterns/User";
+import VideoSrc from "./VideoSrc";
+import { YoutubeService } from "../../patterns/YoutubeService";
 
 const VideoCard = ({
   video,
@@ -65,7 +66,7 @@ const VideoCard = ({
             <Link to={linkTo}>
               <img
                 className='mr-3 videoCardImg'
-                src={`https://img.youtube.com/vi/${source}/0.jpg`}
+                src={YoutubeService.getVideoPicUrl(source)}
                 alt='video pic'
               />
             </Link>
@@ -102,14 +103,15 @@ const VideoCard = ({
             </h6>
             <h6 className='card-subtitle mb-2'>
               <span className='text-muted'>Категория: </span>
-              {textCategories[0]}
+              {videoCategories[category]}
             </h6>
             <h6 className='card-subtitle mb-2'>
               <span className='text-muted'>Кол-во знаков: </span>
               {length}
             </h6>
 
-            <TextSource textSource={source} />
+            <VideoSrc source={source} />
+
             <TextDescription description={desc} />
 
             <div className=''>

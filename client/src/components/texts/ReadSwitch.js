@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { markAsRead } from "../../actions/auth";
 
 const ReadSwitch = ({ user, id, markAsRead }) => {
-  const isRead = textid => (user ? user.finished_texts.includes(textid) : false);
+  const isRead = (textid) => (user ? user.finished_texts.includes(textid) : false);
 
   const [alreadyRead, setAlreadyRead] = useState(isRead(id));
 
@@ -33,8 +33,8 @@ const ReadSwitch = ({ user, id, markAsRead }) => {
   );
 };
 
-const mapStateToProps = state => ({
-  user: state.auth.user
+const mapStateToProps = (state) => ({
+  user: state.auth.user,
 });
 
 export default connect(mapStateToProps, { markAsRead })(ReadSwitch);
