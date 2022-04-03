@@ -178,7 +178,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     }
 
     let chunkedTranslation;
-    if (!isTranslated) {
+    if (!isTranslated && !isToEdit) {
       const { translation } = await getTranslation(chunkedOriginText);
       setIsTranslated(true);
       translationArea.value = translation.join("\n\n");
