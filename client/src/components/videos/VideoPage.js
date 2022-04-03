@@ -106,8 +106,12 @@ const VideoPage = ({
     if (id === "cn") setHideCn(!hideCn);
   };
 
-  const ytClick = () => {
-    alert(player.playerInfo.currentTime);
+  const pauseVideo = () => {
+    if (typeof player.pauseVideo === "function") player.pauseVideo();
+  };
+
+  const playVideo = () => {
+    if (typeof player.playVideo === "function") player.playVideo();
   };
 
   return (
@@ -182,7 +186,7 @@ const VideoPage = ({
           </div>
 
           <div className='col-sm-9'>
-            <h2 onClick={ytClick}>
+            <h2>
               {video.title}{" "}
               <small className='text-muted extra-smtext'>
                 <i className='fas fa-eye'></i> {video.hits}
@@ -208,6 +212,8 @@ const VideoPage = ({
                 hidePinyin={hidePinyin}
                 hideCn={hideCn}
                 hideRu={hideRu}
+                pauseVideo={pauseVideo}
+                playVideo={playVideo}
               />
             </div>
 

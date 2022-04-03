@@ -169,13 +169,12 @@ export const numberToStr = (num) => {
  * @returns {number}    - number of Chinese chars in str w/o spaces
  */
 export const countZnChars = (str) => {
-  if (str) {
-    symbolsToIgnore.forEach((char) => {
-      str = str.replaceAll(char, "");
-    });
-    return str.length;
-  }
-  return 0;
+  if (!str) return 0;
+
+  symbolsToIgnore.forEach((char) => {
+    str = str.replaceAll(char, "");
+  });
+  return str.length;
 };
 /**
  *

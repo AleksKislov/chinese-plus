@@ -23,6 +23,8 @@ const Subs = ({
   unreadToday,
   toEdit,
   fontsize,
+  pauseVideo,
+  playVideo,
 }) => {
   // const numOfChars = countZnChars(originTxt);
   const [alreadyRead, setAlreadyRead] = useState(false);
@@ -131,9 +133,13 @@ const Subs = ({
   return (
     <Fragment>
       <div className='col-sm-12 my-1'>
-        <div className='card border-secondary text-center' style={{ height: "100%" }}>
+        <div className='card border-secondary text-center alreadyRead' style={{ height: "100%" }}>
           {!hideCn && (
-            <span className={`result${fontsize} card-text`}>
+            <span
+              className={`result${fontsize} card-text`}
+              onMouseEnter={pauseVideo}
+              onMouseLeave={playVideo}
+            >
               {mainSub.map((word) => (
                 <TippyTooltip word={word} key={uuid()} />
               ))}

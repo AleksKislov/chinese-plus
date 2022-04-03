@@ -16,9 +16,10 @@ const {
 } = require("../../src/api/services/videos");
 
 // router.get("/vids", async (req, res) => {
+//   const { lang, videoID } = req.query;
 //   getSubtitles({
-//     videoID: "6hWz05iCKls", // youtube video id
-//     lang: "en", // default: `en` zh-CN, ru
+//     videoID, // youtube video id
+//     lang, // default: `en` zh-CN, ru
 //   }).then((captions) => {
 //     // console.log(captions);
 //     res.json(captions);
