@@ -174,7 +174,7 @@ const VideoPage = ({
                 </h6>
 
                 {isAuthenticated && isOkToEdit && (
-                  <Link to={`/create-video?edit`}>
+                  <Link to={`/edit-video`}>
                     <button className='btn btn-sm btn-outline-warning'>Edit</button>
                   </Link>
                 )}
