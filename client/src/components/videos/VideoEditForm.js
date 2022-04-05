@@ -21,6 +21,7 @@ import { v4 as uuid } from "uuid";
 import { videoCategories } from "../../constants/consts.json";
 import { NullUser, User } from "../../patterns/User";
 import { YoutubeService } from "../../patterns/YoutubeService";
+import SubLine from "./SubLine";
 
 const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
   const [user, setUser] = useState(new NullUser());
@@ -50,10 +51,11 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
         source,
       } = videoToEdit;
 
+      console.log("input", chineseArr);
       // document.getElementById("videoSecs").innerHTML = cnSubs.map((line) => line.start).join("\n");
       setDisplayedTime(cnSubs.map((line) => line.start));
       document.getElementById("textArea").value = chineseArr
-        .map((line) => line.join(""))
+        .map((word) => word.join(" "))
         .join("\n");
       document.getElementById("pinyinArea").value = pySubs.join("\n");
       document.getElementById("translationArea").value = ruSubs.join("\n");
@@ -73,6 +75,9 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
     });
   }, [videoToEdit]);
 
+  const [newChineseArr, setNewChineseArr] = useState(null);
+  const [newRuArr, setNewRuArr] = useState(null);
+  const [newPinyinArr, setNewPinyinArr] = useState(null);
   const [displayedTime, setDisplayedTime] = useState([""]);
   const [isRedirected, setIsRedirected] = useState(false);
   const [okToPublish, setOkToPublish] = useState(false);
@@ -91,10 +96,19 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
     category: videoCategories.misc,
   });
 
+  const textToCleanArr = (txt) => {
+    return txt
+      .split("\n")
+      .map((chunk) => chunk.trim())
+      .filter(Boolean);
+  };
+
   const preprocessForm = async (e) => {
     e.preventDefault();
 
     const textArea = document.getElementById("textArea");
+    const translationArea = document.getElementById("translationArea");
+    const pinyinArea = document.getElementById("pinyinArea");
 
     // if (textLen > bgTextLen) {
     //   return store.dispatch(
@@ -105,24 +119,19 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
     //   );
     // }
 
-    const translationArea = document.getElementById("translationArea");
-    const originText = textArea.value.trim().replace(/\n\s*\n/g, "\n");
+    const originText = textArea.value.trim();
+    const length = countZnChars(originText);
 
-    let chunkedOriginText = originText.split("\n"); // array of strings
-    chunkedOriginText = chunkedOriginText.filter((chunk) => chunk);
-    chunkedOriginText = chunkedOriginText.map((chunk) => chunk.trim());
-    textArea.value = chunkedOriginText.join("\n\n");
+    const chunkedOriginText = textToCleanArr(originText);
+    const chunkedTranslation = textToCleanArr(translationArea.value);
+    const chunkedPinyin = textToCleanArr(pinyinArea.value);
 
-    let allwords, chineseChunkedWords;
-    // if (!isLongText) {
-    //   allwords = await segmenter(originText);
-    //   allwords = allwords.filter((word) => word !== " ");
+    let chineseChunkedWords;
+    const segmentedWords = (await segmenter(originText)).filter((word) => word !== " ");
+    console.log("сег", segmentedWords);
     //   const wordsFromDB = await getWords(allwords);
     //   const newArr = itirateWordsFromDB(allwords, wordsFromDB);
     //   chineseChunkedWords = chunkArrayFunc(newArr).filter((chunk) => chunk.length);
-    // } else {
-    //   chineseChunkedWords = chunkedOriginText;
-    // }
 
     // let chunkedTranslation;
     // if (!isTranslated) {
@@ -135,16 +144,14 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
     //   chunkedTranslation = chunkedTranslation.filter((chunk) => chunk.length);
     // }
 
-    const length = countZnChars(originText);
-
-    setFormData({
-      ...formData,
-      // chineseChunkedWords,
-      // chunkedTranslation,
-      // chunkedOriginText,
-      // allwords,
-      length,
-    });
+    // setFormData({
+    //   ...formData,
+    //   // chineseChunkedWords,
+    //   // chunkedTranslation,
+    //   // chunkedOriginText,
+    //   // allwords,
+    //   length,
+    // });
   };
 
   const parseTags = (text) => {
@@ -403,7 +410,11 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
           </div>
           <hr />
 
-          <div className='row'>{formData && formData.chineseChunkedWords}</div>
+          <div className='row'>
+            {okToPublish &&
+              newChineseArr &&
+              newChineseArr.map((chunk, ind) => <SubLine chunk={chunk} />)}
+          </div>
           <hr />
 
           <div className='col-md-12' style={{ height: "6rem" }}>

@@ -176,6 +176,7 @@ export const countZnChars = (str) => {
   });
   return str.length;
 };
+
 /**
  *
  * @param {string} href - window.location.href

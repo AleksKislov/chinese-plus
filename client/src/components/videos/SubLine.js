@@ -11,6 +11,7 @@ import { setAlert } from "../../actions/alert";
 
 const SubLine = ({
   chunk,
+  pinyin,
   translation,
   hideFlag,
   index,
@@ -39,6 +40,12 @@ const SubLine = ({
               <TippyTooltip word={word} key={uuid()} />
             ))}
           </p>
+          {SubLineNum}
+        </div>
+      </div>
+      <div className='col-sm-4 my-1'>
+        <div className='card border-secondary' style={{ height: "100%" }}>
+          <p className='card-text textPadding'>{pinyin}</p>
           {SubLineNum}
         </div>
       </div>
