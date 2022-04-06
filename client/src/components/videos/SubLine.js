@@ -13,8 +13,7 @@ const SubLine = ({
   chunk,
   pinyin,
   translation,
-  hideFlag,
-  index,
+  subTime,
   originTxt,
   user,
   readToday,
@@ -25,11 +24,7 @@ const SubLine = ({
 }) => {
   const numOfChars = countZnChars(originTxt);
 
-  const SubLineNum = (
-    <Tippy content={`Строка №${index + 1}`}>
-      <div className='paragraphNum'>{index + 1}</div>
-    </Tippy>
-  );
+  const SubLineNum = <div className='paragraphNum'>{subTime} сек.</div>;
 
   return (
     <Fragment>

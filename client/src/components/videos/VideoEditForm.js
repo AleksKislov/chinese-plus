@@ -122,16 +122,21 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
     const originText = textArea.value.trim();
     const length = countZnChars(originText);
 
-    const chunkedOriginText = textToCleanArr(originText);
+    // const chunkedOriginText = textToCleanArr(originText);
     const chunkedTranslation = textToCleanArr(translationArea.value);
     const chunkedPinyin = textToCleanArr(pinyinArea.value);
 
-    let chineseChunkedWords;
     const segmentedWords = (await segmenter(originText)).filter((word) => word !== " ");
-    console.log("сег", segmentedWords);
-    //   const wordsFromDB = await getWords(allwords);
-    //   const newArr = itirateWordsFromDB(allwords, wordsFromDB);
-    //   chineseChunkedWords = chunkArrayFunc(newArr).filter((chunk) => chunk.length);
+    const wordsFromDB = await getWords(segmentedWords);
+    const orderedCnWordsFromDB = itirateWordsFromDB(segmentedWords, wordsFromDB);
+    const chineseChunkedWords = chunkArrayFunc(orderedCnWordsFromDB).filter(
+      (chunk) => chunk.length
+    );
+    // console.log("дб", chineseChunkedWords);
+
+    setNewChineseArr(chineseChunkedWords);
+    setNewPinyinArr(chunkedPinyin);
+    setNewRuArr(chunkedTranslation);
 
     // let chunkedTranslation;
     // if (!isTranslated) {
@@ -413,7 +418,16 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
           <div className='row'>
             {okToPublish &&
               newChineseArr &&
-              newChineseArr.map((chunk, ind) => <SubLine chunk={chunk} />)}
+              newRuArr &&
+              newPinyinArr &&
+              newChineseArr.map((chunk, ind) => (
+                <SubLine
+                  chunk={chunk}
+                  translation={newRuArr[ind]}
+                  pinyin={newPinyinArr[ind]}
+                  subTime={displayedTime[ind]}
+                />
+              ))}
           </div>
           <hr />
 
