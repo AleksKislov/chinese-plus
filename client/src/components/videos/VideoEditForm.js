@@ -18,7 +18,7 @@ import {
 } from "../../actions/helpers";
 import { v4 as uuid } from "uuid";
 // import "./style.css";
-import { videoCategories } from "../../constants/consts.json";
+import { videoCategories, smTextLen } from "../../constants/consts.json";
 import { NullUser, User } from "../../patterns/User";
 import { YoutubeService } from "../../patterns/YoutubeService";
 import SubLine from "./SubLine";
@@ -49,6 +49,7 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
         lvl,
         isApproved,
         source,
+        length,
       } = videoToEdit;
 
       console.log("input", chineseArr);
@@ -71,6 +72,7 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
         category: videoCategories[category],
         source,
         videoId: _id,
+        length,
       });
     });
   }, [videoToEdit]);
@@ -81,10 +83,6 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
   const [displayedTime, setDisplayedTime] = useState([""]);
   const [isRedirected, setIsRedirected] = useState(false);
   const [okToPublish, setOkToPublish] = useState(false);
-  // chineseChunkedWords: [],
-  // chunkedTranslation: [],
-  // allwords: [],
-  // chunkedOriginText: [],
   const [formData, setFormData] = useState({
     desc: "",
     title: "",
@@ -103,6 +101,14 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
       .filter(Boolean);
   };
 
+  const setTextLen = () => {
+    const textArea = document.getElementById("textArea");
+    setFormData({
+      ...formData,
+      length: countZnChars(textArea.value.trim()),
+    });
+  };
+
   const preprocessForm = async (e) => {
     e.preventDefault();
 
@@ -110,7 +116,7 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
     const translationArea = document.getElementById("translationArea");
     const pinyinArea = document.getElementById("pinyinArea");
 
-    // if (textLen > bgTextLen) {
+    // if (textLen > smTextLen) {
     //   return store.dispatch(
     //     setAlert(
     //       `Слишком большой текст (превышает ${bgTextLen}字). Разбейте, пожалуйста, на части`,
@@ -138,25 +144,10 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
     setNewPinyinArr(chunkedPinyin);
     setNewRuArr(chunkedTranslation);
 
-    // let chunkedTranslation;
-    // if (!isTranslated) {
-    //   const { translation } = await getTranslation(chunkedOriginText);
-    //   translationArea.value = translation.join("\n\n");
-    //   chunkedTranslation = translation;
-    // } else {
-    //   let translationTrimed = translationArea.value.trim();
-    //   chunkedTranslation = translationTrimed.split("\n"); // array of strings
-    //   chunkedTranslation = chunkedTranslation.filter((chunk) => chunk.length);
-    // }
-
-    // setFormData({
-    //   ...formData,
-    //   // chineseChunkedWords,
-    //   // chunkedTranslation,
-    //   // chunkedOriginText,
-    //   // allwords,
-    //   length,
-    // });
+    setFormData({
+      ...formData,
+      length,
+    });
   };
 
   const parseTags = (text) => {
@@ -362,13 +353,17 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
                       rows='3'
                       placeholder='汉字。。。'
                     ></textarea>
-                    <small className='text-muted'>500 / 500</small>
+                    <small className='text-muted'>
+                      {formData.length || 0} / {smTextLen}
+                    </small>
                   </div>
                   <div className='form-group col-md-3'>
                     <label htmlFor='translationArea'>пиньинь:</label>
                     <textarea
                       onClick={handleKeyDown}
-                      onChange={() => setOkToPublish(false)}
+                      onChange={() => {
+                        setOkToPublish(false);
+                      }}
                       className='form-control'
                       id='pinyinArea'
                       rows='3'
@@ -384,7 +379,11 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
                     <label htmlFor='translationArea'>перевод:</label>
                     <textarea
                       onClick={handleKeyDown}
-                      onChange={() => setOkToPublish(false)}
+                      onChange={() => {
+                        console.log("here");
+                        setTextLen();
+                        setOkToPublish(false);
+                      }}
                       className='form-control'
                       id='translationArea'
                       rows='3'
