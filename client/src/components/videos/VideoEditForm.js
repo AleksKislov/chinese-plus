@@ -165,7 +165,6 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
     };
 
     const { videoId, title, desc, lvl, tags, length, isApproved, category, source } = formData;
-    console.log(category);
     const cnSegmentedSubs = newChineseArr.map((chunk) => chunk.map((x) => x.chinese));
 
     const body = JSON.stringify({
