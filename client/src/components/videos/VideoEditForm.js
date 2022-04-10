@@ -7,13 +7,12 @@ import PropTypes from "prop-types";
 import WordModal from "../translation/WordModal";
 import { setAlert } from "../../actions/alert";
 import { loadUserWords } from "../../actions/userWords";
-// import { TweenMax } from "gsap";
 import {
   getWords,
   chunkArrayFunc,
   segmenter,
   itirateWordsFromDB,
-  getTranslation,
+  // getTranslation,
   countZnChars,
 } from "../../actions/helpers";
 import { v4 as uuid } from "uuid";
@@ -52,8 +51,6 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
         length,
       } = videoToEdit;
 
-      console.log("input", chineseArr);
-      // document.getElementById("videoSecs").innerHTML = cnSubs.map((line) => line.start).join("\n");
       setDisplayedTime(cnSubs.map((line) => line.start));
       document.getElementById("textArea").value = chineseArr
         .map((word) => word.join(" "))
@@ -96,6 +93,7 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
 
   const textToCleanArr = (txt) => {
     return txt
+      .trim()
       .split("\n")
       .map((chunk) => chunk.trim())
       .filter(Boolean);
@@ -116,38 +114,41 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
     const translationArea = document.getElementById("translationArea");
     const pinyinArea = document.getElementById("pinyinArea");
 
-    // if (textLen > smTextLen) {
-    //   return store.dispatch(
-    //     setAlert(
-    //       `Слишком большой текст (превышает ${bgTextLen}字). Разбейте, пожалуйста, на части`,
-    //       "danger"
-    //     )
-    //   );
-    // }
-
     const originText = textArea.value.trim();
     const length = countZnChars(originText);
+    setFormData({ ...formData, length });
 
-    // const chunkedOriginText = textToCleanArr(originText);
+    if (length > smTextLen) {
+      return store.dispatch(
+        setAlert(`Слишком большой текст субтитров (превышает ${smTextLen}字)`, "danger")
+      );
+    }
+
     const chunkedTranslation = textToCleanArr(translationArea.value);
     const chunkedPinyin = textToCleanArr(pinyinArea.value);
+    setNewPinyinArr(chunkedPinyin);
+    setNewRuArr(chunkedTranslation);
 
     const segmentedWords = (await segmenter(originText)).filter((word) => word !== " ");
-    const wordsFromDB = await getWords(segmentedWords);
+    const wordsFromDB = await getWords(segmentedWords); // unordered
     const orderedCnWordsFromDB = itirateWordsFromDB(segmentedWords, wordsFromDB);
     const chineseChunkedWords = chunkArrayFunc(orderedCnWordsFromDB).filter(
       (chunk) => chunk.length
     );
-    // console.log("дб", chineseChunkedWords);
 
     setNewChineseArr(chineseChunkedWords);
-    setNewPinyinArr(chunkedPinyin);
-    setNewRuArr(chunkedTranslation);
 
-    setFormData({
-      ...formData,
-      length,
-    });
+    const okToPost =
+      chunkedTranslation.length === chunkedPinyin.length &&
+      chunkedPinyin.length === chineseChunkedWords.length;
+
+    if (!okToPost) {
+      return store.dispatch(
+        setAlert(`Кол-во строк перевода, пиньиня и кит. текста должно совпадать`, "danger")
+      );
+    }
+
+    setOkToPublish(true);
   };
 
   const parseTags = (text) => {
@@ -164,6 +165,8 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
     };
 
     const { videoId, title, desc, lvl, tags, length, isApproved, category, source } = formData;
+    console.log(category);
+    const cnSegmentedSubs = newChineseArr.map((chunk) => chunk.map((x) => x.chinese));
 
     const body = JSON.stringify({
       videoId,
@@ -171,9 +174,9 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
       desc,
       lvl,
       tags: parseTags(tags),
-      // origintext: chunkedOriginText,
-      // translation: chunkedTranslation,
-      // chinese_arr: allwords,
+      chineseArr: cnSegmentedSubs,
+      ruSubs: newRuArr,
+      pySubs: newPinyinArr,
       length,
       isApproved,
       category,
@@ -181,20 +184,27 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
     });
 
     try {
-      await axios.post(`/api/texts/update`, body, config);
-      alert("Текст успешно изменен!");
+      await axios.post(`/api/videos/update`, body, config);
+      alert("Видео успешно обновлено!");
       setIsRedirected(true);
     } catch (err) {
       console.log(err);
     }
   };
 
+  const changeCategory = (e) => {
+    // (e) => setFormData({ ...formData, [e.target.id]: e.target.value })
+    const ruCategory = e.target.value;
+    const ruCategories = Object.values(videoCategories);
+    const engCategories = Object.keys(videoCategories);
+    const categoryInd = ruCategories.indexOf(ruCategory);
+    setFormData({ ...formData, category: engCategories[categoryInd] });
+  };
+
   const handleKeyDown = (e) => {
     e.target.style.height = "inherit";
     e.target.style.height = `${e.target.scrollHeight}px`;
   };
-
-  // const testEngInput = (str) => setIsEnglish(/^[a-zA-Z]+$/.test(str));
 
   if (isRedirected) return <Redirect to='/not_approved_videos' />;
 
@@ -299,11 +309,11 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
 
                 <div className='form-row'>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='categoryInd'>Выбор категории</label>
+                    <label htmlFor='category'>Выбор категории</label>
                     <select
                       className='form-control'
                       id='category'
-                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
+                      onChange={changeCategory}
                       value={formData.category}
                     >
                       {Object.keys(videoCategories).map((key, ind) => (
@@ -332,8 +342,8 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
                   <div className='form-group col-md-1'>
                     <label htmlFor='textArea'>Сек:</label>
                     <p id='videoSecs' className='text-muted'>
-                      {displayedTime.map((sec) => (
-                        <Fragment>
+                      {displayedTime.map((sec, ind) => (
+                        <Fragment key={ind}>
                           <span>{sec}</span>
                           <br />
                         </Fragment>
@@ -380,7 +390,6 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
                     <textarea
                       onClick={handleKeyDown}
                       onChange={() => {
-                        console.log("here");
                         setTextLen();
                         setOkToPublish(false);
                       }}
@@ -397,17 +406,9 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
                 </div>
 
                 <div className='form-row'>
-                  {
-                    <button
-                      type='submit'
-                      className='btn btn-primary mx-1'
-                      onClick={() => {
-                        setOkToPublish(true);
-                      }}
-                    >
-                      Предобработка
-                    </button>
-                  }
+                  <button type='submit' className='btn btn-primary mx-1'>
+                    Предобработка
+                  </button>
                 </div>
               </fieldset>
             </form>
@@ -415,12 +416,12 @@ const VideoEditForm = ({ loadUserWords, userToCheck, videoToEdit }) => {
           <hr />
 
           <div className='row'>
-            {okToPublish &&
-              newChineseArr &&
+            {newChineseArr &&
               newRuArr &&
               newPinyinArr &&
               newChineseArr.map((chunk, ind) => (
                 <SubLine
+                  key={ind}
                   chunk={chunk}
                   translation={newRuArr[ind]}
                   pinyin={newPinyinArr[ind]}

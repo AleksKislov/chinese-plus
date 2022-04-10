@@ -13,6 +13,7 @@ const {
   deleteComment,
   markAsSeen,
   getVidsInChunks,
+  updateVideo,
 } = require("../../src/api/services/videos");
 
 // router.get("/vids", async (req, res) => {
@@ -44,6 +45,14 @@ router.post(
   ],
   createVideo
 );
+
+/**
+ * @method    POST
+ * @route     api/videos/update
+ * @desc      Update a video
+ * @access    Private
+ */
+router.post("/update", [auth, [check("videoId", "Нет videoId").not().isEmpty()]], updateVideo);
 
 router.post("/mark_as_seen/:id", auth, markAsSeen);
 router.post("/unmark_as_seen/:id", auth, markAsSeen);
