@@ -12,8 +12,8 @@ import {
   chunkArrayFunc,
   segmenter,
   itirateWordsFromDB,
-  textToCleanArr,
   countZnChars,
+  textToCleanArr,
   parseTags,
   // getTranslation,
 } from "../../actions/helpers";
@@ -24,54 +24,12 @@ import { NullUser, User } from "../../patterns/User";
 import { YoutubeService } from "../../patterns/YoutubeService";
 import SubLine from "./SubLine";
 
-const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
+const AddVideoForm = ({ loadUserWords, user }) => {
   useEffect(() => loadUserWords(), []);
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (!videoToEdit) return;
-
-      const {
-        _id,
-        title,
-        desc,
-        category,
-        cnSubs, //  {start: String, dur: String, text: String}
-        pySubs,
-        ruSubs,
-        chineseArr,
-        tags,
-        lvl,
-        isApproved,
-        source,
-        length,
-      } = videoToEdit;
-
-      setDisplayedTime(cnSubs.map((line) => line.start));
-      document.getElementById("textArea").value = chineseArr
-        .map((word) => word.join(" "))
-        .join("\n");
-      document.getElementById("pinyinArea").value = pySubs.join("\n");
-      document.getElementById("translationArea").value = ruSubs.join("\n");
-
-      // document.getElementById("translationArea").value = transTxt.join("\n");
-
-      setFormData({
-        lvl,
-        tags: tags.join(", "),
-        title,
-        desc,
-        isApproved,
-        category: videoCategories[category],
-        source,
-        videoId: _id,
-        length,
-      });
-    });
-  }, [videoToEdit]);
 
   const [newChineseArr, setNewChineseArr] = useState(null);
   const [newRuArr, setNewRuArr] = useState(null);
+  const [newCnSubs, setNewCnSubs] = useState(null);
   const [newPinyinArr, setNewPinyinArr] = useState(null);
   const [displayedTime, setDisplayedTime] = useState([""]);
   const [isRedirected, setIsRedirected] = useState(false);
@@ -83,7 +41,6 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
     lvl: 1,
     tags: "",
     length: 0,
-    videoId: "",
     source: "",
     category: videoCategories.misc,
   });
@@ -140,34 +97,34 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
     setOkToPublish(true);
   };
 
-  const editVideo = async (formData) => {
+  const publishVideo = async (formData) => {
     const config = {
       headers: {
         "Content-Type": "application/json",
       },
     };
 
-    const { videoId, title, desc, lvl, tags, length, isApproved, category, source } = formData;
+    const { title, desc, lvl, tags, length, isApproved, category, source } = formData;
     const cnSegmentedSubs = newChineseArr.map((chunk) => chunk.map((x) => x.chinese));
 
     const body = JSON.stringify({
-      videoId,
       title,
       desc,
       lvl,
-      tags: parseTags(tags),
-      chineseArr: cnSegmentedSubs,
-      ruSubs: newRuArr,
-      pySubs: newPinyinArr,
       length,
       isApproved,
       category,
       source,
+      tags: parseTags(tags),
+      cnSubs: newCnSubs,
+      chineseArr: cnSegmentedSubs,
+      ruSubs: newRuArr,
+      pySubs: newPinyinArr,
     });
 
     try {
-      await axios.post(`/api/videos/update`, body, config);
-      alert("Видео успешно обновлено!");
+      await axios.post(`/api/videos/create`, body, config);
+      alert("Видео успешно добавлено!");
       setIsRedirected(true);
     } catch (err) {
       console.log(err);
@@ -175,7 +132,6 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
   };
 
   const changeCategory = (e) => {
-    // (e) => setFormData({ ...formData, [e.target.id]: e.target.value })
     const ruCategory = e.target.value;
     const ruCategories = Object.values(videoCategories);
     const engCategories = Object.keys(videoCategories);
@@ -204,7 +160,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
       ) : (
         <Fragment>
           <div className='col-md-12'>
-            <h2>Отредактируйте видео с субтитрами</h2>
+            <h2>Добавить видео с субтитрами</h2>
 
             <div className='row'>
               <WordModal />
@@ -250,6 +206,20 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
                     />
                   </div>
                   <div className='form-group col-md-6'>
+                    <label htmlFor='source'>Источник:</label>
+                    <input
+                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
+                      type='text'
+                      className={`form-control ${!formData.source && "is-invalid"}`}
+                      id='source'
+                      placeholder='Id видео'
+                      autoComplete='off'
+                      value={formData.source}
+                    />
+                  </div>
+                </div>
+                <div className='form-row'>
+                  <div className='form-group col-md-6'>
                     <label htmlFor='description'>Краткое описание</label>
                     <input
                       onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
@@ -261,8 +231,6 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
                       value={formData.desc}
                     />
                   </div>
-                </div>
-                <div className='form-row'>
                   <div className='form-group col-md-6'>
                     <label htmlFor='tags'>Тэги через запятую</label>
                     <input
@@ -273,19 +241,6 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
                       placeholder='Список тэгов'
                       value={formData.tags}
                     />
-                  </div>
-                  <div className='form-group col-md-6'>
-                    <label htmlFor='level'>Уровень, от 1(простой) до 3(сложный)</label>
-                    <select
-                      className='form-control'
-                      id='level'
-                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
-                      value={formData.level}
-                    >
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
-                    </select>
                   </div>
                 </div>
 
@@ -306,17 +261,17 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
                     </select>
                   </div>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='source'>Источник:</label>
-                    <input
-                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
-                      type='text'
+                    <label htmlFor='level'>Уровень, от 1(простой) до 3(сложный)</label>
+                    <select
                       className='form-control'
-                      id='source'
-                      placeholder='Id видео'
-                      autoComplete='off'
-                      value={YoutubeService.getSrcLink(formData.source)}
-                      disabled
-                    />
+                      id='level'
+                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
+                      value={formData.level}
+                    >
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                    </select>
                   </div>
                 </div>
 
@@ -415,7 +370,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
 
           <div className='col-md-12' style={{ height: "6rem" }}>
             {okToPublish && (
-              <button className='btn btn-primary mx-1' onClick={(e) => editVideo(formData)}>
+              <button className='btn btn-primary mx-1' onClick={(e) => publishVideo(formData)}>
                 Изменить Видео
               </button>
             )}
@@ -426,7 +381,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
   );
 };
 
-VideoEditForm.propTypes = {
+AddVideoForm.propTypes = {
   userwords: PropTypes.array.isRequired,
   loadUserWords: PropTypes.func.isRequired,
 };
@@ -438,4 +393,4 @@ const mapStateToProps = (state) => ({
   videoToEdit: state.videos.video,
 });
 
-export default connect(mapStateToProps, { loadUserWords })(VideoEditForm);
+export default connect(mapStateToProps, { loadUserWords })(AddVideoForm);

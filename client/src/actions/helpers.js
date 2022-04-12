@@ -1,6 +1,29 @@
 import axios from "axios";
 import React from "react";
 import { symbolsToIgnore } from "../constants/consts.json";
+
+/**
+ * @param {string} text
+ * @returns {Array<string>}
+ */
+export const parseTags = (text) => {
+  let tags = text.replaceAll("，", ",");
+  tags = tags.replaceAll("、", ",");
+  return tags.split(",").map((tag) => tag.trim().toLowerCase()); // array of words
+};
+
+/**
+ * @param {string} txt
+ * @returns {Array<string>}
+ */
+export const textToCleanArr = (txt) => {
+  return txt
+    .trim()
+    .split("\n")
+    .map((chunk) => chunk.trim())
+    .filter(Boolean);
+};
+
 /**
  *
  * @param {array} allwords

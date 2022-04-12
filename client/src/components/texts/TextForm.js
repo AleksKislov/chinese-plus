@@ -16,6 +16,7 @@ import {
   itirateWordsFromDB,
   getTranslation,
   countZnChars,
+  parseTags,
 } from "../../actions/helpers";
 import Paragraph from "./Paragraph";
 import { v4 as uuid } from "uuid";
@@ -206,12 +207,6 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     const res = await getPhotos(formData.pic_theme);
     setPhotosResult(res);
     setPhotosUrls(res);
-  };
-
-  const parseTags = (text) => {
-    let tags = text.replaceAll("，", ",");
-    tags = tags.replaceAll("、", ",");
-    return tags.split(",").map((tag) => tag.trim().toLowerCase()); // array of words
   };
 
   const choosePicUrl = (e) => {

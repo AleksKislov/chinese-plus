@@ -144,7 +144,7 @@ const imgText = {
 };
 
 const mapStateToProps = (state) => ({
-  user: state.auth.user ? new User(state.auth.user) : new NullUser(state.auth.user),
+  user: state.auth.user ? new User(state.auth.user) : new NullUser(),
 });
 
 export default connect(mapStateToProps, {})(VideoCard);

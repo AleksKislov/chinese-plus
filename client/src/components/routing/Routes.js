@@ -47,6 +47,7 @@ import NewHskTests from "../new-hsk/NewHskTests";
 import TranslationForm from "../translation/TranslateForm";
 import Videos from "../videos/Videos";
 import VideoEditForm from "../videos/VideoEditForm";
+import AddVideoForm from "../videos/AddVideoForm";
 // import TranslateForm from "../translation/TranslateForm";
 // <PrivateRoute exact path='/translate' component={TranslateForm} />
 
@@ -103,6 +104,7 @@ const Routes = () => {
           <Route exact path='/kanban' component={Plans} />
           <Route exact path='/posts/:id' component={PostPage} />
           <Route exact path='/create-text' component={TextForm} />
+          <Route exact path='/create-video' component={AddVideoForm} />
           <Route exact path='/edit-video' component={VideoEditForm} />
           <PrivateRoute exact path='/create-bookpage' component={PageForm} />
           <Route exact path='/texts' component={Texts} />

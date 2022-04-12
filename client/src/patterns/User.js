@@ -39,6 +39,10 @@ export class User {
   get avatarPic() {
     return `https://${this.avatar}`;
   }
+
+  get isNull() {
+    return false;
+  }
 }
 
 export class NullUser {
@@ -50,6 +54,10 @@ export class NullUser {
     this.role = "Ноунэйм";
     this.seenVideos = [];
     this.finished_texts = [];
+  }
+
+  get isNull() {
+    return true;
   }
 
   get isAdmin() {
