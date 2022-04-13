@@ -16,21 +16,6 @@ const {
   updateVideo,
 } = require("../../src/api/services/videos");
 
-// router.get("/vids", async (req, res) => {
-// const { lang, videoID } = req.query;
-// getSubtitles({
-//   videoID, // youtube video id
-//   lang, // default: `en` zh-CN, ru
-// }).then((captions) => {
-//   // console.log(captions);
-//   res.json(captions);
-// });
-// const { data } = await axios.get(
-//   `https://www.googleapis.com/youtube/v3/captions?key=${}&part=snippet&videoId=M7FIvfx5J10`
-// );
-// res.json(data);
-// });
-
 /**
  * @method    POST
  * @route     api/videos/create

@@ -227,18 +227,10 @@ const Search = ({
     }, 100);
   };
 
-  const handleNewUserMessage = async (newMessage) => {
-    // console.log(`New message incoming! ${newMessage}`);
-    // Now send the message throught the backend API
-
-    let res;
+  const handleNewUserMessage = async (msg) => {
     try {
-      res = await axios.get("/api/dialogflow?text=" + newMessage);
-
-      if (res) {
-        // console.log(res.data.response);
-        addResponseMessage(res.data.response);
-      }
+      const { data } = await axios.get("/gcloud/dialogflow?text=" + msg);
+      if (data) addResponseMessage(data.response);
     } catch (err) {
       console.log(err);
     }

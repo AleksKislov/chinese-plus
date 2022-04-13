@@ -43,7 +43,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Define routes
+// api routes
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/posts", require("./routes/api/posts"));
@@ -54,13 +54,15 @@ app.use("/api/newhskwords", require("./routes/api/newhskwords"));
 app.use("/api/words", require("./routes/api/words"));
 app.use("/api/userwords", require("./routes/api/userwords"));
 app.use("/api/dictionary", require("./routes/api/dictionary"));
-app.use("/api/dialogflow", require("./routes/api/dialogflow"));
 app.use("/api/comments", require("./routes/api/comments"));
 app.use("/api/texts", require("./routes/api/texts"));
 app.use("/api/books", require("./routes/api/books"));
 app.use("/api/translation", require("./routes/api/translation"));
 app.use("/api/notices", require("./routes/api/notices"));
 app.use("/api/videos", require("./routes/api/videos"));
+
+// glcoud services routes
+app.use("/gcloud/dialogflow", require("./routes/gcloud/dialogflow"));
 
 // Serve static files
 if (!isDevelopment) {

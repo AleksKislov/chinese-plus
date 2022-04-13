@@ -22,7 +22,7 @@ const TranslateForm = ({ loadUserWords, isAuthenticated }) => {
   const [textLen, setTextLen] = useState(0);
   const [wordsFromText, setWordsFromText] = useState([]);
 
-  const onSubmit = async e => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const textArea = document.getElementById("textArea");
 
@@ -31,7 +31,7 @@ const TranslateForm = ({ loadUserWords, isAuthenticated }) => {
     } else {
       let originText = textArea.value.trim();
       let allwords = await segmenter(originText);
-      allwords = allwords.filter(word => word !== " ");
+      allwords = allwords.filter((word) => word !== " ");
       const wordsFromDB = await getWords(allwords);
       const newArr = itirateWordsFromDB(allwords, wordsFromDB);
       setWordsFromText(newArr);
@@ -41,41 +41,7 @@ const TranslateForm = ({ loadUserWords, isAuthenticated }) => {
     // setTextLen(0);
   };
 
-  // const handleNewUserMessage = async newMessage => {
-  //   // console.log(`New message incoming! ${newMessage}`);
-  //   // Now send the message throught the backend API
-
-  //   let res;
-  //   try {
-  //     res = await axios.get("/api/dialogflow?text=" + newMessage);
-
-  //     if (res) {
-  //       // console.log(res.data.response);
-  //       addResponseMessage(res.data.response);
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
-  //   <Widget
-  //   handleNewUserMessage={handleNewUserMessage}
-  //   title='AI-чат Buyilehu'
-  //   subtitle='Пообщайтесь с AI на китайском'
-  //   senderPlaceHolder='Ваше сообщение...'
-  // />
-
-  // <div className='card text-white bg-primary mb-3'>
-  // <div className='card-body'>
-  //   <h4 className='card-title'>Чат с AI</h4>
-  //   <p className='card-text'>
-  //     В нижнем правом углу кнопка для вызова чата с AI. Поддерживаемые темы будут
-  //     расширяться.
-  //   </p>
-  // </div>
-  // </div>
-
-  const onChange = e => setTextLen(e.target.value.length);
+  const onChange = (e) => setTextLen(e.target.value.length);
 
   return (
     <div className='row'>
@@ -107,11 +73,11 @@ const TranslateForm = ({ loadUserWords, isAuthenticated }) => {
       </div>
 
       <div className='col-sm-9'>
-        <form onSubmit={e => onSubmit(e)}>
+        <form onSubmit={(e) => onSubmit(e)}>
           <div className='form-group'>
             <label htmlFor='textArea'>Вставьте китайский текст для обработки:</label>
             <textarea
-              onChange={e => onChange(e)}
+              onChange={(e) => onChange(e)}
               className='form-control'
               id='textArea'
               rows='3'
@@ -130,7 +96,7 @@ const TranslateForm = ({ loadUserWords, isAuthenticated }) => {
           <div className='result'>
             <p>
               {wordsFromText &&
-                wordsFromText.map(word => <TippyTooltip word={word} key={uuid()} />)}
+                wordsFromText.map((word) => <TippyTooltip word={word} key={uuid()} />)}
             </p>
           </div>
         </div>
@@ -141,13 +107,13 @@ const TranslateForm = ({ loadUserWords, isAuthenticated }) => {
 
 TranslateForm.propTypes = {
   userwords: PropTypes.array.isRequired,
-  loadUserWords: PropTypes.func.isRequired
+  loadUserWords: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   userwords: state.userwords.userwords,
   wordsLoading: state.userwords.loading,
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
 });
 
 export default connect(mapStateToProps, { loadUserWords })(TranslateForm);
