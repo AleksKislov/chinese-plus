@@ -73,6 +73,7 @@ const VideoPage = ({
           const ytPlayer = new YT.Player("player", {
             videoId: video.source,
           });
+          console.log(ytPlayer);
           setPlayer(ytPlayer);
         });
       });

@@ -6,4 +6,6 @@ export class YoutubeService {
   static getVideoPicUrl(videoId) {
     return `https://img.youtube.com/vi/${videoId}/0.jpg`;
   }
+
+  static getVideoCaptions() {}
 }

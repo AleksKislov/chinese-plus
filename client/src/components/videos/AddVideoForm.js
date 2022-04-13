@@ -27,13 +27,6 @@ import SubLine from "./SubLine";
 const AddVideoForm = ({ loadUserWords, user }) => {
   useEffect(() => loadUserWords(), []);
 
-  const [newChineseArr, setNewChineseArr] = useState(null);
-  const [newRuArr, setNewRuArr] = useState(null);
-  const [newCnSubs, setNewCnSubs] = useState(null);
-  const [newPinyinArr, setNewPinyinArr] = useState(null);
-  const [displayedTime, setDisplayedTime] = useState([""]);
-  const [isRedirected, setIsRedirected] = useState(false);
-  const [okToPublish, setOkToPublish] = useState(false);
   const [formData, setFormData] = useState({
     isApproved: "0",
     desc: "",
@@ -44,6 +37,22 @@ const AddVideoForm = ({ loadUserWords, user }) => {
     source: "",
     category: videoCategories.misc,
   });
+
+  useEffect(() => {
+    if (formData.title && formData.source) {
+      setOkToPreprocess(true);
+    }
+  }, [formData.title, formData.source]);
+
+  const [isRedirected, setIsRedirected] = useState(false);
+  const [okToPublish, setOkToPublish] = useState(false);
+  const [okToPreprocess, setOkToPreprocess] = useState(false);
+
+  const [newChineseArr, setNewChineseArr] = useState(null);
+  const [newRuArr, setNewRuArr] = useState(null);
+  const [newCnSubs, setNewCnSubs] = useState(null);
+  const [newPinyinArr, setNewPinyinArr] = useState(null);
+  const [displayedTime, setDisplayedTime] = useState([""]);
 
   const setTextLen = () => {
     const textArea = document.getElementById("textArea");
@@ -218,135 +227,149 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                     />
                   </div>
                 </div>
-                <div className='form-row'>
-                  <div className='form-group col-md-6'>
-                    <label htmlFor='description'>Краткое описание</label>
-                    <input
-                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
-                      type='text'
-                      className={`form-control`}
-                      id='description'
-                      autoComplete='off'
-                      placeholder='Кратко про это видео...'
-                      value={formData.desc}
-                    />
-                  </div>
-                  <div className='form-group col-md-6'>
-                    <label htmlFor='tags'>Тэги через запятую</label>
-                    <input
-                      onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                      type='text'
-                      className={`form-control`}
-                      id='tags'
-                      placeholder='Список тэгов'
-                      value={formData.tags}
-                    />
-                  </div>
-                </div>
 
-                <div className='form-row'>
-                  <div className='form-group col-md-6'>
-                    <label htmlFor='category'>Выбор категории</label>
-                    <select
-                      className='form-control'
-                      id='category'
-                      onChange={changeCategory}
-                      value={formData.category}
-                    >
-                      {Object.keys(videoCategories).map((key, ind) => (
-                        <option value={videoCategories[key]} key={ind}>
-                          {videoCategories[key]}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className='form-group col-md-6'>
-                    <label htmlFor='level'>Уровень, от 1(простой) до 3(сложный)</label>
-                    <select
-                      className='form-control'
-                      id='level'
-                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
-                      value={formData.level}
-                    >
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
-                    </select>
-                  </div>
-                </div>
+                {okToPreprocess && (
+                  <Fragment>
+                    <div className='form-row'>
+                      <button className='btn btn-primary mx-1'>Получить субтитры</button>
+                      <span>для видео с id {formData.source}</span>
+                    </div>
 
-                <div className='form-row'>
-                  <div className='form-group col-md-1'>
-                    <label htmlFor='textArea'>Сек:</label>
-                    <p id='videoSecs' className='text-muted'>
-                      {displayedTime.map((sec, ind) => (
-                        <Fragment key={ind}>
-                          <span>{sec}</span>
-                          <br />
-                        </Fragment>
-                      ))}
-                    </p>
-                  </div>
+                    <div className='form-row'>
+                      <div className='form-group col-md-6'>
+                        <label htmlFor='description'>Краткое описание</label>
+                        <input
+                          onChange={(e) =>
+                            setFormData({ ...formData, [e.target.id]: e.target.value })
+                          }
+                          type='text'
+                          className={`form-control`}
+                          id='description'
+                          autoComplete='off'
+                          placeholder='Кратко про это видео...'
+                          value={formData.desc}
+                        />
+                      </div>
+                      <div className='form-group col-md-6'>
+                        <label htmlFor='tags'>Тэги через запятую</label>
+                        <input
+                          onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                          type='text'
+                          className={`form-control`}
+                          id='tags'
+                          placeholder='Список тэгов'
+                          value={formData.tags}
+                        />
+                      </div>
+                    </div>
 
-                  <div className='form-group col-md-2'>
-                    <label htmlFor='textArea'>Поправьте текст:</label>
-                    <textarea
-                      onClick={handleKeyDown}
-                      onChange={() => {
-                        setOkToPublish(false);
-                      }}
-                      className='form-control'
-                      id='textArea'
-                      rows='3'
-                      placeholder='汉字。。。'
-                    ></textarea>
-                    <small className='text-muted'>
-                      {formData.length || 0} / {smTextLen}
-                    </small>
-                  </div>
-                  <div className='form-group col-md-3'>
-                    <label htmlFor='translationArea'>пиньинь:</label>
-                    <textarea
-                      onClick={handleKeyDown}
-                      onChange={() => {
-                        setOkToPublish(false);
-                      }}
-                      className='form-control'
-                      id='pinyinArea'
-                      rows='3'
-                      placeholder='Пиньинь'
-                    ></textarea>
+                    <div className='form-row'>
+                      <div className='form-group col-md-6'>
+                        <label htmlFor='category'>Выбор категории</label>
+                        <select
+                          className='form-control'
+                          id='category'
+                          onChange={changeCategory}
+                          value={formData.category}
+                        >
+                          {Object.keys(videoCategories).map((key, ind) => (
+                            <option value={videoCategories[key]} key={ind}>
+                              {videoCategories[key]}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className='form-group col-md-6'>
+                        <label htmlFor='level'>Уровень, от 1(простой) до 3(сложный)</label>
+                        <select
+                          className='form-control'
+                          id='level'
+                          onChange={(e) =>
+                            setFormData({ ...formData, [e.target.id]: e.target.value })
+                          }
+                          value={formData.level}
+                        >
+                          <option>1</option>
+                          <option>2</option>
+                          <option>3</option>
+                        </select>
+                      </div>
+                    </div>
 
-                    {
-                      // <small className='text-muted'>не забывайте про параграфы</small>
-                    }
-                  </div>
+                    <div className='form-row'>
+                      <div className='form-group col-md-1'>
+                        <label htmlFor='textArea'>Сек:</label>
+                        <p id='videoSecs' className='text-muted'>
+                          {displayedTime.map((sec, ind) => (
+                            <Fragment key={ind}>
+                              <span>{sec}</span>
+                              <br />
+                            </Fragment>
+                          ))}
+                        </p>
+                      </div>
 
-                  <div className='form-group col-md-6'>
-                    <label htmlFor='translationArea'>перевод:</label>
-                    <textarea
-                      onClick={handleKeyDown}
-                      onChange={() => {
-                        setTextLen();
-                        setOkToPublish(false);
-                      }}
-                      className='form-control'
-                      id='translationArea'
-                      rows='3'
-                      placeholder='Ваш перевод'
-                    ></textarea>
+                      <div className='form-group col-md-2'>
+                        <label htmlFor='textArea'>Поправьте текст:</label>
+                        <textarea
+                          onClick={handleKeyDown}
+                          onChange={() => {
+                            setOkToPublish(false);
+                          }}
+                          className='form-control'
+                          id='textArea'
+                          rows='3'
+                          placeholder='汉字。。。'
+                        ></textarea>
+                        <small className='text-muted'>
+                          {formData.length || 0} / {smTextLen}
+                        </small>
+                      </div>
+                      <div className='form-group col-md-3'>
+                        <label htmlFor='translationArea'>пиньинь:</label>
+                        <textarea
+                          onClick={handleKeyDown}
+                          onChange={() => {
+                            setOkToPublish(false);
+                          }}
+                          className='form-control'
+                          id='pinyinArea'
+                          rows='3'
+                          placeholder='Пиньинь'
+                        ></textarea>
 
-                    {
-                      // <small className='text-muted'>не забывайте про параграфы</small>
-                    }
-                  </div>
-                </div>
+                        {
+                          // <small className='text-muted'>не забывайте про параграфы</small>
+                        }
+                      </div>
 
-                <div className='form-row'>
-                  <button type='submit' className='btn btn-primary mx-1'>
-                    Предобработка
-                  </button>
-                </div>
+                      <div className='form-group col-md-6'>
+                        <label htmlFor='translationArea'>перевод:</label>
+                        <textarea
+                          onClick={handleKeyDown}
+                          onChange={() => {
+                            setTextLen();
+                            setOkToPublish(false);
+                          }}
+                          className='form-control'
+                          id='translationArea'
+                          rows='3'
+                          placeholder='Ваш перевод'
+                        ></textarea>
+
+                        {
+                          // <small className='text-muted'>не забывайте про параграфы</small>
+                        }
+                      </div>
+                    </div>
+
+                    <div className='form-row'>
+                      <button type='submit' className='btn btn-primary mx-1'>
+                        Предобработка
+                      </button>
+                    </div>
+                  </Fragment>
+                )}
               </fieldset>
             </form>
           </div>
