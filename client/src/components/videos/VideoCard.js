@@ -4,7 +4,7 @@ import { levelStars, dateToStr } from "../../actions/helpers";
 import Tippy from "@tippyjs/react";
 import { connect } from "react-redux";
 import { videoCategories } from "../../constants/consts.json";
-import LikeTextBtn from "../texts/LikeTextBtn";
+import LikeBtn from "../common/LikeBtn";
 import TextDescription from "../texts/common/TextDescription";
 import { NullUser, User } from "../../patterns/User";
 import VideoSrc from "./VideoSrc";
@@ -120,7 +120,7 @@ const VideoCard = ({
                   Комментарии {comments_id.length > 0 && <span>{comments_id.length}</span>}
                 </button>
               </Link>
-              <LikeTextBtn likes={likes} id={_id} />
+              <LikeBtn likes={likes} id={_id} contentType={"video"} />
             </div>
           </div>
         </div>

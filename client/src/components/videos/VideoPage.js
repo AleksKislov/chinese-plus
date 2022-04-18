@@ -17,7 +17,7 @@ import FontSize from "../common/FontSize";
 import PleaseShareText from "../texts/common/PleaseShareText";
 // import ReadSwitch from "../texts/ReadSwitch";
 import ConfirmModal from "../comments/ConfirmModal";
-import LikeTextBtn from "../texts/LikeTextBtn";
+import LikeBtn from "../common/LikeBtn";
 import YouTubeIframeLoader from "youtube-iframe";
 import { useInterval } from "../../actions/customHooks";
 import { YoutubeService } from "../../patterns/YoutubeService";
@@ -171,7 +171,7 @@ const VideoPage = ({
 
                 <h6 className='card-subtitle mb-2'>
                   <span className='text-muted'>Благодарности: </span>
-                  <LikeTextBtn likes={video.likes} id={video._id} />
+                  <LikeBtn likes={video.likes} id={video._id} contentType={"video"} />
                 </h6>
 
                 {isAuthenticated && isOkToEdit && (

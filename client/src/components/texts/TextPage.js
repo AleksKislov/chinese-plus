@@ -18,7 +18,7 @@ import FontSize from "../common/FontSize";
 import PleaseShareText from "./common/PleaseShareText";
 import ReadSwitch from "./ReadSwitch";
 import ConfirmModal from "../comments/ConfirmModal";
-import LikeTextBtn from "./LikeTextBtn";
+import LikeBtn from "../common/LikeBtn";
 import TextSource from "./common/TextSource";
 import Pagination from "./Pagination";
 
@@ -121,7 +121,7 @@ const TextPage = ({
 
                 <h6 className='card-subtitle mb-2'>
                   <span className='text-muted'>Благодарности: </span>
-                  <LikeTextBtn likes={text.likes} id={text._id} />
+                  <LikeBtn likes={text.likes} id={text._id} />
                 </h6>
 
                 <ReadSwitch id={text._id} />

@@ -4,7 +4,7 @@ import { levelStars, dateToStr } from "../../actions/helpers";
 import Tippy from "@tippyjs/react";
 import { connect } from "react-redux";
 import { textCategories } from "../../constants/consts.json";
-import LikeTextBtn from "./LikeTextBtn";
+import LikeBtn from "../common/LikeBtn";
 import TextDescription from "./common/TextDescription";
 import TextSource from "./common/TextSource";
 
@@ -25,7 +25,7 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
     categoryInd,
     likes,
     source,
-    user: textUser
+    user: textUser,
   } = text;
   useEffect(() => {
     if (hide === 0) setHideId(false);
@@ -36,7 +36,7 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
     setRightLevel(hideLevel === 0 || level === hideLevel);
   }, [hide, category, hideLevel]);
 
-  const isRead = textid => (user ? user.finished_texts.includes(textid) : false);
+  const isRead = (textid) => (user ? user.finished_texts.includes(textid) : false);
   const [hideIt, setHideId] = useState(false);
   const [rightCategory, setRightCategory] = useState(true);
   const [rightLevel, setRightLevel] = useState(true);
@@ -119,7 +119,7 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
                   Комментарии {comments_id.length > 0 && <span>{comments_id.length}</span>}
                 </button>
               </Link>
-              <LikeTextBtn likes={likes} id={_id} />
+              <LikeBtn likes={likes} id={_id} />
             </div>
           </div>
         </div>
@@ -139,11 +139,11 @@ const imgText = {
   // left: "25%",
   // transform: "translate(-50%, -50%)"
   marginTop: "-3.5rem",
-  marginLeft: "1rem"
+  marginLeft: "1rem",
 };
 
-const mapStateToProps = state => ({
-  user: state.auth.user
+const mapStateToProps = (state) => ({
+  user: state.auth.user,
 });
 
 export default connect(mapStateToProps, {})(TextCard);

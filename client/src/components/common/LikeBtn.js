@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
 import Tippy from "@tippyjs/react";
 import { likeText } from "../../actions/texts";
+import { likeVideo } from "../../actions/videos";
 import { connect } from "react-redux";
 
-const LikeTextBtn = ({ likes, id, likeText, user }) => {
+const CONTENT = {
+  video: "video",
+  text: "text",
+};
+
+const LikeBtn = ({ likes, id, likeText, likeVideo, user, contentType }) => {
   useEffect(() => {
-    if (user) setLiked(likes.some(like => like.user === user._id));
+    if (user) setLiked(likes.some((like) => like.user === user._id));
   }, [likes, user]);
 
-  const [liked, setLiked] = useState(user ? likes.some(like => like.user === user._id) : false);
+  const [liked, setLiked] = useState(user ? likes.some((like) => like.user === user._id) : false);
 
   return (
     <Tippy
@@ -21,7 +27,11 @@ const LikeTextBtn = ({ likes, id, likeText, user }) => {
       <button
         className={`btn btn-sm btn-${liked ? "danger" : "outline-info"}`}
         onClick={() => {
-          likeText(id);
+          if (contentType === CONTENT.video) {
+            likeVideo(id);
+          } else {
+            likeText(id);
+          }
         }}
       >
         <i className='fas fa-heart'></i> {likes.length > 0 && <span>{likes.length}</span>}
@@ -30,8 +40,8 @@ const LikeTextBtn = ({ likes, id, likeText, user }) => {
   );
 };
 
-const mapStateToProps = state => ({
-  user: state.auth.user
+const mapStateToProps = (state) => ({
+  user: state.auth.user,
 });
 
-export default connect(mapStateToProps, { likeText })(LikeTextBtn);
+export default connect(mapStateToProps, { likeText, likeVideo })(LikeBtn);
