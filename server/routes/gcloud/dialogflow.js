@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
         text: {
           // The query to send to the dialogflow agent
           // text: "你好",
-          text: text,
+          text,
           // The language used by the client (en-US)
           languageCode: "zn-CN",
         },
