@@ -1,37 +1,28 @@
 const router = require("express").Router();
 const auth = require("../../middleware/auth");
 const axios = require("axios");
-const { getSubtitles } = require("youtube-captions-scraper");
 
 const YT_URLS = {
   captions: `https://www.googleapis.com/youtube/v3/captions?key=${process.env.GC_API_KEY}`,
 };
 
 /**
- * @route   /gcloud/youtube/getCaptionsList?videoId=6hWz05iCKls
+ * @route   /gcloud/youtube/getCaptions?videoId=M7FIvfx5J10
  * @access  Private
  */
-router.get("/getCaptionsList", auth, async (req, res) => {
+router.get("/getCaptions", auth, async (req, res) => {
   const { videoId } = req.query;
   if (!videoId) throw new Error("No videoId provided");
+  // getSubtitles({
+  //   videoID, // youtube video id
+  //   lang, // default: `en` zh-CN, ru
+  // }).then((captions) => {
+  //   // console.log(captions);
+  //   res.json(captions);
+  // });
 
-  const { data } = await axios.get(`${YT_URLS.captions}&part=snippet&videoId=${videoId}`);
+  const { data } = await axios.get(`${YT_URLS.captions}&part=snippet&videoId=M7FIvfx5J10`);
   res.json(data);
-});
-
-/**
- * @route   /gcloud/youtube/getSubs?videoId=6hWz05iCKls
- * @access  Private
- */
-router.get("/getSubs", auth, async (req, res) => {
-  const { videoId, lang } = req.query;
-  if (!videoId) throw new Error("No videoId provided");
-  const captions = await getSubtitles({
-    videoID: videoId, // yt video id
-    lang, // default: `en` zh-CN, ru
-  });
-
-  res.json(captions);
 });
 
 module.exports = router;
