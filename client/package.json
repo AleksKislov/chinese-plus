@@ -28,7 +28,6 @@
     "redux-thunk": "^2.3.0",
     "tippy.js": "^6.2.3",
     "uuid": "^8.1.0",
-    "youtube-captions-scraper": "^2.0.0",
     "youtube-iframe": "^1.0.3"
   },
   "scripts": {
