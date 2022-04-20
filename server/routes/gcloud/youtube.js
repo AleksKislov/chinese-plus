@@ -5,18 +5,30 @@ const { getSubtitles } = require("youtube-captions-scraper");
 
 const YT_URLS = {
   captions: `https://www.googleapis.com/youtube/v3/captions?key=${process.env.GC_API_KEY}`,
+  info: `https://www.googleapis.com/youtube/v3/videos?key=${process.env.GC_API_KEY}`,
 };
 
 /**
- * @route   /gcloud/youtube/getCaptionsList?videoId=6hWz05iCKls
+ * @route   /gcloud/youtube/getInfo?videoId=6hWz05iCKls
  * @access  Private
  */
-router.get("/getCaptionsList", auth, async (req, res) => {
+router.get("/getInfo", auth, async (req, res) => {
   const { videoId } = req.query;
   if (!videoId) throw new Error("No videoId provided");
 
-  const { data } = await axios.get(`${YT_URLS.captions}&part=snippet&videoId=${videoId}`);
-  res.json(data);
+  const result = await Promise.all([
+    axios.get(`${YT_URLS.captions}&part=snippet&videoId=${videoId}`),
+    axios.get(`${YT_URLS.info}&part=snippet&id=${videoId}`),
+  ]);
+
+  const { title, description, tags } = result[1].data.items[0].snippet;
+
+  res.json({
+    title,
+    description,
+    tags,
+    captionLangs: result[0].data.items.map((x) => x.snippet.language),
+  });
 });
 
 /**
