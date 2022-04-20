@@ -39,14 +39,13 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   });
 
   useEffect(() => {
-    if (formData.title && formData.source) {
-      setOkToPreprocess(true);
-    }
-  }, [formData.title, formData.source]);
+    if (formData.source) setOkToGetYtInfo(true);
+  }, [formData.source]);
 
   const [isRedirected, setIsRedirected] = useState(false);
   const [okToPublish, setOkToPublish] = useState(false);
-  const [okToPreprocess, setOkToPreprocess] = useState(false);
+  const [okToGetYtInfo, setOkToGetYtInfo] = useState(false);
+  const [gotYtInfo, setGotYtInfo] = useState(false);
 
   const [newChineseArr, setNewChineseArr] = useState(null);
   const [newRuArr, setNewRuArr] = useState(null);
@@ -175,7 +174,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
               <WordModal />
             </div>
 
-            <form onSubmit={(e) => preprocessForm(e)} style={{ width: "100%" }}>
+            <div style={{ width: "100%" }}>
               <fieldset>
                 {user.isAdmin && (
                   <div className='form-row'>
@@ -198,6 +197,18 @@ const AddVideoForm = ({ loadUserWords, user }) => {
 
                 <div className='form-row'>
                   <div className='form-group col-md-6'>
+                    <label htmlFor='source'>Источник:</label>
+                    <input
+                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
+                      type='text'
+                      className={`form-control ${!formData.source && "is-invalid"}`}
+                      id='source'
+                      placeholder='Id видео'
+                      autoComplete='off'
+                      value={formData.source}
+                    />
+                  </div>
+                  <div className='form-group col-md-6'>
                     <label htmlFor='title'>Название видео</label>
                     <input
                       value={formData.title}
@@ -212,29 +223,20 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                       id='title'
                       placeholder='Название'
                       autoComplete='off'
-                    />
-                  </div>
-                  <div className='form-group col-md-6'>
-                    <label htmlFor='source'>Источник:</label>
-                    <input
-                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
-                      type='text'
-                      className={`form-control ${!formData.source && "is-invalid"}`}
-                      id='source'
-                      placeholder='Id видео'
-                      autoComplete='off'
-                      value={formData.source}
+                      disabled={!gotYtInfo}
                     />
                   </div>
                 </div>
 
-                {okToPreprocess && (
-                  <Fragment>
-                    <div className='form-row'>
-                      <button className='btn btn-primary mx-1'>Получить субтитры</button>
-                      <span>для видео с id {formData.source}</span>
-                    </div>
+                {okToGetYtInfo && (
+                  <div className='form-row'>
+                    <button className='btn btn-primary mx-1'>Получить информацию</button>
+                    <span className='mt-2'>для видео с id {formData.source}</span>
+                  </div>
+                )}
 
+                {gotYtInfo && (
+                  <Fragment>
                     <div className='form-row'>
                       <div className='form-group col-md-6'>
                         <label htmlFor='description'>Краткое описание</label>
@@ -364,14 +366,18 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                     </div>
 
                     <div className='form-row'>
-                      <button type='submit' className='btn btn-primary mx-1'>
+                      <button
+                        type='submit'
+                        className='btn btn-primary mx-1'
+                        onClick={preprocessForm}
+                      >
                         Предобработка
                       </button>
                     </div>
                   </Fragment>
                 )}
               </fieldset>
-            </form>
+            </div>
           </div>
           <hr />
 

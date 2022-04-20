@@ -63,6 +63,7 @@ app.use("/api/videos", require("./routes/api/videos"));
 
 // glcoud services routes
 app.use("/gcloud/dialogflow", require("./routes/gcloud/dialogflow"));
+app.use("/gcloud/youtube", require("./routes/gcloud/youtube"));
 
 // Serve static files
 if (!isDevelopment) {
