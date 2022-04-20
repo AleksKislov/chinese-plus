@@ -1426,5 +1426,9 @@
   "maxWordsPerPage": 200,
   "users": {
     "vocabSize": 150
+  },
+  "CONTENT": {
+    "video": "video",
+    "text": "text"
   }
 }

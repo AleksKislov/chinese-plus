@@ -5,12 +5,12 @@ import Spinner from "../layout/Spinner";
 import TextCard from "./TextCard";
 import ReadingCard from "../dashboard/ReadingCard";
 import { Helmet } from "react-helmet";
-import PleaseShareText from "./common/PleaseShareText";
+import PleaseShare from "../common/PleaseShare";
 import LevelFilter from "./common/LevelFilter";
 import CategoryFilter from "./common/CategoryFilter";
 import ReadFilter from "./common/ReadFilter";
 import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
-import TextsInfoCard from "./common/TextsInfoCard";
+import TextsInfoCard from "../common/TextsInfoCard";
 
 const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, clearTexts }) => {
   const [categoryFlag, setCategoryFlag] = useState(0);
@@ -51,7 +51,7 @@ const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, clearTexts }) 
 
       <div className='col-md-3'>
         <TextsInfoCard text={"Чтение китайских текстов с умным переводом."} />
-        <PleaseShareText />
+        <PleaseShare />
         <ReadingCard />
       </div>
 

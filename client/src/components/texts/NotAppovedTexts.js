@@ -4,7 +4,7 @@ import { loadNotAppoved, clearText } from "../../actions/texts";
 import Spinner from "../layout/Spinner";
 import NotApprovedTextCard from "./NotApprovedTextCard";
 import ReadingCard from "../dashboard/ReadingCard";
-import TextsInfoCard from "./common/TextsInfoCard";
+import TextsInfoCard from "../common/TextsInfoCard";
 
 const NotApprovedTexts = ({ loadNotAppoved, texts, loading, clearText, moreTexts }) => {
   useEffect(() => {
@@ -26,7 +26,7 @@ const NotApprovedTexts = ({ loadNotAppoved, texts, loading, clearText, moreTexts
           <Spinner />
         ) : (
           <div className=''>
-            {texts.map(text => (
+            {texts.map((text) => (
               <NotApprovedTextCard key={text._id} text={text} />
             ))}
             <div className='text-center'>
@@ -51,10 +51,10 @@ const NotApprovedTexts = ({ loadNotAppoved, texts, loading, clearText, moreTexts
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   texts: state.texts.not_approved,
   loading: state.texts.loading,
-  moreTexts: state.texts.moreNotApproved
+  moreTexts: state.texts.moreNotApproved,
 });
 
 export default connect(mapStateToProps, { loadNotAppoved, clearText })(NotApprovedTexts);

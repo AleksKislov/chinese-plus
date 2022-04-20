@@ -5,12 +5,12 @@ import Spinner from "../layout/Spinner";
 import VideoCard from "./VideoCard";
 import ReadingCard from "../dashboard/ReadingCard";
 import { Helmet } from "react-helmet";
-import PleaseShareText from "../texts/common/PleaseShareText";
+import PleaseShare from "../common/PleaseShare";
 // import LevelFilter from "./common/LevelFilter";
 // import CategoryFilter from "./common/CategoryFilter";
 // import ReadFilter from "./common/ReadFilter";
 // import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
-import TextsInfoCard from "../texts/common/TextsInfoCard";
+import TextsInfoCard from "../common/TextsInfoCard";
 
 const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
   const [categoryFlag, setCategoryFlag] = useState(0);
@@ -50,8 +50,11 @@ const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
       </Helmet>
 
       <div className='col-md-3'>
-        <TextsInfoCard text={"Умные субтитры для видео на китайском языке."} />
-        <PleaseShareText />
+        <TextsInfoCard
+          text={"Умные субтитры для видео на китайском языке."}
+          contentType={"video"}
+        />
+        <PleaseShare contentType={"video"} />
         <ReadingCard />
       </div>
 

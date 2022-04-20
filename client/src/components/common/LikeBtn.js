@@ -3,11 +3,7 @@ import Tippy from "@tippyjs/react";
 import { likeText } from "../../actions/texts";
 import { likeVideo } from "../../actions/videos";
 import { connect } from "react-redux";
-
-const CONTENT = {
-  video: "video",
-  text: "text",
-};
+import { CONTENT } from "../../constants/consts.json";
 
 const LikeBtn = ({ likes, id, likeText, likeVideo, user, contentType }) => {
   useEffect(() => {

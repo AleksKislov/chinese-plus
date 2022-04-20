@@ -9,8 +9,8 @@ import PublisherFilter from "./common/PublisherFilter";
 import ReadFilter from "./common/ReadFilter";
 import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
 import { Helmet } from "react-helmet";
-import TextsInfoCard from "./common/TextsInfoCard";
-import PleaseShareText from "./common/PleaseShareText";
+import TextsInfoCard from "../common/TextsInfoCard";
+import PleaseShare from "../common/PleaseShare";
 import ReadingCard from "../dashboard/ReadingCard";
 import { connect } from "react-redux";
 
@@ -27,7 +27,7 @@ const AllTextsTable = ({ user }) => {
   const [publishers, setPublishers] = useState(null);
 
   useEffect(() => {
-    if (texts) setPublishers([...new Set(texts.map(text => text.name))]);
+    if (texts) setPublishers([...new Set(texts.map((text) => text.name))]);
   }, [texts]);
 
   useEffect(() => {
@@ -47,17 +47,17 @@ const AllTextsTable = ({ user }) => {
   const [hideReadFlag, setHideReadFlag] = useState(0);
   const [hideLevelFlag, setHideLevelFlag] = useState(0);
 
-  const onLevelSelect = e =>
+  const onLevelSelect = (e) =>
     setHideLevelFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
 
-  const onReadSelect = e =>
+  const onReadSelect = (e) =>
     setHideReadFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
 
-  const onCategorySelect = e => {
+  const onCategorySelect = (e) => {
     setCategoryFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
   };
 
-  const onPublisherSelect = e => {
+  const onPublisherSelect = (e) => {
     setPublisherFlag(e.target.options[e.target.options.selectedIndex].value);
   };
 
@@ -114,7 +114,7 @@ const AllTextsTable = ({ user }) => {
       </Helmet>
       <div className='col-sm-3'>
         <TextsInfoCard text={"Все проверенные тексты Читалки единым списком"} />
-        <PleaseShareText />
+        <PleaseShare />
         <ReadingCard />
       </div>
 
@@ -174,7 +174,7 @@ const AllTextsTable = ({ user }) => {
             </thead>
             <tbody>
               {texts ? (
-                texts.map(text => (
+                texts.map((text) => (
                   <AllTextsTableItem
                     key={text._id}
                     text={text}
@@ -200,11 +200,11 @@ const AllTextsTable = ({ user }) => {
 };
 
 const thStyle = {
-  whiteSpace: "nowrap"
+  whiteSpace: "nowrap",
 };
 
-const mapStateToProps = state => ({
-  user: state.auth.user
+const mapStateToProps = (state) => ({
+  user: state.auth.user,
 });
 
 export default connect(mapStateToProps, {})(AllTextsTable);

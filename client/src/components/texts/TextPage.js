@@ -15,7 +15,7 @@ import ReadingCard from "../dashboard/ReadingCard";
 import { Helmet } from "react-helmet";
 import { levelStars } from "../../actions/helpers";
 import FontSize from "../common/FontSize";
-import PleaseShareText from "./common/PleaseShareText";
+import PleaseShare from "../common/PleaseShare";
 import ReadSwitch from "./ReadSwitch";
 import ConfirmModal from "../comments/ConfirmModal";
 import LikeBtn from "../common/LikeBtn";
@@ -156,7 +156,7 @@ const TextPage = ({
             </div>
 
             <ReadingCard />
-            <PleaseShareText />
+            <PleaseShare />
           </div>
 
           <div className='col-sm-9'>
