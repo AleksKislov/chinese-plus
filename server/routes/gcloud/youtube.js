@@ -3,9 +3,10 @@ const auth = require("../../middleware/auth");
 const axios = require("axios");
 const { getSubtitles } = require("youtube-captions-scraper");
 
+const YT_BASE_URL = "https://www.googleapis.com/youtube/v3/";
 const YT_URLS = {
-  captions: `https://www.googleapis.com/youtube/v3/captions?key=${process.env.GC_API_KEY}`,
-  info: `https://www.googleapis.com/youtube/v3/videos?key=${process.env.GC_API_KEY}`,
+  captions: `${YT_BASE_URL}captions?key=${process.env.GC_API_KEY}`,
+  info: `${YT_BASE_URL}videos?key=${process.env.GC_API_KEY}`,
 };
 
 /**
