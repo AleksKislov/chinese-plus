@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import axios from "axios";
 import WordsItem from "../texts/WordsItem";
 import WordModal from "../translation/WordModal";
-import { markUpRussianText } from "../../actions/helpers";
+import { markUpRussianText, segmenter, getWords } from "../../actions/helpers";
 import {
   // puppeteerFunc,
   addWord,
@@ -19,6 +19,15 @@ import { Widget, addResponseMessage } from "react-chat-widget";
 import "react-chat-widget/lib/styles.css";
 import "./style.css";
 import { sanitizer } from "../../utils/sanitizer";
+
+const writerSettings = {
+  width: 60,
+  height: 60,
+  padding: 0,
+  showOutline: true,
+  radicalColor: "#168F16",
+  delayBetweenLoops: 3000,
+};
 
 const Search = ({
   history,
@@ -66,90 +75,43 @@ const Search = ({
     if (isAuthenticated) loadUserWords();
   }, [isAuthenticated]);
 
-  const getWords = async (words) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    let res;
-    try {
-      res = await axios.post("/api/dictionary/allwords", words, config);
-    } catch (err) {
-      console.log(err);
-    }
-    return res.data;
-  };
-
   const showSearchResult = async () => {
-    setSearchLoading(true);
-
-    const searchedWords = document.getElementById("searchInput");
-
-    let words = searchedWords.value.trim();
-    if (words.length === 0) {
-      history.push(`/search`);
-    } else {
-      history.push(`/search/${words}`);
-    }
-
+    const words = document.getElementById("searchInput").value.trim();
     const showCharDiv = document.getElementById("showCharDiv");
     showCharDiv.innerHTML = "";
 
-    const segmenter = async (text) => {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
+    if (!words.length) return history.push(`/search`);
 
-      let res;
-      try {
-        res = await axios.post("/api/dictionary/segmenter", { text }, config);
-      } catch (err) {
-        console.log(err);
-      }
-      return res.data;
-    };
+    history.push(`/search/${words}`);
+    setSearchLoading(true);
 
-    if (/\p{Script=Han}/u.test(words) && !(/[а-яА-ЯЁё]/.test(words) || /[A-Za-z0-9]/.test(words))) {
-      for (let i = 0; i < words.length; i++) {
-        const writer = HanziWriter.create("showCharDiv", words[i], {
-          width: 60,
-          height: 60,
-          padding: 0,
-          showOutline: true,
-          radicalColor: "#168F16",
-          delayBetweenLoops: 3000,
-        });
-        writer.loopCharacterAnimation();
-      }
-    } else {
+    const isChinese =
+      /\p{Script=Han}/u.test(words) && !(/[а-яА-ЯЁё]/.test(words) || /[A-Za-z0-9]/.test(words));
+
+    if (!isChinese) {
       showCharDiv.innerHTML =
         "<p class='text-danger'>Пока поддерживается только китайско-русский перевод, приносим извинения за неудобства.</p>";
-      setSearchLoading(false);
-      return;
+      setWordFromSearch(null);
+      setWordsFromSearch(null);
+      return setSearchLoading(false);
     }
 
-    // searchedWords.value = "";
+    [...words].forEach((word) => {
+      const writer = HanziWriter.create("showCharDiv", word, writerSettings);
+      writer.loopCharacterAnimation();
+    });
 
     let allwords = await segmenter(words);
     allwords = allwords.filter((word) => /\p{Script=Han}/u.test(word));
-
     const wordsFromDB = await getWords(allwords);
 
-    // console.log(wordsFromDB);
-    let newArr = allwords.map((word) => {
+    const newArr = allwords.map((word) => {
       for (let i = 0; i < wordsFromDB.length; i++) {
-        if (word === wordsFromDB[i].chinese) {
-          return wordsFromDB[i];
-        }
+        if (word === wordsFromDB[i].chinese) return wordsFromDB[i];
       }
       return word;
     });
 
-    // console.log({ newArr });
     if (newArr.length === 1) {
       setWordFromSearch(newArr[0]);
       setWordsFromSearch(null);
@@ -211,7 +173,6 @@ const Search = ({
   };
 
   const updateVocabulary = async (word) => {
-    // console.log(word);
     if (!word) return;
 
     if (clicked) {

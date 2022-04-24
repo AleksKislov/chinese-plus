@@ -141,13 +141,12 @@ export const segmenter = async (text) => {
     },
   };
 
-  let res;
   try {
-    res = await axios.post("/api/dictionary/segmenter", { text }, config);
+    const { data } = await axios.post("/api/dictionary/segmenter", { text }, config);
+    return data;
   } catch (err) {
     console.log(err);
   }
-  return res.data;
 };
 
 /**
