@@ -76,6 +76,7 @@ const Search = ({
   }, [isAuthenticated]);
 
   const showSearchResult = async () => {
+    setClicked(false);
     const words = document.getElementById("searchInput").value.trim();
     const showCharDiv = document.getElementById("showCharDiv");
     showCharDiv.innerHTML = "";
