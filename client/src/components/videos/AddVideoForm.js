@@ -25,7 +25,9 @@ import { YoutubeService } from "../../patterns/YoutubeService";
 import SubLine from "./SubLine";
 
 const AddVideoForm = ({ loadUserWords, user }) => {
-  useEffect(() => loadUserWords(), []);
+  useEffect(() => {
+    loadUserWords();
+  }, []);
 
   const [formData, setFormData] = useState({
     isApproved: "0",
@@ -39,6 +41,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   });
 
   useEffect(() => {
+    console.log("6hWz05iCKls");
     if (formData.source) setOkToGetYtInfo(true);
   }, [formData.source]);
 
@@ -106,7 +109,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   };
 
   const publishVideo = async (formData) => {
-    const config = {
+    const reqConfig = {
       headers: {
         "Content-Type": "application/json",
       },
@@ -131,7 +134,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
     });
 
     try {
-      await axios.post(`/api/videos/create`, body, config);
+      await axios.post(`/api/videos/create`, body, reqConfig);
       alert("Видео успешно добавлено!");
       setIsRedirected(true);
     } catch (err) {
@@ -150,6 +153,19 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   const handleKeyDown = (e) => {
     e.target.style.height = "inherit";
     e.target.style.height = `${e.target.scrollHeight}px`;
+  };
+
+  const getVideoInfo = async () => {
+    try {
+      const {
+        data: { tags, title, description: desc, captionLangs },
+      } = await YoutubeService.getVideoInfo(formData.source);
+
+      setFormData({ ...formData, title, tags, desc });
+      setGotYtInfo(true);
+    } catch (err) {
+      console.warn(err);
+    }
   };
 
   if (isRedirected) return <Redirect to='/not_approved_videos' />;
@@ -230,7 +246,9 @@ const AddVideoForm = ({ loadUserWords, user }) => {
 
                 {okToGetYtInfo && (
                   <div className='form-row'>
-                    <button className='btn btn-primary mx-1'>Получить информацию</button>
+                    <button className='btn btn-primary mx-1' onClick={getVideoInfo}>
+                      Получить информацию
+                    </button>
                     <span className='mt-2'>для видео с id {formData.source}</span>
                   </div>
                 )}
