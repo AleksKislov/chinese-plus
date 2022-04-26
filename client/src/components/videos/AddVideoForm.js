@@ -2,7 +2,6 @@ import React, { useState, useEffect, Fragment } from "react";
 import { connect } from "react-redux";
 import store from "../../store";
 import { Redirect, Link } from "react-router-dom";
-import axios from "axios";
 import PropTypes from "prop-types";
 import WordModal from "../translation/WordModal";
 import { setAlert } from "../../actions/alert";
@@ -36,7 +35,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
     lvl: 1,
     tags: "",
     length: 0,
-    source: "",
+    source: "", // video id
     category: videoCategories.misc,
   });
 
@@ -49,6 +48,19 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   const [okToPublish, setOkToPublish] = useState(false);
   const [okToGetYtInfo, setOkToGetYtInfo] = useState(false);
   const [gotYtInfo, setGotYtInfo] = useState(false);
+  const [captionLangsList, setCaptionLangsList] = useState(null);
+  const [mainSubLang, setMainSubLang] = useState("");
+
+  useEffect(() => {
+    if (mainSubLang) {
+      try {
+        const data = YoutubeService.getVideoCaption(formData.source, mainSubLang);
+        console.log(data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, [mainSubLang]);
 
   const [newChineseArr, setNewChineseArr] = useState(null);
   const [newRuArr, setNewRuArr] = useState(null);
@@ -109,12 +121,6 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   };
 
   const publishVideo = async (formData) => {
-    const reqConfig = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
     const { title, desc, lvl, tags, length, isApproved, category, source } = formData;
     const cnSegmentedSubs = newChineseArr.map((chunk) => chunk.map((x) => x.chinese));
 
@@ -134,7 +140,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
     });
 
     try {
-      await axios.post(`/api/videos/create`, body, reqConfig);
+      await YoutubeService.createVideo(body);
       alert("Видео успешно добавлено!");
       setIsRedirected(true);
     } catch (err) {
@@ -162,6 +168,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
       } = await YoutubeService.getVideoInfo(formData.source);
 
       setFormData({ ...formData, title, tags, desc });
+      setCaptionLangsList(captionLangs);
       setGotYtInfo(true);
     } catch (err) {
       console.warn(err);
@@ -244,7 +251,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                   </div>
                 </div>
 
-                {okToGetYtInfo && (
+                {okToGetYtInfo && !gotYtInfo && (
                   <div className='form-row'>
                     <button className='btn btn-primary mx-1' onClick={getVideoInfo}>
                       Получить информацию
@@ -264,7 +271,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                           }
                           type='text'
                           className={`form-control`}
-                          id='description'
+                          id='desc'
                           autoComplete='off'
                           placeholder='Кратко про это видео...'
                           value={formData.desc}
@@ -317,81 +324,102 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                     </div>
 
                     <div className='form-row'>
-                      <div className='form-group col-md-1'>
-                        <label htmlFor='textArea'>Сек:</label>
-                        <p id='videoSecs' className='text-muted'>
-                          {displayedTime.map((sec, ind) => (
-                            <Fragment key={ind}>
-                              <span>{sec}</span>
-                              <br />
-                            </Fragment>
-                          ))}
-                        </p>
-                      </div>
-
-                      <div className='form-group col-md-2'>
-                        <label htmlFor='textArea'>Поправьте текст:</label>
-                        <textarea
-                          onClick={handleKeyDown}
-                          onChange={() => {
-                            setOkToPublish(false);
-                          }}
-                          className='form-control'
-                          id='textArea'
-                          rows='3'
-                          placeholder='汉字。。。'
-                        ></textarea>
-                        <small className='text-muted'>
-                          {formData.length || 0} / {smTextLen}
-                        </small>
-                      </div>
                       <div className='form-group col-md-3'>
-                        <label htmlFor='translationArea'>пиньинь:</label>
-                        <textarea
-                          onClick={handleKeyDown}
-                          onChange={() => {
-                            setOkToPublish(false);
-                          }}
+                        <label htmlFor='mainSub'>Выберите основной субтитр</label>
+                        <select
                           className='form-control'
-                          id='pinyinArea'
-                          rows='3'
-                          placeholder='Пиньинь'
-                        ></textarea>
-
-                        {
-                          // <small className='text-muted'>не забывайте про параграфы</small>
-                        }
-                      </div>
-
-                      <div className='form-group col-md-6'>
-                        <label htmlFor='translationArea'>перевод:</label>
-                        <textarea
-                          onClick={handleKeyDown}
-                          onChange={() => {
-                            setTextLen();
-                            setOkToPublish(false);
-                          }}
-                          className='form-control'
-                          id='translationArea'
-                          rows='3'
-                          placeholder='Ваш перевод'
-                        ></textarea>
-
-                        {
-                          // <small className='text-muted'>не забывайте про параграфы</small>
-                        }
+                          id='mainSub'
+                          onChange={(e) => setMainSubLang(e.target.value)}
+                          value={mainSubLang}
+                        >
+                          {captionLangsList &&
+                            ["", ...captionLangsList].map((lang, ind) => (
+                              <option key={ind}>{lang}</option>
+                            ))}
+                        </select>
                       </div>
                     </div>
 
-                    <div className='form-row'>
-                      <button
-                        type='submit'
-                        className='btn btn-primary mx-1'
-                        onClick={preprocessForm}
-                      >
-                        Предобработка
-                      </button>
-                    </div>
+                    {mainSubLang && (
+                      <Fragment>
+                        <div className='form-row'>
+                          <div className='form-group col-md-1'>
+                            <label htmlFor='textArea'>Сек:</label>
+                            <p id='videoSecs' className='text-muted'>
+                              {displayedTime.map((sec, ind) => (
+                                <Fragment key={ind}>
+                                  <span>{sec}</span>
+                                  <br />
+                                </Fragment>
+                              ))}
+                            </p>
+                          </div>
+
+                          <div className='form-group col-md-2'>
+                            <label htmlFor='textArea'>Поправьте текст:</label>
+                            <textarea
+                              onClick={handleKeyDown}
+                              onChange={() => {
+                                setOkToPublish(false);
+                              }}
+                              className='form-control'
+                              id='textArea'
+                              rows='3'
+                              placeholder='汉字。。。'
+                            ></textarea>
+                            <small className='text-muted'>
+                              {formData.length || 0} / {smTextLen}
+                            </small>
+                          </div>
+                          <div className='form-group col-md-3'>
+                            <label htmlFor='translationArea'>пиньинь:</label>
+                            <textarea
+                              onClick={handleKeyDown}
+                              onChange={() => {
+                                setOkToPublish(false);
+                              }}
+                              className='form-control'
+                              id='pinyinArea'
+                              rows='3'
+                              placeholder='Пиньинь'
+                            ></textarea>
+
+                            {
+                              // <small className='text-muted'>не забывайте про параграфы</small>
+                            }
+                          </div>
+
+                          <div className='form-group col-md-6'>
+                            <label htmlFor='translationArea'>перевод:</label>
+                            <textarea
+                              onClick={handleKeyDown}
+                              onChange={() => {
+                                setTextLen();
+                                setOkToPublish(false);
+                              }}
+                              className='form-control'
+                              id='translationArea'
+                              rows='3'
+                              placeholder='Ваш перевод'
+                            ></textarea>
+
+                            {
+                              // <small className='text-muted'>не забывайте про параграфы</small>
+                            }
+                          </div>
+                        </div>
+
+                        <div className='form-row'>
+                          <button
+                            type='submit'
+                            className='btn btn-primary mx-1'
+                            onClick={preprocessForm}
+                          >
+                            Предобработка
+                          </button>
+                        </div>
+                      </Fragment>
+                    )}
                   </Fragment>
                 )}
               </fieldset>

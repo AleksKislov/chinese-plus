@@ -2,7 +2,6 @@ import React, { useState, useEffect, Fragment } from "react";
 import { connect } from "react-redux";
 import store from "../../store";
 import { Redirect, Link } from "react-router-dom";
-import axios from "axios";
 import PropTypes from "prop-types";
 import WordModal from "../translation/WordModal";
 import { setAlert } from "../../actions/alert";
@@ -141,12 +140,6 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
   };
 
   const editVideo = async (formData) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
     const { videoId, title, desc, lvl, tags, length, isApproved, category, source } = formData;
     const cnSegmentedSubs = newChineseArr.map((chunk) => chunk.map((x) => x.chinese));
 
@@ -166,7 +159,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
     });
 
     try {
-      await axios.post(`/api/videos/update`, body, config);
+      await YoutubeService.updateVideo(body);
       alert("Видео успешно обновлено!");
       setIsRedirected(true);
     } catch (err) {
