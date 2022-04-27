@@ -50,7 +50,11 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   const [gotYtInfo, setGotYtInfo] = useState(false);
   const [captionLangsList, setCaptionLangsList] = useState(null);
   const [mainSubLang, setMainSubLang] = useState("");
+  const [pySubLang, setPySubLang] = useState("");
+  const [ruSubLang, setRuSubLang] = useState("");
   const [newCnSubs, setNewCnSubs] = useState(null);
+  const [newRuArr, setNewRuArr] = useState(null);
+  const [newPinyinArr, setNewPinyinArr] = useState(null);
 
   useEffect(() => {
     if (mainSubLang) {
@@ -61,16 +65,67 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   }, [mainSubLang]);
 
   useEffect(() => {
-    if (newCnSubs && newCnSubs.length) {
-      console.log(newCnSubs);
-      // const textArea = document.getElementById("textArea");
-      // textArea.value = newCnSubs.
+    if (pySubLang) {
+      YoutubeService.getVideoCaption(formData.source, pySubLang)
+        .then(({ data }) => setNewPinyinArr(data.map((x) => x.text)))
+        .catch(console.log);
     }
+  }, [pySubLang]);
+
+  useEffect(() => {
+    if (ruSubLang) {
+      YoutubeService.getVideoCaption(formData.source, ruSubLang)
+        .then(({ data }) => setNewRuArr(data.map((x) => x.text)))
+        .catch(console.log);
+    }
+  }, [ruSubLang]);
+
+  useEffect(() => {
+    if (newCnSubs) {
+      const textArea = document.getElementById("textArea");
+      const cnTxt = newCnSubs.reduce((prev, cur, ind) => {
+        return !ind ? cur.text : prev + "\n" + cur.text;
+      }, "");
+      textArea.value = cnTxt.trim();
+      setDisplayedTime(newCnSubs.map((x) => x.start));
+    }
+
+    return () => {
+      setNewCnSubs(null);
+    };
   }, [newCnSubs]);
 
+  useEffect(() => {
+    if (newPinyinArr) {
+      console.log(newPinyinArr);
+      const textArea = document.getElementById("pinyinArea");
+      const pyTxt = newPinyinArr.reduce((prev, cur, ind) => {
+        return !ind ? cur : prev + "\n" + cur;
+      }, "");
+      textArea.value = pyTxt.trim();
+    }
+
+    return () => {
+      setNewPinyinArr(null);
+    };
+  }, [newPinyinArr]);
+
+  useEffect(() => {
+    if (newRuArr) {
+      // console.log(newPinyinArr);
+      const textArea = document.getElementById("translationArea");
+      const ruTxt = newRuArr.reduce((prev, cur, ind) => {
+        return !ind ? cur : prev + "\n" + cur;
+      }, "");
+      textArea.value = ruTxt.trim();
+    }
+
+    return () => {
+      setNewRuArr(null);
+    };
+  }, [newRuArr]);
+
   const [newChineseArr, setNewChineseArr] = useState(null);
-  const [newRuArr, setNewRuArr] = useState(null);
-  const [newPinyinArr, setNewPinyinArr] = useState(null);
   const [displayedTime, setDisplayedTime] = useState([""]);
 
   const setTextLen = () => {
@@ -331,13 +386,44 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                     </div>
 
                     <div className='form-row'>
+                      <div className='col-md-12'>
+                        <p>Загрузите соответствующие субтитры</p>
+                      </div>
                       <div className='form-group col-md-3'>
-                        <label htmlFor='mainSub'>Выберите основной субтитр</label>
+                        <label htmlFor='mainSub'>Основной (кит.)</label>
                         <select
                           className='form-control'
                           id='mainSub'
                           onChange={(e) => setMainSubLang(e.target.value)}
                           value={mainSubLang}
+                        >
+                          {captionLangsList &&
+                            ["", ...captionLangsList].map((lang, ind) => (
+                              <option key={ind}>{lang}</option>
+                            ))}
+                        </select>
+                      </div>
+                      <div className='form-group col-md-3'>
+                        <label htmlFor='pySub'>Пиньинь</label>
+                        <select
+                          className='form-control'
+                          id='pySub'
+                          onChange={(e) => setPySubLang(e.target.value)}
+                          value={pySubLang}
+                        >
+                          {captionLangsList &&
+                            ["", ...captionLangsList].map((lang, ind) => (
+                              <option key={ind}>{lang}</option>
+                            ))}
+                        </select>
+                      </div>
+                      <div className='form-group col-md-3'>
+                        <label htmlFor='ruSub'>Пиньинь</label>
+                        <select
+                          className='form-control'
+                          id='ruSub'
+                          onChange={(e) => setRuSubLang(e.target.value)}
+                          value={ruSubLang}
                         >
                           {captionLangsList &&
                             ["", ...captionLangsList].map((lang, ind) => (
@@ -379,7 +465,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                             </small>
                           </div>
                           <div className='form-group col-md-3'>
-                            <label htmlFor='translationArea'>пиньинь:</label>
+                            <label htmlFor='pinyinArea'>пиньинь:</label>
                             <textarea
                               onClick={handleKeyDown}
                               onChange={() => {
