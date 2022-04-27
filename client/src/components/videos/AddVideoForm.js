@@ -50,21 +50,26 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   const [gotYtInfo, setGotYtInfo] = useState(false);
   const [captionLangsList, setCaptionLangsList] = useState(null);
   const [mainSubLang, setMainSubLang] = useState("");
+  const [newCnSubs, setNewCnSubs] = useState(null);
 
   useEffect(() => {
     if (mainSubLang) {
-      try {
-        const data = YoutubeService.getVideoCaption(formData.source, mainSubLang);
-        console.log(data);
-      } catch (err) {
-        console.log(err);
-      }
+      YoutubeService.getVideoCaption(formData.source, mainSubLang)
+        .then(({ data }) => setNewCnSubs(data))
+        .catch(console.log);
     }
   }, [mainSubLang]);
 
+  useEffect(() => {
+    if (newCnSubs && newCnSubs.length) {
+      console.log(newCnSubs);
+      // const textArea = document.getElementById("textArea");
+      // textArea.value = newCnSubs.
+    }
+  }, [newCnSubs]);
+
   const [newChineseArr, setNewChineseArr] = useState(null);
   const [newRuArr, setNewRuArr] = useState(null);
-  const [newCnSubs, setNewCnSubs] = useState(null);
   const [newPinyinArr, setNewPinyinArr] = useState(null);
   const [displayedTime, setDisplayedTime] = useState([""]);
 
@@ -74,6 +79,12 @@ const AddVideoForm = ({ loadUserWords, user }) => {
       ...formData,
       length: countZnChars(textArea.value.trim()),
     });
+  };
+
+  const displayTxtTooLong = () => {
+    store.dispatch(
+      setAlert(`Слишком большой текст субтитров (превышает ${smTextLen}字)`, "danger")
+    );
   };
 
   const preprocessForm = async (e) => {
@@ -87,11 +98,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
     const length = countZnChars(originText);
     setFormData({ ...formData, length });
 
-    if (length > smTextLen) {
-      return store.dispatch(
-        setAlert(`Слишком большой текст субтитров (превышает ${smTextLen}字)`, "danger")
-      );
-    }
+    if (length > smTextLen) return displayTxtTooLong();
 
     const chunkedTranslation = textToCleanArr(translationArea.value);
     const chunkedPinyin = textToCleanArr(pinyinArea.value);

@@ -16,7 +16,12 @@ export class YoutubeService {
   }
 
   static getVideoCaption(id, lang) {
+    // try {
     return axios.get(`/gcloud/youtube/getSubs?videoId=${id}&lang=${lang}`);
+    //   return data;
+    // } catch (err) {
+    //   console.log(err);
+    // }
   }
 
   static getVideoInfo(id) {
