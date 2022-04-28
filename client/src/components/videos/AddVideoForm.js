@@ -40,7 +40,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   });
 
   useEffect(() => {
-    console.log("6hWz05iCKls");
+    console.log("mP9a6BXuJ78");
     if (formData.source) setOkToGetYtInfo(true);
   }, [formData.source]);
 
@@ -55,6 +55,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   const [newCnSubs, setNewCnSubs] = useState(null);
   const [newRuArr, setNewRuArr] = useState(null);
   const [newPinyinArr, setNewPinyinArr] = useState(null);
+  const [linesQty, setLinesQty] = useState({ cn: 0, ru: 0, py: 0 });
 
   useEffect(() => {
     if (mainSubLang) {
@@ -87,41 +88,46 @@ const AddVideoForm = ({ loadUserWords, user }) => {
         return !ind ? cur.text : prev + "\n" + cur.text;
       }, "");
       textArea.value = cnTxt.trim();
+      setTextLen();
+      setLinesQty({ ...linesQty, cn: newCnSubs.length });
       setDisplayedTime(newCnSubs.map((x) => x.start));
     }
 
     return () => {
+      // setLinesQty({ ...linesQty, cn: 0 });
       setNewCnSubs(null);
     };
   }, [newCnSubs]);
 
   useEffect(() => {
     if (newPinyinArr) {
-      console.log(newPinyinArr);
       const textArea = document.getElementById("pinyinArea");
       const pyTxt = newPinyinArr.reduce((prev, cur, ind) => {
         return !ind ? cur : prev + "\n" + cur;
       }, "");
       textArea.value = pyTxt.trim();
+      setLinesQty({ ...linesQty, py: newPinyinArr.length });
     }
 
     return () => {
-      setNewPinyinArr(null);
+      // setLinesQty({ ...linesQty, py: 0 });
+      // setNewPinyinArr(null);
     };
   }, [newPinyinArr]);
 
   useEffect(() => {
     if (newRuArr) {
-      // console.log(newPinyinArr);
       const textArea = document.getElementById("translationArea");
       const ruTxt = newRuArr.reduce((prev, cur, ind) => {
         return !ind ? cur : prev + "\n" + cur;
       }, "");
       textArea.value = ruTxt.trim();
+      setLinesQty({ ...linesQty, ru: newRuArr.length });
     }
 
     return () => {
-      setNewRuArr(null);
+      // setLinesQty({ ...linesQty, ru: 0 });
+      // setNewRuArr(null);
     };
   }, [newRuArr]);
 
@@ -178,6 +184,8 @@ const AddVideoForm = ({ loadUserWords, user }) => {
         setAlert(`Кол-во строк перевода, пиньиня и кит. текста должно совпадать`, "danger")
       );
     }
+
+    console.log(newChineseArr, newRuArr, newPinyinArr);
 
     setOkToPublish(true);
   };
@@ -245,6 +253,15 @@ const AddVideoForm = ({ loadUserWords, user }) => {
       пожалуйста
     </p>
   );
+
+  /**
+   * @param {Object} e - event
+   * @param {string} where - ru, py or cn
+   */
+  const onTxtChange = (e, where) => {
+    setLinesQty({ ...linesQty, [where]: e.target.value.split("\n").length });
+    setOkToPublish(false);
+  };
 
   return (
     <Fragment>
@@ -387,10 +404,12 @@ const AddVideoForm = ({ loadUserWords, user }) => {
 
                     <div className='form-row'>
                       <div className='col-md-12'>
-                        <p>Загрузите соответствующие субтитры</p>
+                        <p className='text-info'>
+                          Загрузите соответствующие субтитры, при необходимости поправьте текст
+                        </p>
                       </div>
                       <div className='form-group col-md-3'>
-                        <label htmlFor='mainSub'>Основной (кит.)</label>
+                        <label htmlFor='mainSub'>Основной (кит. с таймингом)</label>
                         <select
                           className='form-control'
                           id='mainSub'
@@ -418,7 +437,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                         </select>
                       </div>
                       <div className='form-group col-md-3'>
-                        <label htmlFor='ruSub'>Пиньинь</label>
+                        <label htmlFor='ruSub'>Перевод (рус.)</label>
                         <select
                           className='form-control'
                           id='ruSub'
@@ -449,11 +468,14 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                           </div>
 
                           <div className='form-group col-md-2'>
-                            <label htmlFor='textArea'>Поправьте текст:</label>
+                            <label htmlFor='textArea'>
+                              китайский | <span className='text-info'>строк {linesQty.cn}</span>
+                            </label>
                             <textarea
                               onClick={handleKeyDown}
-                              onChange={() => {
-                                setOkToPublish(false);
+                              onChange={(e) => {
+                                onTxtChange(e, "cn");
+                                setTextLen();
                               }}
                               className='form-control'
                               id='textArea'
@@ -461,35 +483,30 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                               placeholder='汉字。。。'
                             ></textarea>
                             <small className='text-muted'>
-                              {formData.length || 0} / {smTextLen}
+                              {formData.length || 0} / {smTextLen} 字
                             </small>
                           </div>
                           <div className='form-group col-md-3'>
-                            <label htmlFor='pinyinArea'>пиньинь:</label>
+                            <label htmlFor='pinyinArea'>
+                              пиньинь | <span className='text-info'>строк {linesQty.py}</span>
+                            </label>
                             <textarea
                               onClick={handleKeyDown}
-                              onChange={() => {
-                                setOkToPublish(false);
-                              }}
+                              onChange={(e) => onTxtChange(e, "py")}
                               className='form-control'
                               id='pinyinArea'
                               rows='3'
                               placeholder='Пиньинь'
                             ></textarea>
-
-                            {
-                              // <small className='text-muted'>не забывайте про параграфы</small>
-                            }
                           </div>
 
                           <div className='form-group col-md-6'>
-                            <label htmlFor='translationArea'>перевод:</label>
+                            <label htmlFor='translationArea'>
+                              перевод | <span className='text-info'>строк {linesQty.ru}</span>
+                            </label>
                             <textarea
                               onClick={handleKeyDown}
-                              onChange={() => {
-                                setTextLen();
-                                setOkToPublish(false);
-                              }}
+                              onChange={(e) => onTxtChange(e, "ru")}
                               className='form-control'
                               id='translationArea'
                               rows='3'
@@ -539,7 +556,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
           <div className='col-md-12' style={{ height: "6rem" }}>
             {okToPublish && (
               <button className='btn btn-primary mx-1' onClick={(e) => publishVideo(formData)}>
-                Изменить Видео
+                Опубликовать Видео
               </button>
             )}
           </div>
