@@ -143,6 +143,10 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
     const { videoId, title, desc, lvl, tags, length, isApproved, category, source } = formData;
     const cnSegmentedSubs = newChineseArr.map((chunk) => chunk.map((x) => x.chinese));
 
+    const ruCategories = Object.values(videoCategories);
+    const engCategories = Object.keys(videoCategories);
+    const categoryInd = ruCategories.indexOf(category);
+
     const body = JSON.stringify({
       videoId,
       title,
@@ -154,7 +158,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
       pySubs: newPinyinArr,
       length,
       isApproved,
-      category,
+      category: engCategories[categoryInd],
       source,
     });
 
@@ -165,15 +169,6 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
     } catch (err) {
       console.log(err);
     }
-  };
-
-  const changeCategory = (e) => {
-    // (e) => setFormData({ ...formData, [e.target.id]: e.target.value })
-    const ruCategory = e.target.value;
-    const ruCategories = Object.values(videoCategories);
-    const engCategories = Object.keys(videoCategories);
-    const categoryInd = ruCategories.indexOf(ruCategory);
-    setFormData({ ...formData, category: engCategories[categoryInd] });
   };
 
   const handleKeyDown = (e) => {
@@ -288,7 +283,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
                     <select
                       className='form-control'
                       id='category'
-                      onChange={changeCategory}
+                      onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                       value={formData.category}
                     >
                       {Object.keys(videoCategories).map((key, ind) => (

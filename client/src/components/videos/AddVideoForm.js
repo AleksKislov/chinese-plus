@@ -52,67 +52,57 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   const [mainSubLang, setMainSubLang] = useState("");
   const [pySubLang, setPySubLang] = useState("");
   const [ruSubLang, setRuSubLang] = useState("");
-  const [newCnSubs, setNewCnSubs] = useState(null);
+  const [newCnSubs, setNewCnSubs] = useState(null); // с таймингом [{start, dur, text}]
   const [newRuArr, setNewRuArr] = useState(null);
   const [newPinyinArr, setNewPinyinArr] = useState(null);
   const [linesQty, setLinesQty] = useState({ cn: 0, ru: 0, py: 0 });
 
   useEffect(() => {
-    if (mainSubLang) {
-      YoutubeService.getVideoCaption(formData.source, mainSubLang)
-        .then(({ data }) => setNewCnSubs(data))
-        .catch(console.log);
-    }
+    if (!mainSubLang) return;
+
+    YoutubeService.getVideoCaption(formData.source, mainSubLang)
+      .then(({ data }) => setNewCnSubs(data))
+      .catch(console.log);
   }, [mainSubLang]);
 
   useEffect(() => {
-    if (pySubLang) {
-      YoutubeService.getVideoCaption(formData.source, pySubLang)
-        .then(({ data }) => setNewPinyinArr(data.map((x) => x.text)))
-        .catch(console.log);
-    }
+    if (!pySubLang) return;
+
+    YoutubeService.getVideoCaption(formData.source, pySubLang)
+      .then(({ data }) => setNewPinyinArr(data.map((x) => x.text)))
+      .catch(console.log);
   }, [pySubLang]);
 
   useEffect(() => {
-    if (ruSubLang) {
-      YoutubeService.getVideoCaption(formData.source, ruSubLang)
-        .then(({ data }) => setNewRuArr(data.map((x) => x.text)))
-        .catch(console.log);
-    }
+    if (!ruSubLang) return;
+
+    YoutubeService.getVideoCaption(formData.source, ruSubLang)
+      .then(({ data }) => setNewRuArr(data.map((x) => x.text)))
+      .catch(console.log);
   }, [ruSubLang]);
 
   useEffect(() => {
-    if (newCnSubs) {
-      const textArea = document.getElementById("textArea");
-      const cnTxt = newCnSubs.reduce((prev, cur, ind) => {
-        return !ind ? cur.text : prev + "\n" + cur.text;
-      }, "");
-      textArea.value = cnTxt.trim();
-      setTextLen();
-      setLinesQty({ ...linesQty, cn: newCnSubs.length });
-      setDisplayedTime(newCnSubs.map((x) => x.start));
-    }
+    if (!newCnSubs) return;
 
-    return () => {
-      // setLinesQty({ ...linesQty, cn: 0 });
-      setNewCnSubs(null);
-    };
+    const textArea = document.getElementById("textArea");
+    const cnTxt = newCnSubs.reduce((prev, cur, ind) => {
+      return !ind ? cur.text : prev + "\n" + cur.text;
+    }, "");
+    textArea.value = cnTxt.trim();
+    setTextLen();
+    setLinesQty({ ...linesQty, cn: newCnSubs.length });
+    setDisplayedTime(newCnSubs.map((x) => x.start));
   }, [newCnSubs]);
 
   useEffect(() => {
-    if (newPinyinArr) {
-      const textArea = document.getElementById("pinyinArea");
-      const pyTxt = newPinyinArr.reduce((prev, cur, ind) => {
-        return !ind ? cur : prev + "\n" + cur;
-      }, "");
-      textArea.value = pyTxt.trim();
-      setLinesQty({ ...linesQty, py: newPinyinArr.length });
-    }
+    if (!newPinyinArr) return;
 
-    return () => {
-      // setLinesQty({ ...linesQty, py: 0 });
-      // setNewPinyinArr(null);
-    };
+    const textArea = document.getElementById("pinyinArea");
+    const pyTxt = newPinyinArr.reduce((prev, cur, ind) => {
+      return !ind ? cur : prev + "\n" + cur;
+    }, "");
+    textArea.value = pyTxt.trim();
+    setLinesQty({ ...linesQty, py: newPinyinArr.length });
   }, [newPinyinArr]);
 
   useEffect(() => {
@@ -161,8 +151,10 @@ const AddVideoForm = ({ loadUserWords, user }) => {
 
     if (length > smTextLen) return displayTxtTooLong();
 
+    const chunkedChinese = textToCleanArr(originText);
     const chunkedTranslation = textToCleanArr(translationArea.value);
     const chunkedPinyin = textToCleanArr(pinyinArea.value);
+    setNewCnSubs(newCnSubs.map((x, ind) => ({ ...x, text: chunkedChinese[ind] })));
     setNewPinyinArr(chunkedPinyin);
     setNewRuArr(chunkedTranslation);
 
@@ -185,8 +177,6 @@ const AddVideoForm = ({ loadUserWords, user }) => {
       );
     }
 
-    console.log(newChineseArr, newRuArr, newPinyinArr);
-
     setOkToPublish(true);
   };
 
@@ -194,14 +184,20 @@ const AddVideoForm = ({ loadUserWords, user }) => {
     const { title, desc, lvl, tags, length, isApproved, category, source } = formData;
     const cnSegmentedSubs = newChineseArr.map((chunk) => chunk.map((x) => x.chinese));
 
+    console.log(formData, newCnSubs);
+
+    const ruCategories = Object.values(videoCategories);
+    const engCategories = Object.keys(videoCategories);
+    const categoryInd = ruCategories.indexOf(category);
+
     const body = JSON.stringify({
       title,
       desc,
       lvl,
       length,
       isApproved,
-      category,
       source,
+      category: engCategories[categoryInd],
       tags: parseTags(tags),
       cnSubs: newCnSubs,
       chineseArr: cnSegmentedSubs,
@@ -218,14 +214,6 @@ const AddVideoForm = ({ loadUserWords, user }) => {
     }
   };
 
-  const changeCategory = (e) => {
-    const ruCategory = e.target.value;
-    const ruCategories = Object.values(videoCategories);
-    const engCategories = Object.keys(videoCategories);
-    const categoryInd = ruCategories.indexOf(ruCategory);
-    setFormData({ ...formData, category: engCategories[categoryInd] });
-  };
-
   const handleKeyDown = (e) => {
     e.target.style.height = "inherit";
     e.target.style.height = `${e.target.scrollHeight}px`;
@@ -237,7 +225,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
         data: { tags, title, description: desc, captionLangs },
       } = await YoutubeService.getVideoInfo(formData.source);
 
-      setFormData({ ...formData, title, tags, desc });
+      setFormData({ ...formData, title, tags: tags.join(", "), desc });
       setCaptionLangsList(captionLangs);
       setGotYtInfo(true);
     } catch (err) {
@@ -375,7 +363,9 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                         <select
                           className='form-control'
                           id='category'
-                          onChange={changeCategory}
+                          onChange={(e) =>
+                            setFormData({ ...formData, [e.target.id]: e.target.value })
+                          }
                           value={formData.category}
                         >
                           {Object.keys(videoCategories).map((key, ind) => (
@@ -467,7 +457,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                             </p>
                           </div>
 
-                          <div className='form-group col-md-2'>
+                          <div className='form-group col-md-3'>
                             <label htmlFor='textArea'>
                               китайский | <span className='text-info'>строк {linesQty.cn}</span>
                             </label>
@@ -500,7 +490,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                             ></textarea>
                           </div>
 
-                          <div className='form-group col-md-6'>
+                          <div className='form-group col-md-5'>
                             <label htmlFor='translationArea'>
                               перевод | <span className='text-info'>строк {linesQty.ru}</span>
                             </label>
