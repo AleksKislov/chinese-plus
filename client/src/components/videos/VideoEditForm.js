@@ -46,7 +46,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
         length,
       } = videoToEdit;
 
-      setDisplayedTime(cnSubs.map((line) => line.start));
+      setDisplayedTime(cnSubs.map((line) => parseFloat(line.start).toFixed(1)));
       document.getElementById("textArea").value = chineseArr
         .map((word) => word.join(" "))
         .join("\n");

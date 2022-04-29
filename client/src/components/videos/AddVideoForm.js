@@ -91,7 +91,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
     textArea.value = cnTxt.trim();
     setTextLen();
     setLinesQty({ ...linesQty, cn: newCnSubs.length });
-    setDisplayedTime(newCnSubs.map((x) => x.start));
+    setDisplayedTime(newCnSubs.map((x) => parseFloat(x.start).toFixed(1)));
   }, [newCnSubs]);
 
   useEffect(() => {
@@ -394,12 +394,12 @@ const AddVideoForm = ({ loadUserWords, user }) => {
 
                     <div className='form-row'>
                       <div className='col-md-12'>
-                        <p className='text-info'>
+                        <h5 className='text-info'>
                           Загрузите соответствующие субтитры, при необходимости поправьте текст
-                        </p>
+                        </h5>
                       </div>
-                      <div className='form-group col-md-3'>
-                        <label htmlFor='mainSub'>Основной (кит. с таймингом)</label>
+                      <div className='form-group col-md-4'>
+                        <label htmlFor='mainSub'>Китайский (основной с таймингом)</label>
                         <select
                           className='form-control'
                           id='mainSub'
@@ -426,7 +426,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                             ))}
                         </select>
                       </div>
-                      <div className='form-group col-md-3'>
+                      <div className='form-group col-md-5'>
                         <label htmlFor='ruSub'>Перевод (рус.)</label>
                         <select
                           className='form-control'
