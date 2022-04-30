@@ -32,6 +32,7 @@ import BookCardPage from "../books/BookCardPage";
 import PageForm from "../books/PageForm";
 import ChapterPage from "../books/ChapterPage";
 import NotAppovedTexts from "../texts/NotAppovedTexts";
+import NotAppovedVideos from "../videos/NotAppovedVideos";
 import ActiveUserTable from "../stats/ActiveUserTable";
 import AllTextsTable from "../texts/AllTextsTable";
 import UserProfile from "../profile/UserProfile";
@@ -111,6 +112,7 @@ const Routes = () => {
           <Route exact path='/videos' component={Videos} />
           <Route exact path='/all_texts' component={AllTextsTable} />
           <Route exact path='/not_approved_texts' component={NotAppovedTexts} />
+          <Route exact path='/not_approved_videos' component={NotAppovedVideos} />
           <Route exact path='/statistics' component={ActiveUserTable} />
           <Route exact path='/books' component={Books} />
           <Route exact path='/texts/:id/:page' component={TextPage} />

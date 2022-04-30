@@ -14,7 +14,7 @@ import {
 
 const initialState = {
   videos: [],
-  not_approved: [],
+  notApproved: [],
   moreVideos: true,
   moreNotApproved: true,
   video: null,
@@ -62,6 +62,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         videos: [],
+        notApproved: [],
         loading: true,
       };
     case LOAD_NOT_APPROVED_VIDS:
@@ -69,7 +70,7 @@ export default function (state = initialState, action) {
         ...state,
         video: null,
         loading: false,
-        not_approved: [...state.not_approved, ...payload],
+        notApproved: [...state.notApproved, ...payload],
         moreNotApproved: payload.length >= 10 ? true : false,
       };
     case SET_LOADING:

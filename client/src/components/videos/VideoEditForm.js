@@ -22,9 +22,12 @@ import { videoCategories, smTextLen } from "../../constants/consts.json";
 import { NullUser, User } from "../../patterns/User";
 import { YoutubeService } from "../../patterns/YoutubeService";
 import SubLine from "./SubLine";
+import { clearVideos } from "../../actions/videos";
 
-const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
-  useEffect(() => loadUserWords(), []);
+const VideoEditForm = ({ loadUserWords, user, videoToEdit, clearVideos }) => {
+  useEffect(() => {
+    loadUserWords();
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
@@ -176,7 +179,10 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
     e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
-  if (isRedirected) return <Redirect to='/not_approved_videos' />;
+  if (isRedirected) {
+    clearVideos();
+    return <Redirect to='/not_approved_videos' />;
+  }
 
   const onlyForAuthenticated = (
     <p>
@@ -243,7 +249,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
                       onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                       type='text'
                       className={`form-control`}
-                      id='description'
+                      id='desc'
                       autoComplete='off'
                       placeholder='Кратко про это видео...'
                       value={formData.desc}
@@ -263,12 +269,12 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit }) => {
                     />
                   </div>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='level'>Уровень, от 1(простой) до 3(сложный)</label>
+                    <label htmlFor='lvl'>Уровень, от 1(простой) до 3(сложный)</label>
                     <select
                       className='form-control'
-                      id='level'
+                      id='lvl'
                       onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
-                      value={formData.level}
+                      value={formData.lvl}
                     >
                       <option>1</option>
                       <option>2</option>
@@ -426,4 +432,4 @@ const mapStateToProps = (state) => ({
   videoToEdit: state.videos.video,
 });
 
-export default connect(mapStateToProps, { loadUserWords })(VideoEditForm);
+export default connect(mapStateToProps, { loadUserWords, clearVideos })(VideoEditForm);

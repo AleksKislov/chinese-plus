@@ -73,7 +73,6 @@ const VideoPage = ({
           const ytPlayer = new YT.Player("player", {
             videoId: video.source,
           });
-          console.log(ytPlayer);
           setPlayer(ytPlayer);
         });
       });
@@ -150,6 +149,11 @@ const VideoPage = ({
                 }
 
                 <h6 className='card-subtitle mb-2'>
+                  <span className='text-muted'>Благодарности: </span>
+                  <LikeBtn likes={video.likes} id={video._id} contentType={"video"} />
+                </h6>
+
+                <h6 className='card-subtitle mb-2'>
                   <span className='text-muted'>Опубликовал/а: </span>
                   <Link to={`/user/${video.user}`}>{video.userName}</Link>
                 </h6>
@@ -167,11 +171,6 @@ const VideoPage = ({
                 <h6 className='card-subtitle mb-2'>
                   <span className='text-muted'>Описание: </span>
                   {video.desc}
-                </h6>
-
-                <h6 className='card-subtitle mb-2'>
-                  <span className='text-muted'>Благодарности: </span>
-                  <LikeBtn likes={video.likes} id={video._id} contentType={"video"} />
                 </h6>
 
                 {isAuthenticated && isOkToEdit && (

@@ -203,6 +203,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
       chineseArr: cnSegmentedSubs,
       ruSubs: newRuArr,
       pySubs: newPinyinArr,
+      userName: user.name,
     });
 
     try {
