@@ -50,6 +50,9 @@ export default function (state = initialState, action) {
         videos: state.videos.map((video) =>
           video._id === payload.id ? { ...video, likes: payload.likes } : video
         ),
+        notApproved: state.notApproved.map((video) =>
+          video._id === payload.id ? { ...video, likes: payload.likes } : video
+        ),
         video: state.video ? { ...state.video, likes: payload.likes } : state.video,
       };
     case CLEAR_VIDEO:

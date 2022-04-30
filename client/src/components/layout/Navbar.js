@@ -314,6 +314,14 @@ const Navbar = ({
         >
           Видео
         </NavLink>
+        <NavLink
+          className='dropdown-item'
+          to='/not_approved_videos'
+          activeStyle={activeNavLink}
+          onClick={() => setPathsAndCollapse({ ...paths, videos: "/not_approved_videos" })}
+        >
+          На проверке
+        </NavLink>
       </div>
     </li>
   );

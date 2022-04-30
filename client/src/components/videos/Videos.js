@@ -59,7 +59,7 @@ const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
       </div>
 
       <div className='col-md-9'>
-        <h2>Субтитры с переводом для китайских видео</h2>
+        <h2>Китайские видео с умными субтитрами</h2>
 
         {
           // <div className='form-group row'>

@@ -54,7 +54,7 @@ const VideoCard = ({
     rightLevel && (
       <div className={`card my-2 ${isRead(_id) ? "alreadyReadCard" : ""}`}>
         {isRead(_id) && (
-          <Tippy content='Прочитано'>
+          <Tippy content='Просмотрено'>
             <h3 className='alreadyReadMark'>
               <i className='fas fa-check-circle text-success'></i>
             </h3>
@@ -127,20 +127,6 @@ const VideoCard = ({
       </div>
     )
   );
-};
-
-const imgText = {
-  fontSize: "2rem",
-  color: "black",
-  fontWeight: "bold",
-  textShadow: "1px 1px 1px white, 2px 2px 1px white",
-  position: "absolute",
-  width: "5rem",
-  // top: "85%",
-  // left: "25%",
-  // transform: "translate(-50%, -50%)"
-  marginTop: "-3.5rem",
-  marginLeft: "1rem",
 };
 
 const mapStateToProps = (state) => ({
