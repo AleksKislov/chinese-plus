@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { CONTENT } from "../../constants/consts.json";
 import { Fragment } from "react";
 
-const TextsInfoCard = ({ text, contentType }) => {
+const ContentInfoCard = ({ text, contentType }) => {
   useEffect(() => {
     if (window.location.pathname.includes("/texts")) {
       setIsCards(true);
@@ -56,4 +56,4 @@ const TextsInfoCard = ({ text, contentType }) => {
   );
 };
 
-export default TextsInfoCard;
+export default ContentInfoCard;

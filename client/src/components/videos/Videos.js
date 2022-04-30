@@ -10,7 +10,7 @@ import PleaseShare from "../common/PleaseShare";
 // import CategoryFilter from "./common/CategoryFilter";
 // import ReadFilter from "./common/ReadFilter";
 // import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
-import TextsInfoCard from "../common/TextsInfoCard";
+import ContentInfoCard from "../common/ContentInfoCard";
 
 const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
   const [categoryFlag, setCategoryFlag] = useState(0);
@@ -50,8 +50,8 @@ const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
       </Helmet>
 
       <div className='col-md-3'>
-        <TextsInfoCard
-          text={"Умные субтитры для видео на китайском языке."}
+        <ContentInfoCard
+          text={"Тройные субтитры (оригинал, пиньинь и перевод) для видео на китайском языке."}
           contentType={"video"}
         />
         <PleaseShare contentType={"video"} />

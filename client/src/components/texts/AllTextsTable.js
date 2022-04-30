@@ -9,7 +9,7 @@ import PublisherFilter from "./common/PublisherFilter";
 import ReadFilter from "./common/ReadFilter";
 import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
 import { Helmet } from "react-helmet";
-import TextsInfoCard from "../common/TextsInfoCard";
+import ContentInfoCard from "../common/ContentInfoCard";
 import PleaseShare from "../common/PleaseShare";
 import ReadingCard from "../dashboard/ReadingCard";
 import { connect } from "react-redux";
@@ -113,7 +113,7 @@ const AllTextsTable = ({ user }) => {
         <title>Тексты на китайском языке с переводом | Chinese+</title>
       </Helmet>
       <div className='col-sm-3'>
-        <TextsInfoCard text={"Все проверенные тексты Читалки единым списком"} />
+        <ContentInfoCard text={"Все проверенные тексты Читалки единым списком"} />
         <PleaseShare />
         <ReadingCard />
       </div>

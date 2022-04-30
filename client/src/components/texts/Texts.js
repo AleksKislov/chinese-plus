@@ -10,7 +10,7 @@ import LevelFilter from "./common/LevelFilter";
 import CategoryFilter from "./common/CategoryFilter";
 import ReadFilter from "./common/ReadFilter";
 import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
-import TextsInfoCard from "../common/TextsInfoCard";
+import ContentInfoCard from "../common/ContentInfoCard";
 
 const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, clearTexts }) => {
   const [categoryFlag, setCategoryFlag] = useState(0);
@@ -50,7 +50,7 @@ const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, clearTexts }) 
       </Helmet>
 
       <div className='col-md-3'>
-        <TextsInfoCard text={"Чтение китайских текстов с умным переводом."} />
+        <ContentInfoCard text={"Чтение китайских текстов с умным переводом."} />
         <PleaseShare />
         <ReadingCard />
       </div>

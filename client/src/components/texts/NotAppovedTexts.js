@@ -4,7 +4,7 @@ import { loadNotAppoved, clearText } from "../../actions/texts";
 import Spinner from "../layout/Spinner";
 import NotApprovedTextCard from "./NotApprovedTextCard";
 import ReadingCard from "../dashboard/ReadingCard";
-import TextsInfoCard from "../common/TextsInfoCard";
+import ContentInfoCard from "../common/ContentInfoCard";
 
 const NotApprovedTexts = ({ loadNotAppoved, texts, loading, clearText, moreTexts }) => {
   useEffect(() => {
@@ -15,7 +15,7 @@ const NotApprovedTexts = ({ loadNotAppoved, texts, loading, clearText, moreTexts
   return (
     <div className='row'>
       <div className='col-md-3'>
-        <TextsInfoCard text={"Эти тексты ожидают проверки модератором"} />
+        <ContentInfoCard text={"Эти тексты ожидают проверки модератором"} />
         <ReadingCard />
       </div>
 

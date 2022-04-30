@@ -4,7 +4,7 @@ import { loadNotAppoved, clearVideo } from "../../actions/videos";
 import Spinner from "../layout/Spinner";
 import VideoCard from "./VideoCard";
 import ReadingCard from "../dashboard/ReadingCard";
-import TextsInfoCard from "../common/TextsInfoCard";
+import ContentInfoCard from "../common/ContentInfoCard";
 
 const NotApprovedVideos = ({ loadNotAppoved, videos, loading, clearVideo, moreVideos }) => {
   useEffect(() => {
@@ -15,7 +15,7 @@ const NotApprovedVideos = ({ loadNotAppoved, videos, loading, clearVideo, moreVi
   return (
     <div className='row'>
       <div className='col-md-3'>
-        <TextsInfoCard text={"Эти видео ожидают проверки модератором"} contentType={"video"} />
+        <ContentInfoCard text={"Эти видео ожидают проверки модератором"} contentType={"video"} />
         <ReadingCard />
       </div>
 
