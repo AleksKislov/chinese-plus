@@ -12,6 +12,7 @@ const {
   markAsSeen,
   getVidsInChunks,
   updateVideo,
+  getVideosNum,
 } = require("../../src/api/services/videos");
 
 /**
@@ -60,6 +61,13 @@ router.get("/infinite", getVidsInChunks);
 router.get("/all_approved", getAllApprovedVids);
 
 router.get("/not_approved", getNotApprovedVids);
+
+/**
+ *  @route   GET api/videos/videos_num
+ *  @desc    Get the number of videos, approved and not
+ *  @access  Public
+ */
+router.get("/videos_num", getVideosNum);
 
 /**
  * @method  GET

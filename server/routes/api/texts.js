@@ -80,11 +80,11 @@ router.get("/infinite", getTextsInChunks);
 router.get("/not_approved", getNotApprovedTexts);
 
 /**
- *  @route   GET api/texts/approved_num
+ *  @route   GET api/texts/texts_num
  *  @desc    Get the number of texts, approved and not
  *  @access  Public
  */
-router.get("/approved_num", getTextsNum);
+router.get("/texts_num", getTextsNum);
 
 /**
  * @method  GET

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import NumOfTexts from "../texts/common/NumOfTexts";
+import NumOfContent from "./NumOfContent";
 import { Link } from "react-router-dom";
 import { CONTENT } from "../../constants/consts.json";
 import { Fragment } from "react";
@@ -43,10 +43,13 @@ const TextsInfoCard = ({ text, contentType }) => {
               </Link>
             </div>
             <p className='card-text'>{text}</p>
-            <NumOfTexts />
+            <NumOfContent />
           </Fragment>
         ) : (
-          <p className='card-text'>{text}</p>
+          <Fragment>
+            <p className='card-text'>{text}</p>
+            <NumOfContent contentType={"video"} />
+          </Fragment>
         )}
       </div>
     </div>

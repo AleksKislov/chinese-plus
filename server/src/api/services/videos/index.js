@@ -9,7 +9,10 @@ const { likeVideo } = require("./like-video");
 const { markAsSeen } = require("./mark-as-seen");
 const { getVidsInChunks } = require("./get-vids-in-chunks");
 const { updateVideo } = require("./update");
+const { getVideosNum } = require("./get-videos-num");
+
 module.exports = {
+  getVideosNum: apiDecorator(getVideosNum),
   updateVideo: apiDecorator(updateVideo),
   getVidsInChunks: apiDecorator(getVidsInChunks),
   markAsSeen: apiDecorator(markAsSeen),
