@@ -201,8 +201,8 @@ const Navbar = ({
             Упоминания и ответы {mentions && <div className='mentionsCircleLink'></div>}
           </NavLink>
 
-          <NavLink className='dropdown-item font-weight-bold' to='/create-text' exact={true}>
-            Поделиться текстом
+          <NavLink className='dropdown-item font-weight-bold' to='/create-content' exact={true}>
+            Поделиться контентом
           </NavLink>
 
           <NavLink onClick={logout} className='dropdown-item' to='/#' exact={true}>

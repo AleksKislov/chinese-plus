@@ -49,6 +49,7 @@ import TranslationForm from "../translation/TranslateForm";
 import Videos from "../videos/Videos";
 import VideoEditForm from "../videos/VideoEditForm";
 import AddVideoForm from "../videos/AddVideoForm";
+import CreateContent from "../common/CreateContent";
 // import TranslateForm from "../translation/TranslateForm";
 // <PrivateRoute exact path='/translate' component={TranslateForm} />
 
@@ -104,6 +105,8 @@ const Routes = () => {
           <Route exact path='/posts' component={Posts} />
           <Route exact path='/kanban' component={Plans} />
           <Route exact path='/posts/:id' component={PostPage} />
+          <Route exact path='/create-content' component={CreateContent} />
+
           <Route exact path='/create-text' component={TextForm} />
           <Route exact path='/create-video' component={AddVideoForm} />
           <Route exact path='/edit-video' component={VideoEditForm} />
