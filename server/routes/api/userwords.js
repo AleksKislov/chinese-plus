@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth");
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
 
 const UserWord = require("../../src/models/UserWord");
 
@@ -68,51 +68,51 @@ router.delete("/:chinese", auth, async (req, res) => {
  * @desc    search words for web app search url
  * @access  Public
  */
-router.get("/search/:word", async (req, res) => {
-  const searchWord = req.params.word;
+// router.get("/search/:word", async (req, res) => {
+//   const searchWord = req.params.word;
 
-  try {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    const url = "https://bkrs.info/slovo.php?ch=" + encodeURI(searchWord);
-    await page.goto(url);
+//   try {
+//     const browser = await puppeteer.launch();
+//     const page = await browser.newPage();
+//     const url = "https://bkrs.info/slovo.php?ch=" + encodeURI(searchWord);
+//     await page.goto(url);
 
-    let data;
-    if (/[а-яА-ЯЁё]/.test(searchWord)) {
-      data = await page.evaluate(() => document.querySelector(".ch_ru").innerHTML);
-    } else {
-      const pinyin = await page
-        .evaluate(() =>
-          document
-            .querySelector(".py")
-            .innerHTML.replace('<img class="pointer"', ' <i class="fas fa-play"')
-            .replace('src="images/player/negative_small/playup.png">', "></i>")
-        )
-        .catch(async e => {
-          // data = await page.evaluate(() => document.querySelector(".margin_left").innerHTML);
-          // // console.log(data);
-          // data = `<table class="table">${data}</table>`;
-          data = "Error";
-        });
+//     let data;
+//     if (/[а-яА-ЯЁё]/.test(searchWord)) {
+//       data = await page.evaluate(() => document.querySelector(".ch_ru").innerHTML);
+//     } else {
+//       const pinyin = await page
+//         .evaluate(() =>
+//           document
+//             .querySelector(".py")
+//             .innerHTML.replace('<img class="pointer"', ' <i class="fas fa-play"')
+//             .replace('src="images/player/negative_small/playup.png">', "></i>")
+//         )
+//         .catch(async (e) => {
+//           // data = await page.evaluate(() => document.querySelector(".margin_left").innerHTML);
+//           // // console.log(data);
+//           // data = `<table class="table">${data}</table>`;
+//           data = "Error";
+//         });
 
-      if (pinyin && pinyin.includes("<")) {
-        data = pinyin.slice(pinyin.indexOf("<"));
-      }
+//       if (pinyin && pinyin.includes("<")) {
+//         data = pinyin.slice(pinyin.indexOf("<"));
+//       }
 
-      // console.log("up here " + pinyin);
+//       // console.log("up here " + pinyin);
 
-      // if (typeof pinyin === "string") {
-      //   const translation = await page.evaluate(() => document.querySelector(".ru").innerHTML);
-      //   data = `<div class='dictPinyin'>${pinyin}</div>${translation}`;
-      // }
-    }
+//       // if (typeof pinyin === "string") {
+//       //   const translation = await page.evaluate(() => document.querySelector(".ru").innerHTML);
+//       //   data = `<div class='dictPinyin'>${pinyin}</div>${translation}`;
+//       // }
+//     }
 
-    browser.close();
-    return res.json(data);
-  } catch (err) {
-    console.log(err);
-    // return res.json(err);
-  }
-});
+//     browser.close();
+//     return res.json(data);
+//   } catch (err) {
+//     console.log(err);
+//     // return res.json(err);
+//   }
+// });
 
 module.exports = router;

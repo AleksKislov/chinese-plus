@@ -165,6 +165,14 @@ const AddVideoForm = ({ loadUserWords, user }) => {
       (chunk) => chunk.length
     );
 
+    const chunkedPY = chineseChunkedWords.map(
+      (chunk) => chunk.map((x) => x.pinyin.trim()).join(" ")
+      // chunk.reduce(
+      //   (prev, cur) => (prev ? prev + (cur.pinyin || "?").trim() : (cur.pinyin || "?").trim()),
+      //   ""
+      // )
+    );
+    console.log(chunkedPY);
     setNewChineseArr(chineseChunkedWords);
 
     const okToPost =

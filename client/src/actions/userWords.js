@@ -123,36 +123,36 @@ export const loadUserWordsLen = () => async (dispatch) => {
   });
 };
 
-export const puppeteerFunc = (word) => async (dispatch) => {
-  dispatch({ type: SET_LOADING, payload: true });
+// export const puppeteerFunc = (word) => async (dispatch) => {
+//   dispatch({ type: SET_LOADING, payload: true });
 
-  try {
-    const res = await axios.get("/api/userwords/search/" + word);
+//   try {
+//     const res = await axios.get("/api/userwords/search/" + word);
 
-    if (typeof res.data == "object") {
-      // console.log(res.status);
-      throw new Error();
-    }
+//     if (typeof res.data == "object") {
+//       // console.log(res.status);
+//       throw new Error();
+//     }
 
-    let dictResponse;
-    if (!res.data.includes('class="m3"')) {
-      dictResponse = res.data.replace(/"m2"/g, "m3");
-    } else {
-      dictResponse = res.data;
-    }
+//     let dictResponse;
+//     if (!res.data.includes('class="m3"')) {
+//       dictResponse = res.data.replace(/"m2"/g, "m3");
+//     } else {
+//       dictResponse = res.data;
+//     }
 
-    if (dictResponse.includes("href")) {
-      dictResponse = dictResponse.replace(/class/g, "data-class");
-      dictResponse = dictResponse.replace(/href/g, "class='dict-ref' href='#' data-src");
-    }
+//     if (dictResponse.includes("href")) {
+//       dictResponse = dictResponse.replace(/class/g, "data-class");
+//       dictResponse = dictResponse.replace(/href/g, "class='dict-ref' href='#' data-src");
+//     }
 
-    dispatch({
-      type: DICT_RESPONDED,
-      payload: dictResponse,
-    });
-  } catch (err) {
-    dispatch({
-      type: DICT_FAIL,
-    });
-  }
-};
+//     dispatch({
+//       type: DICT_RESPONDED,
+//       payload: dictResponse,
+//     });
+//   } catch (err) {
+//     dispatch({
+//       type: DICT_FAIL,
+//     });
+//   }
+// };
