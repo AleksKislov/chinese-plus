@@ -165,14 +165,15 @@ const AddVideoForm = ({ loadUserWords, user }) => {
       (chunk) => chunk.length
     );
 
-    const chunkedPY = chineseChunkedWords.map(
-      (chunk) => chunk.map((x) => x.pinyin.trim()).join(" ")
-      // chunk.reduce(
-      //   (prev, cur) => (prev ? prev + (cur.pinyin || "?").trim() : (cur.pinyin || "?").trim()),
-      //   ""
-      // )
-    );
-    console.log(chunkedPY);
+    // const chunkedPY = chineseChunkedWords.map(
+    //   (chunk) => chunk.map((x) => x.pinyin.trim()).join(" ")
+    //   // chunk.reduce(
+    //   //   (prev, cur) => (prev ? prev + (cur.pinyin || "?").trim() : (cur.pinyin || "?").trim()),
+    //   //   ""
+    //   // )
+    // );
+    console.log(await YoutubeService.getTextPinyin(JSON.stringify(segmentedWords)));
+    return;
     setNewChineseArr(chineseChunkedWords);
 
     const okToPost =

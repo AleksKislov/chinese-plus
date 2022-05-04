@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Hanzi = require("./dict/dictionary");
+const mdbg = require("mdbg");
 const { getAllWords } = require("./services");
 const auth = require("../../middleware/auth");
 
@@ -90,6 +91,36 @@ router.post("/allWordsForVideo", async (req, res) => {
   try {
     const promises = req.body.map((arr) => getAllWords(arr));
     res.json(await Promise.all(promises));
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.post("/getTextPinyin", async (req, res) => {
+  try {
+    const promises = req.body.map((word) => mdbg.get(word).catch((e) => word));
+    const resArr = await Promise.all(promises);
+    const pinyinText = resArr.map((el) => {
+      if (!el.hasOwnProperty("definitions")) return el;
+
+      const innerArr = Object.values(el.definitions);
+      const pyObj = innerArr.find((x) => x.hasOwnProperty("pinyin"));
+      return pyObj.pinyin;
+    });
+
+    const allChunks = [];
+    let chunk = [];
+    pinyinText.forEach((x) => {
+      if (x !== "\n") {
+        chunk.push(x);
+      } else {
+        allChunks.push(chunk);
+        chunk = [];
+      }
+    });
+
+    res.json(allChunks);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");

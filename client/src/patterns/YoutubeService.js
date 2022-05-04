@@ -30,4 +30,8 @@ export class YoutubeService {
   static createVideo(body) {
     return axios.post(`/api/videos/create`, body, config);
   }
+
+  static getTextPinyin(body) {
+    return axios.post(`/api/dictionary/getTextPinyin`, body, config);
+  }
 }
