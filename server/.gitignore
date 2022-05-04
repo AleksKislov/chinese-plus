@@ -7,3 +7,4 @@ routes/api/dict/dict.js
 .DS_Store
 audio
 cmd.txt
+cedict_db
