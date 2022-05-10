@@ -40,10 +40,11 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   });
 
   useEffect(() => {
-    console.log("mP9a6BXuJ78");
+    // console.log("mP9a6BXuJ78");
     if (formData.source) setOkToGetYtInfo(true);
   }, [formData.source]);
 
+  const [useBackendPy, setUseBackendPy] = useState(true);
   const [isRedirected, setIsRedirected] = useState(false);
   const [okToPublish, setOkToPublish] = useState(false);
   const [okToGetYtInfo, setOkToGetYtInfo] = useState(false);
@@ -153,9 +154,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
 
     const chunkedChinese = textToCleanArr(originText);
     const chunkedTranslation = textToCleanArr(translationArea.value);
-    const chunkedPinyin = textToCleanArr(pinyinArea.value);
     setNewCnSubs(newCnSubs.map((x, ind) => ({ ...x, text: chunkedChinese[ind] })));
-    setNewPinyinArr(chunkedPinyin);
     setNewRuArr(chunkedTranslation);
 
     const segmentedWords = (await segmenter(originText)).filter((word) => word !== " ");
@@ -164,17 +163,17 @@ const AddVideoForm = ({ loadUserWords, user }) => {
     const chineseChunkedWords = chunkArrayFunc(orderedCnWordsFromDB).filter(
       (chunk) => chunk.length
     );
-
-    // const chunkedPY = chineseChunkedWords.map(
-    //   (chunk) => chunk.map((x) => x.pinyin.trim()).join(" ")
-    //   // chunk.reduce(
-    //   //   (prev, cur) => (prev ? prev + (cur.pinyin || "?").trim() : (cur.pinyin || "?").trim()),
-    //   //   ""
-    //   // )
-    // );
-    console.log(await YoutubeService.getTextPinyin(JSON.stringify(segmentedWords)));
-    return;
     setNewChineseArr(chineseChunkedWords);
+
+    let chunkedPinyin;
+    if (useBackendPy) {
+      const { data } = await YoutubeService.getTextPinyin(JSON.stringify(segmentedWords));
+      chunkedPinyin = data.map((line) => line.join(" "));
+      pinyinArea.value = chunkedPinyin.join("\n");
+    } else {
+      chunkedPinyin = textToCleanArr(pinyinArea.value);
+    }
+    setNewPinyinArr(chunkedPinyin);
 
     const okToPost =
       chunkedTranslation.length === chunkedPinyin.length &&
@@ -192,8 +191,6 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   const publishVideo = async (formData) => {
     const { title, desc, lvl, tags, length, isApproved, category, source } = formData;
     const cnSegmentedSubs = newChineseArr.map((chunk) => chunk.map((x) => x.chinese));
-
-    console.log(formData, newCnSubs);
 
     const ruCategories = Object.values(videoCategories);
     const engCategories = Object.keys(videoCategories);
@@ -297,7 +294,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
 
                 <div className='form-row'>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='source'>Источник:</label>
+                    <label htmlFor='source'>Источник</label>
                     <input
                       onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                       type='text'
@@ -309,7 +306,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                     />
                   </div>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='title'>Название видео</label>
+                    <label htmlFor='title'>Название</label>
                     <input
                       value={formData.title}
                       onChange={(e) => {
@@ -341,7 +338,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                   <Fragment>
                     <div className='form-row'>
                       <div className='form-group col-md-6'>
-                        <label htmlFor='description'>Краткое описание</label>
+                        <label htmlFor='description'>Описание (кратко)</label>
                         <input
                           onChange={(e) =>
                             setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -355,7 +352,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                         />
                       </div>
                       <div className='form-group col-md-6'>
-                        <label htmlFor='tags'>Тэги через запятую</label>
+                        <label htmlFor='tags'>Тэги (через запятую)</label>
                         <input
                           onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
                           type='text'
@@ -369,7 +366,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
 
                     <div className='form-row'>
                       <div className='form-group col-md-6'>
-                        <label htmlFor='category'>Выбор категории</label>
+                        <label htmlFor='category'>Категория</label>
                         <select
                           className='form-control'
                           id='category'
@@ -405,9 +402,14 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                     <div className='form-row'>
                       <div className='col-md-12'>
                         <h5 className='text-info'>
-                          Загрузите соответствующие субтитры, при необходимости поправьте текст
+                          Загрузите соответствующие субтитры, при необходимости поправьте их
                         </h5>
+                        <small>
+                          Пиньинь можно загрузить из готовых субтитров на youtube или с нашего
+                          бэкенда (возможно, придется поправить немного)
+                        </small>
                       </div>
+
                       <div className='form-group col-md-4'>
                         <label htmlFor='mainSub'>Китайский (основной с таймингом)</label>
                         <select
@@ -425,6 +427,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                       <div className='form-group col-md-3'>
                         <label htmlFor='pySub'>Пиньинь</label>
                         <select
+                          disabled={!mainSubLang || useBackendPy}
                           className='form-control'
                           id='pySub'
                           onChange={(e) => setPySubLang(e.target.value)}
@@ -435,10 +438,28 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                               <option key={ind}>{lang}</option>
                             ))}
                         </select>
+
+                        <div className='btn-group mt-1' role='group'>
+                          <button
+                            type='button'
+                            className={`btn btn-sm btn-${useBackendPy ? "" : "outline-"}info`}
+                            onClick={() => setUseBackendPy(true)}
+                          >
+                            backend
+                          </button>
+                          <button
+                            type='button'
+                            className={`btn btn-sm btn-${!useBackendPy ? "" : "outline-"}info`}
+                            onClick={() => setUseBackendPy(false)}
+                          >
+                            youtube
+                          </button>
+                        </div>
                       </div>
                       <div className='form-group col-md-5'>
                         <label htmlFor='ruSub'>Перевод (рус.)</label>
                         <select
+                          disabled={!mainSubLang}
                           className='form-control'
                           id='ruSub'
                           onChange={(e) => setRuSubLang(e.target.value)}
@@ -456,7 +477,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                       <Fragment>
                         <div className='form-row'>
                           <div className='form-group col-md-1'>
-                            <label htmlFor='textArea'>Сек:</label>
+                            <label htmlFor='textArea'>сек.</label>
                             <p id='videoSecs' className='text-muted'>
                               {displayedTime.map((sec, ind) => (
                                 <Fragment key={ind}>

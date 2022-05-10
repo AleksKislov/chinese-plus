@@ -119,6 +119,7 @@ router.post("/getTextPinyin", async (req, res) => {
         chunk = [];
       }
     });
+    if (chunk.length) allChunks.push(chunk);
 
     res.json(allChunks);
   } catch (err) {
