@@ -227,7 +227,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit, clearVideos }) => {
 
                 <div className='form-row'>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='title'>Название видео</label>
+                    <label htmlFor='title'>Название</label>
                     <input
                       value={formData.title}
                       onChange={(e) => {
@@ -244,7 +244,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit, clearVideos }) => {
                     />
                   </div>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='description'>Краткое описание</label>
+                    <label htmlFor='description'>Описание (кратко)</label>
                     <input
                       onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                       type='text'
@@ -258,7 +258,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit, clearVideos }) => {
                 </div>
                 <div className='form-row'>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='tags'>Тэги через запятую</label>
+                    <label htmlFor='tags'>Тэги (через запятую)</label>
                     <input
                       onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
                       type='text'
@@ -269,7 +269,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit, clearVideos }) => {
                     />
                   </div>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='lvl'>Уровень, от 1(простой) до 3(сложный)</label>
+                    <label htmlFor='lvl'>Уровень, от 1 (простой) до 3 (сложный)</label>
                     <select
                       className='form-control'
                       id='lvl'
@@ -285,7 +285,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit, clearVideos }) => {
 
                 <div className='form-row'>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='category'>Выбор категории</label>
+                    <label htmlFor='category'>Категория</label>
                     <select
                       className='form-control'
                       id='category'
@@ -300,7 +300,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit, clearVideos }) => {
                     </select>
                   </div>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='source'>Источник:</label>
+                    <label htmlFor='source'>Источник</label>
                     <input
                       onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                       type='text'

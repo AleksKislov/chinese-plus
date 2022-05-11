@@ -29,7 +29,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   }, []);
 
   const [formData, setFormData] = useState({
-    isApproved: "0",
+    // isApproved: "0",
     desc: "",
     title: "",
     lvl: 1,
@@ -189,7 +189,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
   };
 
   const publishVideo = async (formData) => {
-    const { title, desc, lvl, tags, length, isApproved, category, source } = formData;
+    const { title, desc, lvl, tags, length, category, source } = formData;
     const cnSegmentedSubs = newChineseArr.map((chunk) => chunk.map((x) => x.chinese));
 
     const ruCategories = Object.values(videoCategories);
@@ -197,11 +197,11 @@ const AddVideoForm = ({ loadUserWords, user }) => {
     const categoryInd = ruCategories.indexOf(category);
 
     const body = JSON.stringify({
+      // isApproved,
       title,
       desc,
       lvl,
       length,
-      isApproved,
       source,
       category: engCategories[categoryInd],
       tags: parseTags(tags),
@@ -273,25 +273,6 @@ const AddVideoForm = ({ loadUserWords, user }) => {
 
             <div style={{ width: "100%" }}>
               <fieldset>
-                {user.isAdmin && (
-                  <div className='form-row'>
-                    <div className='form-group col-md-6'>
-                      <label htmlFor='isApproved'>Одобрено</label>
-                      <select
-                        className='form-control'
-                        id='isApproved'
-                        value={formData.isApproved}
-                        onChange={(e) =>
-                          setFormData({ ...formData, [e.target.id]: parseInt(e.target.value) })
-                        }
-                      >
-                        <option>0</option>
-                        <option>1</option>
-                      </select>
-                    </div>
-                  </div>
-                )}
-
                 <div className='form-row'>
                   <div className='form-group col-md-6'>
                     <label htmlFor='source'>Источник</label>
@@ -383,14 +364,14 @@ const AddVideoForm = ({ loadUserWords, user }) => {
                         </select>
                       </div>
                       <div className='form-group col-md-6'>
-                        <label htmlFor='level'>Уровень, от 1(простой) до 3(сложный)</label>
+                        <label htmlFor='lvl'>Уровень, от 1 (простой) до 3 (сложный)</label>
                         <select
                           className='form-control'
-                          id='level'
+                          id='lvl'
                           onChange={(e) =>
                             setFormData({ ...formData, [e.target.id]: e.target.value })
                           }
-                          value={formData.level}
+                          value={formData.lvl}
                         >
                           <option>1</option>
                           <option>2</option>
