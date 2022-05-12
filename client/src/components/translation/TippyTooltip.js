@@ -24,6 +24,7 @@ const TippyTooltip = ({
   loadUserWordsLen,
 }) => {
   const [clicked, setClicked] = useState(false);
+  if (!word) word = "";
   const { chinese, pinyin, russian } = word;
 
   useEffect(() => {
