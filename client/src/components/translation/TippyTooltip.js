@@ -22,6 +22,7 @@ const TippyTooltip = ({
   userwords,
   setModalWord,
   loadUserWordsLen,
+  isCurrent,
 }) => {
   const [clicked, setClicked] = useState(false);
   if (!word) word = "";
@@ -82,7 +83,7 @@ const TippyTooltip = ({
   if (word === "\n") {
     return <span className='row'></span>;
   } else if (!word.chinese) {
-    return <span className='tippyTooltips'>{word}</span>;
+    return <span className={`tippyTooltips ${isCurrent ? "text-danger" : ""}`}>{word}</span>;
   } else {
     return (
       <Tippy
@@ -122,7 +123,13 @@ const TippyTooltip = ({
           </div>
         }
       >
-        <span className={`tippyTooltips ${clicked && "tippySelected"}`}>{chinese}</span>
+        <span
+          className={`tippyTooltips ${clicked && "tippySelected"} ${
+            isCurrent ? "text-danger" : ""
+          }`}
+        >
+          {chinese}
+        </span>
       </Tippy>
     );
   }

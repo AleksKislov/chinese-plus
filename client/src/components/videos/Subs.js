@@ -25,6 +25,7 @@ const Subs = ({
   fontsize,
   pauseVideo,
   playVideo,
+  currentWord,
 }) => {
   // const numOfChars = countZnChars(originTxt);
   const [alreadyRead, setAlreadyRead] = useState(false);
@@ -140,13 +141,13 @@ const Subs = ({
               onMouseEnter={pauseVideo}
               onMouseLeave={playVideo}
             >
-              {mainSub.map((word) => (
-                <TippyTooltip word={word} key={uuid()} />
+              {mainSub.map((word, ind) => (
+                <TippyTooltip word={word} key={uuid()} isCurrent={ind <= currentWord} />
               ))}
             </span>
           )}
           {!hidePinyin && (
-            <span className='card-text text-info' style={{ fontSize: 18 }}>
+            <span className={`card-text text-info`} style={{ fontSize: 17 }}>
               {pinyin}
             </span>
           )}

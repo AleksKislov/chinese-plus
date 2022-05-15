@@ -36,13 +36,13 @@ const VideoPage = ({
 }) => {
   const [curSubIndex, setSurSubIndex] = useState(0);
 
-  const [currentMainSub, setCurrentMainSub] = useState(["."]);
   const [fullChineseSubs, setFullChineseSubs] = useState([["."]]);
   const [hideCn, setHideCn] = useState(false);
   const [hideRu, setHideRu] = useState(false);
   const [hidePinyin, setHidePinyin] = useState(false);
   const [isOkToEdit, setIsOkToEdit] = useState(false);
   const [player, setPlayer] = useState({ playerInfo: null });
+  const [currentWord, setCurrentWord] = useState(0);
 
   useEffect(() => {
     setLoading();
@@ -57,10 +57,14 @@ const VideoPage = ({
         return +x.start < curTime && +x.start + +x.dur > curTime;
       });
 
-      if (ind >= 0) {
-        setSurSubIndex(ind);
-        setCurrentMainSub(fullChineseSubs[ind]);
-      }
+      if (ind < 0) return;
+
+      setSurSubIndex(ind);
+      const lineLen = fullChineseSubs[curSubIndex].length;
+      const secStep = +video.cnSubs[ind].dur / lineLen;
+      const curInnerTime = curTime - +video.cnSubs[ind].start;
+      const currentStep = Math.ceil(curInnerTime / secStep);
+      setCurrentWord(currentStep);
     }
   }, 100);
 
@@ -210,6 +214,7 @@ const VideoPage = ({
                 translation={video.ruSubs[curSubIndex]}
                 pinyin={video.pySubs[curSubIndex]}
                 hidePinyin={hidePinyin}
+                currentWord={currentWord}
                 hideCn={hideCn}
                 hideRu={hideRu}
                 pauseVideo={pauseVideo}
