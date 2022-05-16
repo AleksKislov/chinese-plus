@@ -142,7 +142,7 @@ const Subs = ({
               onMouseLeave={playVideo}
             >
               {mainSub.map((word, ind) => (
-                <TippyTooltip word={word} key={uuid()} isCurrent={ind <= currentWord} />
+                <TippyTooltip word={word} key={uuid()} isCurrent={ind <= currentWord + 1} />
               ))}
             </span>
           )}

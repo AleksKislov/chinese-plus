@@ -42,7 +42,7 @@ const VideoPage = ({
   const [hidePinyin, setHidePinyin] = useState(false);
   const [isOkToEdit, setIsOkToEdit] = useState(false);
   const [player, setPlayer] = useState({ playerInfo: null });
-  const [currentWord, setCurrentWord] = useState(0);
+  const [currentWord, setCurrentWord] = useState(-1);
 
   useEffect(() => {
     setLoading();
@@ -63,7 +63,7 @@ const VideoPage = ({
       const lineLen = fullChineseSubs[curSubIndex].length;
       const secStep = +video.cnSubs[ind].dur / lineLen;
       const curInnerTime = curTime - +video.cnSubs[ind].start;
-      const currentStep = Math.ceil(curInnerTime / secStep);
+      const currentStep = Math.floor(curInnerTime / secStep);
       setCurrentWord(currentStep);
     }
   }, 100);
