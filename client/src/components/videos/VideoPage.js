@@ -136,6 +136,7 @@ const VideoPage = ({
             <div className='card bg-light mb-3'>
               <img
                 className='mr-3 cardImageStyle'
+                style={{ objectFit: "cover", height: "8rem" }}
                 src={YoutubeService.getVideoPicUrl(video.source)}
                 alt='video pic'
               />
@@ -203,7 +204,9 @@ const VideoPage = ({
 
             <div className='row my-2'>
               <div className='col-sm-12'>
-                <div id='player' className='embed-responsive embed-responsive-16by9'></div>
+                <div className='embed-responsive embed-responsive-16by9'>
+                  <div id='player' className='embed-responsive-item'></div>
+                </div>
               </div>
             </div>
 
