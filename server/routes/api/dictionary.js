@@ -100,8 +100,23 @@ router.post("/allWordsForVideo", async (req, res) => {
 router.post("/getTextPinyin", async (req, res) => {
   try {
     const promises = req.body.map((word) => mdbg.get(word).catch((e) => word));
-    const resArr = await Promise.all(promises);
-    const pinyinText = resArr.map((el) => {
+    const resArr = await Promise.all(promises); // some long words might stay as is
+
+    const splitWordsArr = resArr.map((el) => {
+      if (el.hasOwnProperty("definitions") || el.length === 1) return el;
+      return el.split("");
+    });
+
+    const singleCharPromises = splitWordsArr.flat(1).map((el) => {
+      if (!el.hasOwnProperty("definitions")) {
+        return mdbg.get(el).catch((e) => el);
+      }
+      return el;
+    });
+
+    const readyObjects = await Promise.all(singleCharPromises);
+
+    const pinyinText = readyObjects.map((el) => {
       if (!el.hasOwnProperty("definitions")) return el;
 
       const innerArr = Object.values(el.definitions);
