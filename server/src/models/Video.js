@@ -8,7 +8,7 @@ const VideoSchema = new Schema({
   desc: { type: String },
   category: {
     type: String,
-    enum: ["misc", "song", "cartoon", "ads", "documentary", "science"],
+    enum: ["misc", "song", "ads", "cartoon", "science", "documentary", "news"],
     default: "misc",
   },
   cnSubs: [

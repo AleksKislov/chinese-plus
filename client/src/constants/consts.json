@@ -1384,9 +1384,10 @@
     "misc": "разное",
     "song": "песня",
     "ads": "реклама",
+    "cartoon": "анимация",
     "sciense": "наука",
-    "lesson": "обучающее",
-    "cartoon": "анимация"
+    "documentary": "документальное",
+    "news": "новости"
   },
   "commentLength": 600,
   "commentEmojis": [
