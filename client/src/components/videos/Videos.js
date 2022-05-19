@@ -6,20 +6,22 @@ import VideoCard from "./VideoCard";
 import ReadingCard from "../dashboard/ReadingCard";
 import { Helmet } from "react-helmet";
 import PleaseShare from "../common/PleaseShare";
-// import LevelFilter from "./common/LevelFilter";
-// import CategoryFilter from "./common/CategoryFilter";
-// import ReadFilter from "./common/ReadFilter";
-// import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
+
+import LevelFilter from "../texts/common/LevelFilter";
+import CategoryFilter from "./CategoryFilter";
+import ReadFilter from "../texts/common/ReadFilter";
+import UnsetFiltersBtn from "../texts/common/UnsetFiltersBtn";
+
 import ContentInfoCard from "../common/ContentInfoCard";
 
 const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
-  const [categoryFlag, setCategoryFlag] = useState(0);
+  const [categoryFlag, setCategoryFlag] = useState();
   const [hideReadFlag, setHideReadFlag] = useState(0);
   const [hideLevelFlag, setHideLevelFlag] = useState(0);
 
   useEffect(() => {
-    loadVideos(videos.length);
-  }, []);
+    loadVideos(videos.length, categoryFlag);
+  }, [categoryFlag]);
 
   const onLevelSelect = (e) =>
     setHideLevelFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
@@ -29,7 +31,7 @@ const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
 
   const onCategorySelect = (e) => {
     clearVideos();
-    setCategoryFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
+    setCategoryFlag(e.target.options[e.target.options.selectedIndex].value);
   };
 
   const clearFilters = () => {
@@ -61,14 +63,12 @@ const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
       <div className='col-md-9'>
         <h2>Китайские видео с умными субтитрами</h2>
 
-        {
-          // <div className='form-group row'>
-          // <LevelFilter onChange={onLevelSelect} />
-          // <ReadFilter onChange={onReadSelect} />
-          // <CategoryFilter onChange={onCategorySelect} />
-          // <UnsetFiltersBtn onClick={clearFilters} />
-          // </div>
-        }
+        <div className='form-group row'>
+          <LevelFilter onChange={onLevelSelect} />
+          <ReadFilter onChange={onReadSelect} />
+          <CategoryFilter onChange={onCategorySelect} />
+          <UnsetFiltersBtn onClick={clearFilters} />
+        </div>
 
         {loading ? (
           <Spinner />
@@ -79,7 +79,7 @@ const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
                 key={video._id}
                 video={video}
                 hide={hideReadFlag}
-                category={categoryFlag}
+                categoryChosen={categoryFlag}
                 hideLevel={hideLevelFlag}
               />
             ))}

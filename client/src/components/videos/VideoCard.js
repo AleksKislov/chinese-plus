@@ -10,11 +10,7 @@ import { NullUser, User } from "../../patterns/User";
 import VideoSrc from "./VideoSrc";
 import { YoutubeService } from "../../patterns/YoutubeService";
 
-const VideoCard = ({
-  video,
-  user,
-  // hide, category, hideLevel
-}) => {
+const VideoCard = ({ video, user, hide, hideLevel, categoryChosen }) => {
   const {
     title,
     tags,
@@ -31,16 +27,17 @@ const VideoCard = ({
     source,
     user: videoUser,
   } = video;
-  // useEffect(() => {
-  //   if (hide === 0) setHideId(false);
-  //   if (hide === 1) setHideId(isRead(_id));
-  //   if (hide === 2) setHideId(!isRead(_id));
-  //   // console.log({ category, category });
-  //   setRightCategory(category === 0 || category === categoryInd + 1);
-  //   setRightLevel(hideLevel === 0 || lvl === hideLevel);
-  // }, [hide, category, hideLevel]);
-
   const isRead = (videoId) => (user ? user.seenVideos.includes(videoId) : false);
+
+  useEffect(() => {
+    if (hide === 0) setHideId(false);
+    if (hide === 1) setHideId(isRead(_id));
+    if (hide === 2) setHideId(!isRead(_id));
+    console.log({ categoryChosen, category });
+    setRightCategory(!categoryChosen || category === categoryChosen);
+    setRightLevel(hideLevel === 0 || lvl === hideLevel);
+  }, [hide, hideLevel, categoryChosen]);
+
   const [hideIt, setHideId] = useState(false);
   const [rightCategory, setRightCategory] = useState(true);
   const [rightLevel, setRightLevel] = useState(true);
