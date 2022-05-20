@@ -33,7 +33,7 @@ const VideoCard = ({ video, user, hide, hideLevel, categoryChosen }) => {
     if (hide === 0) setHideId(false);
     if (hide === 1) setHideId(isRead(_id));
     if (hide === 2) setHideId(!isRead(_id));
-    console.log({ categoryChosen, category });
+
     setRightCategory(!categoryChosen || category === categoryChosen);
     setRightLevel(hideLevel === 0 || lvl === hideLevel);
   }, [hide, hideLevel, categoryChosen]);
