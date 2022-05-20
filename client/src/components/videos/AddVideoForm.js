@@ -232,7 +232,7 @@ const AddVideoForm = ({ loadUserWords, user }) => {
         data: { tags, title, description: desc, captionLangs },
       } = await YoutubeService.getVideoInfo(formData.source);
 
-      setFormData({ ...formData, title, tags: tags.join(", "), desc });
+      setFormData({ ...formData, title, tags: tags ? tags.join(", ") : "", desc });
       setCaptionLangsList(captionLangs);
       setGotYtInfo(true);
     } catch (err) {
