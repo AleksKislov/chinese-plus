@@ -14,7 +14,7 @@ import UnsetFiltersBtn from "../texts/common/UnsetFiltersBtn";
 
 import ContentInfoCard from "../common/ContentInfoCard";
 
-const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
+const Videos = ({ loadVideos, videos, loading, moreVideos, clearVideos }) => {
   const [categoryFlag, setCategoryFlag] = useState();
   const [hideReadFlag, setHideReadFlag] = useState(0);
   const [hideLevelFlag, setHideLevelFlag] = useState(0);
@@ -84,23 +84,21 @@ const Videos = ({ loadVideos, videos, loading, moreTexts, clearVideos }) => {
               />
             ))}
 
-            {
-              // <div className='text-center'>
-              //   {moreTexts ? (
-              //     <button
-              //       type='button'
-              //       className='btn btn-info btn-sm mb-1'
-              //       onClick={() => loadVideos(texts.length, Number(categoryFlag) - 1)}
-              //     >
-              //       Загрузить Ещё
-              //     </button>
-              //   ) : (
-              //     <button type='button' className='btn btn-warning btn-sm mb-1' disabled>
-              //       Больше нетути
-              //     </button>
-              //   )}
-              // </div>
-            }
+            <div className='text-center'>
+              {moreVideos ? (
+                <button
+                  type='button'
+                  className='btn btn-info btn-sm mb-1'
+                  onClick={() => loadVideos(videos.length, categoryFlag)}
+                >
+                  Загрузить Ещё
+                </button>
+              ) : (
+                <button type='button' className='btn btn-warning btn-sm mb-1' disabled>
+                  Больше нетути
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>

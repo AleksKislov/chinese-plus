@@ -27,7 +27,7 @@ const NotApprovedVideos = ({ loadNotAppoved, videos, loading, clearVideo, moreVi
         ) : (
           <div className=''>
             {videos.map((video) => (
-              <VideoCard key={video._id} video={video} />
+              <VideoCard key={video._id} video={video} hideLevel={0} hide={0} />
             ))}
             <div className='text-center'>
               {moreVideos ? (
