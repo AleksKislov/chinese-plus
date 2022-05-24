@@ -14,9 +14,6 @@ const { passport } = require("./src/auth");
 const app = express();
 connectDB();
 
-// mysql db
-require("./src/sql_db/connection");
-
 // Init Middleware
 morgan.token("body", (req, res) => JSON.stringify(req.body, null, 2));
 if (isDevelopment) {

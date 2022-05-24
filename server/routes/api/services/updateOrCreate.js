@@ -1,6 +1,4 @@
 const Day = require("../../../src/models/Day");
-const { Op } = require("sequelize");
-
 const errHandler = (err) => console.log("Reading day error: ", err);
 
 /**
@@ -34,7 +32,6 @@ const fetchReading = async (user_id) => {
   const where = {
     user_id,
     createdAt: {
-      // [Op.between]: [startDate, currentDate],
       $gte: startDate,
       $lt: currentDate,
     },
