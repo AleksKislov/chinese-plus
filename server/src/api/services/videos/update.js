@@ -1,5 +1,4 @@
 const { validationResult } = require("express-validator");
-// const { notifyMe } = require("../_misc");
 
 const Video = require("../../../models/Video");
 
