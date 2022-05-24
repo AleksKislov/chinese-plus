@@ -221,8 +221,9 @@ router.get("/reading_results", auth, async (req, res) => {
  */
 router.post("/reset_reading", async (req, res) => {
   const token = req.header("special-token");
-  if (!token && token !== process.env.SPECIAL_TOKEN)
+  if (!(token && token === process.env.SPECIAL_TOKEN)) {
     return res.status(401).json({ msg: "No token, authorization denied" });
+  }
 
   try {
     await User.updateMany(
