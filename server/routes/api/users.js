@@ -197,7 +197,7 @@ router.get("/reading_results", auth, async (req, res) => {
 });
 
 /**
- * for external usage (with cron jobs)
+ * for everyday cron job
  * @route     POST api/users/reset_reading
  * @desc      Reset today reading history
  * @access    Private
