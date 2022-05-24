@@ -73,7 +73,6 @@ router.post(
   }
 );
 
-// TODO read_today & unread_today => rewrite using 1 query only
 /**
  * @route     POST api/users/read_today
  * @desc      Add number of read chars into DB for this user
@@ -94,22 +93,6 @@ router.post("/read_today", auth, async (req, res) => {
     } else {
       newObj[path] = [ind];
     }
-
-    // haven't read today, so we can create SQL query
-    // for reading_analytics
-    // if (user.read_today_num === 0) {
-    //   createQuery({
-    //     user_id: user._id.toString(),
-    //     have_read: num,
-    //     daily_goal: user.daily_reading_goal
-    //   });
-    // } else {
-    //   const date = new Date();
-    //   updateQuery(
-    //     { have_read: user.read_today_num + num },
-    //     { user_id: user._id.toString(), createdAt: date.toISOString().slice(0, 10) }
-    //   );
-    // }
 
     const updatedUser = await User.findByIdAndUpdate(
       user_id,
