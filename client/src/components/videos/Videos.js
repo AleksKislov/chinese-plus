@@ -9,7 +9,7 @@ import PleaseShare from "../common/PleaseShare";
 
 import LevelFilter from "../texts/common/LevelFilter";
 import CategoryFilter from "./CategoryFilter";
-import ReadFilter from "../texts/common/ReadFilter";
+import ReadFilter from "../common/ReadFilter";
 import UnsetFiltersBtn from "../texts/common/UnsetFiltersBtn";
 
 import ContentInfoCard from "../common/ContentInfoCard";
@@ -65,7 +65,7 @@ const Videos = ({ loadVideos, videos, loading, moreVideos, clearVideos }) => {
 
         <div className='form-group row'>
           <LevelFilter onChange={onLevelSelect} />
-          <ReadFilter onChange={onReadSelect} />
+          <ReadFilter onChange={onReadSelect} isVideos={true} />
           <CategoryFilter onChange={onCategorySelect} />
           <UnsetFiltersBtn onClick={clearFilters} />
         </div>

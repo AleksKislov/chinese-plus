@@ -8,7 +8,7 @@ import { Helmet } from "react-helmet";
 import PleaseShare from "../common/PleaseShare";
 import LevelFilter from "./common/LevelFilter";
 import CategoryFilter from "./common/CategoryFilter";
-import ReadFilter from "./common/ReadFilter";
+import ReadFilter from "../common/ReadFilter";
 import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
 import ContentInfoCard from "../common/ContentInfoCard";
 

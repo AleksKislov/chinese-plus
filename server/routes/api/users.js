@@ -12,6 +12,8 @@ const User = require("../../src/models/User");
 const Post = require("../../src/models/Post");
 const Comment = require("../../src/models/Comment");
 
+const { notifyMe } = require("../../src/api/services/_misc");
+
 /**
  * @route     POST api/users
  * @desc      Register user
@@ -220,6 +222,17 @@ router.post("/reset_reading", async (req, res) => {
     console.log(err.message);
     res.status(500).send("Server error");
   }
+});
+
+router.post("/cron_test", async (req, res) => {
+  const token = req.header("special-token");
+  if (!(token && token === process.env.SPECIAL_TOKEN)) {
+    notifyMe("тест без токена");
+    return res.json({ ok: "200 OK" });
+  }
+
+  notifyMe("тест с токеном");
+  return res.json({ ok: "200 OK" });
 });
 
 /**

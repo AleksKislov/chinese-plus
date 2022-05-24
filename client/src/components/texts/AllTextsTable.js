@@ -6,7 +6,7 @@ import AllTextsTableItem from "./AllTextsTableItem";
 import LevelFilter from "./common/LevelFilter";
 import CategoryFilter from "./common/CategoryFilter";
 import PublisherFilter from "./common/PublisherFilter";
-import ReadFilter from "./common/ReadFilter";
+import ReadFilter from "../common/ReadFilter";
 import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
 import { Helmet } from "react-helmet";
 import ContentInfoCard from "../common/ContentInfoCard";
