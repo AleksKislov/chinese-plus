@@ -224,17 +224,6 @@ router.post("/reset_reading", async (req, res) => {
   }
 });
 
-router.post("/cron_test", async (req, res) => {
-  const token = req.header("special-token");
-  if (!(token && token === process.env.SPECIAL_TOKEN)) {
-    notifyMe("тест без токена");
-    return res.json({ ok: "200 OK" });
-  }
-
-  notifyMe("тест с токеном");
-  return res.json({ ok: "200 OK" });
-});
-
 /**
  * set new avatar and change it everywhere for comments and posts
  * @route     PUT api/users/set_my_avatar
