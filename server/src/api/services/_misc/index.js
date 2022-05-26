@@ -1,4 +1,4 @@
 const { countZnChars } = require("./count-zn-chars");
-const { notifyMe } = require("./notify-me");
+const { notifyMe, notifyTgChannel } = require("./notifier");
 
-module.exports = { notifyMe, countZnChars };
+module.exports = { notifyMe, notifyTgChannel, countZnChars };

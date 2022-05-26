@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const { notifyTgChannel } = require("../_misc");
 
 const Text = require("../../../models/Text");
 
@@ -24,6 +25,9 @@ async function updateTxt(req, res) {
     isLongText,
     pageToEdit,
   } = req.body;
+
+  const foundText = await Text.findById(textId);
+  if (!foundText) throw new Error("No text to update");
 
   const isLngTxtEdit = isLongText && Number.isInteger(pageToEdit);
 
@@ -53,6 +57,11 @@ async function updateTxt(req, res) {
   }
 
   await Text.findByIdAndUpdate(textId, { $set: newFields }, { new: true });
+
+  if (!foundText.isApproved && isApproved) {
+    // notify channel
+  }
+
   return res.json({ status: "done" });
 }
 
