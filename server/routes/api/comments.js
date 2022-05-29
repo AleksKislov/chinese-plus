@@ -9,7 +9,7 @@ const Post = require("../../src/models/Post");
 const Text = require("../../src/models/Text");
 const Video = require("../../src/models/Video");
 const Chapterpage = require("../../src/models/Chapterpage");
-const { Notifier } = require("../../src/api/services/_misc");
+const { Notify } = require("../../src/api/services/_misc");
 
 // @route   POST api/comments?where=...&id=
 // @desc    Create a comment
@@ -61,7 +61,7 @@ router.post("/", [auth, [check("text", "Нужен текст").not().isEmpty()]
     destination.comments_id.unshift(comment._id);
     await destination.save();
 
-    Notifier.toAdmin(`New comment from ${user.name} in /${where}s: ${req.body.text}`);
+    Notify.admin(`New comment from ${user.name} in /${where}s: ${req.body.text}`);
 
     res.json(destination.comments_id);
   } catch (err) {

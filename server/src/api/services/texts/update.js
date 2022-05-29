@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const { Notifier } = require("../_misc");
+const { Notify } = require("../_misc");
 
 const Text = require("../../../models/Text");
 
@@ -59,10 +59,10 @@ async function updateTxt(req, res) {
     };
   }
 
-  await Text.findByIdAndUpdate(textId, { $set: newFields }, { new: true });
+  const updatedTxt = await Text.findByIdAndUpdate(textId, { $set: newFields }, { new: true });
 
   if (!foundText.isApproved && isApproved) {
-    Notifier.telegramPublic("текст", title || foundText.title);
+    Notify.telegramPublic(updatedTxt);
   }
 
   return res.json({ status: "done" });

@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const { Notifier } = require("../_misc");
+const { Notify } = require("../_misc");
 const Hanzi = require("../../../../routes/api/dict/dictionary");
 
 const Text = require("../../../models/Text");
@@ -50,7 +50,7 @@ async function createTxt(req, res) {
   });
 
   const text = await newText.save();
-  Notifier.toAdmin(`New TEXT from ${name}. Title: ${title}`);
+  Notify.admin(`New TEXT from ${name}. Title: ${title}`);
   return res.json(text);
 }
 

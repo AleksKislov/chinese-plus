@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth");
 const { check, validationResult } = require("express-validator");
-const { Notifier } = require("./services");
+const { Notify } = require("../../src/api/services/_misc");
 
 const User = require("../../src/models/User");
 const Profile = require("../../src/models/Profile");
@@ -39,7 +39,7 @@ router.post(
       });
 
       const post = await newPost.save();
-      Notifier.toAdmin(`New post from ${user.name} in /posts. Title: ${title}. Text: ${text}`);
+      Notify.admin(`New post from ${user.name} in /posts. Title: ${title}. Text: ${text}`);
 
       res.json(post);
     } catch (err) {
