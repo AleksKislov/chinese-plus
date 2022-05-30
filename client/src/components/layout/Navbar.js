@@ -426,14 +426,16 @@ const Navbar = ({
         >
           🙏🏻 Донат
         </NavLink>
-        <NavLink
-          className='dropdown-item'
-          to='/kanban'
-          activeStyle={activeNavLink}
-          onClick={() => setPathsAndCollapse({ ...paths, donate: "/kanban" })}
-        >
-          Канбан
-        </NavLink>
+        {
+          // <NavLink
+          //   className='dropdown-item'
+          //   to='/kanban'
+          //   activeStyle={activeNavLink}
+          //   onClick={() => setPathsAndCollapse({ ...paths, donate: "/kanban" })}
+          // >
+          //   Канбан
+          // </NavLink>
+        }
       </div>
     </li>
   );

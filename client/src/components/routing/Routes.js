@@ -21,7 +21,7 @@ import Contacts from "../layout/Contacts";
 import Donate from "../layout/Donate";
 import Search from "../translation/Search";
 import Posts from "../posts/Posts";
-import Plans from "../plans/Plans";
+// import Plans from "../plans/Plans";
 import PostPage from "../posts/PostPage";
 import TextForm from "../texts/TextForm";
 import Texts from "../texts/Texts";
@@ -103,7 +103,9 @@ const Routes = () => {
           <Route exact path='/translate' component={TranslationForm} />
 
           <Route exact path='/posts' component={Posts} />
-          <Route exact path='/kanban' component={Plans} />
+          {
+            //  <Route exact path='/kanban' component={Plans} />
+          }
           <Route exact path='/posts/:id' component={PostPage} />
           <Route exact path='/create-content' component={CreateContent} />
 
