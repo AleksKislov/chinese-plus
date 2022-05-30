@@ -62,7 +62,7 @@ const Posts = ({
 
       if (user.role === "admin") {
         title = emoji + " " + title;
-        addPost(title, newtext, postTag);
+        addPost(title, newtext, "news");
         // loadPosts(0);
         return;
       }
