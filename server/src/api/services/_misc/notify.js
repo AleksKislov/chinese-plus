@@ -24,13 +24,17 @@ class Notify {
 function getTxt(content) {
   const obj = {};
   if (content.cnSubs) {
-    obj.type = `📺 Опубликовано новое <strong>видео</strong> от пользователя ${content.userName}`;
+    obj.type = `📺 <strong>Опубликовано новое видео от пользователя</strong> ${content.userName}`;
     obj.link = `https://www.chineseplus.club/videos/${content._id}`;
     obj.desc = content.desc;
-  } else {
-    obj.type = `📚 Опубликован новый <strong>текст</strong> от пользователя ${content.name}`;
+  } else if (content.origintext) {
+    obj.type = `📚 <strong>Опубликован новый текст от пользователя</strong> ${content.name}`;
     obj.link = `https://www.chineseplus.club/texts/${content._id}`;
     obj.desc = content.description;
+  } else {
+    obj.type = `🚀 <strong>Новости от админа</strong>`;
+    obj.desc = content.text;
+    obj.link = `https://www.chineseplus.club/posts/${content._id}`;
   }
 
   obj.title = content.title;
@@ -38,12 +42,14 @@ function getTxt(content) {
   return writeMsg(obj);
 }
 
-function writeMsg({ type, link, title }) {
+function writeMsg({ type, link, title, desc }) {
   return `${type}!
 
-Название: ${title}
-${link}`;
-  // Описание: ${desc}
+👀 ${title}
+
+📝 ${desc}
+
+🔗 ${link}`;
 }
 
 module.exports = { Notify };

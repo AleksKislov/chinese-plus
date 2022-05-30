@@ -39,7 +39,11 @@ router.post(
       });
 
       const post = await newPost.save();
-      Notify.admin(`New post from ${user.name} in /posts. Title: ${title}. Text: ${text}`);
+      if (user.name === "admin") {
+        Notify.telegramPublic(post);
+      } else {
+        Notify.admin(`New post from ${user.name} in /posts. Title: ${title}. Text: ${text}`);
+      }
 
       res.json(post);
     } catch (err) {

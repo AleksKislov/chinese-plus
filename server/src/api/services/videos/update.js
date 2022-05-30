@@ -36,7 +36,7 @@ async function updateVideo(req, res) {
   if (lvl) newFields.lvl = lvl;
   if (tags) newFields.tags = tags;
   if (category) newFields.category = category;
-  if (isApproved) newFields.isApproved = isApproved;
+  if ([0, 1].includes(isApproved)) newFields.isApproved = isApproved;
   if (source) newFields.source = source;
   if (chineseArr) newFields.chineseArr = chineseArr;
   if (pySubs) newFields.pySubs = pySubs;
@@ -45,7 +45,7 @@ async function updateVideo(req, res) {
 
   const updatedVid = await Video.findByIdAndUpdate(videoId, { $set: newFields }, { new: true });
 
-  if (!foundVid.isApproved && isApproved) {
+  if (foundVid && !foundVid.isApproved && isApproved) {
     Notify.telegramPublic(updatedVid);
   }
 
