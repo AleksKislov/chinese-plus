@@ -33,7 +33,7 @@ function getTxt(content) {
     obj.desc = content.description;
   } else {
     obj.type = `🚀 <strong>Новости от админа</strong>`;
-    obj.desc = content.text;
+    obj.desc = content.text.replace(/\<br \/>/g, "\n");
     obj.link = `https://www.chineseplus.club/posts/${content._id}`;
   }
 
