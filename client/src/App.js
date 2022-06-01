@@ -6,6 +6,7 @@ import Landing from "./components/layout/Landing";
 import Routes from "./components/routing/Routes";
 
 import "./App.css";
+import "./myown.css";
 
 // Redux
 import { Provider } from "react-redux";

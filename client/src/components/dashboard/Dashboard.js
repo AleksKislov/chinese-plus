@@ -51,7 +51,7 @@ const Dashboard = ({
 
       <div className='row'>
         <div className='col-sm-6'>
-          <h1 className='text-primary'>Личный Кабинет</h1>
+          <h1 className=''>Личный Кабинет</h1>
           <div className='row'>
             <div className='col-2'>
               <Tippy content='Поменять аватар' placement='bottom'>
