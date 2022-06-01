@@ -1,23 +1,53 @@
 const axios = require("axios");
+const qs = require("qs");
 
-const url = process.env.TELEGRAM_NOTICE_URL;
-const testChatId = process.env.TEST_CHAT_ID;
-const tgChannelId = process.env.TGCHANNEL_ID;
 const isDevMode = process.env.NODE_ENV === "development";
+
+const tgUrl = process.env.TELEGRAM_NOTICE_URL;
+const tgChannelId = isDevMode ? process.env.TEST_CHAT_ID : process.env.TGCHANNEL_ID;
+const vkChannelId = process.env.VKCHANNEL_ID;
+const vkToken = process.env.VKCHANNEL_TOKEN;
 
 class Notify {
   static admin(txt) {
-    return axios.get(encodeURI(`${url}&text=<pre>${txt}</pre>&chat_id=${testChatId}`));
+    return axios.get(encodeURI(`${tgUrl}&text=<pre>${txt}</pre>&chat_id=${testChatId}`));
   }
 
-  static telegramPublic(content) {
+  static telegramPublic(txt) {
     try {
-      axios.get(
-        encodeURI(`${url}&text=${getTxt(content)}&chat_id=${isDevMode ? testChatId : tgChannelId}`)
-      );
+      axios.get(encodeURI(`${tgUrl}&text=${txt})}&chat_id=${tgChannelId}`));
     } catch (e) {
       console.log(e);
     }
+  }
+
+  static vkPublic(message) {
+    const data = qs.stringify({
+      v: "5.131",
+      owner_id: vkChannelId,
+      access_token: vkToken,
+      message,
+    });
+
+    const config = {
+      method: "post",
+      url: "https://api.vk.com/method/wall.post",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data,
+    };
+
+    try {
+      axios(config);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  static socialMedia(content) {
+    const msg = getTxt(content);
+
+    this.telegramPublic(msg);
+    this.vkPublic(msg);
   }
 }
 

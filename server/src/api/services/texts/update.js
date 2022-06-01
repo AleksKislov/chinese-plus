@@ -62,7 +62,7 @@ async function updateTxt(req, res) {
   const updatedTxt = await Text.findByIdAndUpdate(textId, { $set: newFields }, { new: true });
 
   if (foundText && !foundText.isApproved && isApproved) {
-    Notify.telegramPublic(updatedTxt);
+    Notify.socialMedia(updatedTxt);
   }
 
   return res.json({ status: "done" });

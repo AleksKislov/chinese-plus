@@ -46,7 +46,7 @@ async function updateVideo(req, res) {
   const updatedVid = await Video.findByIdAndUpdate(videoId, { $set: newFields }, { new: true });
 
   if (foundVid && !foundVid.isApproved && isApproved) {
-    Notify.telegramPublic(updatedVid);
+    Notify.socialMedia(updatedVid);
   }
 
   return res.json({ status: "done" });

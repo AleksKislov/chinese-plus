@@ -40,7 +40,7 @@ router.post(
 
       const post = await newPost.save();
       if (user.name === "admin") {
-        Notify.telegramPublic(post);
+        Notify.socialMedia(post);
       } else {
         Notify.admin(`New post from ${user.name} in /posts. Title: ${title}. Text: ${text}`);
       }
