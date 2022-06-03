@@ -108,7 +108,7 @@ const TextPage = ({
           <ConfirmModal />
 
           <div className='col-sm-3'>
-            <div className='card bg-light mb-3'>
+            <div className='card border-primary mb-3'>
               <img className='mr-3 cardImageStyle' src={`${text.pic_url}`} alt='text pic' />
               <div className='card-body'>
                 <p className='card-text text-center'>

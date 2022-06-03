@@ -21,7 +21,7 @@ const ContentInfoCard = ({ text, contentType }) => {
   const cardTitle = <h6 className='card-title'>Отображение текстов:</h6>;
 
   return (
-    <div className='card bg-light mb-3'>
+    <div className='card border-primary mb-3'>
       <div className='card-body'>
         {contentType !== CONTENT.video ? (
           <Fragment>

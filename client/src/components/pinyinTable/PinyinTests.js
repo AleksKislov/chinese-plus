@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { pinyinArr} from '../../constants/consts.json'
+import { pinyinArr } from "../../constants/consts.json";
 import { myAudioURL } from "../../constants/urls.json";
 
 const PinyinTests = () => {
@@ -112,7 +112,7 @@ const PinyinTests = () => {
         <title>Тесты на пиньинь | Chinese+</title>
       </Helmet>
       <div className='col-sm-3'>
-        <div className='card bg-light mb-3'>
+        <div className='card border-primary mb-3'>
           <div className='card-body'>
             <h4 className='card-title'>Пиньинь</h4>
             <p className='card-text'>
@@ -177,7 +177,7 @@ const PinyinTests = () => {
 };
 
 const buttonStyle = {
-  marginRight: "0.5rem"
+  marginRight: "0.5rem",
 };
 
 export default PinyinTests;

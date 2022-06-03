@@ -124,7 +124,7 @@ const TypingGame = ({ words, testStarted, level }) => {
 
   return (
     shuffledWords && (
-      <div className='card bg-light mb-3'>
+      <div className='card border-primary mb-3'>
         <div className='gameLines'>
           <div className='answerLineGreen answerLine' style={{ width: "100%" }}></div>
           <div className='answerLineRed answerLine' style={{ width: `${progress}%` }}></div>

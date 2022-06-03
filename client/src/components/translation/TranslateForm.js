@@ -52,7 +52,7 @@ const TranslateForm = ({ loadUserWords, isAuthenticated }) => {
       <WordModal />
 
       <div className='col-sm-3'>
-        <div className='card bg-light mb-3'>
+        <div className='card border-primary mb-3'>
           <div className='card-body'>
             <h4 className='card-title'>Pop-up Перевод</h4>
             <p className='card-text'>
