@@ -39,7 +39,7 @@ const ContentInfoCard = ({ text, contentType }) => {
                 type='button'
                 className={`btn btn-primary btn-sm ${isTable ? "active" : ""}`}
               >
-                Весь список
+                Список
               </Link>
             </div>
             <p className='card-text'>{text}</p>
