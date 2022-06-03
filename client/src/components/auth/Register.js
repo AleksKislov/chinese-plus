@@ -38,7 +38,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
       </Helmet>
       <div className='col-md-3'></div>
       <div className='col-md-6 text-center'>
-        <h1 className='large text-primary'>Регистрация</h1>
+        <h1 className='large'>Регистрация</h1>
         <p className='lead'>
           <i className='fas fa-user'></i> Создайте свой аккаунт
         </p>

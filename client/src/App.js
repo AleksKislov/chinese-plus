@@ -6,7 +6,7 @@ import Landing from "./components/layout/Landing";
 import Routes from "./components/routing/Routes";
 
 import "./css/common.css";
-// import "./css/theme/App.css";
+import "./css/theme/App.css";
 import "./css/myown.css";
 
 // Redux
@@ -30,6 +30,7 @@ const App = () => {
 
   useEffect(() => {
     const style = document.getElementById("cssTheme");
+    if (!style) return;
     if (+localStorage.isDarkTheme) {
       style.href = "/static/css/App-night.css";
     } else {

@@ -2035,3 +2035,8 @@ a.text-dark:focus {
 .list-group-item-action .list-group-item-heading {
   color: #fff;
 }
+
+.dropdown-menu-right {
+  right: 0;
+  left: auto;
+}

@@ -2070,3 +2070,8 @@ a.text-dark:focus {
 .toast .close:not(:disabled):not(.disabled):focus {
   color: var(--black-clr);
 }
+
+.dropdown-menu-right {
+  right: 0;
+  left: auto;
+}
