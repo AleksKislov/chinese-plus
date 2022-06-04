@@ -472,6 +472,23 @@ const Navbar = ({
     </li>
   );
 
+  const changeTheme = () => {
+    if (+localStorage.isDarkTheme) {
+      localStorage.isDarkTheme = 0;
+    } else {
+      localStorage.isDarkTheme = 1;
+    }
+    window.location.reload();
+  };
+
+  const themeButton = (
+    <li className='nav-item'>
+      <button className='btn btn-sm btn-info' onClick={changeTheme}>
+        Тема
+      </button>
+    </li>
+  );
+
   const mainMenu = (
     <Fragment>
       <ul className='navbar-nav text-center mr-auto'>
@@ -481,6 +498,7 @@ const Navbar = ({
         {hskNav}
         {translationNav}
         {feedbackNav}
+        {themeButton}
       </ul>
 
       {isAuthenticated && authLinks}
