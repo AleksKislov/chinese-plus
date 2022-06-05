@@ -1,7 +1,7 @@
 /* Landing Page */
 .landing {
   position: relative;
-  background: url("./img/picture2.jpg") no-repeat center center fixed;
+  background: url("../img/picture2.jpg") no-repeat center center fixed;
   background-size: cover;
   min-height: 90vh;
   display: flex;
@@ -535,9 +535,9 @@ to violet when it is not checked*/
   top: 0;
 }
 
-.commentP {
+/* .commentP {
   color: #212529;
-}
+} */
 
 .emotippy-box {
   max-width: 140px !important;

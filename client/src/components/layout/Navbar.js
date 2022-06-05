@@ -8,6 +8,16 @@ import { loadUserWordsLen } from "../../actions/userWords";
 import { appVersion } from "../../constants/consts.json";
 import { getMentionsLen } from "../../actions/comments";
 import { users } from "../../constants/consts.json";
+import Tippy from "@tippyjs/react";
+
+const changeTheme = () => {
+  if (+localStorage.isDarkTheme) {
+    localStorage.isDarkTheme = 0;
+  } else {
+    localStorage.isDarkTheme = 1;
+  }
+  window.location.reload();
+};
 
 const Navbar = ({
   logout,
@@ -34,6 +44,7 @@ const Navbar = ({
   const privateLinks = ["/dashboard", "/hsk-words", "userwords"];
   const [totalWordsLen, setTotalWordsLen] = useState(0);
   const [mentions, setMentions] = useState(mentionsLen > 0);
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
 
   useEffect(() => {
     const url = window.location.pathname;
@@ -72,6 +83,14 @@ const Navbar = ({
   }, []);
 
   useEffect(() => {
+    if (+localStorage.isDarkTheme) {
+      return setIsDarkTheme(true);
+    }
+
+    return setIsDarkTheme(false);
+  }, []);
+
+  useEffect(() => {
     setTimeout(() => {
       if (isAuthenticated) {
         getMentionsLen();
@@ -99,6 +118,20 @@ const Navbar = ({
     collapseIt();
     setPaths(obj);
   };
+
+  const themeButton = (
+    <li className='nav-item'>
+      <Tippy content={`${isDarkTheme ? "Светл" : "Темн"}ую тему`} placement='bottom'>
+        <button className='btn' onClick={changeTheme}>
+          {isDarkTheme ? (
+            <i className='fa-solid fa-sun text-warning'></i>
+          ) : (
+            <i className='fa-solid fa-moon text-info'></i>
+          )}
+        </button>
+      </Tippy>
+    </li>
+  );
 
   const noAuthLinks = (
     <ul className='navbar-nav loginNavbar text-center'>
@@ -481,6 +514,7 @@ const Navbar = ({
         {hskNav}
         {translationNav}
         {feedbackNav}
+        {themeButton}
       </ul>
 
       {isAuthenticated && authLinks}

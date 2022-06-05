@@ -4,7 +4,7 @@ import { CONTENT } from "../../constants/consts.json";
 
 const PleaseShare = ({ contentType }) => {
   return (
-    <div className='card bg-light border-primary mb-3'>
+    <div className='card border-primary mb-3'>
       <div className='card-body'>
         <h5 className='card-title'>Станьте героем 💪</h5>
 

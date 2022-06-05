@@ -71,7 +71,7 @@ const ReadingCard = ({ user, setReadGoal, setAlert }) => {
           aria-valuemin='0'
           aria-valuemax='100'
           style={{
-            width: `${user && `${(user.read_today_num / user.daily_reading_goal) * 100}%`}`
+            width: `${user && `${(user.read_today_num / user.daily_reading_goal) * 100}%`}`,
           }}
         ></div>
       </div>
@@ -80,7 +80,7 @@ const ReadingCard = ({ user, setReadGoal, setAlert }) => {
   );
 
   return user ? (
-    <div className='card bg-light border-primary mb-3'>
+    <div className='card border-primary mb-3'>
       <div className='card-body'>
         <h4 className='card-title'>Дневник Чтения 📚</h4>
         <div className='textGoal'>
@@ -93,7 +93,7 @@ const ReadingCard = ({ user, setReadGoal, setAlert }) => {
       </div>
     </div>
   ) : (
-    <div className='card bg-light border-primary mb-3'>
+    <div className='card border-primary mb-3'>
       <div className='card-body'>
         <h5 className='card-title'>Дневник чтения 📚</h5>
         <p className='card-text'>Войдите, чтобы вести учет прочитанных иероглифов</p>
@@ -108,8 +108,8 @@ const ReadingCard = ({ user, setReadGoal, setAlert }) => {
   );
 };
 
-const mapStateToProps = state => ({
-  user: state.auth.user
+const mapStateToProps = (state) => ({
+  user: state.auth.user,
 });
 
 export default connect(mapStateToProps, { setReadGoal, setAlert })(ReadingCard);

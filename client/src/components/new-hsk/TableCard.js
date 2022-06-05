@@ -12,7 +12,7 @@ const NewHskTableCard = ({ level, setLevel, isOldHsk, isForTests }) => {
   const allWordsNum = levels.map((lvl) => infoToUse[lvl]).reduce((prev, cur) => prev + cur);
 
   return (
-    <div className='card bg-light mb-3'>
+    <div className='card border-primary mb-3'>
       <CardInfo isForTests={isForTests} isOldHsk={isOldHsk} />
 
       <ul className='list-group list-group-flush'>

@@ -33,7 +33,7 @@ const ActiveUserTable = ({}) => {
   return (
     <div className='row'>
       <div className='col-sm-3'>
-        <div className='card bg-light mb-3'>
+        <div className='card border-primary mb-3'>
           <div className='card-body'>
             <h4 className='card-title'>Герои Клуба</h4>
             <p className='card-text'>

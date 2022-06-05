@@ -133,7 +133,7 @@ const VideoPage = ({
           <ConfirmModal />
 
           <div className='col-sm-3'>
-            <div className='card bg-light mb-3'>
+            <div className='card border-primary mb-3'>
               <img
                 className='mr-3 cardImageStyle'
                 style={{ objectFit: "cover", height: "8rem" }}

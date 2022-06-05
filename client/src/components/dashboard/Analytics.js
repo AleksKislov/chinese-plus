@@ -67,12 +67,13 @@ const Analytics = ({ user }) => {
       0: { pointShape: "circle", pointSize: 8 },
       1: { type: "line" },
     },
+    backgroundColor: "#adb5bd",
   };
 
   return (
     state &&
     maxX && (
-      <div className=''>
+      <div className='mb-3'>
         <Chart
           columns={[
             {
