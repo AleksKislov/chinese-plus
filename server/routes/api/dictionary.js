@@ -258,4 +258,15 @@ router.post("/segmenter", (req, res) => {
 // [54, 108, 113, 336, 373, 476, 481, 542]
 // 长    倒   得   老   面    省   实在  头
 
+router.get("/addpinyin", async (req, res) => {
+  const ans = await Dictionary.find({ pinyin: " -" });
+
+  const arr = ans.map((x) => x.chinese);
+
+  const promises = arr.map((word) => mdbg.get(word).catch((e) => word));
+  const resArr = await Promise.all(promises);
+
+  res.json(resArr);
+});
+
 module.exports = router;
