@@ -242,6 +242,6 @@ router.post("/addpinyin", async (req, res) => {
  * @desc    update translation or pinyin for a word
  * @access  Private
  */
-router.put("/updateWord", updateWord);
+router.put("/updateWord", auth, updateWord);
 
 module.exports = router;

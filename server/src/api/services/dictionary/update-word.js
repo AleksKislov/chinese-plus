@@ -8,14 +8,22 @@ async function updateWord(req, res) {
   const wordToEdit = await Dictionary.findById(id);
 
   const newFields = {};
-  if (pinyin) newFields.pinyin = pinyin;
-  if (russian) newFields.russian = russian;
+  if (isOkToEdit(pinyin, wordToEdit.pinyin)) {
+    newFields.pinyin = pinyin;
+  }
+  if (isOkToEdit(russian, wordToEdit.russian)) {
+    newFields.russian = russian;
+  }
+
+  if (!newFields.pinyin && !newFields.russian) throw new Error("nothing to update");
 
   newFields.edited = true;
   newFields.previous = wordToEdit.previous;
-  newFields.previous.push({
+  newFields.previous.unshift({
     russian: wordToEdit.russian,
     pinyin: wordToEdit.pinyin,
+    editor: req.user.id,
+    date: new Date().toISOString(),
   });
 
   const editedWord = await Dictionary.findByIdAndUpdate(id, { $set: newFields }, { new: true });
@@ -24,6 +32,14 @@ async function updateWord(req, res) {
 }
 
 module.exports = { updateWord };
+
+/**
+ * @param {string} newField
+ * @param {string} oldField
+ */
+function isOkToEdit(newField, oldField) {
+  return newField && newField.trim() !== oldField.trim();
+}
 
 // {
 //   "_id" : ObjectId("5f0477a4172f4114b21d362e"),
