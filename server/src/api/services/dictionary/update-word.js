@@ -1,4 +1,5 @@
 const Dictionary = require("../../../models/Dictionary");
+const { Notify } = require("../_misc");
 
 async function updateWord(req, res) {
   const { pinyin, russian, id } = req.body;
@@ -27,6 +28,7 @@ async function updateWord(req, res) {
   });
 
   const editedWord = await Dictionary.findByIdAndUpdate(id, { $set: newFields }, { new: true });
+  Notify.admin(`Изменено слово: ${wordToEdit.chinese}`);
 
   res.json(editedWord);
 }

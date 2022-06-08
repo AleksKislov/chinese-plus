@@ -7,7 +7,7 @@ const auth = require("../../middleware/auth");
 
 const Dictionary = require("../../src/models/Dictionary");
 
-const { updateWord } = require("../../src/api/services/dictionary");
+const { updateWord, rollbackUpdate } = require("../../src/api/services/dictionary");
 
 /**
  * @route     GET api/dictionary?word=...
@@ -226,22 +226,32 @@ router.post("/segmenter", (req, res) => {
 // [54, 108, 113, 336, 373, 476, 481, 542]
 // 长    倒   得   老   面    省   实在  头
 
-router.post("/addpinyin", async (req, res) => {
-  const ans = await Dictionary.find({ pinyin: " -" }).limit(500);
+// router.post("/addpinyin", async (req, res) => {
+//   const ans = await Dictionary.find({ pinyin: " -" }).limit(500);
 
-  const arr = ans.map((x) => x.chinese);
-  // console.log(arr);
+//   const arr = ans.map((x) => x.chinese);
+//   // console.log(arr);
 
-  const promises = arr.map((word) => mdbg.get(word).catch((e) => word));
-  const resArr = await Promise.all(promises);
+//   const promises = arr.map((word) => mdbg.get(word).catch((e) => word));
+//   const resArr = await Promise.all(promises);
 
-  res.json(resArr);
-});
+//   res.json(resArr);
+// });
 
 /**
+ * @method  PUT
+ * @route   api/dictionary/updateWord
  * @desc    update translation or pinyin for a word
  * @access  Private
  */
 router.put("/updateWord", auth, updateWord);
+
+/**
+ * @method  PUT
+ * @desc    roll back using previous content of a word
+ * @route   api/dictionary/rollbackUpdate?wordId...&prevInd=
+ * @access  Private
+ */
+router.put("/rollbackUpdate", auth, rollbackUpdate);
 
 module.exports = router;
