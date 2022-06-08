@@ -4,12 +4,11 @@ const DictionarySchema = new mongoose.Schema({
   russian: { type: String },
   pinyin: { type: String },
   edited: {
-    previousContent: { type: String },
-    reason: { type: String },
-    bool: {
-      type: Boolean,
-      default: false,
-    },
+    type: Boolean,
+    default: false,
+  },
+  previous: {
+    type: Array,
   },
   date: {
     type: Date,
