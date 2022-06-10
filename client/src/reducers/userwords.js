@@ -6,7 +6,8 @@ import {
   USER_WORDS_LEN_LOADED,
   DICT_RESPONDED,
   DICT_FAIL,
-  SET_LOADING
+  SET_LOADING,
+  SET_MODAL_TO_EDIT_WORD,
 } from "../actions/types";
 
 const initialState = {
@@ -14,56 +15,62 @@ const initialState = {
   loading: false,
   modalWord: { chinese: "字", russian: "иероглиф", pinyin: "zì" },
   userWordsLen: 0,
-  dictResponse: null
+  dictResponse: null,
+  modalWordToEdit: { chinese: "", pinyin: "", russian: "", _id: "" },
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   const { payload, type } = action;
   switch (type) {
     case USERWORDS_LOADED:
       return {
         ...state,
         userwords: payload,
-        loading: false
+        loading: false,
       };
     case SET_LOADING:
       return {
         ...state,
-        loading: payload
+        loading: payload,
       };
     case USERWORDS_ERROR:
       return {
         ...state,
         userwords: [],
-        loading: false
+        loading: false,
       };
     case REMOVE_USERWORD:
       return {
         ...state,
-        userwords: state.userwords.filter(word => word.chinese !== payload),
-        loading: false
+        userwords: state.userwords.filter((word) => word.chinese !== payload),
+        loading: false,
       };
     case SET_MODAL:
       return {
         ...state,
-        modalWord: payload
+        modalWord: payload,
+      };
+    case SET_MODAL_TO_EDIT_WORD:
+      return {
+        ...state,
+        modalWordToEdit: payload,
       };
     case USER_WORDS_LEN_LOADED:
       return {
         ...state,
-        userWordsLen: payload
+        userWordsLen: payload,
       };
     case DICT_RESPONDED:
       return {
         ...state,
         dictResponse: payload,
-        loading: false
+        loading: false,
       };
     case DICT_FAIL:
       return {
         ...state,
         dictResponse: "<p>Упс, БКРС не отвечает :(</p>",
-        loading: false
+        loading: false,
       };
     default:
       return state;

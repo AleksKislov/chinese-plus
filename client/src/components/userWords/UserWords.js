@@ -5,6 +5,7 @@ import WordsItem from "../texts/WordsItem";
 import PropTypes from "prop-types";
 import Spinner from "../layout/Spinner";
 import WordModal from "../translation/WordModal";
+import WordEditModal from "../translation/WordEditModal";
 import { Link } from "react-router-dom";
 import TypingGame from "./TypingGame";
 import Tippy from "@tippyjs/react";
@@ -62,6 +63,7 @@ const UserWords = ({ loadUserWords, words, wordsLoading }) => {
   ) : (
     <div className='row'>
       <WordModal />
+      <WordEditModal />
 
       <div className='col-sm-3'>
         <div className='card border-primary mb-3'>

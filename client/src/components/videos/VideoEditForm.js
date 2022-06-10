@@ -4,6 +4,7 @@ import store from "../../store";
 import { Redirect, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import WordModal from "../translation/WordModal";
+import WordEditModal from "../translation/WordEditModal";
 import { setAlert } from "../../actions/alert";
 import { loadUserWords } from "../../actions/userWords";
 import {
@@ -202,6 +203,7 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit, clearVideos }) => {
 
             <div className='row'>
               <WordModal />
+              <WordEditModal />
             </div>
 
             <form onSubmit={(e) => preprocessForm(e)} style={{ width: "100%" }}>

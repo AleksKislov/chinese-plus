@@ -5,6 +5,7 @@ import { Redirect, Link } from "react-router-dom";
 import axios from "axios";
 import PropTypes from "prop-types";
 import WordModal from "../translation/WordModal";
+import WordEditModal from "../translation/WordEditModal";
 import { setAlert } from "../../actions/alert";
 import { loadUserWords } from "../../actions/userWords";
 import { TweenMax } from "gsap";
@@ -493,6 +494,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
 
             <div className='row'>
               <WordModal />
+              <WordEditModal />
             </div>
 
             <form onSubmit={(e) => preprocessForm(e)} style={{ width: "100%" }}>

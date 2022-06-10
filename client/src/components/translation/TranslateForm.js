@@ -4,6 +4,7 @@ import store from "../../store";
 // import axios from "axios";
 import PropTypes from "prop-types";
 import WordModal from "./WordModal";
+import WordEditModal from "./WordEditModal";
 import { setAlert } from "../../actions/alert";
 import { loadUserWords } from "../../actions/userWords";
 import { getWords, segmenter, itirateWordsFromDB } from "../../actions/helpers";
@@ -50,6 +51,7 @@ const TranslateForm = ({ loadUserWords, isAuthenticated }) => {
         <title>Перевод текста | Chinese+</title>
       </Helmet>
       <WordModal />
+      <WordEditModal />
 
       <div className='col-sm-3'>
         <div className='card border-primary mb-3'>

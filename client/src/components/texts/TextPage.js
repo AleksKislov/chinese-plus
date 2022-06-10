@@ -8,6 +8,7 @@ import { v4 as uuid } from "uuid";
 import Paragraph from "./Paragraph";
 import { Link } from "react-router-dom";
 import WordModal from "../translation/WordModal";
+import WordEditModal from "../translation/WordEditModal";
 import { loadUserWords } from "../../actions/userWords";
 import Comment from "../comments/Comment";
 import LeaveComment from "../comments/LeaveComment";
@@ -105,6 +106,8 @@ const TextPage = ({
           </Helmet>
 
           <WordModal />
+          <WordEditModal />
+
           <ConfirmModal />
 
           <div className='col-sm-3'>

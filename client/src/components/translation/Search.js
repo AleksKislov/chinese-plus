@@ -10,6 +10,7 @@ import {
   removeWord,
   loadUserWords,
   loadUserWordsLen,
+  setModalEditWord,
 } from "../../actions/userWords";
 import HanziWriter from "hanzi-writer";
 import Spinner from "../layout/Spinner";
@@ -19,6 +20,7 @@ import { Widget, addResponseMessage } from "react-chat-widget";
 import "react-chat-widget/lib/styles.css";
 import "./style.css";
 import { sanitizer } from "../../utils/sanitizer";
+import WordEditModal from "./WordEditModal";
 
 const writerSettings = {
   width: 60,
@@ -38,6 +40,8 @@ const Search = ({
   isAuthenticated,
   userWords,
   removeWord,
+  setModalEditWord,
+  modalWordToEdit,
   // dictResponse
   // puppeteerFunc
 }) => {
@@ -204,6 +208,7 @@ const Search = ({
         <meta charSet='utf-8' />
         <title>Китайско-русский словарь | Chinese+</title>
       </Helmet>
+      <WordEditModal />
 
       <div className='row'>
         <div className='col-sm-8'>
@@ -269,7 +274,7 @@ const Search = ({
                   }
                 >
                   <button
-                    className={`btn btn-sm btn-${clicked ? "warning" : "info"} mr-1`}
+                    className={`btn btn-sm btn-${clicked ? "warning" : "info"}`}
                     onClick={() => updateVocabulary(wordFromSearch)}
                   >
                     {clicked ? <i className='fas fa-minus'></i> : <i className='fas fa-plus'></i>}
@@ -280,16 +285,32 @@ const Search = ({
                   content={<span>{showExamples ? "Скрыть примеры" : "Показать примеры"}</span>}
                 >
                   <button
-                    className='btn btn-sm btn-info'
+                    className='btn btn-sm btn-info mx-1'
                     id='showMoreButton'
                     onClick={showMoreButton}
                   >
                     {showExamples ? "Меньше" : "Больше"}
                   </button>
                 </Tippy>
+
+                <Tippy content={<span>Отредактировать слово</span>}>
+                  <button
+                    className='btn btn-sm btn-warning'
+                    onClick={() => setModalEditWord(wordFromSearch)}
+                    data-toggle='modal'
+                    data-target='#editWordModal'
+                  >
+                    <i className='far fa-edit'></i>
+                  </button>
+                </Tippy>
               </Fragment>
 
-              <h4 className='mt-2'>{wordFromSearch && wordFromSearch.pinyin}</h4>
+              {wordFromSearch && (
+                <h4 className='mt-2'>
+                  {wordFromSearch.chinese} {wordFromSearch.pinyin}
+                </h4>
+              )}
+
               <div
                 className='mb-3'
                 dangerouslySetInnerHTML={{
@@ -303,6 +324,7 @@ const Search = ({
           {wordsFromSearch && (
             <Fragment>
               <WordModal />
+
               <table className='table table-hover mb-3'>
                 <thead>
                   <tr className='table-info'>
@@ -374,6 +396,7 @@ Search.propTypes = {};
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
   userWords: state.userwords.userwords,
+  modalWordToEdit: state.userwords.modalWordToEdit,
   // dictResponse: state.userwords.dictResponse
 });
 
@@ -382,5 +405,6 @@ export default connect(mapStateToProps, {
   loadUserWordsLen,
   addWord,
   removeWord,
+  setModalEditWord,
   // puppeteerFunc
 })(Search);

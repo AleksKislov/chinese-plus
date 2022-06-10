@@ -4,6 +4,7 @@ import store from "../../store";
 import axios from "axios";
 import PropTypes from "prop-types";
 import WordModal from "../translation/WordModal";
+import WordEditModal from "../translation/WordEditModal";
 import { setAlert } from "../../actions/alert";
 import { loadBooks, loadBook } from "../../actions/books";
 import { getWords, chunkArrayFunc, segmenter, itirateWordsFromDB } from "../../actions/helpers";
@@ -31,7 +32,7 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
 
         setFormData({
           ...formData,
-          pageId: _id
+          pageId: _id,
         });
       }
     }, 0);
@@ -55,10 +56,10 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
     chapter: "",
     bookId: "",
     pageNumber: 0,
-    pageId: ""
+    pageId: "",
   });
 
-  const onSubmit = async e => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const textArea = document.getElementById("textArea");
     const translationArea = document.getElementById("translationArea");
@@ -70,7 +71,7 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
       let translationTrimed = translationArea.value.trim();
 
       let allwords = await segmenter(originText);
-      allwords = allwords.filter(word => word !== " ");
+      allwords = allwords.filter((word) => word !== " ");
       const wordsFromDB = await getWords(allwords);
 
       // console.log(wordsFromDB);
@@ -91,27 +92,20 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
         allwords,
         chapter: chapterId,
         book: bookId,
-        pageNumber
+        pageNumber,
       });
     }
   };
 
-  const publishText = async formdata => {
+  const publishText = async (formdata) => {
     const config = {
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     };
 
-    const {
-      book,
-      chunkedTranslation,
-      chunkedOriginText,
-      length,
-      allwords,
-      chapter,
-      pageNumber
-    } = formdata;
+    const { book, chunkedTranslation, chunkedOriginText, length, allwords, chapter, pageNumber } =
+      formdata;
 
     const body = JSON.stringify({
       origintext: chunkedOriginText,
@@ -120,7 +114,7 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
       length,
       chapter,
       book,
-      page_number: pageNumber
+      page_number: pageNumber,
     });
 
     try {
@@ -133,11 +127,11 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
     }
   };
 
-  const editText = async formdata => {
+  const editText = async (formdata) => {
     const config = {
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     };
 
     const { chunkedTranslation, chunkedOriginText, length, pageId, allwords } = formdata;
@@ -147,7 +141,7 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
       origintext: chunkedOriginText,
       translation: chunkedTranslation,
       chinese_arr: allwords,
-      length
+      length,
     });
 
     try {
@@ -166,16 +160,17 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
         <Fragment>
           <div className='row'>
             <WordModal />
+            <WordEditModal />
 
-            <form onSubmit={e => onSubmit(e)} style={{ width: "100%" }}>
+            <form onSubmit={(e) => onSubmit(e)} style={{ width: "100%" }}>
               <fieldset>
                 <div className='form-row'>
                   <div className='form-group col-md-4'>
                     <label htmlFor='title'>Название книги</label>
-                    <select className='custom-select' onChange={e => setBookId(e.target.value)}>
+                    <select className='custom-select' onChange={(e) => setBookId(e.target.value)}>
                       <option defaultValue=''>Выбор книги</option>
                       {books &&
-                        books.map(book => (
+                        books.map((book) => (
                           <option value={book._id} key={book._id}>
                             {book.chineseTitle}
                           </option>
@@ -184,11 +179,14 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
                   </div>
                   <div className='form-group col-md-4'>
                     <label htmlFor='description'>Глава книги</label>
-                    <select className='custom-select' onChange={e => setChapterId(e.target.value)}>
+                    <select
+                      className='custom-select'
+                      onChange={(e) => setChapterId(e.target.value)}
+                    >
                       <option defaultValue=''>Выбор книги</option>
                       {book &&
                         book.contents &&
-                        book.contents.map(chapter => (
+                        book.contents.map((chapter) => (
                           <option value={chapter.chapterId} key={chapter.chapterId}>
                             {chapter.chineseTitle}
                           </option>
@@ -211,7 +209,7 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
                   <div className='form-group col-md-6'>
                     <label htmlFor='textArea'>Вставьте китайский текст для обработки:</label>
                     <textarea
-                      onChange={e => setTextLen(e.target.value.length)}
+                      onChange={(e) => setTextLen(e.target.value.length)}
                       className='form-control'
                       id='textArea'
                       rows='3'
@@ -240,11 +238,11 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
           </div>
           <hr />
 
-          <button className='btn btn-primary mx-1' onClick={e => publishText(formData)}>
+          <button className='btn btn-primary mx-1' onClick={(e) => publishText(formData)}>
             Опубликовать
           </button>
           {isToEdit && (
-            <button className='btn btn-primary mx-1' onClick={e => editText(formData)}>
+            <button className='btn btn-primary mx-1' onClick={(e) => editText(formData)}>
               Изменить текст
             </button>
           )}
@@ -272,16 +270,16 @@ const PageForm = ({ loadUserWords, user, textToEdit, loadBooks, loadBook, book, 
 
 PageForm.propTypes = {
   userwords: PropTypes.array.isRequired,
-  loadUserWords: PropTypes.func.isRequired
+  loadUserWords: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   userwords: state.userwords.userwords,
   wordsLoading: state.userwords.loading,
   user: state.auth.user,
   books: state.books.books,
   book: state.books.book,
-  textToEdit: state.books.page
+  textToEdit: state.books.page,
 });
 
 export default connect(mapStateToProps, { loadUserWords, loadBooks, loadBook })(PageForm);

@@ -10,9 +10,11 @@ import {
   loadUserWords,
   setModalWord,
   loadUserWordsLen,
+  setModalEditWord,
 } from "../../actions/userWords";
 import { sanitizer } from "../../utils/sanitizer";
 import { parseRussian } from "../../actions/helpers";
+import { NullUser, User } from "../../patterns/User";
 
 const TippyTooltip = ({
   word,
@@ -23,6 +25,8 @@ const TippyTooltip = ({
   setModalWord,
   loadUserWordsLen,
   isCurrent,
+  setModalEditWord,
+  user,
 }) => {
   const [clicked, setClicked] = useState(false);
   if (!word) word = "";
@@ -39,18 +43,54 @@ const TippyTooltip = ({
   let translation;
   if (russian) translation = parseRussian(russian);
 
-  const showModal = (e) => {
-    setModalWord(word);
-  };
-
   const moreButton = (
     <button
       className='btn btn-sm btn-warning mb-2'
-      onClick={(e) => showModal(e)}
+      onClick={() => {
+        setModalWord(word);
+        hideIt();
+      }}
       data-toggle='modal'
       data-target='#exampleModal'
     >
       Больше
+    </button>
+  );
+
+  const editButton = user.isNull ? (
+    <Tippy content={<span>Залогиньтесь, чтобы отредактировать</span>}>
+      <button className='btn btn-sm btn-warning mb-2 ml-1'>
+        <i className='far fa-edit'></i>
+      </button>
+    </Tippy>
+  ) : (
+    <Tippy content={<span>Отредактировать слово</span>}>
+      <button
+        className='btn btn-sm btn-warning mb-2 ml-1'
+        data-toggle='modal'
+        onClick={() => {
+          setModalEditWord(word);
+          hideIt();
+        }}
+        data-target='#editWordModal'
+      >
+        <i className='far fa-edit'></i>
+      </button>
+    </Tippy>
+  );
+
+  const plusButton = user.isNull ? (
+    <Tippy content={<span>Залогиньтесь, чтобы сохранить</span>}>
+      <button className={`btn btn-sm float-right btn-${clicked ? "danger" : "info"}`}>
+        <i className='fas fa-plus'></i>
+      </button>
+    </Tippy>
+  ) : (
+    <button
+      className={`btn btn-sm float-right btn-${clicked ? "danger" : "info"}`}
+      onClick={(e) => onClick(e)}
+    >
+      {clicked ? <i className='fas fa-minus'></i> : <i className='fas fa-plus'></i>}
     </button>
   );
 
@@ -114,12 +154,8 @@ const TippyTooltip = ({
               dangerouslySetInnerHTML={{ __html: sanitizer(translation) }}
             ></p>{" "}
             {moreButton}
-            <button
-              className={`btn btn-sm float-right btn-${clicked ? "danger" : "info"}`}
-              onClick={(e) => onClick(e)}
-            >
-              {clicked ? <i className='fas fa-minus'></i> : <i className='fas fa-plus'></i>}
-            </button>
+            {editButton}
+            {plusButton}
           </div>
         }
       >
@@ -141,6 +177,7 @@ TippyTooltip.propTypes = {
 
 const mapStateToProps = (state) => ({
   userwords: state.userwords.userwords,
+  user: state.auth.user ? new User(state.auth.user) : new NullUser(),
 });
 
 export default connect(mapStateToProps, {
@@ -149,4 +186,5 @@ export default connect(mapStateToProps, {
   loadUserWords,
   setModalWord,
   loadUserWordsLen,
+  setModalEditWord,
 })(TippyTooltip);

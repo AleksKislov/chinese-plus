@@ -1,6 +1,7 @@
 import React, { useState, Fragment } from "react";
 import WordsItem from "./WordsItem";
 import WordModal from "../translation/WordModal";
+import WordEditModal from "../translation/WordEditModal";
 
 const TablePlate = ({ lexicons }) => {
   const [hideFlag, setHideFlag] = useState({
@@ -39,6 +40,8 @@ const TablePlate = ({ lexicons }) => {
   return (
     <Fragment>
       <WordModal />
+      <WordEditModal />
+
       <table className='table table-hover table-responsive'>
         <thead>
           <tr className='table-info'>
