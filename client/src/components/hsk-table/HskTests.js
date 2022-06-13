@@ -26,9 +26,10 @@ const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => 
 
   useEffect(() => {
     if (match.params.level) {
-      setLevel(match.params.level);
-      loadTestLexicon(match.params.level);
-      makeLinkActive(Number(match.params.level) - 1, "list-group-item-action");
+      const lvl = +match.params.level || 1;
+      setLevel(lvl + "");
+      loadTestLexicon(lvl + "");
+      makeLinkActive(lvl - 1, "list-group-item-action");
     } else {
       setLevel("1");
       loadTestLexicon("1");
