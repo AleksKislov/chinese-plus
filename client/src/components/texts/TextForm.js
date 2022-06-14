@@ -126,6 +126,8 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
   });
 
   useEffect(() => {
+    if (location.search.includes("page=")) return;
+
     if (textLen > smTextLen) {
       // console.log("here");
       setIsTranslated(true);
@@ -139,6 +141,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
         );
       }
     } else {
+      console.log("тута");
       setIsTranslated(false);
       setIsLongText(false);
     }
