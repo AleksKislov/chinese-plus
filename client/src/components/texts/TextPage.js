@@ -74,7 +74,6 @@ const TextPage = ({
   }, [isAuthenticated]);
 
   useEffect(() => {
-    // console.log("render");
     if (
       currentUser &&
       text &&
