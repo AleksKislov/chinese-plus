@@ -68,9 +68,7 @@ const TextPage = ({
   }, [text]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      loadUserWords();
-    }
+    if (isAuthenticated) loadUserWords();
   }, [isAuthenticated]);
 
   useEffect(() => {
