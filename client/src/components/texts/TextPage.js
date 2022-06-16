@@ -22,6 +22,7 @@ import ConfirmModal from "../comments/ConfirmModal";
 import LikeBtn from "../common/LikeBtn";
 import TextSource from "./common/TextSource";
 import Pagination from "./Pagination";
+import Audio from "./Audio";
 
 const TextPage = ({
   text,
@@ -181,6 +182,8 @@ const TextPage = ({
             <div className='btn btn-sm btn-outline-info float-right' onClick={onClick}>
               {hideFlag ? "Показать Перевод" : "Скрыть Перевод"}
             </div>
+
+            <Audio src={text.audioSrc} title={text.title} />
 
             <div className='row'>
               {chineseChunkedArr.map((chunk, ind) => (
