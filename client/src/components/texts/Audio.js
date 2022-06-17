@@ -17,11 +17,12 @@ const Audio = ({ title, src }) => {
         type: "static",
         position: "bottom",
       },
-      theme: "light",
+      themeColor: "#3498db",
+      theme: +localStorage.isDarkTheme ? "dark" : "light",
     });
   }, [title, src]);
 
-  return <div className='my-2' id='audioContainer'></div>;
+  return <div className='my-2 card border-secondary' id='audioContainer'></div>;
 };
 
 export default Audio;
