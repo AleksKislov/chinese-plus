@@ -12,6 +12,12 @@ const Audio = ({ title, src }) => {
         cover: "1.png",
         src: "https://kislov.chineseplus.ru/audio/pinyin/mi1.mp3",
       },
+      speedOptions: [0.5, 0.75, 1.25, 1.5, 1.75, 2],
+      fixed: {
+        type: "static",
+        position: "bottom",
+      },
+      theme: "light",
     });
   }, [title, src]);
 

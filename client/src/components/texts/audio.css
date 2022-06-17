@@ -484,7 +484,7 @@ svg.shk-btn_mute {
     box-shadow: var(--shadow-body-mobile);
     padding: 5px 16px;
   }
-  /* .shk[data-fixed-type="auto"] {
+  .shk[data-fixed-type="auto"] {
     bottom: 0;
     left: 0;
     position: fixed;
@@ -493,7 +493,7 @@ svg.shk-btn_mute {
   .shk[data-fixed-type="auto"][data-fixed-pos="top"] {
     bottom: auto;
     top: 0;
-  } */
+  }
   .shk[data-live] .shk-bar_wrap {
     height: 4px;
   }
