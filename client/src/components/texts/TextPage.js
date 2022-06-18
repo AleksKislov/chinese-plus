@@ -183,7 +183,10 @@ const TextPage = ({
               {hideFlag ? "Показать Перевод" : "Скрыть Перевод"}
             </div>
 
-            <Audio src={text.audioSrc} title={text.title} />
+            {
+              // text && text.audioSrc &&
+              <Audio src={text.audioSrc} title={text.title} />
+            }
 
             <div className='row'>
               {chineseChunkedArr.map((chunk, ind) => (

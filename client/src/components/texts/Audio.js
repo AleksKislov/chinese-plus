@@ -10,7 +10,7 @@ const Audio = ({ title, src }) => {
         title,
         artist: "Chinese+",
         cover: "1.png",
-        src: "https://kislov.chineseplus.ru/audio/pinyin/mi1.mp3",
+        src: "https://storage.yandexcloud.net/buyilehu/texts/61b5ba35dd225badfe8e8d75.mp3",
       },
       speedOptions: [0.5, 0.75, 1.25, 1.5, 1.75, 2],
       fixed: {
