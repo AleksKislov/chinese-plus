@@ -23,6 +23,7 @@ async function createTxt(req, res) {
     categoryInd,
     source,
     isLongText,
+    audioSrc,
   } = req.body;
 
   let pages;
@@ -46,6 +47,7 @@ async function createTxt(req, res) {
     categoryInd,
     source,
     pages,
+    audioSrc,
     user: req.user.id,
   });
 

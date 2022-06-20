@@ -23,7 +23,7 @@ import Paragraph from "./Paragraph";
 import { v4 as uuid } from "uuid";
 import "./style.css";
 import { bgTextLen, smTextLen, textCategories } from "../../constants/consts.json";
-import { defaultTextPic } from "../../constants/urls.json";
+import { defaultTextPic, textsAudioUrl } from "../../constants/urls.json";
 import { NullUser, User } from "../../patterns/User";
 
 const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
@@ -58,6 +58,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
           source,
           pic_url,
           pages,
+          audioSrc,
         } = textToEdit;
 
         let pageNum;
@@ -91,6 +92,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
           categoryInd,
           source,
           textId: _id,
+          audioSrc,
         });
       }
     });
@@ -123,6 +125,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     theme_word: "", // rewriten usestate,
     source: "",
     categoryInd: 0,
+    audioSrc: 0,
   });
 
   useEffect(() => {
@@ -248,6 +251,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       isApproved,
       categoryInd,
       source,
+      audioSrc,
     } = formdata;
 
     const body = JSON.stringify({
@@ -266,6 +270,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       source,
       name: user.name,
       isLongText,
+      audioSrc,
     });
 
     try {
@@ -301,6 +306,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       isApproved,
       categoryInd,
       source,
+      audioSrc,
     } = formdata;
 
     const body = JSON.stringify({
@@ -320,6 +326,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       source,
       isLongText,
       pageToEdit,
+      audioSrc,
     });
 
     try {
@@ -512,6 +519,21 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                         value={formData.isApproved}
                         onChange={(e) =>
                           setFormData({ ...formData, [e.target.id]: parseInt(e.target.value) })
+                        }
+                      >
+                        <option>0</option>
+                        <option>1</option>
+                      </select>
+                    </div>
+
+                    <div className='form-group col-md-6'>
+                      <label htmlFor='audioSrc'>Есть аудио</label>
+                      <select
+                        className='form-control'
+                        id='audioSrc'
+                        value={formData.audioSrc}
+                        onChange={(e) =>
+                          setFormData({ ...formData, [e.target.id]: +e.target.value })
                         }
                       >
                         <option>0</option>

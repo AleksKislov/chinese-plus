@@ -18,6 +18,7 @@ const TextSchema = new Schema({
   isApproved: { type: Number }, // by admin or moderator, 1 or 0
   hits: { type: Number, default: 1 }, // number of visits
   source: { type: String },
+  audioSrc: { type: Number, default: 0 },
   categoryInd: { type: Number, default: 0 }, // index for textCategories array (on frontend) below
   comments_id: [
     {
