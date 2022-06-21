@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import "./audio.css";
 import Shikwasa from "shikwasa";
+import { textsAudioUrl } from "../../constants/urls.json";
 
-const Audio = ({ title, src }) => {
+const Audio = ({ title, textId }) => {
   useEffect(() => {
     new Shikwasa({
       container: () => document.querySelector("#audioContainer"),
@@ -10,7 +11,7 @@ const Audio = ({ title, src }) => {
         title,
         artist: "Chinese+",
         cover: "1.png",
-        src: "https://storage.yandexcloud.net/buyilehu/texts/61b5ba35dd225badfe8e8d75.mp3",
+        src: `${textsAudioUrl}${textId}.mp3`,
       },
       speedOptions: [0.5, 0.75, 1.25, 1.5, 1.75, 2],
       fixed: {
@@ -20,7 +21,7 @@ const Audio = ({ title, src }) => {
       themeColor: "#3498db",
       theme: +localStorage.isDarkTheme ? "dark" : "light",
     });
-  }, [title, src]);
+  }, [title, textId]);
 
   return <div className='my-2 card border-secondary' id='audioContainer'></div>;
 };

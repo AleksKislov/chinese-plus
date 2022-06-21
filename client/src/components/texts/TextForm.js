@@ -23,7 +23,7 @@ import Paragraph from "./Paragraph";
 import { v4 as uuid } from "uuid";
 import "./style.css";
 import { bgTextLen, smTextLen, textCategories } from "../../constants/consts.json";
-import { defaultTextPic, textsAudioUrl } from "../../constants/urls.json";
+import { defaultTextPic } from "../../constants/urls.json";
 import { NullUser, User } from "../../patterns/User";
 
 const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
@@ -509,7 +509,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
 
             <form onSubmit={(e) => preprocessForm(e)} style={{ width: "100%" }}>
               <fieldset>
-                {user && user.role === "admin" && isToEdit && (
+                {user && (user.role === "admin" || user.role === "moderator") && isToEdit && (
                   <div className='form-row'>
                     <div className='form-group col-md-6'>
                       <label htmlFor='isApproved'>Одобрено</label>
