@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { loadTexts, clearText, clearTexts } from "../../actions/texts";
+import { loadTexts, clearTexts } from "../../actions/texts";
 import Spinner from "../layout/Spinner";
 import TextCard from "./TextCard";
 import ReadingCard from "../dashboard/ReadingCard";
@@ -12,20 +12,24 @@ import ReadFilter from "../common/ReadFilter";
 import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
 import ContentInfoCard from "../common/ContentInfoCard";
 
-const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, clearTexts }) => {
+const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
   const [categoryFlag, setCategoryFlag] = useState(0);
   const [hideReadFlag, setHideReadFlag] = useState(0);
   const [hideLevelFlag, setHideLevelFlag] = useState(0);
 
   useEffect(() => {
-    loadTexts(texts.length, Number(categoryFlag) - 1);
-  }, [categoryFlag]);
+    loadTexts(texts.length, +categoryFlag - 1, hideLevelFlag);
+  }, [categoryFlag, hideReadFlag, hideLevelFlag]);
 
-  const onLevelSelect = (e) =>
+  const onLevelSelect = (e) => {
+    clearTexts();
     setHideLevelFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
+  };
 
-  const onReadSelect = (e) =>
+  const onReadSelect = (e) => {
+    clearTexts();
     setHideReadFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
+  };
 
   const onCategorySelect = (e) => {
     clearTexts();
@@ -37,6 +41,7 @@ const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, clearTexts }) 
     setCategoryFlag(0);
     setHideReadFlag(0);
     setHideLevelFlag(0);
+    loadTexts(0, -1);
     document.getElementById("levelFilt").value = 0;
     document.getElementById("readFilt").value = 0;
     document.getElementById("categoryFilt").value = 0;
@@ -107,4 +112,4 @@ const mapStateToProps = (state) => ({
   user: state.auth.user,
 });
 
-export default connect(mapStateToProps, { loadTexts, clearText, clearTexts })(Texts);
+export default connect(mapStateToProps, { loadTexts, clearTexts })(Texts);
