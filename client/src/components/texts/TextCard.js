@@ -26,13 +26,14 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
     categoryInd,
     likes,
     source,
+    audioSrc,
     user: textUser,
   } = text;
   useEffect(() => {
     if (hide === 0) setHideId(false);
     if (hide === 1) setHideId(isRead(_id));
     if (hide === 2) setHideId(!isRead(_id));
-    // console.log({ category, categoryInd });
+
     setRightCategory(category === 0 || category === categoryInd + 1);
     setRightLevel(hideLevel === 0 || level === hideLevel);
   }, [hide, category, hideLevel]);
@@ -110,13 +111,15 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
               <CommentsBtn id={_id} comments_id={comments_id} />
               <LikeBtn likes={likes} id={_id} />
 
-              <Tippy content='С аудио'>
-                <span>
-                  <button className='btn btn-sm btn-info disabled' disabled>
-                    <i className='fas fa-headphones'></i>
-                  </button>
-                </span>
-              </Tippy>
+              {audioSrc === 1 && (
+                <Tippy content='С аудио'>
+                  <span>
+                    <button className='btn btn-sm btn-info disabled' disabled>
+                      <i className='fas fa-headphones'></i>
+                    </button>
+                  </span>
+                </Tippy>
+              )}
             </div>
           </div>
         </div>
@@ -132,9 +135,6 @@ const imgText = {
   textShadow: "1px 1px 1px white, 2px 2px 1px white",
   position: "absolute",
   width: "5rem",
-  // top: "85%",
-  // left: "25%",
-  // transform: "translate(-50%, -50%)"
   marginTop: "-3.5rem",
   marginLeft: "1rem",
 };

@@ -74,8 +74,9 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
           <LevelFilter onChange={onLevelSelect} />
           <ReadFilter onChange={onReadSelect} />
           <CategoryFilter onChange={onCategorySelect} />
-        </div>
-        <div className='form-group row'>
+
+          <div className='com-sm-3 w-100'></div>
+
           <AudioFilter onClick={onAudioSelect} withAudio={withAudio} />
           <UnsetFiltersBtn onClick={clearFilters} />
         </div>

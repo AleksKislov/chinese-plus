@@ -12,7 +12,7 @@ const AudioFilter = ({ onClick, withAudio }) => {
   };
 
   return (
-    <div className='col-sm-3'>
+    <div className='col-sm-3 mb-2'>
       <div className='btn-group w-100' role='group'>
         <button
           className={`btn btn-outline-primary btn-sm ${!isAudio ? "active" : ""}`}
