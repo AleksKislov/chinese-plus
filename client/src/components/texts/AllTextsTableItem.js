@@ -5,30 +5,33 @@ import { levelStars } from "../../actions/helpers.js";
 import Tippy from "@tippyjs/react";
 import { connect } from "react-redux";
 
-const AllTextsTableItem = ({ text, hide, category, hideLevel, user, publisher }) => {
-  const { _id, level, title, likes, hits, categoryInd, comments_id, name, date } = text;
+const AllTextsTableItem = ({ text, hide, category, hideLevel, user, publisher, withAudio }) => {
+  const { _id, level, title, likes, hits, categoryInd, comments_id, name, date, audioSrc } = text;
 
   useEffect(() => {
     if (hide === 0) setHideId(false);
     if (hide === 1) setHideId(isRead(_id));
     if (hide === 2) setHideId(!isRead(_id));
-    // console.log({ category, categoryInd });
+
     setRightCategory(category === 0 || category === categoryInd + 1);
     setRightLevel(hideLevel === 0 || level === hideLevel);
     setRightPublisher(publisher === "all" || publisher === name);
-  }, [hide, category, hideLevel, publisher]);
+    setOnlyWithAudio(withAudio && +audioSrc === 0);
+  }, [hide, category, hideLevel, publisher, withAudio, audioSrc]);
 
-  const isRead = textid => (user ? user.finished_texts.includes(textid) : false);
+  const isRead = (textid) => (user ? user.finished_texts.includes(textid) : false);
   const [hideIt, setHideId] = useState(false);
   const [rightCategory, setRightCategory] = useState(true);
   const [rightLevel, setRightLevel] = useState(true);
   const [rightPublisher, setRightPublisher] = useState(true);
+  const [onlyWithAudio, setOnlyWithAudio] = useState(false);
 
   return (
     !hideIt &&
     rightCategory &&
     rightLevel &&
-    rightPublisher && (
+    rightPublisher &&
+    !onlyWithAudio && (
       <tr>
         <td>
           <small>{date.split("T")[0]}</small>
@@ -50,6 +53,8 @@ const AllTextsTableItem = ({ text, hide, category, hideLevel, user, publisher })
         <Tippy content={`${comments_id.length} комментариев`} placement='bottom'>
           <td>{comments_id.length}</td>
         </Tippy>
+        <td>{audioSrc === 1 && <i className='fas fa-check-circle text-success'></i>}</td>
+
         {user && (
           <td style={{ paddingRight: "1.5rem" }}>
             <Tippy content={`${isRead(_id) && "Прочитано"}`} placement='bottom'>
@@ -62,8 +67,8 @@ const AllTextsTableItem = ({ text, hide, category, hideLevel, user, publisher })
   );
 };
 
-const mapStateToProps = state => ({
-  user: state.auth.user
+const mapStateToProps = (state) => ({
+  user: state.auth.user,
 });
 
 export default connect(mapStateToProps, {})(AllTextsTableItem);

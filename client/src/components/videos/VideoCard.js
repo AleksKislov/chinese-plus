@@ -5,6 +5,7 @@ import Tippy from "@tippyjs/react";
 import { connect } from "react-redux";
 import { videoCategories } from "../../constants/consts.json";
 import LikeBtn from "../common/LikeBtn";
+import CommentsBtn from "../common/CommentsBtn";
 import TextDescription from "../texts/common/TextDescription";
 import { NullUser, User } from "../../patterns/User";
 import VideoSrc from "./VideoSrc";
@@ -111,12 +112,8 @@ const VideoCard = ({ video, user, hide, hideLevel, categoryChosen }) => {
 
             <TextDescription description={desc} />
 
-            <div className=''>
-              <Link to={linkTo}>
-                <button className='btn btn-sm btn-outline-info mr-2'>
-                  Комментарии {comments_id.length > 0 && <span>{comments_id.length}</span>}
-                </button>
-              </Link>
+            <div>
+              <CommentsBtn id={_id} comments_id={comments_id} contentType={"video"} />
               <LikeBtn likes={likes} id={_id} contentType={"video"} />
             </div>
           </div>

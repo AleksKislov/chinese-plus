@@ -24,6 +24,7 @@ async function updateTxt(req, res) {
     source,
     isLongText,
     pageToEdit,
+    audioSrc,
   } = req.body;
 
   let foundText;
@@ -48,6 +49,7 @@ async function updateTxt(req, res) {
   if ([0, 1].includes(isApproved)) newFields.isApproved = isApproved;
   if (categoryInd) newFields.categoryInd = categoryInd;
   if (source) newFields.source = source;
+  if (audioSrc) newFields.audioSrc = audioSrc;
   if (isLngTxtEdit) {
     newFields = {
       ...newFields,

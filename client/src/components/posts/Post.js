@@ -8,7 +8,7 @@ import Tippy from "@tippyjs/react";
 import { sanitizer } from "../../utils/sanitizer";
 
 const Post = ({ post, comments, isPage }) => {
-  const { text, name, avatar, date, title, _id, tag, comments_id, likes, dislikes, user } = post;
+  const { text, name, avatar, date, title, _id, tag, comments_id, user } = post;
   const tagTheme = {
     wish: "Пожелание",
     bug: "Баг",
@@ -42,32 +42,27 @@ const Post = ({ post, comments, isPage }) => {
         </div>
         <div>
           <div style={{ display: "flex", alignItems: "baseline" }}>
-            <h4 className='card-title'>{title}</h4>
+            <h4 className='card-title'>
+              <Link to={`/posts/${_id}`}>{title}</Link>
+            </h4>
             <span className={`mx-2 badge badge-${badgeColor}`}>{tagTheme[tag]}</span>
           </div>
           <h6 className='card-subtitle mb-2 text-muted'>
             <Link to={`/user/${user}`}>{name}</Link> | <em>{dateAndTime}</em>
           </h6>
           <p className='card-text' dangerouslySetInnerHTML={{ __html: sanitizer(text) }}></p>
-          <div className=''>
-            {
-              // remove likes/dislikes for posts
-              // <button className='btn btn-sm btn-light mb-1' onClick={() => addLike(_id)}>
-              // <i className='fas fa-thumbs-up'></i> {likes.length > 0 && <span>{likes.length}</span>}
-              // </button>
-              // <button className='btn btn-sm btn-light mx-2 mb-1' onClick={() => addDislike(_id)}>
-              // <i className='fas fa-thumbs-down'></i>{" "}
-              // {dislikes.length > 0 && <span>{dislikes.length}</span>}
-              // </button>
-            }
-            <Link to={`/posts/${_id}`}>
-              <button className='btn btn-sm btn-outline-info mb-1'>
-                Комментарии{" "}
-                {isPage
-                  ? comments.length > 0 && <span>{comments.length}</span>
-                  : comments_id.length > 0 && <span>{comments_id.length}</span>}
-              </button>
-            </Link>
+
+          <div>
+            <Tippy content={"Комментарии"}>
+              <Link to={`/posts/${_id}`}>
+                <button className='btn btn-sm btn-outline-info mb-1'>
+                  <i className='fas fa-comment-dots'></i>{" "}
+                  {isPage
+                    ? comments.length > 0 && <span>{comments.length}</span>
+                    : comments_id.length > 0 && <span>{comments_id.length}</span>}
+                </button>
+              </Link>
+            </Tippy>
           </div>
         </div>
       </div>

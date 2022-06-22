@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { loadTexts, clearText, clearTexts } from "../../actions/texts";
+import { loadTexts, clearTexts } from "../../actions/texts";
 import Spinner from "../layout/Spinner";
 import TextCard from "./TextCard";
 import ReadingCard from "../dashboard/ReadingCard";
@@ -9,30 +9,42 @@ import PleaseShare from "../common/PleaseShare";
 import LevelFilter from "./common/LevelFilter";
 import CategoryFilter from "./common/CategoryFilter";
 import ReadFilter from "../common/ReadFilter";
+import AudioFilter from "./common/AudioFilter";
 import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
 import ContentInfoCard from "../common/ContentInfoCard";
 
-const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, clearTexts }) => {
+const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
   const [categoryFlag, setCategoryFlag] = useState(0);
   const [hideReadFlag, setHideReadFlag] = useState(0);
   const [hideLevelFlag, setHideLevelFlag] = useState(0);
+  const [withAudio, setWithAudio] = useState(false);
 
   useEffect(() => {
-    loadTexts(texts.length, Number(categoryFlag) - 1);
-  }, [categoryFlag]);
+    loadTexts(texts.length, +categoryFlag - 1, hideLevelFlag, withAudio);
+  }, [categoryFlag, hideLevelFlag, withAudio]);
 
-  const onLevelSelect = (e) =>
+  const onLevelSelect = (e) => {
+    clearTexts();
     setHideLevelFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
+  };
 
-  const onReadSelect = (e) =>
+  const onReadSelect = (e) => {
+    // clearTexts();
     setHideReadFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
+  };
 
   const onCategorySelect = (e) => {
     clearTexts();
     setCategoryFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
   };
 
+  const onAudioSelect = (bool) => {
+    clearTexts();
+    setWithAudio(bool);
+  };
+
   const clearFilters = () => {
+    setWithAudio(false);
     clearTexts();
     setCategoryFlag(0);
     setHideReadFlag(0);
@@ -62,6 +74,10 @@ const Texts = ({ loadTexts, texts, loading, clearText, moreTexts, clearTexts }) 
           <LevelFilter onChange={onLevelSelect} />
           <ReadFilter onChange={onReadSelect} />
           <CategoryFilter onChange={onCategorySelect} />
+
+          <div className='com-sm-3 w-100'></div>
+
+          <AudioFilter onClick={onAudioSelect} withAudio={withAudio} />
           <UnsetFiltersBtn onClick={clearFilters} />
         </div>
 
@@ -107,4 +123,4 @@ const mapStateToProps = (state) => ({
   user: state.auth.user,
 });
 
-export default connect(mapStateToProps, { loadTexts, clearText, clearTexts })(Texts);
+export default connect(mapStateToProps, { loadTexts, clearTexts })(Texts);
