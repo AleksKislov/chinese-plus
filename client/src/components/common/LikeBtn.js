@@ -21,7 +21,7 @@ const LikeBtn = ({ likes, id, likeText, likeVideo, user, contentType }) => {
       }
     >
       <button
-        className={`btn btn-sm btn-${liked ? "danger" : "outline-info"}`}
+        className={`btn btn-sm mx-1 btn-${liked ? "danger" : "outline-info"}`}
         onClick={() => {
           if (contentType === CONTENT.video) {
             likeVideo(id);

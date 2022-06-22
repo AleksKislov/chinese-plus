@@ -26,6 +26,7 @@ const AllTextsTable = ({ user }) => {
   const [likesClicked, setLikesClicked] = useState(true);
   const [commentsClicked, setCommentsClicked] = useState(true);
   const [publishers, setPublishers] = useState(null);
+  const [withAudio, setWithAudio] = useState(false); // means all texts
 
   useEffect(() => {
     if (texts) setPublishers([...new Set(texts.map((text) => text.name))]);
@@ -66,6 +67,7 @@ const AllTextsTable = ({ user }) => {
     setCategoryFlag(0);
     setHideReadFlag(0);
     setHideLevelFlag(0);
+    setWithAudio(false);
     setPublisherFlag("all");
     document.getElementById("levelFilt").value = 0;
     document.getElementById("readFilt").value = 0;
@@ -128,10 +130,10 @@ const AllTextsTable = ({ user }) => {
           <CategoryFilter onChange={onCategorySelect} />
           <PublisherFilter onChange={onPublisherSelect} publishers={publishers ? publishers : []} />
 
-          <AudioFilter onClick={() => {}} />
+          <AudioFilter onClick={setWithAudio} withAudio={withAudio} />
           <UnsetFiltersBtn onClick={clearFilters} />
         </div>
-        <div className='table-responsive'>
+        <div className='table-responsive-sm'>
           <table className='table table-hover text-center'>
             <thead>
               <tr className='table-info'>
@@ -143,7 +145,7 @@ const AllTextsTable = ({ user }) => {
                 <th>Уровень</th>
                 <th className='text-left'>Название</th>
                 <th>Категория</th>
-                <th>Опубликовал</th>
+                <th>Автор</th>
                 <Tippy content='Кол-во благодарностей' placement='top'>
                   <th style={thStyle}>
                     <div onClick={sortByLikes} style={{ cursor: "pointer" }}>
@@ -165,6 +167,12 @@ const AllTextsTable = ({ user }) => {
                     </div>
                   </th>
                 </Tippy>
+                <Tippy content='Есть аудио' placement='top'>
+                  <th style={thStyle}>
+                    <i className='fas fa-headphones'></i>
+                  </th>
+                </Tippy>
+
                 {user && (
                   <Tippy content='Прочитано ли' placement='top'>
                     <th style={{ paddingRight: "1.5rem" }}>
@@ -184,6 +192,7 @@ const AllTextsTable = ({ user }) => {
                     category={categoryFlag}
                     hideLevel={hideLevelFlag}
                     publisher={publisherFlag}
+                    withAudio={withAudio}
                   />
                 ))
               ) : (
