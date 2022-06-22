@@ -9,6 +9,7 @@ import PleaseShare from "../common/PleaseShare";
 import LevelFilter from "./common/LevelFilter";
 import CategoryFilter from "./common/CategoryFilter";
 import ReadFilter from "../common/ReadFilter";
+import AudioFilter from "./common/AudioFilter";
 import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
 import ContentInfoCard from "../common/ContentInfoCard";
 
@@ -19,7 +20,7 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
 
   useEffect(() => {
     loadTexts(texts.length, +categoryFlag - 1, hideLevelFlag);
-  }, [categoryFlag, hideReadFlag, hideLevelFlag]);
+  }, [categoryFlag, hideLevelFlag]);
 
   const onLevelSelect = (e) => {
     clearTexts();
@@ -27,7 +28,7 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
   };
 
   const onReadSelect = (e) => {
-    clearTexts();
+    // clearTexts();
     setHideReadFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
   };
 
@@ -35,6 +36,8 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
     clearTexts();
     setCategoryFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
   };
+
+  const onAudioSelect = () => {};
 
   const clearFilters = () => {
     clearTexts();
@@ -67,6 +70,9 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
           <LevelFilter onChange={onLevelSelect} />
           <ReadFilter onChange={onReadSelect} />
           <CategoryFilter onChange={onCategorySelect} />
+        </div>
+        <div className='form-group row'>
+          <AudioFilter onClick={onAudioSelect} />
           <UnsetFiltersBtn onClick={clearFilters} />
         </div>
 

@@ -14,9 +14,11 @@ async function getTextsInChunks(req, res) {
   return res.json(texts);
 }
 
-function getSearchQuery({ categoryInd, level }) {
-  let qry = categoryInd ? { isApproved: 1, categoryInd: +categoryInd } : { isApproved: 1 };
+function getSearchQuery({ categoryInd, level, audioSrc }) {
+  let qry = { isApproved: 1 };
+  if (categoryInd) qry = { ...qry, categoryInd: +categoryInd };
   if (level) qry = { ...qry, level: +level };
+  if (audioSrc) qry = { ...qry, audioSrc: 1 };
   return qry;
 }
 

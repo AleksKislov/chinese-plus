@@ -29,7 +29,7 @@ const ContentInfoCard = ({ text, contentType }) => {
             <div className='btn-group w-100 mb-1' role='group'>
               <Link
                 to='/texts'
-                className={`btn btn-primary btn-sm ${isCards ? "active" : ""}`}
+                className={`btn btn-outline-primary btn-sm ${isCards ? "active" : ""}`}
                 type='button'
               >
                 Карточки
@@ -37,7 +37,7 @@ const ContentInfoCard = ({ text, contentType }) => {
               <Link
                 to='/all_texts'
                 type='button'
-                className={`btn btn-primary btn-sm ${isTable ? "active" : ""}`}
+                className={`btn btn-outline-primary btn-sm ${isTable ? "active" : ""}`}
               >
                 Список
               </Link>
