@@ -18,14 +18,15 @@ import { setAlert } from "./alert";
  * @param {number|undefined} categoryInd - text theme / category
  */
 export const loadTexts =
-  (skip = 0, categoryInd, level) =>
+  (skip = 0, categoryInd, level, withAudio) =>
   async (dispatch) => {
     try {
       const categoryParam = categoryInd === -1 ? "" : `&categoryInd=${categoryInd}`;
       const levelParam = !+level ? "" : `&level=${level}`;
+      const audioParam = withAudio ? "&audioSrc=1" : "";
 
       const { data } = await axios.get(
-        `/api/texts/infinite?skip=${skip}${categoryParam}${levelParam}`
+        `/api/texts/infinite?skip=${skip}${categoryParam}${levelParam}${audioParam}`
       );
       dispatch({
         type: LOAD_TEXTS,

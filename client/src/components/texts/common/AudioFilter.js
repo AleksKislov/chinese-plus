@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const AudioFilter = ({ onClick }) => {
+const AudioFilter = ({ onClick, withAudio }) => {
+  useEffect(() => {
+    setIsAudio(withAudio);
+  }, [withAudio]);
   const [isAudio, setIsAudio] = useState(false);
 
   const onSelect = (bool) => {
-    onClick();
+    onClick(bool);
     setIsAudio(bool);
   };
 

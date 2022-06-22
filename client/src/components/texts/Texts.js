@@ -17,10 +17,11 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
   const [categoryFlag, setCategoryFlag] = useState(0);
   const [hideReadFlag, setHideReadFlag] = useState(0);
   const [hideLevelFlag, setHideLevelFlag] = useState(0);
+  const [withAudio, setWithAudio] = useState(false);
 
   useEffect(() => {
-    loadTexts(texts.length, +categoryFlag - 1, hideLevelFlag);
-  }, [categoryFlag, hideLevelFlag]);
+    loadTexts(texts.length, +categoryFlag - 1, hideLevelFlag, withAudio);
+  }, [categoryFlag, hideLevelFlag, withAudio]);
 
   const onLevelSelect = (e) => {
     clearTexts();
@@ -37,9 +38,13 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
     setCategoryFlag(parseInt(e.target.options[e.target.options.selectedIndex].value));
   };
 
-  const onAudioSelect = () => {};
+  const onAudioSelect = (bool) => {
+    clearTexts();
+    setWithAudio(bool);
+  };
 
   const clearFilters = () => {
+    setWithAudio(false);
     clearTexts();
     setCategoryFlag(0);
     setHideReadFlag(0);
@@ -72,7 +77,7 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
           <CategoryFilter onChange={onCategorySelect} />
         </div>
         <div className='form-group row'>
-          <AudioFilter onClick={onAudioSelect} />
+          <AudioFilter onClick={onAudioSelect} withAudio={withAudio} />
           <UnsetFiltersBtn onClick={clearFilters} />
         </div>
 
