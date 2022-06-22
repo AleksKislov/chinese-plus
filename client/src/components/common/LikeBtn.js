@@ -4,6 +4,7 @@ import { likeText } from "../../actions/texts";
 import { likeVideo } from "../../actions/videos";
 import { connect } from "react-redux";
 import { CONTENT } from "../../constants/consts.json";
+// import "../translation/light-border.css";
 
 const LikeBtn = ({ likes, id, likeText, likeVideo, user, contentType }) => {
   useEffect(() => {
