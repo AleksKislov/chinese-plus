@@ -5,6 +5,7 @@ import Tippy from "@tippyjs/react";
 import AllTextsTableItem from "./AllTextsTableItem";
 import LevelFilter from "./common/LevelFilter";
 import CategoryFilter from "./common/CategoryFilter";
+import AudioFilter from "./common/AudioFilter";
 import PublisherFilter from "./common/PublisherFilter";
 import ReadFilter from "../common/ReadFilter";
 import UnsetFiltersBtn from "./common/UnsetFiltersBtn";
@@ -127,6 +128,7 @@ const AllTextsTable = ({ user }) => {
           <CategoryFilter onChange={onCategorySelect} />
           <PublisherFilter onChange={onPublisherSelect} publishers={publishers ? publishers : []} />
 
+          <AudioFilter onClick={() => {}} />
           <UnsetFiltersBtn onClick={clearFilters} />
         </div>
         <div className='table-responsive'>
