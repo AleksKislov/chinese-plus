@@ -57,8 +57,6 @@ const VideoEditForm = ({ loadUserWords, user, videoToEdit, clearVideos }) => {
       document.getElementById("pinyinArea").value = pySubs.join("\n");
       document.getElementById("translationArea").value = ruSubs.join("\n");
 
-      // document.getElementById("translationArea").value = transTxt.join("\n");
-
       setFormData({
         lvl,
         tags: tags.join(", "),
