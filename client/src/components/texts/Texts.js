@@ -49,6 +49,7 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
     setCategoryFlag(0);
     setHideReadFlag(0);
     setHideLevelFlag(0);
+    loadTexts(0, -1);
     document.getElementById("levelFilt").value = 0;
     document.getElementById("readFilt").value = 0;
     document.getElementById("categoryFilt").value = 0;
