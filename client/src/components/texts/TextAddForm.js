@@ -129,7 +129,8 @@ const TextAddForm = ({ loadUserWords, user, location }) => {
     });
   };
 
-  const loadPictures = async () => {
+  const loadPictures = async (e) => {
+    e.preventDefault();
     if (!formData.pic_theme) return;
     const res = await getPhotos(formData.pic_theme);
     setPhotosResult(res);
@@ -235,8 +236,8 @@ const TextAddForm = ({ loadUserWords, user, location }) => {
       <button
         className='btn btn-sm btn-primary mx-1'
         disabled={!formData.pic_theme && !photosUrls}
-        onClick={() => {
-          loadPictures();
+        onClick={(e) => {
+          loadPictures(e);
           noticeMe();
         }}
       >
@@ -363,7 +364,6 @@ const TextAddForm = ({ loadUserWords, user, location }) => {
                     <label htmlFor='title'>Заголовок текста</label>
                     <input
                       onBlur={noticeMe}
-                      value={formData.title}
                       onChange={(e) => {
                         setFormData({
                           ...formData,
@@ -409,7 +409,6 @@ const TextAddForm = ({ loadUserWords, user, location }) => {
                           id='description'
                           autoComplete='off'
                           placeholder='О чем или откуда этот текст...'
-                          value={formData.description}
                         />
                       </div>
                       <div className='form-group col-md-6'>
@@ -421,7 +420,6 @@ const TextAddForm = ({ loadUserWords, user, location }) => {
                           className={`form-control`}
                           id='tags'
                           placeholder='Список тэгов'
-                          value={formData.tags}
                         />
                       </div>
                     </div>
@@ -434,7 +432,6 @@ const TextAddForm = ({ loadUserWords, user, location }) => {
                           onChange={(e) =>
                             setFormData({ ...formData, [e.target.id]: e.target.value })
                           }
-                          value={formData.level}
                         >
                           <option>1</option>
                           <option>2</option>
@@ -449,7 +446,6 @@ const TextAddForm = ({ loadUserWords, user, location }) => {
                           onChange={(e) =>
                             setFormData({ ...formData, [e.target.id]: e.target.value })
                           }
-                          value={formData.categoryInd}
                         >
                           {textCategories.map((x, ind) => (
                             <option value={ind} key={ind}>
@@ -471,7 +467,6 @@ const TextAddForm = ({ loadUserWords, user, location }) => {
                           id='source'
                           placeholder='Источник (по желанию)'
                           autoComplete='off'
-                          value={formData.source}
                         />
                       </div>
                     </div>
@@ -504,7 +499,6 @@ const TextAddForm = ({ loadUserWords, user, location }) => {
                           id='theme_word'
                           placeholder='汉字'
                           autoComplete='off'
-                          value={formData.theme_word}
                         />
                       </div>
                       <div className='form-group col-md-6'>
@@ -583,7 +577,7 @@ const TextAddForm = ({ loadUserWords, user, location }) => {
                       className='form-control'
                       id='translationArea'
                       rows='3'
-                      placeholder='Тут будет гугл-перевод, который нужно поправить! (Или вставьте свой перевод)'
+                      placeholder='Автоматический перевод пока что не работает! Вставьте, пожалуйста, свой перевод (или скопируйте с гугл-транслейт вручную)'
                       disabled={!isTranslated}
                     ></textarea>
                     <small className='text-muted'>не забывайте про параграфы</small>
