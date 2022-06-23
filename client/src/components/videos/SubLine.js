@@ -1,29 +1,8 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment } from "react";
 import TippyTooltip from "../translation/TippyTooltip";
 import { v4 as uuid } from "uuid";
-import Tippy from "@tippyjs/react";
-import { countZnChars } from "../../actions/helpers";
-import { connect } from "react-redux";
-import { readToday, unreadToday } from "../../actions/auth";
-import { TweenMax, Back } from "gsap";
-import store from "../../store";
-import { setAlert } from "../../actions/alert";
 
-const SubLine = ({
-  chunk,
-  pinyin,
-  translation,
-  subTime,
-  originTxt,
-  user,
-  readToday,
-  unreadToday,
-  toEdit,
-  fontsize,
-  toPostLongText,
-}) => {
-  const numOfChars = countZnChars(originTxt);
-
+const SubLine = ({ chunk, pinyin, translation, subTime }) => {
   const SubLineNum = <div className='paragraphNum'>{subTime} сек.</div>;
 
   return (

@@ -113,19 +113,8 @@ const TextEditForm = ({ loadUserWords, user, textToEdit, location }) => {
     audioSrc: 0,
   });
 
-  useEffect(() => {
-    if (location.search.includes("page=")) return;
-
-    if (textLen > smTextLen) {
-      setIsLongText(true);
-    } else {
-      setIsLongText(false);
-    }
-  }, [textLen]);
-
   const preprocessForm = async (e) => {
     e.preventDefault();
-
     const textArea = document.getElementById("textArea");
 
     if (textLen > bgTextLen) {
@@ -145,22 +134,15 @@ const TextEditForm = ({ loadUserWords, user, textToEdit, location }) => {
     chunkedOriginText = chunkedOriginText.map((chunk) => chunk.trim());
     textArea.value = chunkedOriginText.join("\n\n");
 
-    let allwords, chineseChunkedWords;
-    if (!isLongText) {
-      allwords = await segmenter(originText);
-      allwords = allwords.filter((word) => word !== " ");
-      const wordsFromDB = await getWords(allwords);
-      const newArr = itirateWordsFromDB(allwords, wordsFromDB);
-      chineseChunkedWords = chunkArrayFunc(newArr).filter((chunk) => chunk.length);
-    } else {
-      chineseChunkedWords = chunkedOriginText;
-    }
-
+    let allwords = await segmenter(originText);
+    allwords = allwords.filter((word) => word !== " ");
+    const wordsFromDB = await getWords(allwords);
+    const newArr = itirateWordsFromDB(allwords, wordsFromDB);
     const translationTrimed = translationArea.value.trim();
 
     setFormData({
       ...formData,
-      chineseChunkedWords,
+      chineseChunkedWords: chunkArrayFunc(newArr).filter((chunk) => chunk.length),
       chunkedTranslation: translationTrimed.split("\n").filter((chunk) => chunk.length),
       chunkedOriginText,
       length: countZnChars(originText),
@@ -168,7 +150,8 @@ const TextEditForm = ({ loadUserWords, user, textToEdit, location }) => {
     });
   };
 
-  const loadPictures = async () => {
+  const loadPictures = async (e) => {
+    e.preventDefault();
     if (!formData.pic_theme) return;
     const res = await getPhotos(formData.pic_theme);
     setPhotosResult(res);
@@ -271,8 +254,8 @@ const TextEditForm = ({ loadUserWords, user, textToEdit, location }) => {
       <button
         className='btn btn-sm btn-primary mx-1'
         disabled={!formData.pic_theme && !photosUrls}
-        onClick={() => {
-          loadPictures();
+        onClick={(e) => {
+          loadPictures(e);
         }}
       >
         Загрузить
@@ -305,7 +288,7 @@ const TextEditForm = ({ loadUserWords, user, textToEdit, location }) => {
               <WordEditModal />
             </div>
 
-            <form onSubmit={(e) => preprocessForm(e)} style={{ width: "100%" }}>
+            <form style={{ width: "100%" }}>
               <fieldset>
                 {user && (user.isAdmin || user.isModerator) && (
                   <div className='form-row'>
@@ -515,8 +498,9 @@ const TextEditForm = ({ loadUserWords, user, textToEdit, location }) => {
                     <button
                       type='submit'
                       className='btn btn-primary mx-1'
-                      onClick={() => {
+                      onClick={(e) => {
                         setOkToPublish(true);
+                        preprocessForm(e);
                       }}
                     >
                       Предобработка

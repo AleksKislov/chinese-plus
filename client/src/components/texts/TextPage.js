@@ -189,7 +189,7 @@ const TextPage = ({
               {chineseChunkedArr.map((chunk, ind) => (
                 <Paragraph
                   chunk={chunk}
-                  originTxt={text.origintext[ind]}
+                  originTxt={!isLngTxt ? text.origintext[ind] : text.pages[curPage].origintext[ind]}
                   index={ind}
                   key={uuid()}
                   translation={
