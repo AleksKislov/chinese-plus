@@ -23,7 +23,8 @@ import Search from "../translation/Search";
 import Posts from "../posts/Posts";
 // import Plans from "../plans/Plans";
 import PostPage from "../posts/PostPage";
-import TextForm from "../texts/TextForm";
+import TextAddForm from "../texts/TextAddForm";
+import TextEditForm from "../texts/TextEditForm";
 import Texts from "../texts/Texts";
 import TextPage from "../texts/TextPage";
 import VideoPage from "../videos/VideoPage";
@@ -109,7 +110,8 @@ const Routes = () => {
           <Route exact path='/posts/:id' component={PostPage} />
           <Route exact path='/create-content' component={CreateContent} />
 
-          <Route exact path='/create-text' component={TextForm} />
+          <Route exact path='/create-text' component={TextAddForm} />
+          <Route exact path='/edit-text' component={TextEditForm} />
           <Route exact path='/create-video' component={AddVideoForm} />
           <Route exact path='/edit-video' component={VideoEditForm} />
           <PrivateRoute exact path='/create-bookpage' component={PageForm} />

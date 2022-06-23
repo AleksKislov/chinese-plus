@@ -45,27 +45,27 @@ const TextPage = ({
   }, [setLoading, getComments]);
 
   useEffect(() => {
-    if (text) {
-      let txt = text;
-      let givenPage = 0;
-      let pagesNum = text.pages.length;
-      if (text.pages && text.pages.length) {
-        pagesNum = text.pages.length;
-        setIsLngTxt(true);
-      }
-      if (match.params.page) givenPage = +match.params.page;
+    if (!text) return;
 
-      if (pagesNum) {
-        txt = text.pages[givenPage];
-        setCurPage(givenPage);
-        setPagesNum(pagesNum);
-      }
-
-      setTimeout(async () => {
-        const chineseChunkedWords = await parseChineseWords(txt);
-        setChineseChunkedArr(chineseChunkedWords);
-      });
+    let txt = text;
+    let givenPage = 0;
+    let pagesNum = text.pages.length;
+    if (text.pages && text.pages.length) {
+      pagesNum = text.pages.length;
+      setIsLngTxt(true);
     }
+    if (match.params.page) givenPage = +match.params.page;
+
+    if (pagesNum) {
+      txt = text.pages[givenPage];
+      setCurPage(givenPage);
+      setPagesNum(pagesNum);
+    }
+
+    setTimeout(async () => {
+      const chineseChunkedWords = await parseChineseWords(txt);
+      setChineseChunkedArr(chineseChunkedWords);
+    });
   }, [text]);
 
   useEffect(() => {
@@ -149,7 +149,7 @@ const TextPage = ({
                 </h6>
 
                 {isAuthenticated && isOkToEdit && (
-                  <Link to={`/create-text?edit${isLngTxt ? `${`&page=${curPage}`}` : ""}`}>
+                  <Link to={`/edit-text?${isLngTxt ? `${`page=${curPage}`}` : ""}`}>
                     <button className='btn btn-sm btn-outline-warning'>Edit</button>
                   </Link>
                 )}
@@ -189,7 +189,7 @@ const TextPage = ({
               {chineseChunkedArr.map((chunk, ind) => (
                 <Paragraph
                   chunk={chunk}
-                  originTxt={text.origintext[ind]}
+                  originTxt={!isLngTxt ? text.origintext[ind] : text.pages[curPage].origintext[ind]}
                   index={ind}
                   key={uuid()}
                   translation={
