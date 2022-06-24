@@ -1,10 +1,26 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const AudioFilter = ({ onClick, withAudio }) => {
+  const loadNums = async (content) => {
+    try {
+      const { data } = await axios.get(`api/${content}/${content}_num`);
+      setNum(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    loadNums("texts");
+  }, []);
+
   useEffect(() => {
     setIsAudio(withAudio);
   }, [withAudio]);
+
   const [isAudio, setIsAudio] = useState(false);
+  const [num, setNum] = useState({ withAudio: 0 });
 
   const onSelect = (bool) => {
     onClick(bool);
@@ -26,7 +42,7 @@ const AudioFilter = ({ onClick, withAudio }) => {
           className={`btn btn-outline-primary btn-sm ${isAudio ? "active" : ""}`}
           onClick={() => onSelect(true)}
         >
-          С аудио
+          С аудио {num.withAudio}
         </button>
       </div>
     </div>
