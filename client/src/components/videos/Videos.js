@@ -96,7 +96,7 @@ const Videos = ({ loadVideos, videos, loading, moreVideos, clearVideos }) => {
                 </button>
               ) : (
                 <button type='button' className='btn btn-warning btn-sm mb-1' disabled>
-                  Больше нетути
+                  Больше нет
                 </button>
               )}
             </div>

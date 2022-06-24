@@ -100,13 +100,15 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
                 <button
                   type='button'
                   className='btn btn-info btn-sm mb-1'
-                  onClick={() => loadTexts(texts.length, Number(categoryFlag) - 1)}
+                  onClick={() =>
+                    loadTexts(texts.length, Number(categoryFlag) - 1, hideLevelFlag, withAudio)
+                  }
                 >
                   Загрузить Ещё
                 </button>
               ) : (
                 <button type='button' className='btn btn-warning btn-sm mb-1' disabled>
-                  Больше нетути
+                  Больше нет
                 </button>
               )}
             </div>
