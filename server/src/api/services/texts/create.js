@@ -2,6 +2,7 @@ const { validationResult } = require("express-validator");
 const { Notify } = require("../_misc");
 const Hanzi = require("../../../../routes/api/dict/dictionary");
 
+const CHARS_PER_PAGE = 800;
 const Text = require("../../../models/Text");
 
 async function createTxt(req, res) {
@@ -68,7 +69,7 @@ function getPagesForLngTxt(origintext, translation) {
   let pages = [];
 
   for (let i = 0; i < origintext.length; i++) {
-    if (pageText.length >= 1000) {
+    if (pageText.length >= CHARS_PER_PAGE) {
       pages.push(new Page(Hanzi.segment(pageText.trim()), pageTranslation, pageOriginTxt));
       pageText = "";
       pageTranslation = [];
