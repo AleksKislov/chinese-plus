@@ -1,4 +1,4 @@
-rm -r build && \
+rm -rf build && \
 cd ../client && \
 sed -i ".bak" '/\.\/css\/theme\/App/d' ./src/App.js && \
 npm run build && \
