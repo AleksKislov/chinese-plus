@@ -15,7 +15,7 @@ const LeaveComment = ({
   where,
   path,
   commentIdToReply,
-  unsetCommentReply
+  unsetCommentReply,
 }) => {
   const [text, setText] = useState("");
   const [addressedUsers, setAddressedUsers] = useState([]);
@@ -39,7 +39,7 @@ const LeaveComment = ({
     if (isAuthenticated) {
       let newtext = text.replace(/\n/g, "<br />");
 
-      addressedUsers.forEach(user => {
+      addressedUsers.forEach((user) => {
         newtext = newtext.replace(user.str, `<strong class='text-info'>${user.name}</strong>`);
       });
 
@@ -60,7 +60,7 @@ const LeaveComment = ({
     getComments(where, _id);
   };
 
-  const addEmoToText = e => {
+  const addEmoToText = (e) => {
     const previousTxt = document.getElementById("textForm").value;
     setText(`${previousTxt} ${e.target.innerHTML}`);
   };
@@ -73,11 +73,11 @@ const LeaveComment = ({
    * @param {string} txt - comment text
    * @returns {object} - {id, name, str} - where id is user id, name - is user name
    */
-  const checkIfAddressed = txt => {
+  const checkIfAddressed = (txt) => {
     const resArr = txt.split("@@");
-    const onlyNames = resArr.filter(x => x[0] === "[" && x[x.length - 1] === "}");
+    const onlyNames = resArr.filter((x) => x[0] === "[" && x[x.length - 1] === "}");
     const userSet = Array.from(new Set(onlyNames));
-    return userSet.map(x => {
+    return userSet.map((x) => {
       const id = x.slice(1, x.indexOf("]"));
       const name = x.slice(x.indexOf("{") + 1, x.length - 1);
       return { id, name, str: `@@${x}@@` };
@@ -91,7 +91,11 @@ const LeaveComment = ({
           <span className='h6' id='yourCommentId'>
             Ваш Комментарий
           </span>
-          <button type='submit' className='btn btn-primary btn-sm float-right' onClick={onSubmit}>
+          <button
+            type='submit'
+            className='btn btn-primary btn-sm float-right mb-1'
+            onClick={onSubmit}
+          >
             Опубликовать
           </button>
         </div>
@@ -127,8 +131,8 @@ const LeaveComment = ({
               className='form-control'
               rows='3'
               id='textForm'
-              onClick={e => setText(e.target.value)}
-              onChange={e => {
+              onClick={(e) => setText(e.target.value)}
+              onChange={(e) => {
                 checkAuthorized();
                 setText(e.target.value);
               }}
@@ -153,9 +157,9 @@ const LeaveComment = ({
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
-  commentIdToReply: state.comments.commentIdToReply
+  commentIdToReply: state.comments.commentIdToReply,
 });
 
 export default connect(mapStateToProps, { addComment, getComments, unsetCommentReply })(
