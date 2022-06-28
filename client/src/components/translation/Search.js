@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import axios from "axios";
+// import axios from "axios";
 import WordsItem from "../texts/WordsItem";
 import WordModal from "../translation/WordModal";
 import { markUpRussianText, segmenter, getWords } from "../../actions/helpers";
@@ -16,11 +16,11 @@ import HanziWriter from "hanzi-writer";
 import Spinner from "../layout/Spinner";
 import Tippy from "@tippyjs/react";
 import { Helmet } from "react-helmet";
-import { Widget, addResponseMessage } from "react-chat-widget";
 import "react-chat-widget/lib/styles.css";
-import "./style.css";
 import { sanitizer } from "../../utils/sanitizer";
 import WordEditModal from "./WordEditModal";
+// import "./style.css";
+// import { Widget, addResponseMessage } from "react-chat-widget";
 
 const writerSettings = {
   width: 60,
@@ -193,14 +193,14 @@ const Search = ({
     }, 100);
   };
 
-  const handleNewUserMessage = async (msg) => {
-    try {
-      const { data } = await axios.get("/gcloud/dialogflow?text=" + msg);
-      if (data) addResponseMessage(data.response);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const handleNewUserMessage = async (msg) => {
+  //   try {
+  //     const { data } = await axios.get("/gcloud/dialogflow?text=" + msg);
+  //     if (data) addResponseMessage(data.response);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   return (
     <Fragment>
@@ -246,14 +246,16 @@ const Search = ({
         </div>
 
         <div className='col-sm-4'>
-          <div className='card text-white bg-primary mb-3'>
-            <div className='card-body'>
-              <h4 className='card-title'>Чат с AI</h4>
-              <p className='card-text'>
-                Внизу справа - чат с AI. Поддерживаемые темы будут расширяться.
-              </p>
-            </div>
-          </div>
+          {
+            // <div className='card text-white bg-primary mb-3'>
+            //   <div className='card-body'>
+            //     <h4 className='card-title'>Чат с AI</h4>
+            //     <p className='card-text'>
+            //       Внизу справа - чат с AI. Поддерживаемые темы будут расширяться.
+            //     </p>
+            //   </div>
+            // </div>
+          }
         </div>
       </div>
 
@@ -381,12 +383,14 @@ const Search = ({
         <Spinner />
       )}
 
-      <Widget
-        handleNewUserMessage={handleNewUserMessage}
-        title='AI-чат Buyilehu'
-        subtitle='Пообщайтесь с AI на китайском'
-        senderPlaceHolder='Ваше сообщение...'
-      />
+      {
+        // <Widget
+        //   handleNewUserMessage={handleNewUserMessage}
+        //   title='AI-чат Buyilehu'
+        //   subtitle='Пообщайтесь с AI на китайском'
+        //   senderPlaceHolder='Ваше сообщение...'
+        // />
+      }
     </Fragment>
   );
 };
