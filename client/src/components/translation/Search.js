@@ -16,9 +16,9 @@ import HanziWriter from "hanzi-writer";
 import Spinner from "../layout/Spinner";
 import Tippy from "@tippyjs/react";
 import { Helmet } from "react-helmet";
-import "react-chat-widget/lib/styles.css";
 import { sanitizer } from "../../utils/sanitizer";
 import WordEditModal from "./WordEditModal";
+// import "react-chat-widget/lib/styles.css";
 // import "./style.css";
 // import { Widget, addResponseMessage } from "react-chat-widget";
 

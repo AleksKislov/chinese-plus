@@ -11,7 +11,7 @@ import { getWords, segmenter, itirateWordsFromDB } from "../../actions/helpers";
 import TippyTooltip from "./TippyTooltip";
 import { v4 as uuid } from "uuid";
 // import { Widget, addResponseMessage } from "react-chat-widget";
-import "react-chat-widget/lib/styles.css";
+// import "react-chat-widget/lib/styles.css";
 import "./style.css";
 import { Helmet } from "react-helmet";
 
