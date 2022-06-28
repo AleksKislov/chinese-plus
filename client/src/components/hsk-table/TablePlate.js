@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import TableItem from "./TableItem";
-import Tippy from "@tippyjs/react";
+import HideButtons from "./HideButtons";
 
 const TablePlate = ({ lexicons, userWords }) => {
   const [hideFlag, setHideFlag] = useState({
@@ -37,35 +37,7 @@ const TablePlate = ({ lexicons, userWords }) => {
 
   return (
     <Fragment>
-      <div className=''>
-        <span className='mr-1'>Скрыть</span>
-        <span className='btn-group mb-1' role='group'>
-          <button
-            className={`btn btn-sm btn-${hideFlag.chinese ? "" : "outline-"}info`}
-            type='button'
-            id='cn'
-            onClick={(e) => onClick(e)}
-          >
-            Иероглифы
-          </button>
-          <button
-            type='button'
-            className={`btn btn-sm btn-${hideFlag.pinyin ? "" : "outline-"}info`}
-            id='py'
-            onClick={(e) => onClick(e)}
-          >
-            Пиньинь
-          </button>
-          <button
-            type='button'
-            className={`btn btn-sm btn-${hideFlag.translation ? "" : "outline-"}info`}
-            id='ru'
-            onClick={(e) => onClick(e)}
-          >
-            Перевод
-          </button>
-        </span>
-      </div>
+      <HideButtons hideFlag={hideFlag} onClick={onClick} />
       <table className='table table-hover table-responsive'>
         <tbody>
           {lexicons.map((lexicon) => (
