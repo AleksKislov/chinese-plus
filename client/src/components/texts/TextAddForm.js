@@ -15,7 +15,7 @@ import {
   chunkArrayFunc,
   segmenter,
   itirateWordsFromDB,
-  getTranslation,
+  // getTranslation,
   countZnChars,
   parseTags,
 } from "../../actions/helpers";

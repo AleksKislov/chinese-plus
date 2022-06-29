@@ -7,25 +7,23 @@
 }
 
 .flip-front {
-  background-color: rgb(117, 112, 217);
   position: absolute;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
   text-align: center;
-  border: var(--primary) solid 1px;
+  border: var(--secondary) solid 1px;
   border-radius: 0.25rem;
 }
 
 .flip-back {
-  background-color: rgb(36, 207, 79);
   position: absolute;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
   text-align: center;
   transform: rotateY(180deg);
-  border: var(--primary) solid 1px;
+  border: var(--secondary) solid 1px;
   border-radius: 0.25rem;
 }
 
@@ -35,5 +33,5 @@
 
 .flip-card-outer {
   width: 100%;
-  height: 5rem;
+  height: 8rem;
 }
