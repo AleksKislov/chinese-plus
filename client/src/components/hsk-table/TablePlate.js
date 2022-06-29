@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from "react";
 import TableItem from "./TableItem";
 import HideButtons from "./HideButtons";
+import FlipCardsGrid from "./FlipCardsGrid";
 
 const TablePlate = ({ lexicons, userWords }) => {
   const [hideFlag, setHideFlag] = useState({
@@ -38,6 +39,7 @@ const TablePlate = ({ lexicons, userWords }) => {
   return (
     <Fragment>
       <HideButtons hideFlag={hideFlag} onClick={onClick} />
+      <FlipCardsGrid />
       <table className='table table-hover table-responsive'>
         <tbody>
           {lexicons.map((lexicon) => (
