@@ -8,7 +8,7 @@ import WordModal from "../translation/WordModal";
 import WordEditModal from "../translation/WordEditModal";
 import { Link } from "react-router-dom";
 import TypingGame from "./TypingGame";
-import Tippy from "@tippyjs/react";
+// import Tippy from "@tippyjs/react";
 import { users } from "../../constants/consts.json";
 import HideButtons from "../hsk-table/HideButtons";
 
@@ -96,6 +96,13 @@ const UserWords = ({ loadUserWords, words, wordsLoading }) => {
             <HideButtons hideFlag={hideFlag} onClick={onClick} />
 
             <table className='table table-hover table-responsive'>
+              <thead style={{ visibility: "collapse" }}>
+                <th style={{ width: "15%" }}></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </thead>
               <tbody>
                 {words.map((word) => (
                   <WordsItem key={word._id} lexicon={word} hideFlag={hideFlag} />

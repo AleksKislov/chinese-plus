@@ -80,6 +80,14 @@ const TablePlate = ({ lexicons, userWords }) => {
         <Fragment>
           <HideButtons hideFlag={hideFlag} onClick={onClick} />
           <table className='table table-hover table-responsive'>
+            <thead style={{ visibility: "collapse" }}>
+              <th></th>
+              <th style={{ width: "15%" }}></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </thead>
             <tbody>
               {lexicons.map((lexicon) => (
                 <TableItem

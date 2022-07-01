@@ -9,6 +9,7 @@ const HideButtons = ({ hideFlag, onClick }) => {
           className={`btn btn-sm btn-${hideFlag.chinese ? "" : "outline-"}info`}
           type='button'
           onClick={(e) => onClick(e)}
+          id='cn'
         >
           Иероглифы
         </button>
@@ -16,6 +17,7 @@ const HideButtons = ({ hideFlag, onClick }) => {
           type='button'
           className={`btn btn-sm btn-${hideFlag.pinyin ? "" : "outline-"}info`}
           onClick={(e) => onClick(e)}
+          id='py'
         >
           Пиньинь
         </button>
@@ -23,6 +25,7 @@ const HideButtons = ({ hideFlag, onClick }) => {
           type='button'
           className={`btn btn-sm btn-${hideFlag.translation ? "" : "outline-"}info`}
           onClick={(e) => onClick(e)}
+          id='ru'
         >
           Перевод
         </button>
