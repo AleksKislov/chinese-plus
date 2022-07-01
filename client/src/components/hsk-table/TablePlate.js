@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import TableItem from "./TableItem";
 import HideButtons from "./HideButtons";
 import FlipCardsGrid from "./FlipCardsGrid";
@@ -11,6 +11,14 @@ const TablePlate = ({ lexicons, userWords }) => {
   });
 
   const [displayCards, setDisplayCards] = useState(false);
+
+  useEffect(() => {
+    if (+localStorage.displayCards) {
+      setDisplayCards(true);
+    } else {
+      setDisplayCards(false);
+    }
+  });
 
   const onClick = (e) => {
     const id = e.target.id;
@@ -46,7 +54,10 @@ const TablePlate = ({ lexicons, userWords }) => {
           <button
             className={`btn btn-sm btn-${displayCards ? "outline-" : ""}info`}
             type='button'
-            onClick={() => setDisplayCards(false)}
+            onClick={() => {
+              localStorage.setItem("displayCards", "0");
+              setDisplayCards(false);
+            }}
           >
             Таблицу
           </button>
@@ -54,7 +65,10 @@ const TablePlate = ({ lexicons, userWords }) => {
           <button
             type='button'
             className={`btn btn-sm btn-${displayCards ? "" : "outline-"}info`}
-            onClick={() => setDisplayCards(true)}
+            onClick={() => {
+              localStorage.setItem("displayCards", "1");
+              setDisplayCards(true);
+            }}
           >
             Карточки
           </button>
