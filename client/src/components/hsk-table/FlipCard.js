@@ -28,6 +28,7 @@ const FlipCard = ({ word, pinyinAbove }) => {
         <div
           className={`flip-card ${isClicked ? "flipCardMethod" : ""}`}
           onClick={() => setIsClicked(!isClicked)}
+          style={{ cursor: "pointer" }}
         >
           <span className='flip-front py-5 h4'>{pinyinAbove ? pinyin : chinese}</span>
           <span className={`flip-back py-1 px-1 bg-${isDarkTheme ? "secondary" : "light"}`}>
