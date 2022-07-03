@@ -12,6 +12,16 @@ const FlipCard = ({ word, pinyinAbove }) => {
     }
   }, []);
 
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  useEffect(() => {
+    if (+localStorage.isDarkTheme) {
+      setIsDarkTheme(true);
+    } else {
+      setIsDarkTheme(false);
+    }
+  });
+
   return (
     <div className={`col-${columnSize} my-2`}>
       <div className='flip-card-outer'>
@@ -20,7 +30,7 @@ const FlipCard = ({ word, pinyinAbove }) => {
           onClick={() => setIsClicked(!isClicked)}
         >
           <span className='flip-front py-5 h4'>{pinyinAbove ? pinyin : chinese}</span>
-          <span className='flip-back py-1 px-1 bg-light'>
+          <span className={`flip-back py-1 px-1 bg-${isDarkTheme ? "secondary" : "light"}`}>
             <strong className='text-info h4'>{!pinyinAbove ? pinyin : chinese}</strong>
             <br />
             <small>{translation}</small>
