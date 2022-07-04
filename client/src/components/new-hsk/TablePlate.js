@@ -45,12 +45,14 @@ const TablePlate = ({ lexicons }) => {
       <HideButtons hideFlag={hideFlag} onClick={onClick} />
       <table className='table table-hover table-responsive'>
         <thead style={{ visibility: "collapse" }}>
-          <th></th>
-          <th style={{ width: "15%" }}></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
+          <tr>
+            <th></th>
+            <th style={{ width: "15%" }}></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
         </thead>
         <tbody>
           {lexicons.map((word) => (

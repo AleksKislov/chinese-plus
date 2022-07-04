@@ -331,11 +331,13 @@ const Search = ({
 
               <table className='table table-hover mb-3'>
                 <thead style={{ visibility: "collapse" }}>
-                  <th style={{ width: "15%" }}></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
+                  <tr>
+                    <th style={{ width: "15%" }}></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                  </tr>
                 </thead>
                 <tbody>
                   {wordsFromSearch.map((word) => (

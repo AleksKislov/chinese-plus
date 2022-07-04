@@ -97,11 +97,13 @@ const UserWords = ({ loadUserWords, words, wordsLoading }) => {
 
             <table className='table table-hover table-responsive'>
               <thead style={{ visibility: "collapse" }}>
-                <th style={{ width: "15%" }}></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <tr>
+                  <th style={{ width: "15%" }}></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                </tr>
               </thead>
               <tbody>
                 {words.map((word) => (

@@ -7,6 +7,8 @@ import Spinner from "../layout/Spinner";
 import WordsCard from "./WordsCard";
 import TypingGame from "../userWords/TypingGame";
 import HideButtons from "../hsk-table/HideButtons";
+import FlipCardsGrid from "./FlipCardsGrid";
+import TableOrCardsButtons from "./TableOrCardsButton";
 
 const Words = ({ loadWords, words, wordsLoading }) => {
   const [hideFlag, setHideFlag] = useState({
@@ -20,6 +22,8 @@ const Words = ({ loadWords, words, wordsLoading }) => {
     loadWords();
     // eslint-disable-next-line
   }, []);
+
+  const [displayCards, setDisplayCards] = useState(false);
 
   const onClick = (e) => {
     const id = e.target.id;
@@ -60,14 +64,22 @@ const Words = ({ loadWords, words, wordsLoading }) => {
 
         {!testStarted && (
           <Fragment>
-            <HideButtons hideFlag={hideFlag} onClick={onClick} />
-            <table className='table table-hover table-responsive'>
-              <tbody>
-                {words.map((word) => (
-                  <WordsItem key={word._id} lexicon={word} hideFlag={hideFlag} />
-                ))}
-              </tbody>
-            </table>
+            <TableOrCardsButtons setDisplayCards={setDisplayCards} displayCards={displayCards} />
+
+            {displayCards ? (
+              <FlipCardsGrid words={words} />
+            ) : (
+              <Fragment>
+                <HideButtons hideFlag={hideFlag} onClick={onClick} />
+                <table className='table table-hover table-responsive'>
+                  <tbody>
+                    {words.map((word) => (
+                      <WordsItem key={word._id} lexicon={word} hideFlag={hideFlag} />
+                    ))}
+                  </tbody>
+                </table>
+              </Fragment>
+            )}
           </Fragment>
         )}
       </div>
