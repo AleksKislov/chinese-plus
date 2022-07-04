@@ -51,6 +51,7 @@ import Videos from "../videos/Videos";
 import VideoEditForm from "../videos/VideoEditForm";
 import AddVideoForm from "../videos/AddVideoForm";
 import CreateContent from "../common/CreateContent";
+import Radicals from "../for-newbies/Radicals";
 // import TranslateForm from "../translation/TranslateForm";
 // <PrivateRoute exact path='/translate' component={TranslateForm} />
 
@@ -98,6 +99,7 @@ const Routes = () => {
 
           <PrivateRoute exact path='/create-profile' component={CreateProfile} />
           <PrivateRoute exact path='/edit-profile' component={EditProfile} />
+          <Route exact path='/radicals' component={Radicals} />
           <Route exact path='/pinyin' component={PinyinTable} />
           <Route exact path='/search/:chinese' component={Search} />
           <Route exact path='/search' component={Search} />
