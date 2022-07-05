@@ -227,11 +227,10 @@ router.post("/segmenter", (req, res) => {
 // 长    倒   得   老   面    省   实在  头
 
 // router.post("/addpinyin", async (req, res) => {
-//   const ans = await Dictionary.find({ pinyin: " -" }).limit(500);
+//   // const ans = await Dictionary.find({ pinyin: " -" }).limit(500);
 
-//   const arr = ans.map((x) => x.chinese);
+//   // const arr = ans.map((x) => x.chinese);
 //   // console.log(arr);
-
 //   const promises = arr.map((word) => mdbg.get(word).catch((e) => word));
 //   const resArr = await Promise.all(promises);
 
