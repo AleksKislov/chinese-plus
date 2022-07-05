@@ -2,8 +2,9 @@ import { Fragment, useEffect } from "react";
 import Head from "next/head";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css"; // optional for styling
-
-const myAudioURL = "https://kislov.chineseplus.ru/audio/";
+import Layout from "../components/layout/layout";
+import { myAudioURL } from "../constants/urls";
+// const myAudioURL = "https://kislov.chineseplus.ru/audio/";
 
 function PinyinPage() {
   useEffect(() => {
@@ -83,7 +84,7 @@ function PinyinPage() {
         <title>Таблица Пиньиня с Озвучкой | Chinese+</title>
         <meta charSet='utf-8' />
       </Head>
-      <section id='mainSection' className='container-fluid'>
+      <Layout>
         <div className='row justify-content-center'>
           <div className='col-auto'>
             <h1 className=''>Таблица Пиньиня с Озвучкой</h1>
@@ -17285,7 +17286,7 @@ function PinyinPage() {
             </table>
           </div>
         </div>
-      </section>
+      </Layout>
     </Fragment>
   );
 }
