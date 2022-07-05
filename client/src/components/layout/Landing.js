@@ -3,9 +3,10 @@ import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Helmet } from "react-helmet";
-import { parseChineseWords } from "../../actions/helpers";
+// import { parseChineseWords } from "../../actions/helpers";
 import TippyTooltip from "../translation/TippyTooltip";
 import WordModal from "../translation/WordModal";
+import WordEditModal from "../translation/WordEditModal";
 import HanziWriter from "hanzi-writer";
 import CommentsCard from "../dashboard/CommentsCard";
 import { loadPosts } from "../../actions/posts";
@@ -29,7 +30,7 @@ const Landing = ({ isAuthenticated, loadPosts, posts }) => {
       _id: "5f04819868566a15a9ff0227",
       pinyin: " wǒ",
       russian:
-        " [m1]1) я; мой[/m][m2][*][ex]我是学生 я ― учащийся[/ex][/*][/m][m2][*][ex]我父亲 мой отец[/ex][/*][/m][m1]2) мы; наш ([i]о коллективе, стране[/i])[/m][m2][*][ex]我方 наша сторона, наши[/ex][/*][/m][m2][*][ex]我军 наша армия[/ex][/*][/m][m2][*][ex]敌我 противник и мы[/ex][/*][/m][m1]3) сам; самоличный, частный, личный[/m][m2][*][ex]自我 сам; собственный[/ex][/*][/m][m2][*][ex]大公无我 всё общественное, нет ничего личного (собственного)[/ex][/*][/m]"
+        " [m1]1) я; мой[/m][m2][*][ex]我是学生 я ― учащийся[/ex][/*][/m][m2][*][ex]我父亲 мой отец[/ex][/*][/m][m1]2) мы; наш ([i]о коллективе, стране[/i])[/m][m2][*][ex]我方 наша сторона, наши[/ex][/*][/m][m2][*][ex]我军 наша армия[/ex][/*][/m][m2][*][ex]敌我 противник и мы[/ex][/*][/m][m1]3) сам; самоличный, частный, личный[/m][m2][*][ex]自我 сам; собственный[/ex][/*][/m][m2][*][ex]大公无我 всё общественное, нет ничего личного (собственного)[/ex][/*][/m]",
     });
   };
 
@@ -43,7 +44,7 @@ const Landing = ({ isAuthenticated, loadPosts, posts }) => {
         padding: 0,
         showOutline: true,
         radicalColor: "#168F16",
-        delayBetweenLoops: 3000
+        delayBetweenLoops: 3000,
       });
       writer.loopCharacterAnimation();
     }
@@ -75,6 +76,8 @@ const Landing = ({ isAuthenticated, loadPosts, posts }) => {
         </div>
         <div className='row'>
           <WordModal />
+          <WordEditModal />
+
           <div className='col-sm-4'>
             <div className='card border-light mb-3'>
               <div className='card-header h5'>Умный перевод</div>
@@ -207,7 +210,7 @@ const Landing = ({ isAuthenticated, loadPosts, posts }) => {
           <div className='col-sm-6'>
             <h4 className='LandingWhiteTxt'>Последние записи в Гостевой:</h4>
 
-            {posts.map(post => (
+            {posts.map((post) => (
               <Post key={post._id} post={post} />
             ))}
           </div>
@@ -249,12 +252,12 @@ const Landing = ({ isAuthenticated, loadPosts, posts }) => {
 // </div>
 
 Landing.propTypes = {
-  isAuthenticated: PropTypes.bool
+  isAuthenticated: PropTypes.bool,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
-  posts: state.posts.posts
+  posts: state.posts.posts,
 });
 
 export default connect(mapStateToProps, { loadPosts })(Landing);

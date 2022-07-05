@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { loadWords } from "../../actions/hskTable";
 import WordsItem from "./WordsItem";
 import PropTypes from "prop-types";
 import Spinner from "../layout/Spinner";
 import WordsCard from "./WordsCard";
-import Tippy from "@tippyjs/react";
 import TypingGame from "../userWords/TypingGame";
+import HideButtons from "../hsk-table/HideButtons";
+import FlipCardsGrid from "./FlipCardsGrid";
+import TableOrCardsButtons from "./TableOrCardsButton";
 
 const Words = ({ loadWords, words, wordsLoading }) => {
   const [hideFlag, setHideFlag] = useState({
     chinese: false,
     pinyin: false,
-    translation: false
+    translation: false,
   });
   const [testStarted, setTestStarted] = useState(false);
 
@@ -21,31 +23,32 @@ const Words = ({ loadWords, words, wordsLoading }) => {
     // eslint-disable-next-line
   }, []);
 
-  const hideChinese = e => {
-    setHideFlag({
-      chinese: !hideFlag.chinese,
-      translation: hideFlag.translation,
-      pinyin: hideFlag.pinyin
-    });
-    e.target.innerHTML = !hideFlag.chinese ? "Скрыто" : "Иероглифы";
-  };
+  const [displayCards, setDisplayCards] = useState(false);
 
-  const hidePinyin = e => {
-    setHideFlag({
-      pinyin: !hideFlag.pinyin,
-      translation: hideFlag.translation,
-      chinese: hideFlag.chinese
-    });
-    e.target.innerHTML = !hideFlag.pinyin ? "Скрыто" : "Пиньинь";
-  };
+  const onClick = (e) => {
+    const id = e.target.id;
 
-  const hideFanyi = e => {
-    setHideFlag({
-      translation: !hideFlag.translation,
-      chinese: hideFlag.chinese,
-      pinyin: hideFlag.pinyin
-    });
-    e.target.innerHTML = !hideFlag.translation ? "Скрыто" : "Перевод";
+    if (id === "ru") {
+      setHideFlag({
+        translation: !hideFlag.translation,
+        chinese: hideFlag.chinese,
+        pinyin: hideFlag.pinyin,
+      });
+    }
+    if (id === "py") {
+      setHideFlag({
+        pinyin: !hideFlag.pinyin,
+        translation: hideFlag.translation,
+        chinese: hideFlag.chinese,
+      });
+    }
+    if (id === "cn") {
+      setHideFlag({
+        chinese: !hideFlag.chinese,
+        translation: hideFlag.translation,
+        pinyin: hideFlag.pinyin,
+      });
+    }
   };
 
   return wordsLoading && words ? (
@@ -60,57 +63,24 @@ const Words = ({ loadWords, words, wordsLoading }) => {
         <TypingGame words={words} testStarted={setTestStarted} />
 
         {!testStarted && (
-          <table className='table table-hover table-responsive'>
-            <thead>
-              <tr className='table-info'>
-                <th>#</th>
-                <th>
-                  <Tippy placement='bottom' content='Скрыть иероглифы'>
-                    <button
-                      type='button'
-                      className='btn btn-light btn-sm'
-                      onClick={e => hideChinese(e)}
-                    >
-                      Иероглифы
-                    </button>
-                  </Tippy>
-                </th>
-                <th>
-                  <Tippy placement='bottom' content='Скрыть пиньинь'>
-                    <button
-                      type='button'
-                      className='btn btn-light btn-sm'
-                      onClick={e => hidePinyin(e)}
-                    >
-                      Пиньинь
-                    </button>
-                  </Tippy>
-                </th>
-                <th style={{ width: "70%" }}>
-                  <Tippy placement='bottom' content='Скрыть перевод'>
-                    <button
-                      type='button'
-                      className='btn btn-light btn-sm'
-                      onClick={e => hideFanyi(e)}
-                    >
-                      Перевод
-                    </button>
-                  </Tippy>
-                </th>
-                <th>
-                  <div className='text-center'>
-                    <i className='fas fa-headphones'></i>
-                  </div>
-                </th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {words.map(word => (
-                <WordsItem key={word._id} lexicon={word} hideFlag={hideFlag} />
-              ))}
-            </tbody>
-          </table>
+          <Fragment>
+            <TableOrCardsButtons setDisplayCards={setDisplayCards} displayCards={displayCards} />
+
+            {displayCards ? (
+              <FlipCardsGrid words={words} />
+            ) : (
+              <Fragment>
+                <HideButtons hideFlag={hideFlag} onClick={onClick} />
+                <table className='table table-hover table-responsive'>
+                  <tbody>
+                    {words.map((word) => (
+                      <WordsItem key={word._id} lexicon={word} hideFlag={hideFlag} />
+                    ))}
+                  </tbody>
+                </table>
+              </Fragment>
+            )}
+          </Fragment>
         )}
       </div>
     </div>
@@ -119,12 +89,12 @@ const Words = ({ loadWords, words, wordsLoading }) => {
 
 Words.propTypes = {
   words: PropTypes.array.isRequired,
-  loadWords: PropTypes.func.isRequired
+  loadWords: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   words: state.hskTable.words,
-  wordsLoading: state.hskTable.wordsLoading
+  wordsLoading: state.hskTable.wordsLoading,
 });
 
 export default connect(mapStateToProps, { loadWords })(Words);

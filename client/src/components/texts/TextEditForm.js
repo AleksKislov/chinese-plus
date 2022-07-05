@@ -5,16 +5,15 @@ import { Redirect, Link } from "react-router-dom";
 import axios from "axios";
 import PropTypes from "prop-types";
 import WordModal from "../translation/WordModal";
+import WordEditModal from "../translation/WordEditModal";
 import { setAlert } from "../../actions/alert";
 import { loadUserWords } from "../../actions/userWords";
-import { TweenMax } from "gsap";
 import {
   getPhotos,
   getWords,
   chunkArrayFunc,
   segmenter,
   itirateWordsFromDB,
-  getTranslation,
   countZnChars,
   parseTags,
 } from "../../actions/helpers";
@@ -25,87 +24,76 @@ import { bgTextLen, smTextLen, textCategories } from "../../constants/consts.jso
 import { defaultTextPic } from "../../constants/urls.json";
 import { NullUser, User } from "../../patterns/User";
 
-const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
-  const [user, setUser] = useState(new NullUser());
-
+const TextEditForm = ({ loadUserWords, user, textToEdit, location }) => {
   useEffect(() => {
-    if (!userToCheck) return;
-    const curUser = new User(userToCheck);
-    setUser(curUser);
     loadUserWords();
-
-    // if (curUser.isAdmin || curUser.isModerator) setMaxTextLen(bgTextLen);
-    if (!textToEdit) setTimeout(noticeMe, 1000);
-  }, [userToCheck]);
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
-      if (textToEdit && location.search.includes("?edit")) {
-        setIsToEdit(true);
+      if (!textToEdit) return;
+      const {
+        level,
+        origintext,
+        tags,
+        title,
+        description,
+        translation,
+        _id,
+        theme_word,
+        isApproved,
+        categoryInd,
+        source,
+        pic_url,
+        pages,
+        audioSrc,
+      } = textToEdit;
 
-        const {
-          level,
-          origintext,
-          tags,
-          title,
-          description,
-          translation,
-          _id,
-          theme_word,
-          isApproved,
-          categoryInd,
-          source,
-          pic_url,
-          pages,
-        } = textToEdit;
-
-        let pageNum;
-        let isLong = false;
-        if (pages && pages.length > 1 && location.search.includes("page=")) {
-          isLong = true;
-          pageNum = +location.search.slice(-1);
-          setPageToEdit(pageNum);
-          setIsLongText(true);
-        }
-
-        let origTxt = origintext;
-        let transTxt = translation;
-        if (isLong) {
-          origTxt = pages[pageNum].origintext;
-          transTxt = pages[pageNum].translation;
-        }
-        document.getElementById("textArea").value = origTxt.join("\n");
-        document.getElementById("translationArea").value = transTxt.join("\n");
-        setIsTranslated(true);
-
-        setFormData({
-          ...formData,
-          pic_url,
-          level,
-          tags: tags.join(", "),
-          title,
-          description,
-          theme_word,
-          isApproved,
-          categoryInd,
-          source,
-          textId: _id,
-        });
+      let pageNum;
+      let isLong = false;
+      if (pages && pages.length > 1 && location.search.includes("page=")) {
+        isLong = true;
+        pageNum = +location.search.slice(-1);
+        setPageToEdit(pageNum);
+        setIsLongText(true);
       }
+
+      let origTxt = origintext;
+      let transTxt = translation;
+      if (isLong) {
+        origTxt = pages[pageNum].origintext;
+        transTxt = pages[pageNum].translation;
+      }
+      const textToDisplay = origTxt.join("\n");
+      document.getElementById("textArea").value = textToDisplay;
+      document.getElementById("translationArea").value = transTxt.join("\n");
+      setTextLen(textToDisplay.length);
+
+      setFormData({
+        ...formData,
+        pic_url,
+        level,
+        tags: tags.join(", "),
+        title,
+        description,
+        theme_word,
+        isApproved,
+        categoryInd,
+        source,
+        textId: _id,
+        audioSrc,
+      });
     });
   }, [textToEdit]);
 
   const [pageToEdit, setPageToEdit] = useState(null);
   const [isLongText, setIsLongText] = useState(false);
-  // const [maxTextLen, setMaxTextLen] = useState(smTextLen);
   const [photosResult, setPhotosResult] = useState(true);
   const [isEnglish, setIsEnglish] = useState(false);
   const [isRedirected, setIsRedirected] = useState(false);
   const [okToPublish, setOkToPublish] = useState(false);
-  const [isToEdit, setIsToEdit] = useState(false);
   const [textLen, setTextLen] = useState(0);
   const [photosUrls, setPhotosUrls] = useState(false);
-  const [isTranslated, setIsTranslated] = useState(false);
   const [formData, setFormData] = useState({
     chineseChunkedWords: [],
     chunkedTranslation: [],
@@ -122,32 +110,11 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     theme_word: "", // rewriten usestate,
     source: "",
     categoryInd: 0,
+    audioSrc: 0,
   });
-
-  useEffect(() => {
-    if (textLen > smTextLen) {
-      // console.log("here");
-      setIsTranslated(true);
-      setIsLongText(true);
-      if (!isToEdit) {
-        store.dispatch(
-          setAlert(
-            `У вас большой текст (превышает ${smTextLen}字). Автоперевод недоступен`,
-            "danger"
-          )
-        );
-      }
-    } else {
-      setIsTranslated(false);
-      setIsLongText(false);
-    }
-  }, [textLen]);
 
   const preprocessForm = async (e) => {
     e.preventDefault();
-    const okToProcess = formData.pic_url || isToEdit;
-    if (!okToProcess) return;
-
     const textArea = document.getElementById("textArea");
 
     if (textLen > bgTextLen) {
@@ -167,42 +134,24 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
     chunkedOriginText = chunkedOriginText.map((chunk) => chunk.trim());
     textArea.value = chunkedOriginText.join("\n\n");
 
-    let allwords, chineseChunkedWords;
-    if (!isLongText || isToEdit) {
-      allwords = await segmenter(originText);
-      allwords = allwords.filter((word) => word !== " ");
-      const wordsFromDB = await getWords(allwords);
-      const newArr = itirateWordsFromDB(allwords, wordsFromDB);
-      chineseChunkedWords = chunkArrayFunc(newArr).filter((chunk) => chunk.length);
-    } else {
-      chineseChunkedWords = chunkedOriginText;
-    }
-
-    let chunkedTranslation;
-    if (!isTranslated && !isToEdit) {
-      const { translation } = await getTranslation(chunkedOriginText);
-      setIsTranslated(true);
-      translationArea.value = translation.join("\n\n");
-      chunkedTranslation = translation;
-    } else {
-      let translationTrimed = translationArea.value.trim();
-      chunkedTranslation = translationTrimed.split("\n"); // array of strings
-      chunkedTranslation = chunkedTranslation.filter((chunk) => chunk.length);
-    }
-
-    const length = countZnChars(originText);
+    let allwords = await segmenter(originText);
+    allwords = allwords.filter((word) => word !== " ");
+    const wordsFromDB = await getWords(allwords);
+    const newArr = itirateWordsFromDB(allwords, wordsFromDB);
+    const translationTrimed = translationArea.value.trim();
 
     setFormData({
       ...formData,
-      chineseChunkedWords,
-      chunkedTranslation,
+      chineseChunkedWords: chunkArrayFunc(newArr).filter((chunk) => chunk.length),
+      chunkedTranslation: translationTrimed.split("\n").filter((chunk) => chunk.length),
       chunkedOriginText,
-      length,
+      length: countZnChars(originText),
       allwords,
     });
   };
 
-  const loadPictures = async () => {
+  const loadPictures = async (e) => {
+    e.preventDefault();
     if (!formData.pic_theme) return;
     const res = await getPhotos(formData.pic_theme);
     setPhotosResult(res);
@@ -214,65 +163,13 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
 
     const selectedImg = document.getElementsByClassName("imgToChooseActive");
     if (selectedImg[0]) selectedImg[0].classList.remove("imgToChooseActive");
-    document.getElementById("pic_theme_url").value = e.target.src;
+    document.getElementById("pic_url").value = e.target.src;
     e.target.className += " imgToChooseActive";
 
     setFormData({
       ...formData,
       pic_url: e.target.src,
     });
-  };
-
-  const publishText = async (formdata) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    const {
-      chunkedTranslation,
-      tags,
-      chunkedOriginText,
-      title,
-      description,
-      level,
-      length,
-      allwords,
-      pic_url,
-      theme_word,
-      isApproved,
-      categoryInd,
-      source,
-    } = formdata;
-
-    const body = JSON.stringify({
-      origintext: chunkedOriginText,
-      title,
-      description,
-      level,
-      tags: parseTags(tags),
-      translation: chunkedTranslation,
-      chinese_arr: allwords,
-      length,
-      pic_url,
-      theme_word,
-      isApproved,
-      categoryInd,
-      source,
-      name: user.name,
-      isLongText,
-    });
-
-    try {
-      await axios.post(`/api/texts/create`, body, config);
-      alert(
-        "Текст отправлен на проверку и в течение суток будет опубликован. СПАСИБО, что вносите свой вклад!"
-      );
-      setIsRedirected(true);
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   const editText = async (formdata) => {
@@ -297,6 +194,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       isApproved,
       categoryInd,
       source,
+      audioSrc,
     } = formdata;
 
     const body = JSON.stringify({
@@ -316,6 +214,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       source,
       isLongText,
       pageToEdit,
+      audioSrc,
     });
 
     try {
@@ -330,16 +229,6 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
   const handleKeyDown = (e) => {
     e.target.style.height = "inherit";
     e.target.style.height = `${e.target.scrollHeight}px`;
-  };
-
-  const noticeMe = () => {
-    if (isToEdit) return;
-
-    TweenMax.fromTo(
-      ".noticeMe",
-      { backgroundColor: "#e74c3c" },
-      { duration: 2, backgroundColor: "#f39c12" }
-    );
   };
 
   const testEngInput = (str) => setIsEnglish(/^[a-zA-Z]+$/.test(str));
@@ -365,9 +254,8 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
       <button
         className='btn btn-sm btn-primary mx-1'
         disabled={!formData.pic_theme && !photosUrls}
-        onClick={() => {
-          loadPictures();
-          noticeMe();
+        onClick={(e) => {
+          loadPictures(e);
         }}
       >
         Загрузить
@@ -380,7 +268,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
 
   return (
     <Fragment>
-      {!user ? (
+      {user.isNull ? (
         <p>
           Страница доступна только авторизованным пользователям.{" "}
           <Link to='/login'>Залогиньтесь</Link> , пожалуйста
@@ -390,114 +278,19 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
           <div className='col-md-12'>
             <h2>Добавьте текст для Читалки</h2>
             <h4>следуя шагам ниже</h4>
-            {isToEdit ? (
-              <div className='alert alert-info'>
-                <div className='mb-3'>{textForEditing}</div>
-              </div>
-            ) : (
-              <p>
-                🙏🏻 сделайте свой вклад в развитие платформы и преумножение доступного образования в
-                Интернете
-                <br />
-                🔥 самое важное - поправить перевод, все остальное может сделать и админ. Спасибо
-                Вам!
-              </p>
-            )}
 
-            {!textToEdit && !isToEdit && (
-              <div className='alert alert-warning noticeMe'>
-                <div className='mb-3'>
-                  {!formData.title && (
-                    <Fragment>
-                      <h4 className='alert-heading'>ШАГ 1</h4>
-                      <p>
-                        <span>
-                          Заполните хотя бы заголовок. 🙏🏻 вы хорошо поможете, если заполните все
-                          поля.
-                        </span>
-                      </p>
-                    </Fragment>
-                  )}
-
-                  {formData.title && textLen === 0 && (
-                    <Fragment>
-                      <h4 className='alert-heading'>ШАГ 2</h4>
-                      <p>Теперь вы можете вставить китайский текст</p>
-                      <p>
-                        ВНИМАНИЕ: если не нужен автоматический перевод, то кликните тумблер над
-                        полем для перевода, чтобы отключить google translate
-                      </p>
-                    </Fragment>
-                  )}
-
-                  {textLen > 0 && formData.chineseChunkedWords.length === 0 && (
-                    <Fragment>
-                      <h4 className='alert-heading'>ШАГ 3</h4>
-                      <p>Нажмите кнопку 'Предобработка' для обработки и перевода текста</p>
-                    </Fragment>
-                  )}
-
-                  {formData.chineseChunkedWords.length !== 0 && (
-                    <Fragment>
-                      <h4 className='alert-heading'>ШАГ 4</h4>
-                      <p>
-                        <span>
-                          Поправьте русский перевод и китайский оригинал при необходимости (после
-                          снова нажмитее 'Предобработка').
-                          <br />
-                          🔥 Если результат устраивает, то можете нажать 'Опубликовать'.
-                          <br />
-                          🛑 китайские слова можно отделить пробелами, если они выделены неверно.
-                          <br />
-                          🙏🏻 вы хорошо поможете, если заполните все поля (описание и тэги)
-                        </span>
-                      </p>
-                    </Fragment>
-                  )}
-                </div>
-                <div className='progress' style={{ border: "none" }}>
-                  <div
-                    className={`progress-bar bg-${
-                      formData.chunkedOriginText.length && formData.chunkedOriginText[0] !== ""
-                        ? "success"
-                        : "info"
-                    }`}
-                    role='progressbar'
-                    style={{
-                      width: `${
-                        ((formData.title ? 1 : 0) +
-                          (formData.description ? 1 : 0) +
-                          (formData.tags.length && formData.tags[0] !== "" ? 1 : 0) +
-                          (formData.pic_theme ? 1 : 0) +
-                          (formData.theme_word ? 1 : 0) +
-                          (formData.pic_url !== defaultTextPic ? 1 : 0) +
-                          (photosUrls ? 1 : 0) +
-                          (formData.chunkedOriginText.length && formData.chunkedOriginText[0] !== ""
-                            ? 1
-                            : 0) +
-                          (formData.chunkedTranslation.length &&
-                          formData.chunkedTranslation[0] !== ""
-                            ? 1
-                            : 0) +
-                          1) *
-                        10
-                      }%`,
-                    }}
-                    aria-valuenow='25'
-                    aria-valuemin='0'
-                    aria-valuemax='100'
-                  ></div>
-                </div>
-              </div>
-            )}
+            <div className='alert alert-info'>
+              <div className='mb-3'>{textForEditing}</div>
+            </div>
 
             <div className='row'>
               <WordModal />
+              <WordEditModal />
             </div>
 
-            <form onSubmit={(e) => preprocessForm(e)} style={{ width: "100%" }}>
+            <form style={{ width: "100%" }}>
               <fieldset>
-                {user && user.role === "admin" && isToEdit && (
+                {user && (user.isAdmin || user.isModerator) && (
                   <div className='form-row'>
                     <div className='form-group col-md-6'>
                       <label htmlFor='isApproved'>Одобрено</label>
@@ -513,13 +306,27 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                         <option>1</option>
                       </select>
                     </div>
+
+                    <div className='form-group col-md-6'>
+                      <label htmlFor='audioSrc'>Есть аудио</label>
+                      <select
+                        className='form-control'
+                        id='audioSrc'
+                        value={formData.audioSrc}
+                        onChange={(e) =>
+                          setFormData({ ...formData, [e.target.id]: +e.target.value })
+                        }
+                      >
+                        <option>0</option>
+                        <option>1</option>
+                      </select>
+                    </div>
                   </div>
                 )}
                 <div className='form-row'>
                   <div className='form-group col-md-6'>
                     <label htmlFor='title'>Заголовок текста</label>
                     <input
-                      onBlur={noticeMe}
                       value={formData.title}
                       onChange={(e) => {
                         setFormData({
@@ -528,7 +335,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                         });
                       }}
                       type='text'
-                      className={`form-control ${!formData.title && !isToEdit && "is-invalid"}`}
+                      className={`form-control ${!formData.title && "is-invalid"}`}
                       id='title'
                       placeholder='Заголовок'
                       autoComplete='off'
@@ -537,7 +344,6 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                   <div className='form-group col-md-6'>
                     <label htmlFor='description'>Краткое описание</label>
                     <input
-                      onBlur={noticeMe}
                       onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                       type='text'
                       className={`form-control`}
@@ -552,7 +358,6 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                   <div className='form-group col-md-6'>
                     <label htmlFor='tags'>Тэги через запятую</label>
                     <input
-                      onBlur={noticeMe}
                       onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
                       type='text'
                       className={`form-control`}
@@ -579,7 +384,6 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                   <div className='form-group col-md-3'>
                     <label htmlFor='pic_theme'>Тема картинки (1 слово Eng)</label>
                     <input
-                      onBlur={noticeMe}
                       onChange={(e) => {
                         testEngInput(e.target.value);
                         setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -595,7 +399,6 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                     <label htmlFor='theme_word'>1 или 2 汉字 на картинку</label>
 
                     <input
-                      onBlur={noticeMe}
                       onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })}
                       type='text'
                       className={`form-control`}
@@ -606,13 +409,14 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                     />
                   </div>
                   <div className='form-group col-md-6'>
-                    <label htmlFor='pic_theme_url'>URL для картинки</label>
+                    <label htmlFor='pic_url'>URL для картинки</label>
                     <input
                       type='text'
                       className='form-control'
-                      id='pic_theme_url'
+                      id='pic_url'
                       placeholder='Кликните картинку ниже'
                       autoComplete='off'
+                      value={formData.pic_url}
                       disabled
                     />
                   </div>
@@ -621,14 +425,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                   {photosUrls ? readyToClick : loadPicsBtnClicked}
                 </div>
                 <div className='form-row'>
-                  <div
-                    className='form-group col-md-12'
-                    id='photosDiv'
-                    onClick={(e) => {
-                      choosePicUrl(e);
-                      noticeMe();
-                    }}
-                  ></div>
+                  <div className='form-group col-md-12' id='photosDiv' onClick={choosePicUrl}></div>
                 </div>
 
                 <div className='form-row'>
@@ -664,27 +461,6 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                 </div>
 
                 <div className='form-row'>
-                  <div className='form-group col-md-6'></div>
-                  {!isToEdit && (
-                    <div className='form-group col-md-6 d-flex align-self-end'>
-                      <div className='custom-control custom-switch mb-2'>
-                        <input
-                          type='checkbox'
-                          className='custom-control-input'
-                          id='needGoogle'
-                          checked={!isTranslated}
-                          onChange={() => setIsTranslated(!isTranslated)}
-                          disabled={isLongText}
-                        />
-                        <label className='custom-control-label text-danger' htmlFor='needGoogle'>
-                          {!isTranslated ? "Нужен гугл-перевод" : "Вставьте свой перевод"}
-                        </label>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className='form-row'>
                   <div className='form-group col-md-6'>
                     <label htmlFor='textArea'>Вставьте китайский текст для обработки:</label>
                     <textarea
@@ -697,7 +473,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                       id='textArea'
                       rows='3'
                       placeholder='汉字。。。'
-                      disabled={formData.title || isToEdit ? false : true}
+                      disabled={formData.title ? false : true}
                     ></textarea>
                     <small className='text-muted'>
                       {textLen}/{smTextLen}
@@ -712,20 +488,19 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                       id='translationArea'
                       rows='3'
                       placeholder='Тут будет гугл-перевод, который нужно поправить! (Или вставьте свой перевод)'
-                      disabled={isTranslated || isToEdit ? false : true}
                     ></textarea>
                     <small className='text-muted'>не забывайте про параграфы</small>
                   </div>
                 </div>
 
                 <div className='form-row'>
-                  {(textLen !== 0 || isToEdit) && (
+                  {textLen !== 0 && (
                     <button
                       type='submit'
                       className='btn btn-primary mx-1'
-                      onClick={() => {
+                      onClick={(e) => {
                         setOkToPublish(true);
-                        noticeMe();
+                        preprocessForm(e);
                       }}
                     >
                       Предобработка
@@ -747,33 +522,14 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
                   key={uuid()}
                   translation={formData.chunkedTranslation[ind]}
                   toEdit={true}
-                  toPostLongText={isLongText && !isToEdit}
+                  toPostLongText={false}
                 />
               ))}
           </div>
           <hr />
 
           <div className='col-md-12' style={{ height: "6rem" }}>
-            {formData.chineseChunkedWords.length !== 0 && okToPublish && !isToEdit && (
-              <div className=''>
-                <button
-                  className='btn btn-primary mx-1'
-                  onClick={(e) => publishText(formData)}
-                  disabled={
-                    formData.chunkedTranslation.length !== formData.chineseChunkedWords.length
-                  }
-                >
-                  Опубликовать
-                </button>
-
-                {formData.chunkedTranslation.length !== formData.chineseChunkedWords.length && (
-                  <span className='text-danger'>
-                    Кол-во параграфов оригинала и перевода не совпадает!
-                  </span>
-                )}
-              </div>
-            )}
-            {isToEdit && okToPublish && (
+            {okToPublish && (
               <button className='btn btn-primary mx-1' onClick={(e) => editText(formData)}>
                 Изменить Текст
               </button>
@@ -785,7 +541,7 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
   );
 };
 
-TextForm.propTypes = {
+TextEditForm.propTypes = {
   userwords: PropTypes.array.isRequired,
   loadUserWords: PropTypes.func.isRequired,
 };
@@ -793,8 +549,8 @@ TextForm.propTypes = {
 const mapStateToProps = (state) => ({
   userwords: state.userwords.userwords,
   wordsLoading: state.userwords.loading,
-  userToCheck: state.auth.user,
+  user: state.auth.user ? new User(state.auth.user) : new NullUser(),
   textToEdit: state.texts.text,
 });
 
-export default connect(mapStateToProps, { loadUserWords })(TextForm);
+export default connect(mapStateToProps, { loadUserWords })(TextEditForm);

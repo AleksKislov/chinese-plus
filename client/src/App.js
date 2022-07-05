@@ -5,7 +5,9 @@ import Footer from "./components/layout/Footer";
 import Landing from "./components/layout/Landing";
 import Routes from "./components/routing/Routes";
 
-import "./App.css";
+import "./css/common.css";
+import "./css/theme/App.css";
+import "./css/myown.css";
 
 // Redux
 import { Provider } from "react-redux";
@@ -24,6 +26,16 @@ if (localStorage.userid) {
 const App = () => {
   useEffect(() => {
     store.dispatch(loadUser());
+  }, []);
+
+  useEffect(() => {
+    const style = document.getElementById("cssTheme");
+    if (!style) return;
+    if (+localStorage.isDarkTheme) {
+      style.href = "/static/css/App-night.css";
+    } else {
+      style.href = "/static/css/App.css";
+    }
   }, []);
 
   return (

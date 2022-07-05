@@ -1,5 +1,5 @@
 {
-  "appVersion": "2.25.0",
+  "appVersion": "2.30.1",
   "pinyinArr": [
     "a1",
     "ai3",
@@ -1327,7 +1327,7 @@
     "yi2"
   ],
   "bgTextLen": 16000,
-  "smTextLen": 1200,
+  "smTextLen": 900,
   "symbolsToIgnore": [
     " ",
     "．",
@@ -1389,7 +1389,7 @@
     "documentary": "документальное",
     "news": "новости"
   },
-  "commentLength": 600,
+  "commentLength": 800,
   "commentEmojis": [
     "🔥",
     "🙏🏻",

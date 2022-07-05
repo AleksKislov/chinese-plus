@@ -1,7 +1,8 @@
 const { validationResult } = require("express-validator");
-const { notifyMe } = require("../_misc");
+const { Notify } = require("../_misc");
 const Hanzi = require("../../../../routes/api/dict/dictionary");
 
+const CHARS_PER_PAGE = 800;
 const Text = require("../../../models/Text");
 
 async function createTxt(req, res) {
@@ -23,6 +24,7 @@ async function createTxt(req, res) {
     categoryInd,
     source,
     isLongText,
+    audioSrc,
   } = req.body;
 
   let pages;
@@ -46,11 +48,12 @@ async function createTxt(req, res) {
     categoryInd,
     source,
     pages,
+    audioSrc,
     user: req.user.id,
   });
 
   const text = await newText.save();
-  notifyMe(`New TEXT from ${name}. Title: ${title}`);
+  Notify.admin(`New TEXT from ${name}. Title: ${title}`);
   return res.json(text);
 }
 
@@ -66,18 +69,19 @@ function getPagesForLngTxt(origintext, translation) {
   let pages = [];
 
   for (let i = 0; i < origintext.length; i++) {
-    if (pageText.length < 1200) {
-      pageText += origintext[i] + "\n";
-      pageTranslation.push(translation[i]);
-      pageOriginTxt.push(origintext[i]);
-    } else {
+    if (pageText.length >= CHARS_PER_PAGE) {
       pages.push(new Page(Hanzi.segment(pageText.trim()), pageTranslation, pageOriginTxt));
       pageText = "";
       pageTranslation = [];
       pageOriginTxt = [];
     }
+
+    pageText += origintext[i] + "\n";
+    pageTranslation.push(translation[i]);
+    pageOriginTxt.push(origintext[i]);
   }
-  pages.push(new Page(Hanzi.segment(pageText.trim()), pageTranslation));
+
+  pages.push(new Page(Hanzi.segment(pageText.trim()), pageTranslation, pageOriginTxt));
   return pages;
 }
 

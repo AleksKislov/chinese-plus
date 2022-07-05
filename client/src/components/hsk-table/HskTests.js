@@ -26,9 +26,10 @@ const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => 
 
   useEffect(() => {
     if (match.params.level) {
-      setLevel(match.params.level);
-      loadTestLexicon(match.params.level);
-      makeLinkActive(Number(match.params.level) - 1, "list-group-item-action");
+      const lvl = +match.params.level || 1;
+      setLevel(lvl + "");
+      loadTestLexicon(lvl + "");
+      makeLinkActive(lvl - 1, "list-group-item-action");
     } else {
       setLevel("1");
       loadTestLexicon("1");
@@ -283,7 +284,7 @@ const HskTests = ({ lexicons, loadTestLexicon, loading, setLoading, match }) => 
       </Helmet>
 
       <div className='col-sm-3'>
-        <div className='card bg-light mb-3'>
+        <div className='card border-primary mb-3'>
           <div className='card-body'>
             <h4 className='card-title'>HSK Quizes</h4>
             <h6 className='card-subtitle mb-2 text-muted'>Короткие тесты</h6>

@@ -24,7 +24,7 @@ const PinyinTable = () => {
     let thsArr = Array.from(ths);
 
     tdsArr.forEach((td, i) => {
-      td.addEventListener("mouseover", e => {
+      td.addEventListener("mouseover", (e) => {
         let ind = i % 36;
 
         for (let index = 0; index < 22; index++) {
@@ -35,7 +35,7 @@ const PinyinTable = () => {
         tdsArr[i].setAttribute("class", "highlightedItem");
       });
 
-      td.addEventListener("mouseout", e => {
+      td.addEventListener("mouseout", (e) => {
         let ind = i % 36;
         for (let index = 0; index < 22; index++) {
           tdsArr[ind + index * 36].classList.remove("highlighted");
@@ -47,11 +47,11 @@ const PinyinTable = () => {
     });
 
     trsArr.forEach((tr, i) => {
-      tr.addEventListener("mouseover", e => {
+      tr.addEventListener("mouseover", (e) => {
         trsArr[i].setAttribute("class", "highlighted");
       });
 
-      tr.addEventListener("mouseout", e => {
+      tr.addEventListener("mouseout", (e) => {
         for (let index = 0; index < 22; index++) {
           trsArr[index].classList.remove("highlighted");
         }
@@ -61,7 +61,7 @@ const PinyinTable = () => {
     const pinyinToggler = document.getElementsByClassName("pinjin-toggler");
     let pinyinTogArr = Array.from(pinyinToggler);
 
-    pinyinTogArr.forEach(el => {
+    pinyinTogArr.forEach((el) => {
       let cont = el.parentNode.getElementsByClassName("dropdown-menu");
       cont[0].innerHTML = cont[0].innerHTML.replace(/data-pinyin/gi, "onclick");
 
@@ -71,7 +71,7 @@ const PinyinTable = () => {
         trigger: "click",
         interactive: true,
         theme: "translucent",
-        placement: "bottom"
+        placement: "bottom",
       });
     });
   };
@@ -83,10 +83,12 @@ const PinyinTable = () => {
         <title>Таблица Пиньиня с Озвучкой | Chinese+</title>
       </Helmet>
       <div className='col-auto'>
-        <h1 className='text-primary'>Таблица Пиньиня с Озвучкой</h1>
+        <h1 className=''>Таблица Пиньиня с Озвучкой</h1>
 
-        <div className="alert alert-dismissible alert-info">
-          <button type="button" className="close" data-dismiss="alert">&times;</button>
+        <div className='alert alert-dismissible alert-info'>
+          <button type='button' className='close' data-dismiss='alert'>
+            &times;
+          </button>
           Кликайте на слоги, чтобы услышать озвучку носителем языка
         </div>
 

@@ -19,9 +19,6 @@ const Footer = () => {
           </a>{" "}
           <a href='https://www.youtube.com/c/Buyilehuorg' target='_blank'>
             <i className='fab fa-youtube'></i>
-          </a>{" "}
-          <a href='https://www.facebook.com/buyilehu/' target='_blank'>
-            <i className='fab fa-facebook-square'></i>
           </a>
         </span>
       </div>

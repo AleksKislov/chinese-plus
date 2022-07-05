@@ -21,9 +21,10 @@ import Contacts from "../layout/Contacts";
 import Donate from "../layout/Donate";
 import Search from "../translation/Search";
 import Posts from "../posts/Posts";
-import Plans from "../plans/Plans";
+// import Plans from "../plans/Plans";
 import PostPage from "../posts/PostPage";
-import TextForm from "../texts/TextForm";
+import TextAddForm from "../texts/TextAddForm";
+import TextEditForm from "../texts/TextEditForm";
 import Texts from "../texts/Texts";
 import TextPage from "../texts/TextPage";
 import VideoPage from "../videos/VideoPage";
@@ -50,6 +51,7 @@ import Videos from "../videos/Videos";
 import VideoEditForm from "../videos/VideoEditForm";
 import AddVideoForm from "../videos/AddVideoForm";
 import CreateContent from "../common/CreateContent";
+import Radicals from "../for-newbies/Radicals";
 // import TranslateForm from "../translation/TranslateForm";
 // <PrivateRoute exact path='/translate' component={TranslateForm} />
 
@@ -97,17 +99,21 @@ const Routes = () => {
 
           <PrivateRoute exact path='/create-profile' component={CreateProfile} />
           <PrivateRoute exact path='/edit-profile' component={EditProfile} />
+          <Route exact path='/radicals' component={Radicals} />
           <Route exact path='/pinyin' component={PinyinTable} />
           <Route exact path='/search/:chinese' component={Search} />
           <Route exact path='/search' component={Search} />
           <Route exact path='/translate' component={TranslationForm} />
 
           <Route exact path='/posts' component={Posts} />
-          <Route exact path='/kanban' component={Plans} />
+          {
+            //  <Route exact path='/kanban' component={Plans} />
+          }
           <Route exact path='/posts/:id' component={PostPage} />
           <Route exact path='/create-content' component={CreateContent} />
 
-          <Route exact path='/create-text' component={TextForm} />
+          <Route exact path='/create-text' component={TextAddForm} />
+          <Route exact path='/edit-text' component={TextEditForm} />
           <Route exact path='/create-video' component={AddVideoForm} />
           <Route exact path='/edit-video' component={VideoEditForm} />
           <PrivateRoute exact path='/create-bookpage' component={PageForm} />

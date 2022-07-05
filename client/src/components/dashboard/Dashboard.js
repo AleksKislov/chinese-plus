@@ -51,7 +51,7 @@ const Dashboard = ({
 
       <div className='row'>
         <div className='col-sm-6'>
-          <h1 className='text-primary'>Личный Кабинет</h1>
+          <h1 className=''>Личный Кабинет</h1>
           <div className='row'>
             <div className='col-2'>
               <Tippy content='Поменять аватар' placement='bottom'>
@@ -80,7 +80,7 @@ const Dashboard = ({
 
       <div className='row'>
         <div className='col-sm-6'>
-          <div className='card bg-light mb-3'>
+          <div className='card border-primary mb-3'>
             <div className='card-body'>
               <h4 className='card-title'>Мой HSK</h4>
               <h6 className='card-subtitle mb-2 text-muted'>Личный список слов HSK</h6>
@@ -99,7 +99,7 @@ const Dashboard = ({
             </div>
           </div>
 
-          <div className='card bg-light mb-3'>
+          <div className='card border-primary mb-3'>
             <div className='card-body'>
               <h4 className='card-title'>Мои Слова</h4>
               <h6 className='card-subtitle mb-2 text-muted'>Список слов из текстов</h6>
@@ -122,7 +122,7 @@ const Dashboard = ({
 
         {
           // {dictStats.all ? (
-          //   <div className='card bg-light mb-3'>
+          //   <div className='card border-primary mb-3'>
           //     <div className='card-body'>
           //       <h4 className='card-title'>Статистика</h4>
           //       <h6 className='card-subtitle mb-2 text-muted'>словаря БКРС</h6>

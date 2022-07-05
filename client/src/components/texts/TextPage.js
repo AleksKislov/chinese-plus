@@ -8,6 +8,7 @@ import { v4 as uuid } from "uuid";
 import Paragraph from "./Paragraph";
 import { Link } from "react-router-dom";
 import WordModal from "../translation/WordModal";
+import WordEditModal from "../translation/WordEditModal";
 import { loadUserWords } from "../../actions/userWords";
 import Comment from "../comments/Comment";
 import LeaveComment from "../comments/LeaveComment";
@@ -21,6 +22,7 @@ import ConfirmModal from "../comments/ConfirmModal";
 import LikeBtn from "../common/LikeBtn";
 import TextSource from "./common/TextSource";
 import Pagination from "./Pagination";
+import Audio from "./Audio";
 
 const TextPage = ({
   text,
@@ -43,37 +45,34 @@ const TextPage = ({
   }, [setLoading, getComments]);
 
   useEffect(() => {
-    if (text) {
-      let txt = text;
-      let givenPage = 0;
-      let pagesNum = text.pages.length;
-      if (text.pages && text.pages.length) {
-        pagesNum = text.pages.length;
-        setIsLngTxt(true);
-      }
-      if (match.params.page) givenPage = +match.params.page;
+    if (!text) return;
 
-      if (pagesNum) {
-        txt = text.pages[givenPage];
-        setCurPage(givenPage);
-        setPagesNum(pagesNum);
-      }
-
-      setTimeout(async () => {
-        const chineseChunkedWords = await parseChineseWords(txt);
-        setChineseChunkedArr(chineseChunkedWords);
-      });
+    let txt = text;
+    let givenPage = 0;
+    let pagesNum = text.pages.length;
+    if (text.pages && text.pages.length) {
+      pagesNum = text.pages.length;
+      setIsLngTxt(true);
     }
+    if (match.params.page) givenPage = +match.params.page;
+
+    if (pagesNum) {
+      txt = text.pages[givenPage];
+      setCurPage(givenPage);
+      setPagesNum(pagesNum);
+    }
+
+    setTimeout(async () => {
+      const chineseChunkedWords = await parseChineseWords(txt);
+      setChineseChunkedArr(chineseChunkedWords);
+    });
   }, [text]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      loadUserWords();
-    }
+    if (isAuthenticated) loadUserWords();
   }, [isAuthenticated]);
 
   useEffect(() => {
-    // console.log("render");
     if (
       currentUser &&
       text &&
@@ -105,10 +104,12 @@ const TextPage = ({
           </Helmet>
 
           <WordModal />
+          <WordEditModal />
+
           <ConfirmModal />
 
           <div className='col-sm-3'>
-            <div className='card bg-light mb-3'>
+            <div className='card border-primary mb-3'>
               <img className='mr-3 cardImageStyle' src={`${text.pic_url}`} alt='text pic' />
               <div className='card-body'>
                 <p className='card-text text-center'>
@@ -148,7 +149,7 @@ const TextPage = ({
                 </h6>
 
                 {isAuthenticated && isOkToEdit && (
-                  <Link to={`/create-text?edit${isLngTxt ? `${`&page=${curPage}`}` : ""}`}>
+                  <Link to={`/edit-text?${isLngTxt ? `${`page=${curPage}`}` : ""}`}>
                     <button className='btn btn-sm btn-outline-warning'>Edit</button>
                   </Link>
                 )}
@@ -182,11 +183,13 @@ const TextPage = ({
               {hideFlag ? "Показать Перевод" : "Скрыть Перевод"}
             </div>
 
+            {text && text.audioSrc === 1 && <Audio textId={text._id} title={text.title} />}
+
             <div className='row'>
               {chineseChunkedArr.map((chunk, ind) => (
                 <Paragraph
                   chunk={chunk}
-                  originTxt={text.origintext[ind]}
+                  originTxt={!isLngTxt ? text.origintext[ind] : text.pages[curPage].origintext[ind]}
                   index={ind}
                   key={uuid()}
                   translation={

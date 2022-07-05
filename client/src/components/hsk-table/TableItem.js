@@ -55,10 +55,12 @@ const TableItem = ({ addWord, lexicon, selected, removeWord, loadLengths, hideFl
         <small>{word_id}</small>
       </td>
       <td>
-        <h4>{!hideFlag.chinese && chinese}</h4>
+        <h5>{!hideFlag.chinese && chinese}</h5>
       </td>
       <td>{!hideFlag.pinyin && pinyin}</td>
-      <td>{!hideFlag.translation && translation}</td>
+      <td>
+        <small>{!hideFlag.translation && translation}</small>
+      </td>
       <td>
         <button className='btn btn-sm btn-info' onClick={() => playIt(word_id, level)}>
           <i className='fas fa-play'></i>

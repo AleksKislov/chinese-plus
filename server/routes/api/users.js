@@ -12,7 +12,7 @@ const User = require("../../src/models/User");
 const Post = require("../../src/models/Post");
 const Comment = require("../../src/models/Comment");
 
-const { notifyMe } = require("../../src/api/services/_misc");
+const { Notify } = require("../../src/api/services/_misc");
 
 /**
  * @route     POST api/users

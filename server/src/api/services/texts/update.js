@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const { Notify } = require("../_misc");
 
 const Text = require("../../../models/Text");
 
@@ -23,7 +24,14 @@ async function updateTxt(req, res) {
     source,
     isLongText,
     pageToEdit,
+    audioSrc,
   } = req.body;
+
+  let foundText;
+  if (isApproved) {
+    foundText = await Text.findById(textId);
+    if (!foundText) throw new Error("No text to update");
+  }
 
   const isLngTxtEdit = isLongText && Number.isInteger(pageToEdit);
 
@@ -38,9 +46,10 @@ async function updateTxt(req, res) {
   if (tags) newFields.tags = tags;
   if (pic_url) newFields.pic_url = pic_url;
   if (theme_word) newFields.theme_word = theme_word;
-  if (isApproved) newFields.isApproved = isApproved;
+  if ([0, 1].includes(isApproved)) newFields.isApproved = isApproved;
   if (categoryInd) newFields.categoryInd = categoryInd;
   if (source) newFields.source = source;
+  if (audioSrc) newFields.audioSrc = audioSrc;
   if (isLngTxtEdit) {
     newFields = {
       ...newFields,
@@ -52,7 +61,12 @@ async function updateTxt(req, res) {
     };
   }
 
-  await Text.findByIdAndUpdate(textId, { $set: newFields }, { new: true });
+  const updatedTxt = await Text.findByIdAndUpdate(textId, { $set: newFields }, { new: true });
+
+  if (foundText && !foundText.isApproved && isApproved) {
+    Notify.socialMedia(updatedTxt);
+  }
+
   return res.json({ status: "done" });
 }
 

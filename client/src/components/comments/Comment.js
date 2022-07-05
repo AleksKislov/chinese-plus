@@ -13,17 +13,17 @@ const Comment = ({
   isAuthenticated,
   setCommentToDelete,
   setCommentReply,
-  addLike
+  addLike,
 }) => {
   const { avatar, text, name, date, user, _id, commentIdToReply, likes } = comment;
   const dateAndTime = dateToStr(date);
 
   useEffect(() => {
-    if (currentUser) setLiked(likes.some(like => like.user === currentUser._id));
+    if (currentUser) setLiked(likes.some((like) => like.user === currentUser._id));
   }, [likes, currentUser]);
 
   const [liked, setLiked] = useState(
-    currentUser && likes ? likes.some(like => like.user === currentUser._id) : false
+    currentUser && likes ? likes.some((like) => like.user === currentUser._id) : false
   );
 
   return (
@@ -60,12 +60,12 @@ const Comment = ({
           <p className='card-text' dangerouslySetInnerHTML={{ __html: sanitizer(text) }}></p>
 
           <div className='row'>
-            <div className='col-md-8 my-2'>
+            <div className='col-md-6 my-2'>
               <h6 className='card-subtitle text-muted'>
                 <Link to={`/user/${user}`}>{name}</Link> | <em>{dateAndTime}</em>
               </h6>
             </div>
-            <div className='col-md-4'>
+            <div className='col-md-6'>
               <div className='float-right'>
                 <Tippy
                   content={
@@ -89,7 +89,7 @@ const Comment = ({
                       className='btn btn-sm btn-info mx-1'
                       data-toggle='modal'
                       data-target='#confirmModal'
-                      onClick={e => setCommentToDelete(comment)}
+                      onClick={(e) => setCommentToDelete(comment)}
                     >
                       <i className='far fa-edit'></i>
                     </button>
@@ -118,16 +118,16 @@ const Comment = ({
 
 const imgStyle = {
   width: "40px",
-  borderRadius: "8px"
+  borderRadius: "8px",
 };
 
 const customStyle = {
-  display: "flex"
+  display: "flex",
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
-  currentUser: state.auth.user
+  currentUser: state.auth.user,
 });
 
 export default connect(mapStateToProps, { setCommentToDelete, setCommentReply, addLike })(Comment);

@@ -6,7 +6,8 @@ const { getAllWords } = require("./services");
 const auth = require("../../middleware/auth");
 
 const Dictionary = require("../../src/models/Dictionary");
-// const Hskword = require("../../src/models/Hskword");
+
+const { updateWord, rollbackUpdate } = require("../../src/api/services/dictionary");
 
 /**
  * @route     GET api/dictionary?word=...
@@ -182,39 +183,6 @@ router.get("/certain/:word", async (req, res) => {
   }
 });
 
-// TODO edit all refs
-// router.get("/editref/:id", async (req, res) => {
-//   const id = req.params.id;
-
-//   try {
-//     let wordToEdit = await Dictionary.findById(id);
-
-//     if (wordToEdit.edited.bool === false) {
-//       const matchedArr = wordToEdit.russian.match(/(\[ref\])(.*)(\[\/ref)/);
-//       // res.send(matchedArr[2]);
-
-//       const foundWord = matchedArr[2];
-//       // console.log(foundWord);
-//       const wordToRefer = await Dictionary.findOne({ chinese: foundWord });
-
-//       wordToEdit.edited.bool = true;
-//       wordToEdit.edited.previousContent = wordToEdit.russian;
-//       wordToEdit.edited.reason = "ref";
-//       wordToEdit.russian = wordToEdit.russian + wordToRefer.russian;
-//       const edited = await Dictionary.findOneAndUpdate(
-//         { _id: id },
-//         {
-//           $set: wordToEdit
-//         },
-//         { new: true }
-//       );
-//       res.json(edited);
-//     }
-//   } catch (err) {
-//     console.error(err);
-//   }
-// });
-
 /**
  * @route     GET api/dictionary/segmenter
  * @desc      GET all words from text SEGMENTED
@@ -257,5 +225,32 @@ router.post("/segmenter", (req, res) => {
 
 // [54, 108, 113, 336, 373, 476, 481, 542]
 // 长    倒   得   老   面    省   实在  头
+
+// router.post("/addpinyin", async (req, res) => {
+//   // const ans = await Dictionary.find({ pinyin: " -" }).limit(500);
+
+//   // const arr = ans.map((x) => x.chinese);
+//   // console.log(arr);
+//   const promises = arr.map((word) => mdbg.get(word).catch((e) => word));
+//   const resArr = await Promise.all(promises);
+
+//   res.json(resArr);
+// });
+
+/**
+ * @method  PUT
+ * @route   api/dictionary/updateWord
+ * @desc    update translation or pinyin for a word
+ * @access  Private
+ */
+router.put("/updateWord", auth, updateWord);
+
+/**
+ * @method  PUT
+ * @desc    roll back using previous content of a word
+ * @route   api/dictionary/rollbackUpdate?wordId...&prevInd=
+ * @access  Private
+ */
+router.put("/rollbackUpdate", auth, rollbackUpdate);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import axios from "axios";
+// import axios from "axios";
 import WordsItem from "../texts/WordsItem";
 import WordModal from "../translation/WordModal";
 import { markUpRussianText, segmenter, getWords } from "../../actions/helpers";
@@ -10,15 +10,18 @@ import {
   removeWord,
   loadUserWords,
   loadUserWordsLen,
+  setModalEditWord,
 } from "../../actions/userWords";
 import HanziWriter from "hanzi-writer";
 import Spinner from "../layout/Spinner";
 import Tippy from "@tippyjs/react";
 import { Helmet } from "react-helmet";
-import { Widget, addResponseMessage } from "react-chat-widget";
-import "react-chat-widget/lib/styles.css";
-import "./style.css";
 import { sanitizer } from "../../utils/sanitizer";
+import WordEditModal from "./WordEditModal";
+import HideButtons from "../hsk-table/HideButtons";
+// import "react-chat-widget/lib/styles.css";
+// import "./style.css";
+// import { Widget, addResponseMessage } from "react-chat-widget";
 
 const writerSettings = {
   width: 60,
@@ -38,6 +41,8 @@ const Search = ({
   isAuthenticated,
   userWords,
   removeWord,
+  setModalEditWord,
+  modalWordToEdit,
   // dictResponse
   // puppeteerFunc
 }) => {
@@ -146,33 +151,6 @@ const Search = ({
     }
   };
 
-  const hideChinese = (e) => {
-    setHideFlag({
-      chinese: !hideFlag.chinese,
-      translation: hideFlag.translation,
-      pinyin: hideFlag.pinyin,
-    });
-    e.target.innerHTML = !hideFlag.chinese ? "Скрыто" : "Иероглифы";
-  };
-
-  const hidePinyin = (e) => {
-    setHideFlag({
-      pinyin: !hideFlag.pinyin,
-      translation: hideFlag.translation,
-      chinese: hideFlag.chinese,
-    });
-    e.target.innerHTML = !hideFlag.pinyin ? "Скрыто" : "Пиньинь";
-  };
-
-  const hideFanyi = (e) => {
-    setHideFlag({
-      translation: !hideFlag.translation,
-      chinese: hideFlag.chinese,
-      pinyin: hideFlag.pinyin,
-    });
-    e.target.innerHTML = !hideFlag.translation ? "Скрыто" : "Перевод";
-  };
-
   const updateVocabulary = async (word) => {
     if (!word) return;
 
@@ -189,14 +167,40 @@ const Search = ({
     }, 100);
   };
 
-  const handleNewUserMessage = async (msg) => {
-    try {
-      const { data } = await axios.get("/gcloud/dialogflow?text=" + msg);
-      if (data) addResponseMessage(data.response);
-    } catch (err) {
-      console.log(err);
+  const onClick = (e) => {
+    const id = e.target.id;
+
+    if (id === "ru") {
+      setHideFlag({
+        translation: !hideFlag.translation,
+        chinese: hideFlag.chinese,
+        pinyin: hideFlag.pinyin,
+      });
+    }
+    if (id === "py") {
+      setHideFlag({
+        pinyin: !hideFlag.pinyin,
+        translation: hideFlag.translation,
+        chinese: hideFlag.chinese,
+      });
+    }
+    if (id === "cn") {
+      setHideFlag({
+        chinese: !hideFlag.chinese,
+        translation: hideFlag.translation,
+        pinyin: hideFlag.pinyin,
+      });
     }
   };
+
+  // const handleNewUserMessage = async (msg) => {
+  //   try {
+  //     const { data } = await axios.get("/gcloud/dialogflow?text=" + msg);
+  //     if (data) addResponseMessage(data.response);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   return (
     <Fragment>
@@ -204,6 +208,7 @@ const Search = ({
         <meta charSet='utf-8' />
         <title>Китайско-русский словарь | Chinese+</title>
       </Helmet>
+      <WordEditModal />
 
       <div className='row'>
         <div className='col-sm-8'>
@@ -241,14 +246,16 @@ const Search = ({
         </div>
 
         <div className='col-sm-4'>
-          <div className='card text-white bg-primary mb-3'>
-            <div className='card-body'>
-              <h4 className='card-title'>Чат с AI</h4>
-              <p className='card-text'>
-                Внизу справа - чат с AI. Поддерживаемые темы будут расширяться.
-              </p>
-            </div>
-          </div>
+          {
+            // <div className='card text-white bg-primary mb-3'>
+            //   <div className='card-body'>
+            //     <h4 className='card-title'>Чат с AI</h4>
+            //     <p className='card-text'>
+            //       Внизу справа - чат с AI. Поддерживаемые темы будут расширяться.
+            //     </p>
+            //   </div>
+            // </div>
+          }
         </div>
       </div>
 
@@ -269,7 +276,7 @@ const Search = ({
                   }
                 >
                   <button
-                    className={`btn btn-sm btn-${clicked ? "warning" : "info"} mr-1`}
+                    className={`btn btn-sm btn-${clicked ? "warning" : "info"}`}
                     onClick={() => updateVocabulary(wordFromSearch)}
                   >
                     {clicked ? <i className='fas fa-minus'></i> : <i className='fas fa-plus'></i>}
@@ -280,16 +287,32 @@ const Search = ({
                   content={<span>{showExamples ? "Скрыть примеры" : "Показать примеры"}</span>}
                 >
                   <button
-                    className='btn btn-sm btn-info'
+                    className='btn btn-sm btn-info mx-1'
                     id='showMoreButton'
                     onClick={showMoreButton}
                   >
                     {showExamples ? "Меньше" : "Больше"}
                   </button>
                 </Tippy>
+
+                <Tippy content={<span>Отредактировать слово</span>}>
+                  <button
+                    className='btn btn-sm btn-warning'
+                    onClick={() => setModalEditWord(wordFromSearch)}
+                    data-toggle='modal'
+                    data-target='#editWordModal'
+                  >
+                    <i className='far fa-edit'></i>
+                  </button>
+                </Tippy>
               </Fragment>
 
-              <h4 className='mt-2'>{wordFromSearch && wordFromSearch.pinyin}</h4>
+              {wordFromSearch && (
+                <h4 className='mt-2'>
+                  {wordFromSearch.chinese} {wordFromSearch.pinyin}
+                </h4>
+              )}
+
               <div
                 className='mb-3'
                 dangerouslySetInnerHTML={{
@@ -303,38 +326,17 @@ const Search = ({
           {wordsFromSearch && (
             <Fragment>
               <WordModal />
+
+              <HideButtons hideFlag={hideFlag} onClick={onClick} />
+
               <table className='table table-hover mb-3'>
-                <thead>
-                  <tr className='table-info'>
-                    <th>
-                      <button
-                        type='button'
-                        className='btn btn-light btn-sm'
-                        onClick={(e) => hideChinese(e)}
-                      >
-                        Иероглифы
-                      </button>
-                    </th>
-                    <th>
-                      <button
-                        type='button'
-                        className='btn btn-light btn-sm'
-                        onClick={(e) => hidePinyin(e)}
-                      >
-                        Пиньинь
-                      </button>
-                    </th>
-                    <th style={{ width: "60%" }}>
-                      <button
-                        type='button'
-                        className='btn btn-light btn-sm'
-                        onClick={(e) => hideFanyi(e)}
-                      >
-                        Перевод
-                      </button>
-                    </th>
-                    <th>Примеры</th>
-                    <th>Изучать</th>
+                <thead style={{ visibility: "collapse" }}>
+                  <tr>
+                    <th style={{ width: "15%" }}></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -359,12 +361,14 @@ const Search = ({
         <Spinner />
       )}
 
-      <Widget
-        handleNewUserMessage={handleNewUserMessage}
-        title='AI-чат Buyilehu'
-        subtitle='Пообщайтесь с AI на китайском'
-        senderPlaceHolder='Ваше сообщение...'
-      />
+      {
+        // <Widget
+        //   handleNewUserMessage={handleNewUserMessage}
+        //   title='AI-чат Buyilehu'
+        //   subtitle='Пообщайтесь с AI на китайском'
+        //   senderPlaceHolder='Ваше сообщение...'
+        // />
+      }
     </Fragment>
   );
 };
@@ -374,6 +378,7 @@ Search.propTypes = {};
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
   userWords: state.userwords.userwords,
+  modalWordToEdit: state.userwords.modalWordToEdit,
   // dictResponse: state.userwords.dictResponse
 });
 
@@ -382,5 +387,6 @@ export default connect(mapStateToProps, {
   loadUserWordsLen,
   addWord,
   removeWord,
+  setModalEditWord,
   // puppeteerFunc
 })(Search);

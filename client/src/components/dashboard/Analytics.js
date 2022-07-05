@@ -58,10 +58,15 @@ const Analytics = ({ user }) => {
   }, [user]);
 
   const options = {
-    title: "Статистика по чтению за месяц",
-    hAxis: { title: "Дата", textPosition: "none" },
-    vAxis: { title: "Прочитано, 字", viewWindow: { min: 1, max: { maxX } } },
-    // legend: "none",
+    hAxis: {
+      title: "Дата",
+      textPosition: "none",
+    },
+    vAxis: {
+      title: "Прочитано, 字",
+      viewWindow: { min: 1, max: { maxX } },
+    },
+    // legend: { textStyle: textColor },
     seriesType: "area",
     series: {
       0: { pointShape: "circle", pointSize: 8 },
@@ -69,10 +74,21 @@ const Analytics = ({ user }) => {
     },
   };
 
+  if (+localStorage.isDarkTheme) {
+    const textColor = { color: "#fff" };
+    options.hAxis.titleTextStyle = textColor;
+    options.vAxis.titleTextStyle = textColor;
+    options.vAxis.textStyle = textColor;
+    options.backgroundColor = "#222";
+    options.legend = { textStyle: textColor };
+  }
+
   return (
     state &&
     maxX && (
-      <div className=''>
+      <div className='mb-3'>
+        <h4>Статистика по чтению за месяц</h4>
+
         <Chart
           columns={[
             {

@@ -91,12 +91,14 @@ const WordsItem = ({
         <small>{id}</small>
       </td>
       <td>
-        <h4>{!hideFlag.chinese && chinese}</h4>
+        <h5>{!hideFlag.chinese && chinese}</h5>
       </td>
       <td>{!hideFlag.pinyin && pinyin}</td>
-      <td
-        dangerouslySetInnerHTML={{ __html: sanitizer(!hideFlag.translation ? russian : "") }}
-      ></td>
+      <td>
+        <small
+          dangerouslySetInnerHTML={{ __html: sanitizer(!hideFlag.translation ? russian : "") }}
+        ></small>
+      </td>
       <td>{moreButton}</td>
       <td>
         <button className='btn btn-sm btn-info' onClick={() => playIt(lexicon)}>

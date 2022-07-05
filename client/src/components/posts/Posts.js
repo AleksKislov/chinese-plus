@@ -62,7 +62,7 @@ const Posts = ({
 
       if (user.role === "admin") {
         title = emoji + " " + title;
-        addPost(title, newtext, postTag);
+        addPost(title, newtext, "news");
         // loadPosts(0);
         return;
       }
@@ -169,9 +169,6 @@ const Posts = ({
             </a>{" "}
             <a href='https://www.youtube.com/c/Buyilehuorg' target='_blank'>
               <i className='fab fa-youtube'></i>
-            </a>{" "}
-            <a href='https://www.facebook.com/buyilehu/' target='_blank'>
-              <i className='fab fa-facebook-square'></i>
             </a>
           </span>
         </div>
@@ -312,7 +309,7 @@ const Posts = ({
                   </button>
                 ) : (
                   <button type='button' className='btn btn-warning btn-sm mb-1' disabled>
-                    Больше нетути
+                    Больше нет
                   </button>
                 )}
               </div>

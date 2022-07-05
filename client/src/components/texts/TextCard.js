@@ -5,6 +5,7 @@ import Tippy from "@tippyjs/react";
 import { connect } from "react-redux";
 import { textCategories } from "../../constants/consts.json";
 import LikeBtn from "../common/LikeBtn";
+import CommentsBtn from "../common/CommentsBtn";
 import TextDescription from "./common/TextDescription";
 import TextSource from "./common/TextSource";
 
@@ -25,13 +26,14 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
     categoryInd,
     likes,
     source,
+    audioSrc,
     user: textUser,
   } = text;
   useEffect(() => {
     if (hide === 0) setHideId(false);
     if (hide === 1) setHideId(isRead(_id));
     if (hide === 2) setHideId(!isRead(_id));
-    // console.log({ category, categoryInd });
+
     setRightCategory(category === 0 || category === categoryInd + 1);
     setRightLevel(hideLevel === 0 || level === hideLevel);
   }, [hide, category, hideLevel]);
@@ -50,9 +52,9 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
       <div className={`card my-2 ${isRead(_id) ? "alreadyReadCard" : ""}`}>
         {isRead(_id) && (
           <Tippy content='Прочитано'>
-            <h3 className='alreadyReadMark'>
+            <h4 className='alreadyReadMark'>
               <i className='fas fa-check-circle text-success'></i>
-            </h3>
+            </h4>
           </Tippy>
         )}
 
@@ -101,25 +103,23 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
               <span className='text-muted'>Кол-во знаков: </span>
               {length}
             </h6>
-            {
-              //   source && (
-              //   <h6 className='card-subtitle mb-2'>
-              //     <span className='text-muted'>Источник: </span>
-              //     {source}
-              //   </h6>
-              // )
-            }
-            <TextSource textSource={source} />
 
+            <TextSource textSource={source} />
             <TextDescription description={description} />
 
-            <div className=''>
-              <Link to={`/texts/${_id}`}>
-                <button className='btn btn-sm btn-outline-info mr-2'>
-                  Комментарии {comments_id.length > 0 && <span>{comments_id.length}</span>}
-                </button>
-              </Link>
+            <div>
+              <CommentsBtn id={_id} comments_id={comments_id} />
               <LikeBtn likes={likes} id={_id} />
+
+              {audioSrc === 1 && (
+                <Tippy content='С аудио'>
+                  <span>
+                    <button className='btn btn-sm btn-info disabled' disabled>
+                      <i className='fas fa-headphones'></i>
+                    </button>
+                  </span>
+                </Tippy>
+              )}
             </div>
           </div>
         </div>
@@ -135,9 +135,6 @@ const imgText = {
   textShadow: "1px 1px 1px white, 2px 2px 1px white",
   position: "absolute",
   width: "5rem",
-  // top: "85%",
-  // left: "25%",
-  // transform: "translate(-50%, -50%)"
   marginTop: "-3.5rem",
   marginLeft: "1rem",
 };

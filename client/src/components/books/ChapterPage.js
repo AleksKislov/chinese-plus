@@ -6,6 +6,7 @@ import { loadBook, setLoading, loadPage } from "../../actions/books";
 import { getComments } from "../../actions/comments";
 import { parseChineseWords } from "../../actions/helpers";
 import WordModal from "../translation/WordModal";
+import WordEditModal from "../translation/WordEditModal";
 import { loadUserWords } from "../../actions/userWords";
 import { v4 as uuid } from "uuid";
 import Paragraph from "../texts/Paragraph";
@@ -27,7 +28,7 @@ const ChapterPage = ({
   comments,
   getComments,
   loadUserWords,
-  isAuthenticated
+  isAuthenticated,
 }) => {
   useEffect(() => {
     const { chapterId, pageInd, bookId } = match.params;
@@ -78,6 +79,7 @@ const ChapterPage = ({
 
           <div className='row'>
             <WordModal />
+            <WordEditModal />
             <ConfirmModal />
 
             <ImageCard book={book} />
@@ -120,7 +122,7 @@ const ChapterPage = ({
                   />
                   <h4>Комментарии:</h4>
                   {comments.length > 0 &&
-                    comments.map(comment => <Comment key={comment._id} comment={comment} />)}
+                    comments.map((comment) => <Comment key={comment._id} comment={comment} />)}
                 </div>
               )}
             </div>
@@ -131,13 +133,13 @@ const ChapterPage = ({
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   book: state.books.book,
   loading: state.books.loading,
   isAuthenticated: state.auth.isAuthenticated,
   currentUser: state.auth.user,
   page: state.books.page,
-  comments: state.comments.currentComments
+  comments: state.comments.currentComments,
 });
 
 export default connect(mapStateToProps, {
@@ -145,5 +147,5 @@ export default connect(mapStateToProps, {
   setLoading,
   loadPage,
   getComments,
-  loadUserWords
+  loadUserWords,
 })(ChapterPage);

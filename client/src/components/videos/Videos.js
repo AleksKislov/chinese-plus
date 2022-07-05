@@ -39,6 +39,7 @@ const Videos = ({ loadVideos, videos, loading, moreVideos, clearVideos }) => {
     setCategoryFlag(0);
     setHideReadFlag(0);
     setHideLevelFlag(0);
+    loadVideos(0);
     document.getElementById("levelFilt").value = 0;
     document.getElementById("readFilt").value = 0;
     document.getElementById("categoryFilt").value = 0;
@@ -95,7 +96,7 @@ const Videos = ({ loadVideos, videos, loading, moreVideos, clearVideos }) => {
                 </button>
               ) : (
                 <button type='button' className='btn btn-warning btn-sm mb-1' disabled>
-                  Больше нетути
+                  Больше нет
                 </button>
               )}
             </div>

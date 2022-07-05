@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import TableItem from "./TableItem";
-import Tippy from "@tippyjs/react";
+import HideButtons from "./HideButtons";
+import FlipCardsGrid from "./FlipCardsGrid";
+import TableOrCardsButtons from "./TableOrCardsButton";
 
 const TablePlate = ({ lexicons, userWords }) => {
   const [hideFlag, setHideFlag] = useState({
@@ -9,86 +11,67 @@ const TablePlate = ({ lexicons, userWords }) => {
     translation: false,
   });
 
-  const hideChinese = (e) => {
-    setHideFlag({
-      chinese: !hideFlag.chinese,
-      translation: hideFlag.translation,
-      pinyin: hideFlag.pinyin,
-    });
-    e.target.innerHTML = !hideFlag.chinese ? "Скрыто" : "Иероглифы";
-  };
+  const [displayCards, setDisplayCards] = useState(false);
 
-  const hidePinyin = (e) => {
-    setHideFlag({
-      pinyin: !hideFlag.pinyin,
-      translation: hideFlag.translation,
-      chinese: hideFlag.chinese,
-    });
-    e.target.innerHTML = !hideFlag.pinyin ? "Скрыто" : "Пиньинь";
-  };
+  const onClick = (e) => {
+    const id = e.target.id;
 
-  const hideFanyi = (e) => {
-    setHideFlag({
-      translation: !hideFlag.translation,
-      chinese: hideFlag.chinese,
-      pinyin: hideFlag.pinyin,
-    });
-    e.target.innerHTML = !hideFlag.translation ? "Скрыто" : "Перевод";
+    if (id === "ru") {
+      setHideFlag({
+        translation: !hideFlag.translation,
+        chinese: hideFlag.chinese,
+        pinyin: hideFlag.pinyin,
+      });
+    }
+    if (id === "py") {
+      setHideFlag({
+        pinyin: !hideFlag.pinyin,
+        translation: hideFlag.translation,
+        chinese: hideFlag.chinese,
+      });
+    }
+    if (id === "cn") {
+      setHideFlag({
+        chinese: !hideFlag.chinese,
+        translation: hideFlag.translation,
+        pinyin: hideFlag.pinyin,
+      });
+    }
   };
 
   return (
-    <table className='table table-hover table-responsive'>
-      <thead>
-        <tr className='table-info'>
-          <th className='text-center'>
-            <i className='fab fa-slack-hash'></i>
-          </th>
-          <th>
-            <Tippy placement='bottom' content='Скрыть иероглифы'>
-              <button
-                type='button'
-                className='btn btn-light btn-sm'
-                onClick={(e) => hideChinese(e)}
-              >
-                Иероглифы
-              </button>
-            </Tippy>
-          </th>
-          <th>
-            <Tippy placement='bottom' content='Скрыть пиньинь'>
-              <button type='button' className='btn btn-light btn-sm' onClick={(e) => hidePinyin(e)}>
-                Пиньинь
-              </button>
-            </Tippy>
-          </th>
-          <th style={{ width: "70%" }}>
-            <Tippy placement='bottom' content='Скрыть перевод'>
-              <button type='button' className='btn btn-light btn-sm' onClick={(e) => hideFanyi(e)}>
-                Перевод
-              </button>
-            </Tippy>
-          </th>
-          <th>
-            <div className='text-center'>
-              <i className='fas fa-headphones'></i>
-            </div>
-          </th>
-          <th className='text-center'>
-            <i className='fas fa-plus'></i>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {lexicons.map((lexicon) => (
-          <TableItem
-            key={lexicon._id}
-            lexicon={lexicon}
-            selected={userWords.some((word) => word.word_id === lexicon.word_id)}
-            hideFlag={hideFlag}
-          />
-        ))}
-      </tbody>
-    </table>
+    <Fragment>
+      <TableOrCardsButtons setDisplayCards={setDisplayCards} displayCards={displayCards} />
+      {displayCards ? (
+        <FlipCardsGrid words={lexicons} />
+      ) : (
+        <Fragment>
+          <HideButtons hideFlag={hideFlag} onClick={onClick} />
+          <table className='table table-hover table-responsive'>
+            <thead style={{ visibility: "collapse" }}>
+              <tr>
+                <th></th>
+                <th style={{ width: "15%" }}></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {lexicons.map((lexicon) => (
+                <TableItem
+                  key={lexicon._id}
+                  lexicon={lexicon}
+                  selected={userWords.some((word) => word.word_id === lexicon.word_id)}
+                  hideFlag={hideFlag}
+                />
+              ))}
+            </tbody>
+          </table>
+        </Fragment>
+      )}
+    </Fragment>
   );
 };
 

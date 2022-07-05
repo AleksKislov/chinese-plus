@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { setModalWord } from "../../actions/userWords";
 import Tippy from "@tippyjs/react";
 import { sanitizer } from "../../utils/sanitizer";
 import { markUpRussianText } from "../../actions/helpers";
@@ -71,4 +70,4 @@ const mapStateToProps = (state) => ({
   word: state.userwords.modalWord,
 });
 
-export default connect(mapStateToProps, { setModalWord })(WordModal);
+export default connect(mapStateToProps, {})(WordModal);

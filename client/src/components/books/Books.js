@@ -21,7 +21,7 @@ const Books = ({ loadBooks, books, loading, clearBook }) => {
       </Helmet>
 
       <div className='col-md-3'>
-        <div className='card bg-light mb-3'>
+        <div className='card border-primary mb-3'>
           <div className='card-body'>
             <p className='card-text'>
               Чтение книг на китайском языке с параллельным переводом каждого параграфа, а также с
@@ -39,16 +39,16 @@ const Books = ({ loadBooks, books, loading, clearBook }) => {
         {loading && !books.length ? (
           <Spinner />
         ) : (
-          books.map(book => <BookCard key={book._id} book={book} />)
+          books.map((book) => <BookCard key={book._id} book={book} />)
         )}
       </div>
     </div>
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   books: state.books.books,
-  loading: state.books.loading
+  loading: state.books.loading,
 });
 
 export default connect(mapStateToProps, { loadBooks, clearBook })(Books);

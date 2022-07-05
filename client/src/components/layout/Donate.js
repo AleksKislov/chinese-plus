@@ -22,7 +22,7 @@ const Donate = () => {
         </div>
 
         <div className='col-sm-6 mb-3'>
-          <div className='card bg-light mb-3'>
+          <div className='card border-primary mb-3'>
             <div className='card-body'>
               <p className='card-text'>
                 Cпасибо всем большое за поддержку! Если вы не хотите быть анонимным спонсором, то

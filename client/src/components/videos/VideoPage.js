@@ -7,6 +7,7 @@ import Spinner from "../layout/Spinner";
 import Subs from "./Subs";
 import { Link } from "react-router-dom";
 import WordModal from "../translation/WordModal";
+import WordEditModal from "../translation/WordEditModal";
 import { loadUserWords } from "../../actions/userWords";
 import Comment from "../comments/Comment";
 import LeaveComment from "../comments/LeaveComment";
@@ -130,10 +131,11 @@ const VideoPage = ({
           </Helmet>
 
           <WordModal />
+          <WordEditModal />
           <ConfirmModal />
 
           <div className='col-sm-3'>
-            <div className='card bg-light mb-3'>
+            <div className='card border-primary mb-3'>
               <img
                 className='mr-3 cardImageStyle'
                 style={{ objectFit: "cover", height: "8rem" }}

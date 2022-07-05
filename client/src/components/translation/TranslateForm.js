@@ -4,13 +4,14 @@ import store from "../../store";
 // import axios from "axios";
 import PropTypes from "prop-types";
 import WordModal from "./WordModal";
+import WordEditModal from "./WordEditModal";
 import { setAlert } from "../../actions/alert";
 import { loadUserWords } from "../../actions/userWords";
 import { getWords, segmenter, itirateWordsFromDB } from "../../actions/helpers";
 import TippyTooltip from "./TippyTooltip";
 import { v4 as uuid } from "uuid";
 // import { Widget, addResponseMessage } from "react-chat-widget";
-import "react-chat-widget/lib/styles.css";
+// import "react-chat-widget/lib/styles.css";
 import "./style.css";
 import { Helmet } from "react-helmet";
 
@@ -50,9 +51,10 @@ const TranslateForm = ({ loadUserWords, isAuthenticated }) => {
         <title>Перевод текста | Chinese+</title>
       </Helmet>
       <WordModal />
+      <WordEditModal />
 
       <div className='col-sm-3'>
-        <div className='card bg-light mb-3'>
+        <div className='card border-primary mb-3'>
           <div className='card-body'>
             <h4 className='card-title'>Pop-up Перевод</h4>
             <p className='card-text'>

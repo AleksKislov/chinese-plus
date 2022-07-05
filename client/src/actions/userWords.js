@@ -10,6 +10,7 @@ import {
   DICT_RESPONDED,
   DICT_FAIL,
   SET_LOADING,
+  SET_MODAL_TO_EDIT_WORD,
 } from "./types";
 import axios from "axios";
 import { setAlert } from "./alert";
@@ -104,6 +105,13 @@ export const removeWord = (chinese) => async (dispatch) => {
 export const setModalWord = (word) => async (dispatch) => {
   dispatch({
     type: SET_MODAL,
+    payload: word,
+  });
+};
+
+export const setModalEditWord = (word) => async (dispatch) => {
+  dispatch({
+    type: SET_MODAL_TO_EDIT_WORD,
     payload: word,
   });
 };

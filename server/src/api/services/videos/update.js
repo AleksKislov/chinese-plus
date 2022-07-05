@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const { Notify } = require("../_misc");
 
 const Video = require("../../../models/Video");
 
@@ -22,6 +23,12 @@ async function updateVideo(req, res) {
     // cnSubs,
   } = req.body;
 
+  let foundVid;
+  if (isApproved) {
+    foundVid = await Video.findById(videoId);
+    if (!foundVid) throw new Error("No text to update");
+  }
+
   let newFields = {};
   if (title) newFields.title = title;
   if (length) newFields.length = length;
@@ -29,14 +36,19 @@ async function updateVideo(req, res) {
   if (lvl) newFields.lvl = lvl;
   if (tags) newFields.tags = tags;
   if (category) newFields.category = category;
-  if (isApproved) newFields.isApproved = isApproved;
+  if ([0, 1].includes(isApproved)) newFields.isApproved = isApproved;
   if (source) newFields.source = source;
   if (chineseArr) newFields.chineseArr = chineseArr;
   if (pySubs) newFields.pySubs = pySubs;
   if (ruSubs) newFields.ruSubs = ruSubs;
   // if (cnSubs) newFields.cnSubs = cnSubs;
 
-  await Video.findByIdAndUpdate(videoId, { $set: newFields }, { new: true });
+  const updatedVid = await Video.findByIdAndUpdate(videoId, { $set: newFields }, { new: true });
+
+  if (foundVid && !foundVid.isApproved && isApproved) {
+    Notify.socialMedia(updatedVid);
+  }
+
   return res.json({ status: "done" });
 }
 
