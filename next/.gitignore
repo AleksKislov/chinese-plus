@@ -39,3 +39,5 @@ yarn-error.log*
 node_modules
 .next
 >>>>>>> master
+
+/constants/urls.ts

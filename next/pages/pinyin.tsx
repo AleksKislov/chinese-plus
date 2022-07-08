@@ -3,10 +3,10 @@ import Head from "next/head";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css"; // optional for styling
 import Layout from "../components/layout/layout";
-import { myAudioURL } from "../constants/urls";
-// const myAudioURL = "https://kislov.chineseplus.ru/audio/";
+import urls from "../constants/urls";
 
 function PinyinPage() {
+  const { myAudioURL } = urls;
   useEffect(() => {
     loaded();
     // eslint-disable-next-line
@@ -89,11 +89,11 @@ function PinyinPage() {
           <div className='col-auto'>
             <h1 className=''>Таблица Пиньиня с Озвучкой</h1>
 
-            <div className='alert alert-dismissible alert-info'>
-              <button type='button' className='close' data-dismiss='alert'>
-                &times;
+            <div className='alert alert-info alert-dismissible fade show' role='alert'>
+              <strong>Кликайте</strong> на слоги, чтобы услышать озвучку носителем языка.
+              <button type='button' className='close' data-dismiss='alert' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
               </button>
-              Кликайте на слоги, чтобы услышать озвучку носителем языка
             </div>
 
             <table className='table table-bordered table-responsive' id='table-pinjin'>
