@@ -37,4 +37,5 @@ yarn-error.log*
 node_modules
 .next
 
-/constants/urls.ts
+.env
+constants/urls.ts
