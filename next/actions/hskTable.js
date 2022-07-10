@@ -16,7 +16,7 @@ import {
 import axios from "axios";
 import { setAlert } from "./alert";
 import { setAuthToken, setGoogleAuth } from "../utils/setAuthToken";
-import { users } from "../constants/consts.json";
+import { users } from "../constants/consts";
 
 // load all HSK lexicon at hsk-table
 export const loadLexicon = (hskLevel, limit) => async (dispatch) => {

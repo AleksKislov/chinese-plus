@@ -7,9 +7,9 @@ import PropTypes from "prop-types";
 import { logout } from "../../actions/auth";
 import { loadLengths } from "../../actions/hskTable";
 import { loadUserWordsLen } from "../../actions/userWords";
-import { appVersion } from "../../constants/consts.json";
+import { appVersion } from "../../constants/consts";
 import { getMentionsLen } from "../../actions/comments";
-import { users } from "../../constants/consts.json";
+import { users } from "../../constants/consts";
 import Tippy from "@tippyjs/react";
 
 const changeTheme = () => {

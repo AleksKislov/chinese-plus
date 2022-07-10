@@ -1,6 +1,6 @@
-{
-  "appVersion": "2.30.1",
-  "pinyinArr": [
+const consts = {
+  appVersion: "2.30.1",
+  pinyinArr: [
     "a1",
     "ai3",
     "ai4",
@@ -1324,11 +1324,11 @@
     "zuo2",
     "zun1",
     "zha1",
-    "yi2"
+    "yi2",
   ],
-  "bgTextLen": 16000,
-  "smTextLen": 900,
-  "symbolsToIgnore": [
+  bgTextLen: 16000,
+  smTextLen: 900,
+  symbolsToIgnore: [
     " ",
     "．",
     "。",
@@ -1364,9 +1364,9 @@
     "—",
     "「",
     "」",
-    "\n"
+    "\n",
   ],
-  "textCategories": [
+  textCategories: [
     "Учебные и HSK",
     "Детское",
     "Документы и бизнес",
@@ -1378,19 +1378,19 @@
     "Еда и рецепты",
     "Медицина",
     "Технологии и IT",
-    "Юмор"
+    "Юмор",
   ],
-  "videoCategories": {
-    "misc": "разное",
-    "song": "песня",
-    "ads": "реклама",
-    "cartoon": "анимация",
-    "sciense": "наука",
-    "documentary": "документальное",
-    "news": "новости"
+  videoCategories: {
+    misc: "разное",
+    song: "песня",
+    ads: "реклама",
+    cartoon: "анимация",
+    sciense: "наука",
+    documentary: "документальное",
+    news: "новости",
   },
-  "commentLength": 800,
-  "commentEmojis": [
+  commentLength: 800,
+  commentEmojis: [
     "🔥",
     "🙏🏻",
     "👍",
@@ -1404,33 +1404,35 @@
     "🚀",
     "💪",
     "🤣",
-    "🤷‍"
+    "🤷‍",
   ],
-  "hskInfo": {
-    "bandSize": {
-      "1": 500,
-      "2": 772,
-      "3": 973,
-      "4": 1000,
-      "5": 1071,
-      "6": 1140,
-      "789": 5636
+  hskInfo: {
+    bandSize: {
+      1: 500,
+      2: 772,
+      3: 973,
+      4: 1000,
+      5: 1071,
+      6: 1140,
+      789: 5636,
     },
-    "oldLevelSize": {
-      "1": 150,
-      "2": 150,
-      "3": 300,
-      "4": 600,
-      "5": 1300,
-      "6": 2500
-    }
+    oldLevelSize: {
+      1: 150,
+      2: 150,
+      3: 300,
+      4: 600,
+      5: 1300,
+      6: 2500,
+    },
   },
-  "maxWordsPerPage": 200,
-  "users": {
-    "vocabSize": 150
+  maxWordsPerPage: 200,
+  users: {
+    vocabSize: 150,
   },
-  "CONTENT": {
-    "video": "video",
-    "text": "text"
-  }
-}
+  CONTENT: {
+    video: "video",
+    text: "text",
+  },
+};
+
+export default consts;

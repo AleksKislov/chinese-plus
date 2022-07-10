@@ -1,6 +1,5 @@
 import axios from "axios";
-import React from "react";
-import { symbolsToIgnore } from "../constants/consts.json";
+import { symbolsToIgnore } from "../constants/consts";
 
 /**
  * @param {string} text
@@ -200,7 +199,6 @@ export const countZnChars = (str) => {
 };
 
 /**
- *
  * @param {string} href - window.location.href
  */
 export const checkBaseUrl = (href) =>
