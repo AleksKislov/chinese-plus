@@ -1,7 +1,7 @@
 import { useState, Fragment } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
-import { NextResponse } from "next/server";
 import { connect } from "react-redux";
 import { login } from "../actions/auth";
 import GoogleButton from "../components/auth/google-button";
@@ -10,6 +10,8 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Layout from "../components/layout/layout";
 
 const Login = ({ login, isAuthenticated }) => {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -23,9 +25,7 @@ const Login = ({ login, isAuthenticated }) => {
     login(email, password);
   };
 
-  if (isAuthenticated) {
-    return NextResponse.redirect("/dashboard");
-  }
+  if (isAuthenticated) router.push("/pinyin");
 
   return (
     <Fragment>
@@ -61,7 +61,7 @@ const Login = ({ login, isAuthenticated }) => {
                   type='password'
                   placeholder='Пароль'
                   name='password'
-                  minLength='6'
+                  minLength={6}
                   value={password}
                   onChange={(e) => onChange(e)}
                   className='form-control'

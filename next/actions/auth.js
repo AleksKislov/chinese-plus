@@ -17,7 +17,7 @@ import {
   MARK_TEXT_READ,
 } from "./types";
 import { setAuthToken, setGoogleAuth } from "../utils/setAuthToken";
-import { ApiService } from "../patterns/ApiService";
+// import { ApiService } from "../patterns/ApiService";
 
 //load user
 export const loadUser = () => async (dispatch) => {
@@ -82,8 +82,8 @@ export const login = (email, password) => async (dispatch) => {
   const body = JSON.stringify({ email, password });
 
   try {
-    // const { data } = await axios.post("/api/auth", body, config);
-    const { data } = await ApiService.call("post", "/api/auth", body);
+    const { data } = await axios.post("/api/auth", body, config);
+    // const { data } = await ApiService.call("post", "/api/auth", body);
 
     dispatch({
       type: LOGIN_SUCCESS,

@@ -5,6 +5,7 @@ const path = require("path");
 const morgan = require("morgan");
 const cookieSession = require("cookie-session");
 const compression = require("compression");
+const cors = require("cors");
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -24,6 +25,7 @@ if (isDevelopment) {
   );
 }
 
+app.use(cors({ origin: "*" }));
 app.use(compression());
 // app.use(express.json({ extended: false }));
 app.use(bodyParser.json({ limit: "10mb" }));

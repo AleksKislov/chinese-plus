@@ -21,6 +21,7 @@
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
     "redux-devtools-extension": "^2.13.9",
+    "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.1",
     "styled-components": "^5.3.5",
     "tippy.js": "^6.3.7",

@@ -1,8 +1,10 @@
 import type { AppProps } from "next/app";
 import { useEffect, useState } from "react";
+import { PersistGate } from "redux-persist/integration/react";
 import { Provider } from "react-redux";
-import store from "../store";
+import MyStorage from "../store";
 
+const { store, persistor } = MyStorage();
 import "../styles/common.css";
 import "../styles/theme/App.css";
 import "../styles/myown.css";
@@ -25,10 +27,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <Provider store={store}>
-      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-        <GlobalStyles />
-        <Component {...pageProps} />
-      </ThemeProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+          <GlobalStyles />
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </PersistGate>
     </Provider>
   );
 }
