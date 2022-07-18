@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
@@ -37,42 +37,48 @@ const Login = ({ login, isAuthenticated }) => {
         <div className='row'>
           <div className='col-md-3'></div>
           <div className='col-md-6 text-center'>
-            <h1 className='large'>Войти</h1>
-            <p className='lead'>
-              <FontAwesomeIcon icon={faUser} /> Залогиньтесь в свой аккаунт
-            </p>
+            {isAuthenticated ? (
+              <p>Загрузка...</p>
+            ) : (
+              <Fragment>
+                <h1 className='large'>Войти</h1>
+                <p className='lead'>
+                  <FontAwesomeIcon icon={faUser} /> Залогиньтесь в свой аккаунт
+                </p>
 
-            <GoogleButton />
-            <p>или</p>
-            <form className='form' onSubmit={(e) => onSubmit(e)}>
-              <div className='form-group'>
-                <input
-                  type='email'
-                  placeholder='Адрес Email'
-                  name='email'
-                  value={email}
-                  onChange={(e) => onChange(e)}
-                  className='form-control'
-                  required
-                />
-              </div>
-              <div className='form-group'>
-                <input
-                  type='password'
-                  placeholder='Пароль'
-                  name='password'
-                  minLength={6}
-                  value={password}
-                  onChange={(e) => onChange(e)}
-                  className='form-control'
-                />
-              </div>
+                <GoogleButton />
+                <p>или</p>
+                <form className='form' onSubmit={(e) => onSubmit(e)}>
+                  <div className='form-group'>
+                    <input
+                      type='email'
+                      placeholder='Адрес Email'
+                      name='email'
+                      value={email}
+                      onChange={(e) => onChange(e)}
+                      className='form-control'
+                      required
+                    />
+                  </div>
+                  <div className='form-group'>
+                    <input
+                      type='password'
+                      placeholder='Пароль'
+                      name='password'
+                      minLength={6}
+                      value={password}
+                      onChange={(e) => onChange(e)}
+                      className='form-control'
+                    />
+                  </div>
 
-              <input type='submit' className='btn btn-primary' value='Войти' />
-            </form>
-            <p className='my-1'>
-              Еще нет аккаунта? Самое время <Link href='/register'>зарегистрироваться</Link> :)
-            </p>
+                  <input type='submit' className='btn btn-primary' value='Войти' />
+                </form>
+                <p className='my-1'>
+                  Еще нет аккаунта? Самое время <Link href='/register'>зарегистрироваться</Link> :)
+                </p>
+              </Fragment>
+            )}
           </div>
           <div className='col-md-3'></div>
         </div>

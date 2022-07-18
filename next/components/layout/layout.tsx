@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Footer from "./footer";
-// import Navbar from "./navbar";
+import Navbar from "./navbar";
 
 const Layout = ({ children }) => {
   const router = useRouter();
@@ -12,7 +12,8 @@ const Layout = ({ children }) => {
         <title>With Cookies</title>
       </Head>
 
-      {/* <Navbar /> */}
+      <Navbar />
+
       <main>
         <section
           className={router.pathname === "/pinyin" ? "container-fluid" : "container"}

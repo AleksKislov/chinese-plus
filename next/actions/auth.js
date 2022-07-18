@@ -17,7 +17,6 @@ import {
   MARK_TEXT_READ,
 } from "./types";
 import { setAuthToken, setGoogleAuth } from "../utils/setAuthToken";
-// import { ApiService } from "../patterns/ApiService";
 
 //load user
 export const loadUser = () => async (dispatch) => {

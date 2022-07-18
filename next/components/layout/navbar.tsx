@@ -1,16 +1,15 @@
-import Link from "next/link";
-// import { useUser } from "../lib/hooks";
-
+// import Link from "next/Link";
 import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import { logout } from "../../actions/auth";
 import { loadLengths } from "../../actions/hskTable";
 import { loadUserWordsLen } from "../../actions/userWords";
-import { appVersion } from "../../constants/consts";
 import { getMentionsLen } from "../../actions/comments";
-import { users } from "../../constants/consts";
 import Tippy from "@tippyjs/react";
+import { useRouter } from "next/router";
+
+import constants from "../../constants/consts";
+const { users, appVersion } = constants;
 
 const changeTheme = () => {
   if (+localStorage.isDarkTheme) {
@@ -32,6 +31,8 @@ const Navbar = ({
   getMentionsLen,
   mentionsLen,
 }) => {
+  const router = useRouter();
+
   const initialPaths = {
     pinyin: "/pinyin",
     hsk: "/hsk-table",
@@ -43,7 +44,7 @@ const Navbar = ({
   Object.freeze(initialPaths);
 
   const [paths, setPaths] = useState(initialPaths);
-  const privateLinks = ["/dashboard", "/hsk-words", "userwords"];
+  const privateas = ["/dashboard", "/hsk-words", "userwords"];
   const [totalWordsLen, setTotalWordsLen] = useState(0);
   const [mentions, setMentions] = useState(mentionsLen > 0);
   const [isDarkTheme, setIsDarkTheme] = useState(true);
@@ -75,7 +76,7 @@ const Navbar = ({
         ...initialPaths,
         login: url,
       });
-    } else if (privateLinks.includes(url)) {
+    } else if (privateas.includes(url)) {
       setPaths({
         ...initialPaths,
         private: url,
@@ -94,15 +95,13 @@ const Navbar = ({
 
   useEffect(() => {
     setTimeout(() => {
-      if (isAuthenticated) {
-        getMentionsLen();
-        setMentions(mentionsLen > 0);
-        // console.log(mentionsLen);
-        loadLengths();
-        loadUserWordsLen();
-        if ((userWordsLen && allWordsLen) || userWordsLen === 0 || allWordsLen === 0)
-          setTotalWordsLen(userWordsLen + allWordsLen);
-      }
+      if (!isAuthenticated) return;
+      getMentionsLen();
+      setMentions(mentionsLen > 0);
+      loadLengths();
+      loadUserWordsLen();
+      if ((userWordsLen && allWordsLen) || userWordsLen === 0 || allWordsLen === 0)
+        setTotalWordsLen(userWordsLen + allWordsLen);
     }, 500);
   }, [isAuthenticated, allWordsLen, userWordsLen, mentionsLen]);
 
@@ -135,49 +134,49 @@ const Navbar = ({
     </li>
   );
 
-  const noAuthLinks = (
+  const noAuthas = (
     <ul className='navbar-nav loginNavbar text-center'>
       <li className='nav-item dropdown'>
-        <Link
+        <a
           className='nav-link dropdown-toggle'
           data-toggle='dropdown'
           href={paths.login}
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
         >
           <i className='fas fa-door-open'></i> Вход
-        </Link>
+        </a>
         <div className='dropdown-menu dropdown-menu-right'>
-          <Link
+          <a
             className='dropdown-item'
             href='/register'
-            activeStyle={activeNavLink}
+            activeClassName='activeNavLink'
             onClick={() => setPathsAndCollapse({ ...paths, login: "/register" })}
             exact={true}
           >
             Регистрация
-          </Link>
-          <Link
+          </a>
+          <a
             className='dropdown-item'
             href='/login'
-            activeStyle={activeNavLink}
+            activeClassName='activeNavLink'
             onClick={() => setPathsAndCollapse({ ...paths, login: "/login" })}
             exact={true}
           >
             Войти
-          </Link>
+          </a>
         </div>
       </li>
     </ul>
   );
 
-  const authLinks = (
+  const authas = (
     <ul className='navbar-nav loginNavbar text-center'>
       <li className='nav-item dropdown'>
-        <Link
+        <a
           className='nav-link dropdown-toggle my-auto'
           data-toggle='dropdown'
           href={paths.private}
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
         >
           {user && (
             <div style={{ display: "inline", position: "relative" }}>
@@ -186,63 +185,63 @@ const Navbar = ({
               {mentions && <div className='mentionsCircle'></div>}
             </div>
           )}
-        </Link>
+        </a>
         <div className='dropdown-menu dropdown-menu-right'>
-          <Link
+          <a
             className='dropdown-item'
             href='/dashboard'
-            activeStyle={activeNavLink}
+            activeClassName='activeNavLink'
             onClick={() => setPathsAndCollapse({ ...paths, private: "/dashboard" })}
           >
             ЛК
-          </Link>
+          </a>
 
-          <Link
+          <a
             className='dropdown-item'
             href='/hsk-words'
-            activeStyle={activeNavLink}
+            activeClassName='activeNavLink'
             onClick={() => setPathsAndCollapse({ ...paths, private: "/hsk-words" })}
           >
             Мой HSK{" "}
             <span className='badge badge-pill badge-warning'>
               {allWordsLen} / {users.vocabSize}
             </span>
-          </Link>
+          </a>
 
-          <Link
+          <a
             className='dropdown-item'
             href='/userwords'
-            activeStyle={activeNavLink}
+            activeClassName='activeNavLink'
             onClick={() => setPathsAndCollapse({ ...paths, private: "/userwords" })}
           >
             Мои Слова{" "}
             <span className='badge badge-pill badge-warning'>
               {userWordsLen} / {users.vocabSize}
             </span>
-          </Link>
+          </a>
 
           {user && (
-            <Link
+            <a
               className='dropdown-item'
               href={"/user/" + user._id}
-              activeStyle={activeNavLink}
+              activeClassName='activeNavLink'
               onClick={collapseIt}
             >
               Мои тексты
-            </Link>
+            </a>
           )}
 
-          <Link className='dropdown-item' href='/mentions' exact={true}>
-            Упоминания и ответы {mentions && <div className='mentionsCircleLink'></div>}
-          </Link>
+          <a className='dropdown-item' href='/mentions' exact={true}>
+            Упоминания и ответы {mentions && <div className='mentionsCirclea'></div>}
+          </a>
 
-          <Link className='dropdown-item font-weight-bold' href='/create-content' exact={true}>
+          <a className='dropdown-item font-weight-bold' href='/create-content' exact={true}>
             Поделиться контентом
-          </Link>
+          </a>
 
-          <Link onClick={logout} className='dropdown-item' href='/#' exact={true}>
+          <a onClick={logout} className='dropdown-item' href='/#' exact={true}>
             Выйти <i className='fas fa-sign-out-alt'></i>
-          </Link>
+          </a>
         </div>
       </li>
     </ul>
@@ -250,226 +249,214 @@ const Navbar = ({
 
   const pinyinNav = (
     <li className='nav-item dropdown'>
-      <Link
-        className='nav-link dropdown-toggle'
-        data-toggle='dropdown'
-        href={paths.pinyin}
-        activeStyle={activeNavLink}
-      >
+      <a className='nav-link dropdown-toggle' data-toggle='dropdown' href={paths.pinyin}>
         Пиньинь
-      </Link>
+      </a>
 
       <div className='dropdown-menu'>
-        <Link
-          className='dropdown-item'
-          href='/pinyin'
-          activeStyle={activeNavLink}
-          onClick={() => setPathsAndCollapse({ ...paths, pinyin: "/pinyin" })}
+        <a
+          className={`dropdown-item${router.pathname == "/pinyin" ? " active" : ""}`}
+          onClick={() => {
+            setPathsAndCollapse({ ...paths, pinyin: "/pinyin" });
+          }}
         >
           Таблица
-        </Link>
-        <Link
+        </a>
+
+        <a
           className='dropdown-item'
           href='/pinyin-tests'
-          activeStyle={activeNavLink}
           onClick={() => setPathsAndCollapse({ ...paths, pinyin: "/pinyin-tests" })}
         >
           Тесты
-        </Link>
+        </a>
       </div>
     </li>
   );
 
   const readingNav = (
     <li className='nav-item dropdown'>
-      <Link
+      <a
         className='nav-link dropdown-toggle'
         data-toggle='dropdown'
         href={paths.reading}
-        activeStyle={activeNavLink}
+        activeClassName='activeNavLink'
       >
         Читалка
-      </Link>
+      </a>
 
       <div className='dropdown-menu'>
-        <Link
+        <a
           className='dropdown-item'
           href='/texts'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
           onClick={() => setPathsAndCollapse({ ...paths, reading: "/texts" })}
         >
           Тексты
-        </Link>
-        <Link
+        </a>
+        <a
           className='dropdown-item'
           href='/books'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
           onClick={() => setPathsAndCollapse({ ...paths, reading: "/books" })}
         >
           Книги
-        </Link>
-        <Link
+        </a>
+        <a
           className='dropdown-item'
           href='/not_approved_texts'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
           onClick={() => setPathsAndCollapse({ ...paths, reading: "/not_approved_texts" })}
         >
           На проверке
-        </Link>
+        </a>
         <div className='dropdown-divider'></div>
-        <Link
+        <a
           className='dropdown-item'
           href='/statistics'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
           onClick={() => setPathsAndCollapse({ ...paths, reading: "/statistics" })}
         >
           Герои Клуба
-        </Link>
+        </a>
       </div>
     </li>
   );
 
   const videosNav = (
     <li className='nav-item dropdown'>
-      <Link
-        className='nav-link dropdown-toggle'
-        data-toggle='dropdown'
-        href={paths.videos}
-        activeStyle={activeNavLink}
-      >
+      <a className='nav-link dropdown-toggle' data-toggle='dropdown' href={paths.videos}>
         Видео
-      </Link>
+      </a>
 
       <div className='dropdown-menu'>
-        <Link
+        <a
           className='dropdown-item'
           href='/videos'
-          activeStyle={activeNavLink}
           onClick={() => setPathsAndCollapse({ ...paths, videos: "/videos" })}
         >
           Видео
-        </Link>
-        <Link
+        </a>
+        <a
           className='dropdown-item'
           href='/not_approved_videos'
-          activeStyle={activeNavLink}
           onClick={() => setPathsAndCollapse({ ...paths, videos: "/not_approved_videos" })}
         >
           На проверке
-        </Link>
+        </a>
       </div>
     </li>
   );
 
   const hskNav = (
     <li className='nav-item dropdown'>
-      <Link
+      <a
         className='nav-link dropdown-toggle'
         data-toggle='dropdown'
         href={paths.hsk}
-        activeStyle={activeNavLink}
+        activeClassName='activeNavLink'
       >
         HSK
-      </Link>
+      </a>
 
       <div className='dropdown-menu'>
         <em>
           <small className='nav-link disabled text-info pl-4'>HSK 2.0</small>
         </em>
-        <Link
+        <a
           className='dropdown-item'
           href='/hsk-table'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
           onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-table" })}
         >
           Все слова
-        </Link>
-        <Link
+        </a>
+        <a
           className='dropdown-item'
           href='/hsk-tests'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
           onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-tests" })}
         >
           Тесты
-        </Link>
-        <Link
+        </a>
+        <a
           className='dropdown-item'
           href='/hsk-search'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
           onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-search" })}
         >
           Поиск
-        </Link>
+        </a>
 
         <div className='dropdown-divider'></div>
         <em>
           <small className='nav-link disabled pl-4 text-info'>HSK 3.0</small>
         </em>
-        <Link
+        <a
           className='dropdown-item'
           href='/hsk-new-table'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
           onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-new-table" })}
         >
           Все слова
-        </Link>
-        <Link
+        </a>
+        <a
           className='dropdown-item'
           href='/hsk-new-tests'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
           onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-new-tests" })}
         >
           Тесты
-        </Link>
-        <Link
+        </a>
+        <a
           className='dropdown-item'
           href='/hsk-new-search'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
           onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-new-search" })}
         >
           Поиск
-        </Link>
+        </a>
       </div>
     </li>
   );
 
   const feedbackNav = (
     <li className='nav-item dropdown'>
-      <Link
+      <a
         className='nav-link dropdown-toggle'
         data-toggle='dropdown'
         href='/donate'
-        activeStyle={activeNavLink}
+        activeClassName='activeNavLink'
       >
         <i className='far fa-comment-alt'></i> Фидбэк
-      </Link>
+      </a>
 
       <div className='dropdown-menu'>
-        <Link
+        <a
           onClick={collapseIt}
           className='dropdown-item'
           href='/posts'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
         >
           Гостевая
-        </Link>
-        <Link
+        </a>
+        <a
           className='dropdown-item'
           href='/donate'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
           onClick={() => setPathsAndCollapse({ ...paths, donate: "/donate" })}
         >
           🙏🏻 Донат
-        </Link>
+        </a>
         {
-          // <Link
+          // <a
           //   className='dropdown-item'
           //   href='/kanban'
-          //   activeStyle={activeNavLink}
+          //   activeClassName ='activeNavLink'
           //   onClick={() => setPathsAndCollapse({ ...paths, donate: "/kanban" })}
           // >
           //   Канбан
-          // </Link>
+          // </a>
         }
       </div>
     </li>
@@ -477,32 +464,32 @@ const Navbar = ({
 
   const translationNav = (
     <li className='nav-item dropdown'>
-      <Link
+      <a
         className='nav-link dropdown-toggle'
         data-toggle='dropdown'
         href='/search'
-        activeStyle={activeNavLink}
+        activeClassName='activeNavLink'
       >
         Словарь
-      </Link>
+      </a>
 
       <div className='dropdown-menu'>
-        <Link
+        <a
           onClick={collapseIt}
           className='dropdown-item'
           href='/search'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
         >
           Словарь
-        </Link>
-        <Link
+        </a>
+        <a
           onClick={collapseIt}
           className='dropdown-item'
           href='/translate'
-          activeStyle={activeNavLink}
+          activeClassName='activeNavLink'
         >
           Pop-up перевод
-        </Link>
+        </a>
       </div>
     </li>
   );
@@ -510,27 +497,27 @@ const Navbar = ({
   const mainMenu = (
     <Fragment>
       <ul className='navbar-nav text-center mr-auto'>
-        {readingNav}
+        {/* {readingNav} */}
         {videosNav}
         {pinyinNav}
-        {hskNav}
+        {/* {hskNav}
         {translationNav}
         {feedbackNav}
-        {themeButton}
+        {themeButton} */}
       </ul>
 
-      {isAuthenticated && authLinks}
+      {isAuthenticated && authas}
 
-      {!isAuthenticated && noAuthLinks}
+      {!isAuthenticated && noAuthas}
     </Fragment>
   );
 
   return (
     <nav className='navbar navbar-expand-lg navbar-dark bg-primary' id='topNavbar'>
-      <Link className='navbar-brand' href='/' onClick={collapseIt}>
+      <a className='navbar-brand' href='/' onClick={collapseIt}>
         <i className='fas fa-yin-yang'></i> Chinese+Club{" "}
         <span style={{ fontSize: "50%" }}>{appVersion}</span>
-      </Link>
+      </a>
       <button
         className='navbar-toggler'
         type='button'
@@ -550,20 +537,15 @@ const Navbar = ({
   );
 };
 
-const activeNavLink = {
-  color: "#18BC9C",
-};
+// const activeNavLink = {
+//   color: "#18BC9C",
+// };
 
 const imgStyle = {
   width: "3.5vh",
   borderRadius: "50%",
   border: "1px solid #18BC9C",
   marginLeft: "0.3rem",
-};
-
-Navbar.propTypes = {
-  logout: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
