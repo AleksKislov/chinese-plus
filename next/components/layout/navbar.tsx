@@ -1,12 +1,15 @@
 // import Link from "next/Link";
 import React, { Fragment, useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { logout } from "../../actions/auth";
 import { loadLengths } from "../../actions/hskTable";
 import { loadUserWordsLen } from "../../actions/userWords";
 import { getMentionsLen } from "../../actions/comments";
+
 import Tippy from "@tippyjs/react";
-import { useRouter } from "next/router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
 
 import constants from "../../constants/consts";
 const { users, appVersion } = constants;
@@ -125,9 +128,9 @@ const Navbar = ({
       <Tippy content={`${isDarkTheme ? "Светл" : "Темн"}ую тему`} placement='bottom'>
         <button className='btn' onClick={changeTheme}>
           {isDarkTheme ? (
-            <i className='fa-solid fa-sun text-warning'></i>
+            <FontAwesomeIcon icon={faSun} className='text-warning' />
           ) : (
-            <i className='fa-solid fa-moon text-info'></i>
+            <FontAwesomeIcon icon={faMoon} className='text-info' />
           )}
         </button>
       </Tippy>
@@ -249,13 +252,20 @@ const Navbar = ({
 
   const pinyinNav = (
     <li className='nav-item dropdown'>
-      <a className='nav-link dropdown-toggle' data-toggle='dropdown' href={paths.pinyin}>
+      <a
+        className='nav-link dropdown-toggle'
+        data-toggle='dropdown'
+        href={paths.pinyin}
+        style={router.pathname.includes(paths.pinyin) ? activeNav : {}}
+      >
         Пиньинь
       </a>
 
       <div className='dropdown-menu'>
         <a
           className={`dropdown-item${router.pathname == "/pinyin" ? " active" : ""}`}
+          href='/pinyin'
+          style={router.pathname == "/pinyin" ? activeNav : {}}
           onClick={() => {
             setPathsAndCollapse({ ...paths, pinyin: "/pinyin" });
           }}
@@ -264,9 +274,10 @@ const Navbar = ({
         </a>
 
         <a
-          className='dropdown-item'
+          className={`dropdown-item${router.pathname == "/pinyin-tests" ? " active" : ""}`}
           href='/pinyin-tests'
           onClick={() => setPathsAndCollapse({ ...paths, pinyin: "/pinyin-tests" })}
+          style={router.pathname == "/pinyin-tests" ? activeNav : {}}
         >
           Тесты
         </a>
@@ -280,41 +291,41 @@ const Navbar = ({
         className='nav-link dropdown-toggle'
         data-toggle='dropdown'
         href={paths.reading}
-        activeClassName='activeNavLink'
+        style={router.pathname.includes(paths.reading) ? activeNav : {}}
       >
         Читалка
       </a>
 
       <div className='dropdown-menu'>
         <a
-          className='dropdown-item'
+          className={`dropdown-item${router.pathname == "/texts" ? " active" : ""}`}
           href='/texts'
-          activeClassName='activeNavLink'
+          style={router.pathname == "/texts" ? activeNav : {}}
           onClick={() => setPathsAndCollapse({ ...paths, reading: "/texts" })}
         >
           Тексты
         </a>
         <a
-          className='dropdown-item'
+          className={`dropdown-item${router.pathname == "/books" ? " active" : ""}`}
           href='/books'
-          activeClassName='activeNavLink'
+          style={router.pathname == "/books" ? activeNav : {}}
           onClick={() => setPathsAndCollapse({ ...paths, reading: "/books" })}
         >
           Книги
         </a>
         <a
-          className='dropdown-item'
+          className={`dropdown-item${router.pathname == "/not_approved_texts" ? " active" : ""}`}
           href='/not_approved_texts'
-          activeClassName='activeNavLink'
+          style={router.pathname == "/not_approved_texts" ? activeNav : {}}
           onClick={() => setPathsAndCollapse({ ...paths, reading: "/not_approved_texts" })}
         >
           На проверке
         </a>
         <div className='dropdown-divider'></div>
         <a
-          className='dropdown-item'
+          className={`dropdown-item${router.pathname == "/statistics" ? " active" : ""}`}
           href='/statistics'
-          activeClassName='activeNavLink'
+          style={router.pathname == "/statistics" ? activeNav : {}}
           onClick={() => setPathsAndCollapse({ ...paths, reading: "/statistics" })}
         >
           Герои Клуба
@@ -497,13 +508,13 @@ const Navbar = ({
   const mainMenu = (
     <Fragment>
       <ul className='navbar-nav text-center mr-auto'>
-        {/* {readingNav} */}
+        {readingNav}
         {videosNav}
         {pinyinNav}
-        {/* {hskNav}
+        {hskNav}
         {translationNav}
         {feedbackNav}
-        {themeButton} */}
+        {themeButton}
       </ul>
 
       {isAuthenticated && authas}
@@ -537,9 +548,9 @@ const Navbar = ({
   );
 };
 
-// const activeNavLink = {
-//   color: "#18BC9C",
-// };
+const activeNav = {
+  color: "#18BC9C",
+};
 
 const imgStyle = {
   width: "3.5vh",

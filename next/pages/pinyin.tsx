@@ -5,7 +5,10 @@ import "tippy.js/dist/tippy.css"; // optional for styling
 import Layout from "../components/layout/layout";
 
 const myAudioURL = process.env.myAudioURL;
+
 function PinyinPage() {
+  console.log("nnenen", myAudioURL);
+
   useEffect(() => {
     loaded();
     // eslint-disable-next-line
