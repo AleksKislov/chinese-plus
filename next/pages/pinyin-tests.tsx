@@ -3,6 +3,9 @@ import Head from "next/head";
 import Layout from "../components/layout/layout";
 import consts from "../constants/consts";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSyncAlt, faPlay } from "@fortawesome/free-solid-svg-icons";
+
 const myAudioURL = process.env.myAudioURL;
 
 const PinyinTests = () => {
@@ -10,50 +13,11 @@ const PinyinTests = () => {
   const { pinyinArr } = consts;
 
   useEffect(() => {
-    init();
+    refresh();
     // eslint-disable-next-line
   }, []);
 
   let [answers, setAnswers] = useState([]);
-
-  function init() {
-    // display layout
-    const audioId = document.getElementById("audio");
-    audioId.innerHTML = "";
-    // answers = [];
-    setAnswers([]);
-
-    let column = document.createElement("div");
-    column.setAttribute("class", "col-sm-4");
-
-    let column2 = document.createElement("div");
-    column2.setAttribute("class", "col-sm-4");
-
-    let column3 = document.createElement("div");
-    column3.setAttribute("class", "col-sm-4");
-
-    let quantityOfquestions = 12;
-
-    function createCol(col) {
-      for (let index = 0; index < quantityOfquestions / 3; index++) {
-        let questionForm = document.createElement("div");
-        questionForm.setAttribute("class", "input-group");
-        questionForm.innerHTML =
-          '<button class="btn btn-secondary"><i class="fas fa-play"></i></button><input type="text" class="form-control" placeholder="Введите пиньинь">';
-        col.appendChild(questionForm);
-      }
-    }
-
-    createCol(column);
-    createCol(column2);
-    createCol(column3);
-
-    audioId.appendChild(column);
-    audioId.appendChild(column2);
-    audioId.appendChild(column3);
-
-    refresh();
-  }
 
   const audioButtons = document.getElementsByClassName("btn-secondary");
 
@@ -110,6 +74,38 @@ const PinyinTests = () => {
     }
   };
 
+  const answerButtons = (
+    <div className='pinyinButtons'>
+      <button
+        type='button'
+        className='btn btn-primary btn-sm'
+        id='audioCheck'
+        onClick={() => checkAnswers()}
+        style={buttonStyle}
+      >
+        Проверка
+      </button>
+      <button
+        type='button'
+        className='btn btn-primary btn-sm'
+        id='audioAnswers'
+        onClick={() => showAllAnswers()}
+        style={buttonStyle}
+      >
+        Показать Ответы
+      </button>
+      <button
+        type='button'
+        className='btn btn-primary btn-sm'
+        id='audioButton'
+        onClick={() => init()}
+        style={buttonStyle}
+      >
+        <FontAwesomeIcon icon={faSyncAlt} />
+      </button>
+    </div>
+  );
+
   return (
     <Fragment>
       <Head>
@@ -137,47 +133,27 @@ const PinyinTests = () => {
               Введите соответствующий пиньинь для аудио в виде [латынь][цифра], например,{" "}
               <span className='text-info'>huang2</span> или <span className='text-info'>lv4</span>
             </small>
+
             <div id='audio' className='questions row'>
-              <div className='col-sm-4'>
-                <div className='input-group'></div>
-              </div>
-              <div className='col-sm-4'>
-                <div className='input-group'></div>
-              </div>
-              <div className='col-sm-4'>
-                <div className='input-group'></div>
-              </div>
+              {Array.from({ length: 3 }).map((_, ind) => (
+                <div className='col-sm-4' key={ind}>
+                  {Array.from({ length: 4 }).map((_, ind) => (
+                    <div className='input-group' key={ind}>
+                      <button className='btn btn-secondary'>
+                        <FontAwesomeIcon icon={faPlay} />
+                      </button>
+                      <input
+                        type='text'
+                        className='form-control'
+                        placeholder='Введите пиньинь'
+                      ></input>
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
 
-            <div className='pinyinButtons'>
-              <button
-                type='button'
-                className='btn btn-primary btn-sm'
-                id='audioCheck'
-                onClick={() => checkAnswers()}
-                style={buttonStyle}
-              >
-                Проверка
-              </button>
-              <button
-                type='button'
-                className='btn btn-primary btn-sm'
-                id='audioAnswers'
-                onClick={() => showAllAnswers()}
-                style={buttonStyle}
-              >
-                Показать Ответы
-              </button>
-              <button
-                type='button'
-                className='btn btn-primary btn-sm'
-                id='audioButton'
-                onClick={() => init()}
-                style={buttonStyle}
-              >
-                <i className='fas fa-sync-alt'></i>
-              </button>
-            </div>
+            {answerButtons}
           </div>
         </div>
       </Layout>
