@@ -1,7 +1,7 @@
 import React, { useEffect, useState, Fragment } from "react";
 import Head from "next/head";
-import Layout from "../components/layout/layout";
-import consts from "../constants/consts";
+import Layout from "../../components/layout/layout";
+import consts from "../../constants/consts";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSyncAlt, faPlay } from "@fortawesome/free-solid-svg-icons";

@@ -2,7 +2,7 @@ import { Fragment, useEffect } from "react";
 import Head from "next/head";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css"; // optional for styling
-import Layout from "../components/layout/layout";
+import Layout from "../../components/layout/layout";
 
 const myAudioURL = process.env.myAudioURL;
 
