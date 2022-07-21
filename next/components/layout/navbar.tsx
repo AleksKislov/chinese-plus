@@ -1,5 +1,6 @@
 // import Link from "next/Link";
 import React, { Fragment, useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { logout } from "../../actions/auth";
@@ -55,6 +56,16 @@ const Paths: {
     login: "login",
     register: "register",
   },
+
+  user: {
+    id: "user",
+    me: "me",
+    hsk_words: "hsk_words",
+    my_words: "my_words",
+    my_texts: "my_texts",
+    mentions: "mentions",
+    create_content: "create_content",
+  },
 };
 
 class PathService {
@@ -95,18 +106,6 @@ const Navbar = ({
 }) => {
   const router = useRouter();
 
-  const initialPaths = {
-    pinyin: "/pinyin",
-    hsk: "/hsk-table",
-    reading: "/texts",
-    login: "/register",
-    private: "/dashboard",
-    videos: "/videos",
-  };
-  Object.freeze(initialPaths);
-
-  const [paths, setPaths] = useState(initialPaths);
-  const privateas = ["/dashboard", "/hsk-words", "userwords"];
   const [totalWordsLen, setTotalWordsLen] = useState(0);
   const [mentions, setMentions] = useState(mentionsLen > 0);
   const [isDarkTheme, setIsDarkTheme] = useState(true);
@@ -130,20 +129,6 @@ const Navbar = ({
         setTotalWordsLen(userWordsLen + allWordsLen);
     }, 500);
   }, [isAuthenticated, allWordsLen, userWordsLen, mentionsLen]);
-
-  const navbarId = document.getElementById("navbarId");
-  const collapseIt = () => {
-    if (navbarId.classList.contains("show")) {
-      return navbarId.classList.remove("show");
-    }
-
-    navbarId.classList.add("show");
-  };
-
-  // for main menu and dropdown
-  const setPathsAndCollapse = (obj) => {
-    collapseIt();
-  };
 
   const themeButton = (
     <li className='nav-item'>
@@ -200,11 +185,11 @@ const Navbar = ({
   const authas = (
     <ul className='navbar-nav loginNavbar text-center'>
       <li className='nav-item dropdown'>
-        <a className='nav-link dropdown-toggle my-auto' data-toggle='dropdown' href={paths.private}>
+        <a className='nav-link dropdown-toggle my-auto' data-toggle='dropdown'>
           {user && (
             <div style={{ display: "inline", position: "relative" }}>
               <span className='badge badge-pill badge-warning'>{totalWordsLen}</span>{" "}
-              <img className='' src={`https:${user.avatar}`} style={imgStyle} alt='Avatar' />
+              <Image src={`https:${user.avatar}`} style={imgStyle} alt='Avatar' />
               {mentions && <div className='mentionsCircle'></div>}
             </div>
           )}
@@ -229,7 +214,7 @@ const Navbar = ({
           </a>
 
           {user && (
-            <a className='dropdown-item' href={"/user/" + user._id} onClick={collapseIt}>
+            <a className='dropdown-item' href={"/user/" + user._id}>
               Мои тексты
             </a>
           )}
@@ -242,7 +227,7 @@ const Navbar = ({
             Поделиться контентом
           </a>
 
-          <a onClick={logout} className='dropdown-item' href='/#'>
+          <a onClick={logout} className='dropdown-item'>
             Выйти <FontAwesomeIcon icon={faSignOutAlt} />
           </a>
         </div>
@@ -309,12 +294,7 @@ const Navbar = ({
 
   const readingNav = (
     <li className='nav-item dropdown'>
-      <a
-        className='nav-link dropdown-toggle'
-        data-toggle='dropdown'
-        href={paths.reading}
-        style={router.pathname.includes(paths.reading) ? activeNav : {}}
-      >
+      <a className='nav-link dropdown-toggle' data-toggle='dropdown'>
         Читалка
       </a>
 
@@ -354,7 +334,7 @@ const Navbar = ({
 
   const videosNav = (
     <li className='nav-item dropdown'>
-      <a className='nav-link dropdown-toggle' data-toggle='dropdown' href={paths.videos}>
+      <a className='nav-link dropdown-toggle' data-toggle='dropdown'>
         Видео
       </a>
 
@@ -371,7 +351,7 @@ const Navbar = ({
 
   const hskNav = (
     <li className='nav-item dropdown'>
-      <a className='nav-link dropdown-toggle' data-toggle='dropdown' href={paths.hsk}>
+      <a className='nav-link dropdown-toggle' data-toggle='dropdown'>
         HSK
       </a>
 
@@ -413,7 +393,7 @@ const Navbar = ({
       </a>
 
       <div className='dropdown-menu'>
-        <a onClick={collapseIt} className='dropdown-item' href='/posts'>
+        <a className='dropdown-item' href='/posts'>
           Гостевая
         </a>
         <a className='dropdown-item' href='/donate'>
@@ -430,10 +410,10 @@ const Navbar = ({
       </a>
 
       <div className='dropdown-menu'>
-        <a onClick={collapseIt} className='dropdown-item' href='/search'>
+        <a className='dropdown-item' href='/search'>
           Словарь
         </a>
-        <a onClick={collapseIt} className='dropdown-item' href='/translate'>
+        <a className='dropdown-item' href='/translate'>
           Pop-up перевод
         </a>
       </div>
@@ -460,7 +440,7 @@ const Navbar = ({
 
   return (
     <nav className='navbar navbar-expand-lg navbar-dark bg-primary' id='topNavbar'>
-      <a className='navbar-brand' href='/' onClick={collapseIt}>
+      <a className='navbar-brand' href='/'>
         <FontAwesomeIcon icon={faYinYang} /> Chinese+Club{" "}
         <span style={{ fontSize: "50%" }}>{appVersion}</span>
       </a>
