@@ -1,13 +1,13 @@
-import { useState, Fragment, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
 import { connect } from "react-redux";
-import { login } from "../actions/auth";
-import GoogleButton from "../components/auth/google-button";
+import { login } from "../../actions/auth";
+import GoogleButton from "../../components/auth/google-button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import Layout from "../components/layout/layout";
+import Layout from "../../components/layout/layout";
 
 const Login = ({ login, isAuthenticated }) => {
   const router = useRouter();
@@ -25,10 +25,10 @@ const Login = ({ login, isAuthenticated }) => {
     login(email, password);
   };
 
-  if (isAuthenticated) router.push("/pinyin");
+  if (isAuthenticated) router.push("/me");
 
   return (
-    <Fragment>
+    <>
       <Head>
         <meta charSet='utf-8' />
         <title>Войти в Chinese+ Клуб</title>
@@ -40,7 +40,7 @@ const Login = ({ login, isAuthenticated }) => {
             {isAuthenticated ? (
               <p>Загрузка...</p>
             ) : (
-              <Fragment>
+              <>
                 <h1 className='large'>Войти</h1>
                 <p className='lead'>
                   <FontAwesomeIcon icon={faUser} /> Залогиньтесь в свой аккаунт
@@ -77,13 +77,13 @@ const Login = ({ login, isAuthenticated }) => {
                 <p className='my-1'>
                   Еще нет аккаунта? Самое время <Link href='/register'>зарегистрироваться</Link> :)
                 </p>
-              </Fragment>
+              </>
             )}
           </div>
           <div className='col-md-3'></div>
         </div>
       </Layout>
-    </Fragment>
+    </>
   );
 };
 

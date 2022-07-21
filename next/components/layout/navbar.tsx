@@ -9,7 +9,15 @@ import { getMentionsLen } from "../../actions/comments";
 
 import Tippy from "@tippyjs/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSun,
+  faMoon,
+  faYinYang,
+  faDoorOpen,
+  faSignOutAlt,
+  faComment,
+  faDonate,
+} from "@fortawesome/free-solid-svg-icons";
 
 import constants from "../../constants/consts";
 const { users, appVersion } = constants;
@@ -22,6 +30,57 @@ const changeTheme = () => {
   }
   window.location.reload();
 };
+
+const Paths: {
+  [key: string]: {
+    [key: string]: string;
+  };
+} = {
+  start: {
+    id: "start",
+    pinyin: "pinyin",
+    pinyin_tests: "pinyin_tests",
+    radicals: "radicals",
+  },
+
+  reading: {
+    texts: "texts",
+    books: "books",
+    not_approved_texts: "not_approved_texts",
+    our_heroes: "our_heroes",
+  },
+
+  auth: {
+    id: "auth",
+    login: "login",
+    register: "register",
+  },
+};
+
+class PathService {
+  static activeStyle = { color: "#18BC9C" };
+
+  static getMainStyle(path: string, folder: string) {
+    return path.includes(`/${Paths[folder].id}`) ? this.activeStyle : {};
+  }
+
+  static getStyle(path: string, folder: string, name?: string) {
+    if (name) {
+      return path === `/${Paths[folder].id}/${Paths[folder][name]}` ? this.activeStyle : {};
+    }
+    return path === `/${Paths[folder].id}` ? this.activeStyle : {};
+  }
+
+  static getClass(path: string, folder: string, name?: string) {
+    if (name) return path === `/${Paths[folder].id}/${Paths[folder][name]}` ? " active" : "";
+    return path === `/${Paths[folder].id}` ? " active" : "";
+  }
+
+  static getLink(folder: string, name?: string) {
+    if (name) return `/${Paths[folder].id}/${Paths[folder][name]}`;
+    return `/${Paths[folder].id}`;
+  }
+}
 
 const Navbar = ({
   logout,
@@ -53,42 +112,6 @@ const Navbar = ({
   const [isDarkTheme, setIsDarkTheme] = useState(true);
 
   useEffect(() => {
-    const url = window.location.pathname;
-    if (url.includes("/books") || url.includes("/texts")) {
-      setPaths({
-        ...initialPaths,
-        reading: url,
-      });
-    } else if (url.includes("/videos")) {
-      setPaths({
-        ...initialPaths,
-        videos: url,
-      });
-    } else if (url.includes("/pinyin")) {
-      setPaths({
-        ...initialPaths,
-        pinyin: url,
-      });
-    } else if (url.includes("/hsk")) {
-      setPaths({
-        ...initialPaths,
-        hsk: url,
-      });
-    } else if (url === "/register" || url === "/login") {
-      setPaths({
-        ...initialPaths,
-        login: url,
-      });
-    } else if (privateas.includes(url)) {
-      setPaths({
-        ...initialPaths,
-        private: url,
-      });
-    }
-    // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
     if (+localStorage.isDarkTheme) {
       return setIsDarkTheme(true);
     }
@@ -111,16 +134,15 @@ const Navbar = ({
   const navbarId = document.getElementById("navbarId");
   const collapseIt = () => {
     if (navbarId.classList.contains("show")) {
-      navbarId.classList.remove("show");
-    } else {
-      navbarId.classList.add("show");
+      return navbarId.classList.remove("show");
     }
+
+    navbarId.classList.add("show");
   };
 
   // for main menu and dropdown
   const setPathsAndCollapse = (obj) => {
     collapseIt();
-    setPaths(obj);
   };
 
   const themeButton = (
@@ -143,27 +165,30 @@ const Navbar = ({
         <a
           className='nav-link dropdown-toggle'
           data-toggle='dropdown'
-          href={paths.login}
-          activeClassName='activeNavLink'
+          style={PathService.getMainStyle(router.pathname, Paths.auth.id)}
         >
-          <i className='fas fa-door-open'></i> Вход
+          <FontAwesomeIcon icon={faDoorOpen} /> Вход
         </a>
         <div className='dropdown-menu dropdown-menu-right'>
           <a
-            className='dropdown-item'
-            href='/register'
-            activeClassName='activeNavLink'
-            onClick={() => setPathsAndCollapse({ ...paths, login: "/register" })}
-            exact={true}
+            className={`dropdown-item${PathService.getClass(
+              router.pathname,
+              Paths.auth.id,
+              Paths.auth.register
+            )}`}
+            style={PathService.getStyle(router.pathname, Paths.auth.id, Paths.auth.register)}
+            href={PathService.getLink(Paths.auth.id, Paths.auth.register)}
           >
             Регистрация
           </a>
           <a
-            className='dropdown-item'
-            href='/login'
-            activeClassName='activeNavLink'
-            onClick={() => setPathsAndCollapse({ ...paths, login: "/login" })}
-            exact={true}
+            className={`dropdown-item${PathService.getClass(
+              router.pathname,
+              Paths.auth.id,
+              Paths.auth.login
+            )}`}
+            style={PathService.getStyle(router.pathname, Paths.auth.id, Paths.auth.login)}
+            href={PathService.getLink(Paths.auth.id, Paths.auth.login)}
           >
             Войти
           </a>
@@ -175,12 +200,7 @@ const Navbar = ({
   const authas = (
     <ul className='navbar-nav loginNavbar text-center'>
       <li className='nav-item dropdown'>
-        <a
-          className='nav-link dropdown-toggle my-auto'
-          data-toggle='dropdown'
-          href={paths.private}
-          activeClassName='activeNavLink'
-        >
+        <a className='nav-link dropdown-toggle my-auto' data-toggle='dropdown' href={paths.private}>
           {user && (
             <div style={{ display: "inline", position: "relative" }}>
               <span className='badge badge-pill badge-warning'>{totalWordsLen}</span>{" "}
@@ -190,33 +210,18 @@ const Navbar = ({
           )}
         </a>
         <div className='dropdown-menu dropdown-menu-right'>
-          <a
-            className='dropdown-item'
-            href='/dashboard'
-            activeClassName='activeNavLink'
-            onClick={() => setPathsAndCollapse({ ...paths, private: "/dashboard" })}
-          >
+          <a className='dropdown-item' href='/dashboard'>
             ЛК
           </a>
 
-          <a
-            className='dropdown-item'
-            href='/hsk-words'
-            activeClassName='activeNavLink'
-            onClick={() => setPathsAndCollapse({ ...paths, private: "/hsk-words" })}
-          >
+          <a className='dropdown-item' href='/hsk-words'>
             Мой HSK{" "}
             <span className='badge badge-pill badge-warning'>
               {allWordsLen} / {users.vocabSize}
             </span>
           </a>
 
-          <a
-            className='dropdown-item'
-            href='/userwords'
-            activeClassName='activeNavLink'
-            onClick={() => setPathsAndCollapse({ ...paths, private: "/userwords" })}
-          >
+          <a className='dropdown-item' href='/userwords'>
             Мои Слова{" "}
             <span className='badge badge-pill badge-warning'>
               {userWordsLen} / {users.vocabSize}
@@ -224,26 +229,21 @@ const Navbar = ({
           </a>
 
           {user && (
-            <a
-              className='dropdown-item'
-              href={"/user/" + user._id}
-              activeClassName='activeNavLink'
-              onClick={collapseIt}
-            >
+            <a className='dropdown-item' href={"/user/" + user._id} onClick={collapseIt}>
               Мои тексты
             </a>
           )}
 
-          <a className='dropdown-item' href='/mentions' exact={true}>
+          <a className='dropdown-item' href='/mentions'>
             Упоминания и ответы {mentions && <div className='mentionsCirclea'></div>}
           </a>
 
-          <a className='dropdown-item font-weight-bold' href='/create-content' exact={true}>
+          <a className='dropdown-item font-weight-bold' href='/create-content'>
             Поделиться контентом
           </a>
 
-          <a onClick={logout} className='dropdown-item' href='/#' exact={true}>
-            Выйти <i className='fas fa-sign-out-alt'></i>
+          <a onClick={logout} className='dropdown-item' href='/#'>
+            Выйти <FontAwesomeIcon icon={faSignOutAlt} />
           </a>
         </div>
       </li>
@@ -255,31 +255,53 @@ const Navbar = ({
       <a
         className='nav-link dropdown-toggle'
         data-toggle='dropdown'
-        href={paths.pinyin}
-        style={router.pathname.includes(paths.pinyin) ? activeNav : {}}
+        style={PathService.getMainStyle(router.pathname, Paths.start.id)}
       >
-        Пиньинь
+        Начинающим
       </a>
 
       <div className='dropdown-menu'>
         <a
-          className={`dropdown-item${router.pathname == "/pinyin" ? " active" : ""}`}
-          href='/pinyin'
-          style={router.pathname == "/pinyin" ? activeNav : {}}
-          onClick={() => {
-            setPathsAndCollapse({ ...paths, pinyin: "/pinyin" });
-          }}
+          className={`dropdown-item${PathService.getClass(router.pathname, Paths.start.id)}`}
+          style={PathService.getStyle(router.pathname, Paths.start.id)}
+          href={PathService.getLink(Paths.start.id)}
         >
-          Таблица
+          С чего начать
+        </a>
+        <a
+          className={`dropdown-item${PathService.getClass(
+            router.pathname,
+            Paths.start.id,
+            Paths.start.pinyin
+          )}`}
+          href={PathService.getLink(Paths.start.id, Paths.start.pinyin)}
+          style={PathService.getStyle(router.pathname, Paths.start.id, Paths.start.pinyin)}
+        >
+          Таблица Пиньиня
         </a>
 
         <a
-          className={`dropdown-item${router.pathname == "/pinyin-tests" ? " active" : ""}`}
-          href='/pinyin-tests'
-          onClick={() => setPathsAndCollapse({ ...paths, pinyin: "/pinyin-tests" })}
-          style={router.pathname == "/pinyin-tests" ? activeNav : {}}
+          className={`dropdown-item${PathService.getClass(
+            router.pathname,
+            Paths.start.id,
+            Paths.start.pinyin_tests
+          )}`}
+          href={PathService.getLink(Paths.start.id, Paths.start.pinyin_tests)}
+          style={PathService.getStyle(router.pathname, Paths.start.id, Paths.start.pinyin_tests)}
         >
-          Тесты
+          Тесты на пиньинь
+        </a>
+
+        <a
+          className={`dropdown-item${PathService.getClass(
+            router.pathname,
+            Paths.start.id,
+            Paths.start.radicals
+          )}`}
+          href={PathService.getLink(Paths.start.id, Paths.start.radicals)}
+          style={PathService.getStyle(router.pathname, Paths.start.id, Paths.start.radicals)}
+        >
+          Ключи иероглифов
         </a>
       </div>
     </li>
@@ -301,7 +323,6 @@ const Navbar = ({
           className={`dropdown-item${router.pathname == "/texts" ? " active" : ""}`}
           href='/texts'
           style={router.pathname == "/texts" ? activeNav : {}}
-          onClick={() => setPathsAndCollapse({ ...paths, reading: "/texts" })}
         >
           Тексты
         </a>
@@ -309,7 +330,6 @@ const Navbar = ({
           className={`dropdown-item${router.pathname == "/books" ? " active" : ""}`}
           href='/books'
           style={router.pathname == "/books" ? activeNav : {}}
-          onClick={() => setPathsAndCollapse({ ...paths, reading: "/books" })}
         >
           Книги
         </a>
@@ -317,7 +337,6 @@ const Navbar = ({
           className={`dropdown-item${router.pathname == "/not_approved_texts" ? " active" : ""}`}
           href='/not_approved_texts'
           style={router.pathname == "/not_approved_texts" ? activeNav : {}}
-          onClick={() => setPathsAndCollapse({ ...paths, reading: "/not_approved_texts" })}
         >
           На проверке
         </a>
@@ -326,7 +345,6 @@ const Navbar = ({
           className={`dropdown-item${router.pathname == "/statistics" ? " active" : ""}`}
           href='/statistics'
           style={router.pathname == "/statistics" ? activeNav : {}}
-          onClick={() => setPathsAndCollapse({ ...paths, reading: "/statistics" })}
         >
           Герои Клуба
         </a>
@@ -341,18 +359,10 @@ const Navbar = ({
       </a>
 
       <div className='dropdown-menu'>
-        <a
-          className='dropdown-item'
-          href='/videos'
-          onClick={() => setPathsAndCollapse({ ...paths, videos: "/videos" })}
-        >
+        <a className='dropdown-item' href='/videos'>
           Видео
         </a>
-        <a
-          className='dropdown-item'
-          href='/not_approved_videos'
-          onClick={() => setPathsAndCollapse({ ...paths, videos: "/not_approved_videos" })}
-        >
+        <a className='dropdown-item' href='/not_approved_videos'>
           На проверке
         </a>
       </div>
@@ -361,12 +371,7 @@ const Navbar = ({
 
   const hskNav = (
     <li className='nav-item dropdown'>
-      <a
-        className='nav-link dropdown-toggle'
-        data-toggle='dropdown'
-        href={paths.hsk}
-        activeClassName='activeNavLink'
-      >
+      <a className='nav-link dropdown-toggle' data-toggle='dropdown' href={paths.hsk}>
         HSK
       </a>
 
@@ -374,28 +379,13 @@ const Navbar = ({
         <em>
           <small className='nav-link disabled text-info pl-4'>HSK 2.0</small>
         </em>
-        <a
-          className='dropdown-item'
-          href='/hsk-table'
-          activeClassName='activeNavLink'
-          onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-table" })}
-        >
+        <a className='dropdown-item' href='/hsk-table'>
           Все слова
         </a>
-        <a
-          className='dropdown-item'
-          href='/hsk-tests'
-          activeClassName='activeNavLink'
-          onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-tests" })}
-        >
+        <a className='dropdown-item' href='/hsk-tests'>
           Тесты
         </a>
-        <a
-          className='dropdown-item'
-          href='/hsk-search'
-          activeClassName='activeNavLink'
-          onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-search" })}
-        >
+        <a className='dropdown-item' href='/hsk-search'>
           Поиск
         </a>
 
@@ -403,28 +393,13 @@ const Navbar = ({
         <em>
           <small className='nav-link disabled pl-4 text-info'>HSK 3.0</small>
         </em>
-        <a
-          className='dropdown-item'
-          href='/hsk-new-table'
-          activeClassName='activeNavLink'
-          onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-new-table" })}
-        >
+        <a className='dropdown-item' href='/hsk-new-table'>
           Все слова
         </a>
-        <a
-          className='dropdown-item'
-          href='/hsk-new-tests'
-          activeClassName='activeNavLink'
-          onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-new-tests" })}
-        >
+        <a className='dropdown-item' href='/hsk-new-tests'>
           Тесты
         </a>
-        <a
-          className='dropdown-item'
-          href='/hsk-new-search'
-          activeClassName='activeNavLink'
-          onClick={() => setPathsAndCollapse({ ...paths, hsk: "/hsk-new-search" })}
-        >
+        <a className='dropdown-item' href='/hsk-new-search'>
           Поиск
         </a>
       </div>
@@ -433,72 +408,32 @@ const Navbar = ({
 
   const feedbackNav = (
     <li className='nav-item dropdown'>
-      <a
-        className='nav-link dropdown-toggle'
-        data-toggle='dropdown'
-        href='/donate'
-        activeClassName='activeNavLink'
-      >
-        <i className='far fa-comment-alt'></i> Фидбэк
+      <a className='nav-link dropdown-toggle' data-toggle='dropdown' href='/donate'>
+        <FontAwesomeIcon icon={faComment} /> Фидбэк
       </a>
 
       <div className='dropdown-menu'>
-        <a
-          onClick={collapseIt}
-          className='dropdown-item'
-          href='/posts'
-          activeClassName='activeNavLink'
-        >
+        <a onClick={collapseIt} className='dropdown-item' href='/posts'>
           Гостевая
         </a>
-        <a
-          className='dropdown-item'
-          href='/donate'
-          activeClassName='activeNavLink'
-          onClick={() => setPathsAndCollapse({ ...paths, donate: "/donate" })}
-        >
-          🙏🏻 Донат
+        <a className='dropdown-item' href='/donate'>
+          <FontAwesomeIcon icon={faDonate} /> Донат
         </a>
-        {
-          // <a
-          //   className='dropdown-item'
-          //   href='/kanban'
-          //   activeClassName ='activeNavLink'
-          //   onClick={() => setPathsAndCollapse({ ...paths, donate: "/kanban" })}
-          // >
-          //   Канбан
-          // </a>
-        }
       </div>
     </li>
   );
 
   const translationNav = (
     <li className='nav-item dropdown'>
-      <a
-        className='nav-link dropdown-toggle'
-        data-toggle='dropdown'
-        href='/search'
-        activeClassName='activeNavLink'
-      >
+      <a className='nav-link dropdown-toggle' data-toggle='dropdown' href='/search'>
         Словарь
       </a>
 
       <div className='dropdown-menu'>
-        <a
-          onClick={collapseIt}
-          className='dropdown-item'
-          href='/search'
-          activeClassName='activeNavLink'
-        >
+        <a onClick={collapseIt} className='dropdown-item' href='/search'>
           Словарь
         </a>
-        <a
-          onClick={collapseIt}
-          className='dropdown-item'
-          href='/translate'
-          activeClassName='activeNavLink'
-        >
+        <a onClick={collapseIt} className='dropdown-item' href='/translate'>
           Pop-up перевод
         </a>
       </div>
@@ -508,9 +443,9 @@ const Navbar = ({
   const mainMenu = (
     <Fragment>
       <ul className='navbar-nav text-center mr-auto'>
+        {pinyinNav}
         {readingNav}
         {videosNav}
-        {pinyinNav}
         {hskNav}
         {translationNav}
         {feedbackNav}
@@ -526,7 +461,7 @@ const Navbar = ({
   return (
     <nav className='navbar navbar-expand-lg navbar-dark bg-primary' id='topNavbar'>
       <a className='navbar-brand' href='/' onClick={collapseIt}>
-        <i className='fas fa-yin-yang'></i> Chinese+Club{" "}
+        <FontAwesomeIcon icon={faYinYang} /> Chinese+Club{" "}
         <span style={{ fontSize: "50%" }}>{appVersion}</span>
       </a>
       <button
@@ -546,10 +481,6 @@ const Navbar = ({
       </div>
     </nav>
   );
-};
-
-const activeNav = {
-  color: "#18BC9C",
 };
 
 const imgStyle = {

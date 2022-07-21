@@ -1,16 +1,18 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
-import { NextResponse } from "next/server";
 import { connect } from "react-redux";
-import { setAlert } from "../actions/alert";
-import { register } from "../actions/auth";
-import GoogleButton from "../components/auth/google-button";
+import { setAlert } from "../../actions/alert";
+import { register } from "../../actions/auth";
+import GoogleButton from "../../components/auth/google-button";
 import Head from "next/head";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import Layout from "../components/layout/layout";
+import Layout from "../../components/layout/layout";
 
 const Register = ({ setAlert, register, isAuthenticated }) => {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -31,12 +33,10 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
     }
   };
 
-  if (isAuthenticated) {
-    return NextResponse.redirect("/dashboard");
-  }
+  if (isAuthenticated) router.push("/me");
 
   return (
-    <Fragment>
+    <>
       <Head>
         <meta charSet='utf-8' />
         <title>Войти в Chinese+ Клуб</title>
@@ -108,7 +108,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
           <div className='col-md-3'></div>
         </div>
       </Layout>
-    </Fragment>
+    </>
   );
 };
 
