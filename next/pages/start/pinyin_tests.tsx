@@ -1,6 +1,5 @@
-import React, { useEffect, useState, Fragment } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
-import Layout from "../../components/layout/layout";
 import consts from "../../constants/consts";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,7 +8,6 @@ import { faSyncAlt, faPlay } from "@fortawesome/free-solid-svg-icons";
 const myAudioURL = process.env.myAudioURL;
 
 const PinyinTests = () => {
-  console.log("nnenen", myAudioURL);
   const { pinyinArr } = consts;
 
   useEffect(() => {
@@ -107,12 +105,12 @@ const PinyinTests = () => {
   );
 
   return (
-    <Fragment>
+    <>
       <Head>
         <meta charSet='utf-8' />
         <title>Тесты на пиньинь | Chinese+</title>
       </Head>
-      <Layout>
+      <>
         <div className='row'>
           <div className='col-sm-3'>
             <div className='card border-primary mb-3'>
@@ -156,8 +154,8 @@ const PinyinTests = () => {
             {answerButtons}
           </div>
         </div>
-      </Layout>
-    </Fragment>
+      </>
+    </>
   );
 };
 

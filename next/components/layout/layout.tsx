@@ -8,15 +8,11 @@ const Layout = ({ children }) => {
 
   return (
     <>
-      <Head>
-        <title>With Cookies</title>
-      </Head>
-
       <Navbar />
 
       <main>
         <section
-          className={router.pathname === "/pinyin" ? "container-fluid" : "container"}
+          className={router.pathname === "/start/pinyin" ? "container-fluid" : "container"}
           id='mainSection'
         >
           {children}

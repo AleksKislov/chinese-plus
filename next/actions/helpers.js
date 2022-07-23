@@ -1,5 +1,7 @@
 import axios from "axios";
 import { symbolsToIgnore } from "../constants/consts";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * @param {string} text
@@ -208,30 +210,17 @@ export const checkBaseUrl = (href) =>
  * @param {number} lvl -
  */
 export const levelStars = (lvl) => {
-  if (lvl === 3)
-    return (
-      <span className='text-stars'>
-        <i className='fas fa-star text-warning'></i>
-        <i className='fas fa-star text-warning'></i>
-        <i className='fas fa-star text-warning'></i>
-      </span>
-    );
-  if (lvl === 2)
-    return (
-      <span className='text-stars'>
-        <i className='fas fa-star text-warning'></i>
-        <i className='fas fa-star text-warning'></i>
-        <i className='fas fa-star text-muted'></i>
-      </span>
-    );
-  if (lvl === 1)
-    return (
-      <span className='text-stars'>
-        <i className='fas fa-star text-warning'></i>
-        <i className='fas fa-star text-muted'></i>
-        <i className='fas fa-star text-muted'></i>
-      </span>
-    );
+  const emptyStars = lvl - 3;
+  return (
+    <span className='text-stars'>
+      {Array.from({ length: lvl }).map((_x, ind) => (
+        <FontAwesomeIcon icon={faStar} className='text-warning' key={ind} />
+      ))}
+      {Array.from({ length: emptyStars }).map((_x, ind) => (
+        <FontAwesomeIcon icon={faStar} className='text-muted' key={ind} />
+      ))}
+    </span>
+  );
 };
 
 /**

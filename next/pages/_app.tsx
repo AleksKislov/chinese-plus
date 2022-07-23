@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import MyStorage from "../store";
 const { store, persistor } = MyStorage();
 import { setAuthToken, setGoogleAuth } from "../utils/setAuthToken";
+import Layout from "../components/layout/layout";
 
 import "../styles/common.css";
 import "../styles/theme/App.css";
@@ -35,7 +36,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <PersistGate loading={null} persistor={persistor}>
         {/* <ThemeProvider theme={isDark ? darkTheme : lightTheme}> */}
         {/* <GlobalStyles /> */}
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
         {/* </ThemeProvider> */}
       </PersistGate>
     </Provider>

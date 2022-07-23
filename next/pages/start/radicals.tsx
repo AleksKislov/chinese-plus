@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Layout from "../../components/layout/layout";
 
 const Radicals = () => {
   return (
@@ -8,7 +7,7 @@ const Radicals = () => {
         <meta charSet='utf-8' />
         <title>Ключи китайских иероглифов | Chinese+</title>
       </Head>
-      <Layout>
+      <>
         <div>
           <h1>Ключи китайских иероглифов</h1>
           <div>
@@ -2147,7 +2146,7 @@ const Radicals = () => {
             </tbody>
           </table>
         </div>
-      </Layout>
+      </>
     </>
   );
 };

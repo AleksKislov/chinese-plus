@@ -1,4 +1,3 @@
-// import Link from "next/Link";
 import React, { Fragment, useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -182,31 +181,45 @@ const Navbar = ({
     </ul>
   );
 
+  const myLoader = ({ src }: { src: string }): string => src;
+
   const authas = (
     <ul className='navbar-nav loginNavbar text-center'>
       <li className='nav-item dropdown'>
         <a className='nav-link dropdown-toggle my-auto' data-toggle='dropdown'>
           {user && (
-            <div style={{ display: "inline", position: "relative" }}>
-              <span className='badge badge-pill badge-warning'>{totalWordsLen}</span>{" "}
-              <Image src={`https:${user.avatar}`} style={imgStyle} alt='Avatar' />
+            <div style={{ position: "relative", display: "inline" }}>
+              <span className='badge badge-pill badge-warning'>{totalWordsLen}</span>
+              <Image
+                loader={myLoader}
+                src={`https:${user.avatar}`}
+                alt='avatar'
+                height={"30%"}
+                width={"35%"}
+              />
               {mentions && <div className='mentionsCircle'></div>}
             </div>
           )}
         </a>
         <div className='dropdown-menu dropdown-menu-right'>
-          <a className='dropdown-item' href='/dashboard'>
+          <a className='dropdown-item' href={PathService.getLink(Paths.user.id, Paths.user.me)}>
             ЛК
           </a>
 
-          <a className='dropdown-item' href='/hsk-words'>
+          <a
+            className='dropdown-item'
+            href={PathService.getLink(Paths.user.id, Paths.user.hsk_words)}
+          >
             Мой HSK{" "}
             <span className='badge badge-pill badge-warning'>
               {allWordsLen} / {users.vocabSize}
             </span>
           </a>
 
-          <a className='dropdown-item' href='/userwords'>
+          <a
+            className='dropdown-item'
+            href={PathService.getLink(Paths.user.id, Paths.user.my_words)}
+          >
             Мои Слова{" "}
             <span className='badge badge-pill badge-warning'>
               {userWordsLen} / {users.vocabSize}
@@ -214,16 +227,22 @@ const Navbar = ({
           </a>
 
           {user && (
-            <a className='dropdown-item' href={"/user/" + user._id}>
+            <a className='dropdown-item' href={PathService.getLink(Paths.user.id) + `/${user._id}`}>
               Мои тексты
             </a>
           )}
 
-          <a className='dropdown-item' href='/mentions'>
+          <a
+            className='dropdown-item'
+            href={PathService.getLink(Paths.user.id, Paths.user.mentions)}
+          >
             Упоминания и ответы {mentions && <div className='mentionsCirclea'></div>}
           </a>
 
-          <a className='dropdown-item font-weight-bold' href='/create-content'>
+          <a
+            className='dropdown-item font-weight-bold'
+            href={PathService.getLink(Paths.user.id, Paths.user.create_content)}
+          >
             Поделиться контентом
           </a>
 
@@ -432,9 +451,7 @@ const Navbar = ({
         {themeButton}
       </ul>
 
-      {isAuthenticated && authas}
-
-      {!isAuthenticated && noAuthas}
+      {isAuthenticated ? authas : noAuthas}
     </Fragment>
   );
 
@@ -464,10 +481,8 @@ const Navbar = ({
 };
 
 const imgStyle = {
-  width: "3.5vh",
+  // width: "3.5vh",
   borderRadius: "50%",
-  border: "1px solid #18BC9C",
-  marginLeft: "0.3rem",
 };
 
 const mapStateToProps = (state) => ({

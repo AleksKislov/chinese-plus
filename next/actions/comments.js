@@ -145,7 +145,6 @@ export const deleteComment = (where, where_id, comment_id) => async (dispatch) =
 export const getLastComments = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/comments/last");
-
     dispatch({
       type: GET_10COMMENTS,
       payload: data,

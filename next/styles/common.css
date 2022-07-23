@@ -9646,3 +9646,10 @@ fieldset:disabled a.btn {
   color: var(--success);
   text-decoration: none;
 }
+
+.nav-avatar {
+  border-radius: 50%;
+  /* border: 1px solid #18bc9c; */
+  /* margin-left: 0.3rem; */
+  margin-top: 1.8rem;
+}
