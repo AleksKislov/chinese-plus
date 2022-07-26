@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -11,6 +10,8 @@ import Head from "next/head";
 import Analytics from "../../components/dashboard/Analytics";
 import Tippy from "@tippyjs/react";
 import { NullUser, User } from "../../patterns/User";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 import constants from "../../constants/consts";
 const { users } = constants;
@@ -44,7 +45,7 @@ const Dashboard = ({ clearText, auth: { user: userToCheck }, allWordsLen, userWo
           <div className='row'>
             <div className='col-2'>
               <Tippy content='Поменять аватар' placement='bottom'>
-                <Link href='/set_avatar'>
+                <a href='/user/set_avatar'>
                   <Image
                     loader={myLoader}
                     src={`https:${user.avatarPic}`}
@@ -52,12 +53,12 @@ const Dashboard = ({ clearText, auth: { user: userToCheck }, allWordsLen, userWo
                     alt='avatar'
                     style={imgStyle}
                   />
-                </Link>
+                </a>
               </Tippy>
             </div>
             <div className='col-10'>
               <p className=''>
-                <i className='fas fa-user'></i> Привет, {user.name}
+                <FontAwesomeIcon icon={faUser} /> Привет, {user.name}
               </p>
               <p className=''>Роль: {user.role}</p>
             </div>
@@ -85,12 +86,12 @@ const Dashboard = ({ clearText, auth: { user: userToCheck }, allWordsLen, userWo
                   {allWordsLen} / {users.vocabSize}
                 </span>
               </p>
-              <Link href='/hsk-table' className='card-link'>
+              <a href='/hsk/table' className='card-link'>
                 Весь HSK
-              </Link>
-              <Link href='/hsk-words' className='card-link'>
+              </a>
+              <a href='/user/hsk_words' className='card-link'>
                 Мой HSK
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -104,9 +105,9 @@ const Dashboard = ({ clearText, auth: { user: userToCheck }, allWordsLen, userWo
                   {userWordsLen} / {users.vocabSize}
                 </span>
               </p>
-              <Link href='/userwords' className='card-link'>
+              <a href='/userwords' className='card-link'>
                 Мои Слова
-              </Link>
+              </a>
             </div>
           </div>
         </div>

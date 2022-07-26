@@ -64,6 +64,7 @@ const Paths: {
     my_texts: "my_texts",
     mentions: "mentions",
     create_content: "create_content",
+    set_avatar: "set_avatar",
   },
 };
 
@@ -186,7 +187,11 @@ const Navbar = ({
   const authas = (
     <ul className='navbar-nav loginNavbar text-center'>
       <li className='nav-item dropdown'>
-        <a className='nav-link dropdown-toggle my-auto' data-toggle='dropdown'>
+        <a
+          className='nav-link dropdown-toggle my-auto'
+          data-toggle='dropdown'
+          style={PathService.getMainStyle(router.pathname, Paths.user.id)}
+        >
           {user && (
             <div style={{ position: "relative", display: "inline" }}>
               <span className='badge badge-pill badge-warning'>{totalWordsLen}</span>
@@ -202,13 +207,26 @@ const Navbar = ({
           )}
         </a>
         <div className='dropdown-menu dropdown-menu-right'>
-          <a className='dropdown-item' href={PathService.getLink(Paths.user.id, Paths.user.me)}>
+          <a
+            href={PathService.getLink(Paths.user.id, Paths.user.me)}
+            className={`dropdown-item${PathService.getClass(
+              router.pathname,
+              Paths.user.id,
+              Paths.user.me
+            )}`}
+            style={PathService.getStyle(router.pathname, Paths.user.id, Paths.user.me)}
+          >
             ЛК
           </a>
 
           <a
-            className='dropdown-item'
             href={PathService.getLink(Paths.user.id, Paths.user.hsk_words)}
+            className={`dropdown-item${PathService.getClass(
+              router.pathname,
+              Paths.user.id,
+              Paths.user.hsk_words
+            )}`}
+            style={PathService.getStyle(router.pathname, Paths.user.id, Paths.user.hsk_words)}
           >
             Мой HSK{" "}
             <span className='badge badge-pill badge-warning'>
@@ -217,7 +235,12 @@ const Navbar = ({
           </a>
 
           <a
-            className='dropdown-item'
+            className={`dropdown-item${PathService.getClass(
+              router.pathname,
+              Paths.user.id,
+              Paths.user.my_words
+            )}`}
+            style={PathService.getStyle(router.pathname, Paths.user.id, Paths.user.my_words)}
             href={PathService.getLink(Paths.user.id, Paths.user.my_words)}
           >
             Мои Слова{" "}
@@ -226,21 +249,37 @@ const Navbar = ({
             </span>
           </a>
 
-          {user && (
-            <a className='dropdown-item' href={PathService.getLink(Paths.user.id) + `/${user._id}`}>
-              Мои тексты
-            </a>
-          )}
+          <a
+            className={`dropdown-item${PathService.getClass(
+              router.pathname,
+              Paths.user.id,
+              Paths.user.my_texts
+            )}`}
+            style={PathService.getStyle(router.pathname, Paths.user.id, Paths.user.my_texts)}
+            href={PathService.getLink(Paths.user.id) + `/${user._id}`}
+          >
+            Мои тексты
+          </a>
 
           <a
-            className='dropdown-item'
+            className={`dropdown-item${PathService.getClass(
+              router.pathname,
+              Paths.user.id,
+              Paths.user.mentions
+            )}`}
+            style={PathService.getStyle(router.pathname, Paths.user.id, Paths.user.mentions)}
             href={PathService.getLink(Paths.user.id, Paths.user.mentions)}
           >
             Упоминания и ответы {mentions && <div className='mentionsCirclea'></div>}
           </a>
 
           <a
-            className='dropdown-item font-weight-bold'
+            className={`dropdown-item font-weight-bold${PathService.getClass(
+              router.pathname,
+              Paths.user.id,
+              Paths.user.create_content
+            )}`}
+            style={PathService.getStyle(router.pathname, Paths.user.id, Paths.user.create_content)}
             href={PathService.getLink(Paths.user.id, Paths.user.create_content)}
           >
             Поделиться контентом

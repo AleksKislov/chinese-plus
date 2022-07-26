@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import { fromNow } from "../../actions/helpers";
 import { getMentionsLen } from "../../actions/comments";
 import { connect } from "react-redux";
@@ -16,7 +15,7 @@ const Mentions = ({ getMentionsLen, clearText }) => {
     getMentions(isSeen);
   }, [isSeen]);
 
-  const getMentions = async seenIt => {
+  const getMentions = async (seenIt) => {
     try {
       const { data } = await axios.get("/api/comments/to_me/" + seenIt);
       setMentions(data);
@@ -28,8 +27,8 @@ const Mentions = ({ getMentionsLen, clearText }) => {
   const markArSeen = async () => {
     const config = {
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     };
 
     try {
@@ -73,9 +72,9 @@ const Mentions = ({ getMentionsLen, clearText }) => {
         )}
         <ul className='list-group'>
           {mentions &&
-            mentions.map(comment => (
-              <Link
-                to={`/${comment.destination}s/${comment.path || comment.post_id}`}
+            mentions.map((comment) => (
+              <a
+                href={`/${comment.destination}s/${comment.path || comment.post_id}`}
                 className='list-group-item list-group-item-action'
                 key={comment._id}
               >
@@ -84,7 +83,7 @@ const Mentions = ({ getMentionsLen, clearText }) => {
                   {fromNow(comment.date)}
                 </span>
                 <p dangerouslySetInnerHTML={{ __html: comment.text }} className='commentP'></p>
-              </Link>
+              </a>
             ))}
         </ul>
       </div>

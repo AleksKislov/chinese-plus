@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Chart } from "react-google-charts";
 import axios from "axios";

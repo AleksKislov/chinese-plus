@@ -4,6 +4,8 @@ import Tippy from "@tippyjs/react";
 import { setReadGoal } from "../../actions/auth";
 import { setAlert } from "../../actions/alert";
 import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faSyncAlt } from "@fortawesome/free-solid-svg-icons";
 
 const ReadingCard = ({ user, setReadGoal, setAlert }) => {
   const [change, setChange] = useState(false);
@@ -39,7 +41,7 @@ const ReadingCard = ({ user, setReadGoal, setAlert }) => {
         id='changeGoalButton'
         onClick={() => setChange(!change)}
       >
-        {change ? <i className='fas fa-edit'></i> : <i className='fas fa-sync-alt'></i>}
+        <FontAwesomeIcon icon={change ? faEdit : faSyncAlt} />
       </button>
     </Tippy>
   );
