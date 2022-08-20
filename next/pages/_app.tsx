@@ -7,9 +7,11 @@ const { store, persistor } = MyStorage();
 import { setAuthToken, setGoogleAuth } from "../utils/setAuthToken";
 import Layout from "../components/layout/layout";
 
-import "../styles/common.css";
-import "../styles/theme/App.css";
-import "../styles/myown.css";
+// import "../styles/common.css";
+// import "../styles/theme/App.css";
+// import "../styles/myown.css";
+import "bootstrap/dist/css/bootstrap.css";
+
 import { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme, GlobalStyles } from "../themeConfig";
 
@@ -18,6 +20,10 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS
 
 function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    import("bootstrap/dist/js/bootstrap");
+  }, []);
+
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {

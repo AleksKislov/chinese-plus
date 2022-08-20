@@ -69,7 +69,9 @@ const Paths: {
 };
 
 class PathService {
-  static activeStyle = { color: "#18BC9C" };
+  static activeStyle = {
+    // color: "#18BC9C"
+  };
 
   static getMainStyle(path: string, folder: string) {
     return path.includes(`/${Paths[folder].id}`) ? this.activeStyle : {};
@@ -249,17 +251,19 @@ const Navbar = ({
             </span>
           </a>
 
-          <a
-            className={`dropdown-item${PathService.getClass(
-              router.pathname,
-              Paths.user.id,
-              Paths.user.my_texts
-            )}`}
-            style={PathService.getStyle(router.pathname, Paths.user.id, Paths.user.my_texts)}
-            href={PathService.getLink(Paths.user.id) + `/${user._id}`}
-          >
-            Мои тексты
-          </a>
+          {user && (
+            <a
+              className={`dropdown-item${PathService.getClass(
+                router.pathname,
+                Paths.user.id,
+                Paths.user.my_texts
+              )}`}
+              style={PathService.getStyle(router.pathname, Paths.user.id, Paths.user.my_texts)}
+              href={PathService.getLink(Paths.user.id) + `/${user._id}`}
+            >
+              Мои тексты
+            </a>
+          )}
 
           <a
             className={`dropdown-item${PathService.getClass(
@@ -303,7 +307,7 @@ const Navbar = ({
         Начинающим
       </a>
 
-      <div className='dropdown-menu'>
+      <ul className='dropdown-menu'>
         <a
           className={`dropdown-item${PathService.getClass(router.pathname, Paths.start.id)}`}
           style={PathService.getStyle(router.pathname, Paths.start.id)}
@@ -346,7 +350,7 @@ const Navbar = ({
         >
           Ключи иероглифов
         </a>
-      </div>
+      </ul>
     </li>
   );
 
@@ -480,7 +484,7 @@ const Navbar = ({
 
   const mainMenu = (
     <Fragment>
-      <ul className='navbar-nav text-center mr-auto'>
+      <ul className='navbar-nav text-center me-auto'>
         {pinyinNav}
         {readingNav}
         {videosNav}
@@ -495,7 +499,7 @@ const Navbar = ({
   );
 
   return (
-    <nav className='navbar navbar-expand-lg navbar-dark bg-primary' id='topNavbar'>
+    <nav className='navbar navbar-expand-lg navbar-dark bg-dark' id='topNavbar'>
       <a className='navbar-brand' href='/'>
         <FontAwesomeIcon icon={faYinYang} /> Chinese+Club{" "}
         <span style={{ fontSize: "50%" }}>{appVersion}</span>

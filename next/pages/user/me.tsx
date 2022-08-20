@@ -44,23 +44,22 @@ const Dashboard = ({ clearText, auth: { user: userToCheck }, allWordsLen, userWo
           <h1 className=''>Личный Кабинет</h1>
           <div className='row'>
             <div className='col-2'>
-              <Tippy content='Поменять аватар' placement='bottom'>
-                <a href='/user/set_avatar'>
-                  <Image
-                    loader={myLoader}
-                    src={`https:${user.avatarPic}`}
-                    layout='fill'
-                    alt='avatar'
-                    style={imgStyle}
-                  />
-                </a>
-              </Tippy>
+              <Image
+                loader={myLoader}
+                src={user.avatarPic}
+                layout='fill'
+                alt='avatar'
+                style={imgStyle}
+              />
             </div>
             <div className='col-10'>
-              <p className=''>
+              <span>
                 <FontAwesomeIcon icon={faUser} /> Привет, {user.name}
-              </p>
-              <p className=''>Роль: {user.role}</p>
+              </span>
+              <p>Роль: {user.role}</p>
+              <a className='btn btn-outline-info btn-sm' type='button' href='/user/set_avatar'>
+                Сменить
+              </a>
             </div>
           </div>
         </div>

@@ -90,12 +90,15 @@ function PinyinPage() {
 
             <div className='alert alert-info alert-dismissible fade show' role='alert'>
               <strong>Кликайте</strong> на слоги, чтобы услышать озвучку носителем языка.
-              <button type='button' className='close' data-dismiss='alert' aria-label='Close'>
-                <span aria-hidden='true'>&times;</span>
-              </button>
+              <button
+                type='button'
+                className='btn-close'
+                data-bs-dismiss='alert'
+                aria-label='Close'
+              ></button>
             </div>
 
-            <table className='table table-bordered table-responsive' id='table-pinjin'>
+            <table className='table table-bordered table-responsive table-sm' id='table-pinjin'>
               <thead>
                 <tr id='tableHead'>
                   <th id='tableBlank'>&nbsp;</th>
