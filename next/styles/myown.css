@@ -74,35 +74,6 @@
   border: 0;
 }
 
-.highlighted {
-  color: #fff;
-  background-color: #75caeb;
-}
-
-.highlightedItem {
-  color: #fff;
-  background-color: #158cba;
-  font-weight: bolder;
-}
-
-.pinyinTippy {
-  list-style-type: none;
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 0;
-  padding-left: 0;
-}
-
-.pinyinTippy .btn {
-  text-transform: lowercase !important;
-  font-size: 1rem;
-  margin: 2px;
-}
-
-.pinjin-toggler {
-  cursor: pointer;
-}
-
 .tippyTooltips:hover {
   background-color: var(--info);
   color: #fff;
@@ -542,10 +513,6 @@ to violet when it is not checked*/
 .emotippy-box {
   max-width: 140px !important;
 }
-
-/* #topNavbar {
-    margin-bottom: 1rem;
-  } */
 
 #myFooter {
   /* margin-top:1rem; */

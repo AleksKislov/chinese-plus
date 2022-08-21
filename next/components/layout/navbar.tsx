@@ -499,7 +499,7 @@ const Navbar = ({
   );
 
   return (
-    <nav className='navbar navbar-expand-lg navbar-dark bg-dark' id='topNavbar'>
+    <nav className='navbar navbar-expand-lg navbar-dark bg-primary'>
       <a className='navbar-brand' href='/'>
         <FontAwesomeIcon icon={faYinYang} /> Chinese+Club{" "}
         <span style={{ fontSize: "50%" }}>{appVersion}</span>

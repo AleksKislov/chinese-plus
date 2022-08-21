@@ -1,0 +1,29 @@
+.highlighted {
+  color: #fff !important;
+  background-color: #75caeb !important;
+}
+
+.pinyinTippy {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
+.pinyinTippy .btn {
+  text-transform: lowercase !important;
+  font-size: 1rem;
+  margin: 2px;
+}
+
+.pinjin-toggler {
+  cursor: pointer;
+}
+
+#table-pinjin td,
+#table-pinjin th {
+  padding: 5px;
+  font-size: 12px;
+  text-align: center;
+}

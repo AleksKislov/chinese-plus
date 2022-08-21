@@ -7,10 +7,10 @@ const { store, persistor } = MyStorage();
 import { setAuthToken, setGoogleAuth } from "../utils/setAuthToken";
 import Layout from "../components/layout/layout";
 
-// import "../styles/common.css";
-// import "../styles/theme/App.css";
-// import "../styles/myown.css";
-import "bootstrap/dist/css/bootstrap.css";
+import "../styles/myown.css";
+import "../styles/pinyin/Pinyin-table.css";
+import "../styles/theme/App.css";
+// import "bootstrap/dist/css/bootstrap.css";
 
 import { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme, GlobalStyles } from "../themeConfig";

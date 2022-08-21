@@ -8,9 +8,8 @@ const Layout = ({ children }) => {
 
   return (
     <>
-      <Navbar />
-
       <main>
+        <Navbar />
         <section
           className={router.pathname === "/start/pinyin" ? "container-fluid" : "container"}
           id='mainSection'
