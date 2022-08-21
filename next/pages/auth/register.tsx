@@ -52,7 +52,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
           <p>или</p>
 
           <form className='form' onSubmit={(e) => onSubmit(e)}>
-            <div className='form-group'>
+            <div className='form-group mb-3'>
               <input
                 type='text'
                 placeholder='Имя / Ник'
@@ -62,7 +62,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                 onChange={(e) => onChange(e)}
               />
             </div>
-            <div className='form-group'>
+            <div className='form-group mb-3'>
               <input
                 type='email'
                 placeholder='Адрес Email'
@@ -76,25 +76,25 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                 (ну или google account)
               </small>
             </div>
-            <div className='form-group'>
+            <div className='form-group mb-3'>
               <input
                 type='password'
                 placeholder='Пароль'
                 name='password'
-                minLength='6'
+                minLength={6}
                 value={password}
                 onChange={(e) => onChange(e)}
                 className='form-control'
               />
             </div>
-            <div className='form-group'>
+            <div className='form-group mb-3'>
               <input
                 type='password'
                 placeholder='Повторите Пароль'
                 name='password2'
                 value={password2}
                 onChange={(e) => onChange(e)}
-                minLength='6'
+                minLength={6}
                 className='form-control'
               />
             </div>

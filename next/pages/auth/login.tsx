@@ -48,7 +48,7 @@ const Login = ({ login, isAuthenticated }) => {
               <GoogleButton />
               <p>или</p>
               <form className='form' onSubmit={(e) => onSubmit(e)}>
-                <div className='form-group'>
+                <div className='form-group mb-3'>
                   <input
                     type='email'
                     placeholder='Адрес Email'
@@ -59,7 +59,7 @@ const Login = ({ login, isAuthenticated }) => {
                     required
                   />
                 </div>
-                <div className='form-group'>
+                <div className='form-group mb-3'>
                   <input
                     type='password'
                     placeholder='Пароль'

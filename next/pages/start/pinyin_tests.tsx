@@ -5,7 +5,7 @@ import consts from "../../constants/consts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSyncAlt, faPlay } from "@fortawesome/free-solid-svg-icons";
 
-const myAudioURL = process.env.myAudioURL;
+const myAudioURL = process.env.NEXT_PUBLIC_myAudioURL;
 
 const PinyinTests = () => {
   const { pinyinArr } = consts;
@@ -19,6 +19,12 @@ const PinyinTests = () => {
 
   const audioButtons = document.getElementsByClassName("btn-secondary");
 
+  function playPinyin(ind) {
+    const audio = new Audio(`${myAudioURL}pinyin/${answers[ind]}.mp3`);
+    audio.play();
+  }
+  const answerInput = document.getElementsByClassName("form-control");
+
   function refresh() {
     let answersArr = [];
     for (let i = 0; i < audioButtons.length; i++) {
@@ -26,20 +32,16 @@ const PinyinTests = () => {
 
       answersArr.push(pinyinArr[randInd]);
       setAnswers(answersArr);
-      //add random audio to buttons
-      audioButtons[i].addEventListener("click", () => {
-        const audio = new Audio(`${myAudioURL}pinyin/${pinyinArr[randInd]}.mp3`);
-        audio.play();
-      });
 
       //refresh its color
       audioButtons[i].style.backgroundColor = "#f0f0f0";
       audioButtons[i].style.color = "#555";
       audioButtons[i].style.borderColor = "#ced4da";
+      answerInput[i].value = "";
+      answerInput[i].classList.remove("is-invalid");
+      answerInput[i].classList.remove("is-valid");
     }
   }
-
-  const answerInput = document.getElementsByClassName("form-control");
 
   function checkAnswers() {
     for (let i = 0; i < answerInput.length; i++) {
@@ -78,7 +80,7 @@ const PinyinTests = () => {
         type='button'
         className='btn btn-primary btn-sm'
         id='audioCheck'
-        onClick={() => checkAnswers()}
+        onClick={checkAnswers}
         style={buttonStyle}
       >
         Проверка
@@ -87,7 +89,7 @@ const PinyinTests = () => {
         type='button'
         className='btn btn-primary btn-sm'
         id='audioAnswers'
-        onClick={() => showAllAnswers()}
+        onClick={showAllAnswers}
         style={buttonStyle}
       >
         Показать Ответы
@@ -96,7 +98,7 @@ const PinyinTests = () => {
         type='button'
         className='btn btn-primary btn-sm'
         id='audioButton'
-        onClick={() => init()}
+        onClick={refresh}
         style={buttonStyle}
       >
         <FontAwesomeIcon icon={faSyncAlt} />
@@ -133,11 +135,16 @@ const PinyinTests = () => {
             </small>
 
             <div id='audio' className='questions row'>
-              {Array.from({ length: 3 }).map((_, ind) => (
-                <div className='col-sm-4' key={ind}>
+              {Array.from({ length: 3 }).map((_, outInd) => (
+                <div className='col-sm-4' key={outInd}>
                   {Array.from({ length: 4 }).map((_, ind) => (
                     <div className='input-group' key={ind}>
-                      <button className='btn btn-secondary'>
+                      <button
+                        className='btn btn-secondary'
+                        onClick={() => {
+                          playPinyin(outInd * 4 + ind);
+                        }}
+                      >
                         <FontAwesomeIcon icon={faPlay} />
                       </button>
                       <input
