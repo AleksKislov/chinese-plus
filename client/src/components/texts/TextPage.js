@@ -6,7 +6,7 @@ import { parseChineseWords } from "../../actions/helpers";
 import Spinner from "../layout/Spinner";
 import { v4 as uuid } from "uuid";
 import Paragraph from "./Paragraph";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import WordModal from "../translation/WordModal";
 import WordEditModal from "../translation/WordEditModal";
 import { loadUserWords } from "../../actions/userWords";
@@ -23,6 +23,7 @@ import LikeBtn from "../common/LikeBtn";
 import TextSource from "./common/TextSource";
 import Pagination from "./Pagination";
 import Audio from "./Audio";
+import axios from "axios";
 
 const TextPage = ({
   text,
@@ -90,7 +91,26 @@ const TextPage = ({
   const [chineseChunkedArr, setChineseChunkedArr] = useState([]);
   const [hideFlag, setHideFlag] = useState(false);
   const [isOkToEdit, setIsOkToEdit] = useState(false);
+  const [isRedirected, setIsRedirected] = useState(false);
   const onClick = () => setHideFlag(!hideFlag);
+
+  const deleteText = async () => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      await axios.delete(`/api/texts/delete/${match.params.id}`, config);
+      alert("Текст успешно удален!");
+      setIsRedirected(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  if (isRedirected) return <Redirect to='/not_approved_texts' />;
 
   return (
     <Fragment>
@@ -152,6 +172,12 @@ const TextPage = ({
                   <Link to={`/edit-text?${isLngTxt ? `${`page=${curPage}`}` : ""}`}>
                     <button className='btn btn-sm btn-outline-warning'>Edit</button>
                   </Link>
+                )}
+
+                {isAuthenticated && isOkToEdit && currentUser.role === "admin" && (
+                  <button onClick={deleteText} className='btn btn-sm btn-outline-danger mx-1'>
+                    Delete
+                  </button>
                 )}
               </div>
             </div>
