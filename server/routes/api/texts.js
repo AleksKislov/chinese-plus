@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const auth = require("../../middleware/auth");
+const adminAuth = require("../../middleware/admin-auth");
 const { check } = require("express-validator");
 
 const {
@@ -16,6 +17,7 @@ const {
   likeText,
   markAsRead,
   markAsNotRead,
+  deleteText,
 } = require("../../src/api/services/texts");
 
 /**
@@ -61,6 +63,13 @@ router.get("/", getAllApprovedTexts);
  * { num: 7, name: "Sergei Guer", userid: "600728cd4c87149d9552bba7" }]
  */
 router.get("/statistics", getTextsPerUserStats);
+
+/**
+ * @route     DELETE api/texts/:id
+ * @desc      Delete a Text
+ * @access    Private
+ */
+router.delete("/delete/:id", adminAuth, deleteText);
 
 /**
  * @route     DELETE api/texts/comment/:id/:comment_id

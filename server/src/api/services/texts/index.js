@@ -13,6 +13,7 @@ const { getTextsInChunks } = require("./get-texts-in-chunks");
 const { likeText } = require("./like-text");
 const { markAsRead } = require("./mark-as-read");
 const { markAsNotRead } = require("./mark-as-not-read");
+const { deleteText } = require("./delete-text");
 module.exports = {
   markAsNotRead: apiDecorator(markAsNotRead),
   markAsRead: apiDecorator(markAsRead),
@@ -27,4 +28,5 @@ module.exports = {
   deleteComment: apiDecorator(deleteComment),
   getById: apiDecorator(getById),
   getByUserId: apiDecorator(getByUserId),
+  deleteText: apiDecorator(deleteText),
 };
