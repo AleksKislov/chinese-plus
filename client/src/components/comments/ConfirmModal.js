@@ -12,7 +12,7 @@ const ConfirmModal = ({ editComment, deleteComment, commentToDelete, getComments
     if (commentToDelete) setText(commentToDelete.text);
   }, [commentToDelete]);
 
-  const addEmoToText = e => {
+  const addEmoToText = (e) => {
     const previousTxt = document.getElementById("changeComment").value;
     setText(`${previousTxt} ${e.target.innerHTML}`);
   };
@@ -46,7 +46,7 @@ const ConfirmModal = ({ editComment, deleteComment, commentToDelete, getComments
                 className='form-control'
                 value={text}
                 id='changeComment'
-                onChange={e => setText(e.target.value)}
+                onChange={(e) => setText(e.target.value)}
               ></textarea>
             </div>
             <div className=''>
@@ -63,7 +63,7 @@ const ConfirmModal = ({ editComment, deleteComment, commentToDelete, getComments
               data-dismiss='modal'
               className='btn btn-info btn-sm'
               disabled={text.length > commentLength}
-              onClick={e => {
+              onClick={(e) => {
                 getComments(commentToDelete.destination, commentToDelete.post_id);
 
                 editComment(text, commentToDelete._id);
@@ -76,7 +76,7 @@ const ConfirmModal = ({ editComment, deleteComment, commentToDelete, getComments
               type='button'
               data-dismiss='modal'
               className='btn btn-danger btn-sm'
-              onClick={e =>
+              onClick={(e) =>
                 deleteComment(
                   commentToDelete.destination,
                   commentToDelete.post_id,
@@ -93,8 +93,8 @@ const ConfirmModal = ({ editComment, deleteComment, commentToDelete, getComments
   );
 };
 
-const mapStateToProps = state => ({
-  commentToDelete: state.comments.commentToDelete
+const mapStateToProps = (state) => ({
+  commentToDelete: state.comments.commentToDelete,
 });
 
 export default connect(mapStateToProps, { deleteComment, editComment, getComments })(ConfirmModal);

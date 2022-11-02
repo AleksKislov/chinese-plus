@@ -37,6 +37,7 @@ const TextPage = ({
   currentUser,
   getComments,
   comments,
+  error404,
 }) => {
   useEffect(() => {
     setLoading();
@@ -85,6 +86,7 @@ const TextPage = ({
     }
   }, [text, isAuthenticated]);
 
+  const [wantToDelete, setWantToDelete] = useState(false);
   const [isLngTxt, setIsLngTxt] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [pagesNum, setPagesNum] = useState(0);
@@ -115,7 +117,11 @@ const TextPage = ({
   return (
     <Fragment>
       {loading || !text || chineseChunkedArr.length === 0 ? (
-        <Spinner />
+        error404 ? (
+          <h3>Ошибка! Такого текста не существует :(</h3>
+        ) : (
+          <Spinner />
+        )
       ) : (
         <div className='row'>
           <Helmet>
@@ -175,9 +181,20 @@ const TextPage = ({
                 )}
 
                 {isAuthenticated && isOkToEdit && currentUser.role === "admin" && (
-                  <button onClick={deleteText} className='btn btn-sm btn-outline-danger mx-1'>
-                    Delete
-                  </button>
+                  <div className='mt-2'>
+                    <button
+                      onClick={() => setWantToDelete(!wantToDelete)}
+                      className='btn btn-sm btn-outline-info mx-1'
+                    >
+                      Delete?
+                    </button>
+
+                    {wantToDelete && (
+                      <button onClick={deleteText} className='btn btn-sm btn-outline-danger mx-1'>
+                        Delete!
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -245,7 +262,7 @@ const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
   currentUser: state.auth.user,
   comments: state.comments.currentComments,
-  // longText: state.texts.longText,
+  error404: state.texts.error,
 });
 
 export default connect(mapStateToProps, {

@@ -22,6 +22,7 @@ const initialState = {
   longText: null,
   loading: true,
   currentComments: [],
+  error: false,
 };
 
 export default function (state = initialState, action) {
@@ -34,6 +35,7 @@ export default function (state = initialState, action) {
         loading: false,
         texts: [...state.texts, ...payload],
         moreTexts: payload.length === 10 ? true : false,
+        error: false,
       };
     case GET_COMMENTS:
       return {
@@ -60,12 +62,14 @@ export default function (state = initialState, action) {
         text: null,
         longText: null,
         currentComments: [],
+        error: false,
       };
     case CLEAR_TEXTS:
       return {
         ...state,
         texts: [],
         loading: true,
+        error: false,
       };
     case LOAD_NOT_APPROVED:
       return {
@@ -87,6 +91,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         loading: false,
+        error: true,
       };
 
     case LOAD_TEXT:
@@ -94,12 +99,14 @@ export default function (state = initialState, action) {
         ...state,
         text: payload,
         loading: false,
+        error: false,
       };
     case LOAD_LONG_TEXT:
       return {
         ...state,
         longText: payload,
         loading: false,
+        error: false,
       };
     default:
       return {
