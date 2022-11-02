@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const Notice = ({}) => {
+const Notice = () => {
   const [notice, setNotice] = useState(null);
   useEffect(() => {
     loadNotice();
@@ -10,7 +10,6 @@ const Notice = ({}) => {
   const loadNotice = async () => {
     try {
       const { data } = await axios.get("/api/notices");
-      // console.log(data);
       setNotice(data);
     } catch (err) {
       console.log(err);
@@ -22,7 +21,7 @@ const Notice = ({}) => {
     notice.display && (
       <div className='row'>
         <div className='col-md-12'>
-          <div className='alert alert-dismissible alert-light text-center'>
+          <div className={`alert alert-dismissible text-center alert-${notice.color}`}>
             <button type='button' className='close' data-dismiss='alert'>
               &times;
             </button>

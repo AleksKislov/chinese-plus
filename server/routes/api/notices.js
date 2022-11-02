@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const adminAuth = require("../../middleware/admin-auth");
 
 const Notice = require("../../src/models/Notice");
 
@@ -20,6 +21,23 @@ const Notice = require("../../src/models/Notice");
 //     res.status(500).send("Server error");
 //   }
 // });
+
+router.post("/edit", adminAuth, async (req, res) => {
+  try {
+    const { text, display, color } = req.body;
+    const [notice] = await Notice.find();
+    await Notice.update(
+      { _id: notice._id },
+      { $set: { text, display, color } },
+      { upsert: true, runValidators: true }
+    );
+
+    res.json({ msg: "done" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
 
 /**
  * @route     GET api/notices
