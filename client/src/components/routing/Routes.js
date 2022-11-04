@@ -9,8 +9,10 @@ import HskTable from "../hsk-table/HskTable";
 import Words from "../hsk-table/Words";
 import UserWords from "../userWords/UserWords";
 
-import Dashboard from "../dashboard/Dashboard";
 import PrivateRoute from "../routing/PrivateRoute";
+import AdminRoute from "../routing/AdminRoute";
+
+import Dashboard from "../dashboard/Dashboard";
 import PinyinTable from "../pinyinTable/PinyinTable";
 import PinyinTests from "../pinyinTable/PinyinTests";
 import HskTests from "../hsk-table/HskTests";
@@ -52,6 +54,9 @@ import VideoEditForm from "../videos/VideoEditForm";
 import AddVideoForm from "../videos/AddVideoForm";
 import CreateContent from "../common/CreateContent";
 import Radicals from "../for-newbies/Radicals";
+import AdminMenu from "../admin/AdminMenu";
+import AdNotices from "../admin/AdNotices";
+
 // import TranslateForm from "../translation/TranslateForm";
 // <PrivateRoute exact path='/translate' component={TranslateForm} />
 
@@ -84,6 +89,9 @@ const Routes = () => {
           <PrivateRoute exact path='/hsk-words' component={Words} />
           <PrivateRoute exact path='/userwords' component={UserWords} />
           <PrivateRoute exact path='/mentions' component={Mentions} />
+          <AdminRoute exact path='/ad' component={AdminMenu} />
+          <AdminRoute exact path='/ad/notices' component={AdNotices} />
+
           <Route exact path='/hsk-table' render={() => <Redirect to='/hsk-table/1' />} />
           <Route exact path='/hsk-search' component={SearchHSK} />
           <Route exact path='/hsk-new-search' component={SearchNewHSK} />

@@ -24,11 +24,11 @@ const Notice = require("../../src/models/Notice");
 
 router.post("/edit", adminAuth, async (req, res) => {
   try {
-    const { text, display, color } = req.body;
+    const { text, display, color, link } = req.body;
     const [notice] = await Notice.find();
-    await Notice.update(
+    await Notice.updateOne(
       { _id: notice._id },
-      { $set: { text, display, color } },
+      { $set: { text, display, color, link } },
       { upsert: true, runValidators: true }
     );
 

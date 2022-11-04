@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const NoticeSchema = new mongoose.Schema({
   text: { type: String },
+  link: { type: String },
   display: { type: Boolean },
   color: {
     type: String,
