@@ -31,11 +31,7 @@ const App = () => {
   useEffect(() => {
     const style = document.getElementById("cssTheme");
     if (!style) return;
-    if (+localStorage.isDarkTheme) {
-      style.href = "/static/css/App-night.css";
-    } else {
-      style.href = "/static/css/App.css";
-    }
+    style.href = +localStorage.isDarkTheme ? "/static/css/App-night.css" : "/static/css/App.css";
   }, []);
 
   return (

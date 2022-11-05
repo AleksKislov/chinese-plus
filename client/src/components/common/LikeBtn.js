@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { CONTENT } from "../../constants/consts.json";
 // import "../translation/light-border.css";
 
-const LikeBtn = ({ likes, id, likeText, likeVideo, user, contentType }) => {
+const LikeBtn = ({ likes, id, likeText, likeVideo, user, contentType, isDark }) => {
   useEffect(() => {
     if (user) setLiked(likes.some((like) => like.user === user._id));
   }, [likes, user]);
@@ -15,6 +15,7 @@ const LikeBtn = ({ likes, id, likeText, likeVideo, user, contentType }) => {
 
   return (
     <Tippy
+      theme={isDark}
       content={
         likes && likes.length > 0
           ? likes.reduce((acc, x) => (acc += `${x.name}, `), "").slice(0, -2)

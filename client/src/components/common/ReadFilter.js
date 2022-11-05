@@ -2,9 +2,14 @@ import React from "react";
 import Tippy from "@tippyjs/react";
 import { connect } from "react-redux";
 
-const ReadFilter = ({ onChange, user, isVideos }) => {
+const ReadFilter = ({ onChange, user, isVideos, isDark }) => {
   return (
-    <Tippy content='Только для авторизованных' placement='bottom' disabled={user ? true : false}>
+    <Tippy
+      theme={isDark}
+      content='Только для авторизованных'
+      placement='bottom'
+      disabled={user ? true : false}
+    >
       <div className='col-sm-3 mb-2'>
         <label htmlFor='readFilt'>{isVideos ? "Просмотренные" : "Прочитанные"}</label>
         <select

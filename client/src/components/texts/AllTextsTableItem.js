@@ -26,6 +26,11 @@ const AllTextsTableItem = ({ text, hide, category, hideLevel, user, publisher, w
   const [rightPublisher, setRightPublisher] = useState(true);
   const [onlyWithAudio, setOnlyWithAudio] = useState(false);
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   return (
     !hideIt &&
     rightCategory &&
@@ -44,20 +49,20 @@ const AllTextsTableItem = ({ text, hide, category, hideLevel, user, publisher, w
         <td>
           <Link to={`/user/${text.user}`}>{name}</Link>
         </td>
-        <Tippy content={`${likes.length} раз сказали спасибо`} placement='bottom'>
+        <Tippy theme={isDark} content={`${likes.length} раз сказали спасибо`} placement='bottom'>
           <td>{likes.length}</td>
         </Tippy>
-        <Tippy content={`${hits} просмотров`} placement='bottom'>
+        <Tippy theme={isDark} content={`${hits} просмотров`} placement='bottom'>
           <td>{hits}</td>
         </Tippy>
-        <Tippy content={`${comments_id.length} комментариев`} placement='bottom'>
+        <Tippy theme={isDark} content={`${comments_id.length} комментариев`} placement='bottom'>
           <td>{comments_id.length}</td>
         </Tippy>
         <td>{audioSrc === 1 && <i className='fas fa-check-circle text-success'></i>}</td>
 
         {user && (
           <td style={{ paddingRight: "1.5rem" }}>
-            <Tippy content={`${isRead(_id) && "Прочитано"}`} placement='bottom'>
+            <Tippy theme={isDark} content={`${isRead(_id) && "Прочитано"}`} placement='bottom'>
               {isRead(_id) && <i className='fas fa-check-circle text-success'></i>}
             </Tippy>
           </td>

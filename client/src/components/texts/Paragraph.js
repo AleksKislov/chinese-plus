@@ -104,14 +104,19 @@ const Paragraph = ({
     }
   };
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   const paragraphNum = (
-    <Tippy content={`Параграф №${index + 1}`}>
+    <Tippy theme={isDark} content={`Параграф №${index + 1}`}>
       <div className='paragraphNum'>{index + 1}</div>
     </Tippy>
   );
 
   const paragraphPlus = (
-    <Tippy content={`Прочитано ${numOfChars} 字`}>
+    <Tippy theme={isDark} content={`Прочитано ${numOfChars} 字`}>
       <div
         className={`paragraphToRead paragraph-${alreadyRead ? "minus" : "plus"}`}
         onClick={() => readOrUnread()}

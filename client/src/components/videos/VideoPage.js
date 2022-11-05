@@ -119,6 +119,11 @@ const VideoPage = ({
     if (typeof player.playVideo === "function") player.playVideo();
   };
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   return (
     <Fragment>
       {loading || !video ? (
@@ -157,7 +162,12 @@ const VideoPage = ({
 
                 <h6 className='card-subtitle mb-2'>
                   <span className='text-muted'>Благодарности: </span>
-                  <LikeBtn likes={video.likes} id={video._id} contentType={"video"} />
+                  <LikeBtn
+                    likes={video.likes}
+                    id={video._id}
+                    contentType={"video"}
+                    isDark={isDark}
+                  />
                 </h6>
 
                 <h6 className='card-subtitle mb-2'>

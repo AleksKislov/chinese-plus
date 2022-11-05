@@ -55,6 +55,11 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
     document.getElementById("categoryFilt").value = 0;
   };
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   return (
     <div className='row'>
       <Helmet>
@@ -73,7 +78,7 @@ const Texts = ({ loadTexts, texts, loading, moreTexts, clearTexts }) => {
 
         <div className='form-group row'>
           <LevelFilter onChange={onLevelSelect} />
-          <ReadFilter onChange={onReadSelect} />
+          <ReadFilter onChange={onReadSelect} isDark={isDark} />
           <CategoryFilter onChange={onCategorySelect} />
 
           <div className='com-sm-3 w-100'></div>

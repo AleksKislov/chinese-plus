@@ -45,6 +45,10 @@ const Videos = ({ loadVideos, videos, loading, moreVideos, clearVideos }) => {
     document.getElementById("categoryFilt").value = 0;
   };
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
   return (
     <div className='row'>
       <Helmet>
@@ -66,7 +70,7 @@ const Videos = ({ loadVideos, videos, loading, moreVideos, clearVideos }) => {
 
         <div className='form-group row'>
           <LevelFilter onChange={onLevelSelect} />
-          <ReadFilter onChange={onReadSelect} isVideos={true} />
+          <ReadFilter onChange={onReadSelect} isVideos={true} isDark={isDark} />
           <CategoryFilter onChange={onCategorySelect} />
           <UnsetFiltersBtn onClick={clearFilters} />
         </div>

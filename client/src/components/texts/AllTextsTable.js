@@ -109,6 +109,11 @@ const AllTextsTable = ({ user }) => {
     setDateClicked(!dateClicked);
   };
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   return (
     <div className='row'>
       <Helmet>
@@ -126,7 +131,7 @@ const AllTextsTable = ({ user }) => {
 
         <div className='form-group row'>
           <LevelFilter onChange={onLevelSelect} />
-          <ReadFilter onChange={onReadSelect} />
+          <ReadFilter onChange={onReadSelect} isDark={isDark} />
           <CategoryFilter onChange={onCategorySelect} />
           <PublisherFilter onChange={onPublisherSelect} publishers={publishers ? publishers : []} />
 
@@ -146,35 +151,35 @@ const AllTextsTable = ({ user }) => {
                 <th className='text-left'>Название</th>
                 <th>Категория</th>
                 <th>Автор</th>
-                <Tippy content='Кол-во благодарностей' placement='top'>
+                <Tippy theme={isDark} content='Кол-во благодарностей' placement='top'>
                   <th style={thStyle}>
                     <div onClick={sortByLikes} style={{ cursor: "pointer" }}>
                       <i className='fas fa-heart'></i> <i className='fas fa-sort'></i>
                     </div>
                   </th>
                 </Tippy>
-                <Tippy content='Кол-во просмотров' placement='top'>
+                <Tippy theme={isDark} content='Кол-во просмотров' placement='top'>
                   <th style={thStyle}>
                     <div onClick={sortByHits} style={{ cursor: "pointer" }}>
                       <i className='fas fa-eye'></i> <i className='fas fa-sort'></i>
                     </div>
                   </th>
                 </Tippy>
-                <Tippy content='Кол-во комментариев' placement='top'>
+                <Tippy theme={isDark} content='Кол-во комментариев' placement='top'>
                   <th style={thStyle}>
                     <div onClick={sortByComments} style={{ cursor: "pointer" }}>
                       <i className='fas fa-comment-dots'></i> <i className='fas fa-sort'></i>
                     </div>
                   </th>
                 </Tippy>
-                <Tippy content='Есть аудио' placement='top'>
+                <Tippy theme={isDark} content='Есть аудио' placement='top'>
                   <th style={thStyle}>
                     <i className='fas fa-headphones'></i>
                   </th>
                 </Tippy>
 
                 {user && (
-                  <Tippy content='Прочитано ли' placement='top'>
+                  <Tippy theme={isDark} content='Прочитано ли' placement='top'>
                     <th style={{ paddingRight: "1.5rem" }}>
                       <i className='fas fa-clipboard-check'></i>{" "}
                     </th>

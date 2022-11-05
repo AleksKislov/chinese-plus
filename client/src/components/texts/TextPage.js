@@ -86,6 +86,11 @@ const TextPage = ({
     }
   }, [text, isAuthenticated]);
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   const [wantToDelete, setWantToDelete] = useState(false);
   const [isLngTxt, setIsLngTxt] = useState(false);
   const [curPage, setCurPage] = useState(0);
@@ -148,7 +153,7 @@ const TextPage = ({
 
                 <h6 className='card-subtitle mb-2'>
                   <span className='text-muted'>Благодарности: </span>
-                  <LikeBtn likes={text.likes} id={text._id} />
+                  <LikeBtn likes={text.likes} id={text._id} isDark={isDark} />
                 </h6>
 
                 <ReadSwitch id={text._id} />

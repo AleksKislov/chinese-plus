@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 // import {  clearPosts } from "../../actions/posts";
@@ -18,6 +18,11 @@ const Post = ({ post, comments, isPage }) => {
   const dateAndTime = dateToStr(date);
   const badgeColor = tag === "news" ? "info" : tag === "bug" ? "danger" : "success";
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   return (
     <div className='card my-2'>
       <Helmet>
@@ -28,6 +33,7 @@ const Post = ({ post, comments, isPage }) => {
       <div className='card-body' style={customStyle}>
         <div>
           <Tippy
+            theme={isDark}
             content='Кликните, чтобы обратиться к пользователю в комментарии'
             placement='bottom'
           >
@@ -53,7 +59,7 @@ const Post = ({ post, comments, isPage }) => {
           <p className='card-text' dangerouslySetInnerHTML={{ __html: sanitizer(text) }}></p>
 
           <div>
-            <Tippy content={"Комментарии"}>
+            <Tippy theme={isDark} content={"Комментарии"}>
               <Link to={`/posts/${_id}`}>
                 <button className='btn btn-sm btn-outline-info mb-1'>
                   <i className='fas fa-comment-dots'></i>{" "}

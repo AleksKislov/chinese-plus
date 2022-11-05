@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import Tippy from "@tippyjs/react";
 import { setReadGoal } from "../../actions/auth";
@@ -20,9 +20,14 @@ const ReadingCard = ({ user, setReadGoal, setAlert }) => {
     }
   };
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   const textAboutGoal = (
     <p className='card-text mt-1'>
-      <Tippy content='Прочитать иероглифов в день'>
+      <Tippy theme={isDark} content='Прочитать иероглифов в день'>
         <span>
           <span className='text-muted'>Дневная цель:</span>{" "}
           {(user && user.daily_reading_goal) || "0"} 字
@@ -32,7 +37,7 @@ const ReadingCard = ({ user, setReadGoal, setAlert }) => {
   );
 
   const changeGoalButton = (
-    <Tippy content='Поменять дневную цель'>
+    <Tippy theme={isDark} content='Поменять дневную цель'>
       <button
         type='button'
         className={`btn btn-${change ? "warning" : "info"} btn-sm`}

@@ -38,6 +38,11 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
     setRightLevel(hideLevel === 0 || level === hideLevel);
   }, [hide, category, hideLevel]);
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   const isRead = (textid) => (user ? user.finished_texts.includes(textid) : false);
   const [hideIt, setHideId] = useState(false);
   const [rightCategory, setRightCategory] = useState(true);
@@ -51,7 +56,7 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
     rightLevel && (
       <div className={`card my-2 ${isRead(_id) ? "alreadyReadCard" : ""}`}>
         {isRead(_id) && (
-          <Tippy content='Прочитано'>
+          <Tippy content='Прочитано' theme={isDark}>
             <h4 className='alreadyReadMark'>
               <i className='fas fa-check-circle text-success'></i>
             </h4>
@@ -68,7 +73,7 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
           <div className='col-md-9'>
             <h4 className='card-title'>
               <Link to={`/texts/${_id}`}>{title}</Link>{" "}
-              <Tippy content={`просмотров: ${hits}`}>
+              <Tippy content={`просмотров: ${hits}`} theme={isDark}>
                 <small className='text-muted extra-smtext'>
                   <i className='fas fa-eye'></i> {hits}
                 </small>
@@ -108,11 +113,11 @@ const TextCard = ({ text, user, hide, category, hideLevel }) => {
             <TextDescription description={description} />
 
             <div>
-              <CommentsBtn id={_id} comments_id={comments_id} />
-              <LikeBtn likes={likes} id={_id} />
+              <CommentsBtn id={_id} comments_id={comments_id} isDark={isDark} />
+              <LikeBtn likes={likes} id={_id} isDark={isDark} />
 
               {audioSrc === 1 && (
-                <Tippy content='С аудио'>
+                <Tippy content='С аудио' theme={isDark}>
                   <span>
                     <button className='btn btn-sm btn-info disabled' disabled>
                       <i className='fas fa-headphones'></i>

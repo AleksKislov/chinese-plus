@@ -46,13 +46,18 @@ const VideoCard = ({ video, user, hide, hideLevel, categoryChosen }) => {
   const dateAndTime = dateToStr(date);
   const linkTo = `/videos/${_id}`;
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   return (
     !hideIt &&
     rightCategory &&
     rightLevel && (
       <div className={`card my-2 ${isRead(_id) ? "alreadyReadCard" : ""}`}>
         {isRead(_id) && (
-          <Tippy content='Просмотрено'>
+          <Tippy theme={isDark} content='Просмотрено'>
             <h3 className='alreadyReadMark'>
               <i className='fas fa-check-circle text-success'></i>
             </h3>
@@ -72,7 +77,9 @@ const VideoCard = ({ video, user, hide, hideLevel, categoryChosen }) => {
           <div className='col-md-9'>
             <h4 className='card-title'>
               <Link to={linkTo}>{title}</Link>{" "}
-              <Tippy content={`просмотров: ${hits}`}>
+              <Tippy theme={isDark}>
+                {" "}
+                content={`просмотров: ${hits}`}
                 <small className='text-muted extra-smtext'>
                   <i className='fas fa-eye'></i> {hits}
                 </small>
@@ -114,7 +121,7 @@ const VideoCard = ({ video, user, hide, hideLevel, categoryChosen }) => {
 
             <div>
               <CommentsBtn id={_id} comments_id={comments_id} contentType={"video"} />
-              <LikeBtn likes={likes} id={_id} contentType={"video"} />
+              <LikeBtn likes={likes} id={_id} contentType={"video"} isDark={isDark} />
             </div>
           </div>
         </div>

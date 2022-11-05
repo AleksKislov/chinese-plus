@@ -26,12 +26,18 @@ const Comment = ({
     currentUser && likes ? likes.some((like) => like.user === currentUser._id) : false
   );
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   return (
     <div className='card my-2' id={_id}>
       <div className='commentIdNum'>{`#${_id.slice(-3)}`}</div>
       <div className='card-body' style={customStyle}>
         <div>
           <Tippy
+            theme={isDark}
             content='Кликните, чтобы обратиться к пользователю в комментарии'
             placement='bottom'
           >
@@ -68,6 +74,7 @@ const Comment = ({
             <div className='col-md-6'>
               <div className='float-right'>
                 <Tippy
+                  theme={isDark}
                   content={
                     likes && likes.length > 0
                       ? likes.reduce((acc, x) => (acc += `${x.name}, `), "").slice(0, -2)
@@ -84,7 +91,7 @@ const Comment = ({
                 </Tippy>
 
                 {isAuthenticated && (currentUser._id === user || currentUser.role === "admin") && (
-                  <Tippy content='Отредактировать / удалить'>
+                  <Tippy theme={isDark} content='Отредактировать / удалить'>
                     <button
                       className='btn btn-sm btn-info mx-1'
                       data-toggle='modal'
@@ -97,7 +104,7 @@ const Comment = ({
                 )}
 
                 {isAuthenticated && currentUser._id !== user && (
-                  <Tippy content='Ответить'>
+                  <Tippy theme={isDark} content='Ответить'>
                     <HashLink
                       to='#yourCommentId'
                       className='btn btn-outline-primary btn-sm mx-1'
