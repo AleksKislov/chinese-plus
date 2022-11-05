@@ -151,6 +151,11 @@ const Search = ({
     }
   };
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   const updateVocabulary = async (word) => {
     if (!word) return;
 
@@ -267,6 +272,7 @@ const Search = ({
             <Fragment>
               <Fragment>
                 <Tippy
+                  theme={isDark}
                   content={
                     clicked ? (
                       <span>Убрать слово из вокабуляра</span>
@@ -284,6 +290,7 @@ const Search = ({
                 </Tippy>
 
                 <Tippy
+                  theme={isDark}
                   content={<span>{showExamples ? "Скрыть примеры" : "Показать примеры"}</span>}
                 >
                   <button
@@ -295,7 +302,7 @@ const Search = ({
                   </button>
                 </Tippy>
 
-                <Tippy content={<span>Отредактировать слово</span>}>
+                <Tippy theme={isDark} content={<span>Отредактировать слово</span>}>
                   <button
                     className='btn btn-sm btn-warning'
                     onClick={() => setModalEditWord(wordFromSearch)}

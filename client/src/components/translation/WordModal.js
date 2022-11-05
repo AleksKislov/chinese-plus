@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import Tippy from "@tippyjs/react";
 import { sanitizer } from "../../utils/sanitizer";
@@ -27,6 +27,11 @@ const WordModal = ({ word }) => {
     }
   };
 
+  const [isDark, setIsDark] = useState("");
+  useEffect(() => {
+    setIsDark(+localStorage.isDarkTheme ? "light-border" : "");
+  }, []);
+
   return (
     <div
       className='modal fade'
@@ -42,7 +47,10 @@ const WordModal = ({ word }) => {
             <h5 className='modal-title' id='exampleModalLabel'>
               {chinese} | {pinyin}
             </h5>
-            <Tippy content={<span>{showExamples ? "Скрыть примеры" : "Показать примеры"}</span>}>
+            <Tippy
+              theme={isDark}
+              content={<span>{showExamples ? "Скрыть примеры" : "Показать примеры"}</span>}
+            >
               <button
                 className='btn btn-sm btn-warning ml-3'
                 id='showMoreButton'

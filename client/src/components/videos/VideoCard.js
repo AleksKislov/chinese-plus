@@ -77,9 +77,7 @@ const VideoCard = ({ video, user, hide, hideLevel, categoryChosen }) => {
           <div className='col-md-9'>
             <h4 className='card-title'>
               <Link to={linkTo}>{title}</Link>{" "}
-              <Tippy theme={isDark}>
-                {" "}
-                content={`просмотров: ${hits}`}
+              <Tippy theme={isDark} content={`просмотров: ${hits}`}>
                 <small className='text-muted extra-smtext'>
                   <i className='fas fa-eye'></i> {hits}
                 </small>
@@ -120,7 +118,12 @@ const VideoCard = ({ video, user, hide, hideLevel, categoryChosen }) => {
             <TextDescription description={desc} />
 
             <div>
-              <CommentsBtn id={_id} comments_id={comments_id} contentType={"video"} />
+              <CommentsBtn
+                id={_id}
+                comments_id={comments_id}
+                contentType={"video"}
+                isDark={isDark}
+              />
               <LikeBtn likes={likes} id={_id} contentType={"video"} isDark={isDark} />
             </div>
           </div>
