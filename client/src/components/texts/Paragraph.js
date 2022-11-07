@@ -2,7 +2,8 @@ import React, { Fragment, useState, useEffect } from "react";
 import TippyTooltip from "../translation/TippyTooltip";
 import { v4 as uuid } from "uuid";
 import Tippy from "@tippyjs/react";
-import { countZnChars } from "../../actions/helpers";
+import { countZnChars, parseChineseWords, newParseChineseWords } from "../../actions/helpers";
+
 import { connect } from "react-redux";
 import { readToday, unreadToday } from "../../actions/auth";
 import { TweenMax, Back } from "gsap";
@@ -10,34 +11,48 @@ import store from "../../store";
 import { setAlert } from "../../actions/alert";
 
 const Paragraph = ({
-  chunk,
+  chunk: chunkToUse,
   translation,
   hideFlag,
   index,
   originTxt,
-  user,
   readToday,
   unreadToday,
   toEdit,
+  user,
   fontsize,
   toPostLongText,
 }) => {
   const numOfChars = countZnChars(originTxt);
   const [alreadyRead, setAlreadyRead] = useState(false);
+  const [chunk, setChunk] = useState(null);
+
+  console.log("тута");
 
   useEffect(() => {
-    if (user && !toEdit) {
-      if (user.read_today_arr && user.read_today_arr[window.location.pathname]) {
-        if (user.read_today_arr[window.location.pathname].includes(index)) setAlreadyRead(true);
-      }
-    }
-  }, [user]);
+    console.log("слова");
+
+    setTimeout(async () => {
+      const chineseChunkedWords = await newParseChineseWords(chunkToUse, match.params.id, index);
+      setChunk(chineseChunkedWords);
+    });
+  }, [chunkToUse]);
+
+  // useEffect(() => {
+  //   console.log("user");
+  //   if (user && !toEdit) {
+  //     if (user.read_today_arr && user.read_today_arr[window.location.pathname]) {
+  //       if (user.read_today_arr[window.location.pathname].includes(index)) setAlreadyRead(true);
+  //     }
+  //   }
+  // }, [user]);
 
   const readOrUnread = () => {
     if (alreadyRead) {
       setAlreadyRead(!alreadyRead);
-      if (user && user.daily_reading_goal)
+      if (user && user.daily_reading_goal) {
         unreadToday({ num: numOfChars, path: window.location.pathname, ind: index });
+      }
     } else {
       setAlreadyRead(!alreadyRead);
       if (user && user.daily_reading_goal) {
@@ -115,11 +130,15 @@ const Paragraph = ({
     </Tippy>
   );
 
+  //   <div
+  //   className={`paragraphToRead paragraph-${alreadyRead ? "minus" : "plus"}`}
+  //   onClick={readOrUnread}
+  // >
   const paragraphPlus = (
     <Tippy theme={isDark} content={`Прочитано ${numOfChars} 字`}>
       <div
         className={`paragraphToRead paragraph-${alreadyRead ? "minus" : "plus"}`}
-        onClick={() => readOrUnread()}
+        onClick={readOrUnread}
       >
         <div className='box align-middle center' id={"box" + index}></div>
         <div className='box1 align-middle center' id={"box1" + index}></div>
@@ -142,7 +161,7 @@ const Paragraph = ({
             {toPostLongText ? (
               <span>{chunk}</span>
             ) : (
-              chunk.map((word) => <TippyTooltip word={word} key={uuid()} />)
+              chunk && chunk.map((word) => <TippyTooltip word={word} key={uuid()} />)
             )}
           </p>
           {paragraphNum}

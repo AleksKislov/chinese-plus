@@ -2,7 +2,7 @@ import React, { useEffect, Fragment, useState } from "react";
 import { connect } from "react-redux";
 import { loadText, setLoading } from "../../actions/texts";
 import { getComments } from "../../actions/comments";
-import { parseChineseWords } from "../../actions/helpers";
+import { parseChineseWords, chunkArrayFunc } from "../../actions/helpers";
 import Spinner from "../layout/Spinner";
 import { v4 as uuid } from "uuid";
 import Paragraph from "./Paragraph";
@@ -64,10 +64,11 @@ const TextPage = ({
       setPagesNum(pagesNum);
     }
 
-    setTimeout(async () => {
-      const chineseChunkedWords = await parseChineseWords(txt);
-      setChineseChunkedArr(chineseChunkedWords);
-    });
+    // setTimeout(async () => {
+    // const chineseChunkedWords = await parseChineseWords(txt);
+    // setChineseChunkedArr(chineseChunkedWords);
+    // });
+    setChineseChunkedArr(chunkArrayFunc(txt.chinese_arr));
   }, [text]);
 
   useEffect(() => {
