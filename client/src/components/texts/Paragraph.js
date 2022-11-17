@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import TippyTooltip from "../translation/TippyTooltip";
 import { v4 as uuid } from "uuid";
 import Tippy from "@tippyjs/react";
-import { countZnChars } from "../../actions/helpers";
+import { countZnChars, newParseChineseWords } from "../../actions/helpers";
 import { connect } from "react-redux";
 import { readToday, unreadToday } from "../../actions/auth";
 import { TweenMax, Back } from "gsap";
@@ -10,20 +10,55 @@ import store from "../../store";
 import { setAlert } from "../../actions/alert";
 
 const Paragraph = ({
-  chunk,
+  chunk: chunkToUse,
   translation,
   hideFlag,
   index,
   originTxt,
-  user,
   readToday,
   unreadToday,
   toEdit,
+  user,
   fontsize,
   toPostLongText,
 }) => {
   const numOfChars = countZnChars(originTxt);
   const [alreadyRead, setAlreadyRead] = useState(false);
+  const [chunk, setChunk] = useState(null);
+
+  useEffect(() => {
+    let curTxt;
+    try {
+      curTxt = JSON.parse(localStorage.getItem("currentText"));
+    } catch (err) {
+      //
+    }
+
+    const curTxtCondition = curTxt && curTxt.path === window.location.pathname && curTxt.chineseArr;
+
+    if (curTxtCondition && curTxt.chineseArr[index]) {
+      setChunk(curTxt.chineseArr[index]);
+    } else {
+      setTimeout(async () => {
+        const words = await newParseChineseWords(chunkToUse);
+        setChunk(words);
+
+        localStorage.setItem(
+          "currentText",
+          JSON.stringify({
+            path: window.location.pathname,
+            chineseArr: curTxtCondition
+              ? { ...curTxt.chineseArr, [index]: words }
+              : { [index]: words },
+          })
+        );
+      });
+    }
+
+    return () => {
+      console.log("тута");
+    };
+  }, []);
 
   useEffect(() => {
     if (user && !toEdit) {
@@ -36,14 +71,15 @@ const Paragraph = ({
   const readOrUnread = () => {
     if (alreadyRead) {
       setAlreadyRead(!alreadyRead);
-      if (user && user.daily_reading_goal)
+      if (user && user.daily_reading_goal) {
         unreadToday({ num: numOfChars, path: window.location.pathname, ind: index });
+      }
     } else {
       setAlreadyRead(!alreadyRead);
       if (user && user.daily_reading_goal) {
         changeTeam();
       } else {
-        store.dispatch(setAlert("Авторизуйтесь и установите свою цель для чтения!", "danger"));
+        store.dispatch(setAlert("Авторизуйтесь и/или установите свою цель для чтения!", "danger"));
       }
     }
   };
@@ -119,7 +155,7 @@ const Paragraph = ({
     <Tippy theme={isDark} content={`Прочитано ${numOfChars} 字`}>
       <div
         className={`paragraphToRead paragraph-${alreadyRead ? "minus" : "plus"}`}
-        onClick={() => readOrUnread()}
+        onClick={readOrUnread}
       >
         <div className='box align-middle center' id={"box" + index}></div>
         <div className='box1 align-middle center' id={"box1" + index}></div>
@@ -142,6 +178,8 @@ const Paragraph = ({
             {toPostLongText ? (
               <span>{chunk}</span>
             ) : (
+              chunk &&
+              chunk.length &&
               chunk.map((word) => <TippyTooltip word={word} key={uuid()} />)
             )}
           </p>
@@ -168,4 +206,7 @@ const mapStateToProps = (state) => ({
   fontsize: state.profile.fontsize,
 });
 
-export default connect(mapStateToProps, { readToday, unreadToday })(Paragraph);
+export default connect(mapStateToProps, {
+  readToday,
+  unreadToday,
+})(Paragraph);

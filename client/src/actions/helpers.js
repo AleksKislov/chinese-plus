@@ -48,7 +48,6 @@ export const chunkArrayFunc = (arr) => {
       inds.push(i);
     }
   }
-  // console.log(inds);
 
   let chunkedArr = [];
 
@@ -73,6 +72,27 @@ export const getWords = async (words) => {
 
   try {
     const { data } = await axios.post("/api/dictionary/allwords", words, config);
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getWordsForParag = async (words, textId, paragInd) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const body = JSON.stringify({
+    words,
+    textId,
+    paragInd,
+  });
+
+  try {
+    const { data } = await axios.post("/api/dictionary/wordsForParag", body, config);
     return data;
   } catch (err) {
     console.log(err);
@@ -123,6 +143,12 @@ export const parseChineseWords = async (obj) => {
   const wordsFromDB = await getWords(obj.chinese_arr);
   const newArr = itirateWordsFromDB(obj.chinese_arr, wordsFromDB);
   return chunkArrayFunc(newArr); // array of object arrays
+};
+
+export const newParseChineseWords = async (chineseArr) => {
+  return itirateWordsFromDB(chineseArr, await getWords(chineseArr));
+  // const { words, isAlreadyRead } = await getWordsForParag(chineseArr, textId, paragnd);
+  // return { words: itirateWordsFromDB(chineseArr, words), isAlreadyRead };
 };
 
 export async function parseWordsForVideo(wordsArr) {
