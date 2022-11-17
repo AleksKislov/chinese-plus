@@ -161,8 +161,8 @@
 }
 
 .alreadyRead {
-  /* background-color: rgba(152, 153, 153, 0.2); */
-  background-color: var(--light);
+  background-color: rgba(74, 196, 196, 0.2);
+  /* background-color: var(--dark); */
 }
 
 .tippyPinyin {
