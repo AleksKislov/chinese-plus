@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Hanzi = require("./dict/dictionary");
 const mdbg = require("mdbg");
-const { getAllWords } = require("./services");
+const { getAllWords, getWordsForParag } = require("./services");
 const auth = require("../../middleware/auth");
 
 const Dictionary = require("../../src/models/Dictionary");
@@ -81,6 +81,17 @@ router.post("/", auth, async (req, res) => {
 router.post("/allwords", async (req, res) => {
   try {
     res.json(await getAllWords(req.body));
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.post("/wordsForParag", auth, async (req, res) => {
+  const userId = req.user?.id;
+
+  try {
+    res.json(await getWordsForParag({ ...req.body, userId }));
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");

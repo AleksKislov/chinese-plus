@@ -2,8 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import TippyTooltip from "../translation/TippyTooltip";
 import { v4 as uuid } from "uuid";
 import Tippy from "@tippyjs/react";
-import { countZnChars, parseChineseWords, newParseChineseWords } from "../../actions/helpers";
-
+import { countZnChars, newParseChineseWords } from "../../actions/helpers";
 import { connect } from "react-redux";
 import { readToday, unreadToday } from "../../actions/auth";
 import { TweenMax, Back } from "gsap";
@@ -27,25 +26,47 @@ const Paragraph = ({
   const [alreadyRead, setAlreadyRead] = useState(false);
   const [chunk, setChunk] = useState(null);
 
-  console.log("тута");
+  useEffect(() => {
+    let curTxt;
+    try {
+      curTxt = JSON.parse(localStorage.getItem("currentText"));
+    } catch (err) {
+      //
+    }
+
+    const curTxtCondition = curTxt && curTxt.path === window.location.pathname && curTxt.chineseArr;
+
+    if (curTxtCondition && curTxt.chineseArr[index]) {
+      setChunk(curTxt.chineseArr[index]);
+    } else {
+      setTimeout(async () => {
+        const words = await newParseChineseWords(chunkToUse);
+        setChunk(words);
+
+        localStorage.setItem(
+          "currentText",
+          JSON.stringify({
+            path: window.location.pathname,
+            chineseArr: curTxtCondition
+              ? { ...curTxt.chineseArr, [index]: words }
+              : { [index]: words },
+          })
+        );
+      });
+    }
+
+    return () => {
+      console.log("тута");
+    };
+  }, []);
 
   useEffect(() => {
-    console.log("слова");
-
-    setTimeout(async () => {
-      const chineseChunkedWords = await newParseChineseWords(chunkToUse, match.params.id, index);
-      setChunk(chineseChunkedWords);
-    });
-  }, [chunkToUse]);
-
-  // useEffect(() => {
-  //   console.log("user");
-  //   if (user && !toEdit) {
-  //     if (user.read_today_arr && user.read_today_arr[window.location.pathname]) {
-  //       if (user.read_today_arr[window.location.pathname].includes(index)) setAlreadyRead(true);
-  //     }
-  //   }
-  // }, [user]);
+    if (user && !toEdit) {
+      if (user.read_today_arr && user.read_today_arr[window.location.pathname]) {
+        if (user.read_today_arr[window.location.pathname].includes(index)) setAlreadyRead(true);
+      }
+    }
+  }, [user]);
 
   const readOrUnread = () => {
     if (alreadyRead) {
@@ -58,7 +79,7 @@ const Paragraph = ({
       if (user && user.daily_reading_goal) {
         changeTeam();
       } else {
-        store.dispatch(setAlert("Авторизуйтесь и установите свою цель для чтения!", "danger"));
+        store.dispatch(setAlert("Авторизуйтесь и/или установите свою цель для чтения!", "danger"));
       }
     }
   };
@@ -130,10 +151,6 @@ const Paragraph = ({
     </Tippy>
   );
 
-  //   <div
-  //   className={`paragraphToRead paragraph-${alreadyRead ? "minus" : "plus"}`}
-  //   onClick={readOrUnread}
-  // >
   const paragraphPlus = (
     <Tippy theme={isDark} content={`Прочитано ${numOfChars} 字`}>
       <div
@@ -161,7 +178,9 @@ const Paragraph = ({
             {toPostLongText ? (
               <span>{chunk}</span>
             ) : (
-              chunk && chunk.map((word) => <TippyTooltip word={word} key={uuid()} />)
+              chunk &&
+              chunk.length &&
+              chunk.map((word) => <TippyTooltip word={word} key={uuid()} />)
             )}
           </p>
           {paragraphNum}
@@ -187,4 +206,7 @@ const mapStateToProps = (state) => ({
   fontsize: state.profile.fontsize,
 });
 
-export default connect(mapStateToProps, { readToday, unreadToday })(Paragraph);
+export default connect(mapStateToProps, {
+  readToday,
+  unreadToday,
+})(Paragraph);

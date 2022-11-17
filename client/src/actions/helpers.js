@@ -78,7 +78,7 @@ export const getWords = async (words) => {
   }
 };
 
-export const getWordsForParag = async (words) => {
+export const getWordsForParag = async (words, textId, paragInd) => {
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -140,15 +140,15 @@ export const getTranslation = async (text) => {
  * @param {Object} obj - text from texts or page in books
  */
 export const parseChineseWords = async (obj) => {
-  console.log(obj);
   const wordsFromDB = await getWords(obj.chinese_arr);
   const newArr = itirateWordsFromDB(obj.chinese_arr, wordsFromDB);
   return chunkArrayFunc(newArr); // array of object arrays
 };
 
-export const newParseChineseWords = async (chineseArr, textId, parInd) => {
-  const wordsFromDB = await getWordsForParag(chineseArr);
-  return itirateWordsFromDB(chineseArr, wordsFromDB);
+export const newParseChineseWords = async (chineseArr) => {
+  return itirateWordsFromDB(chineseArr, await getWords(chineseArr));
+  // const { words, isAlreadyRead } = await getWordsForParag(chineseArr, textId, paragnd);
+  // return { words: itirateWordsFromDB(chineseArr, words), isAlreadyRead };
 };
 
 export async function parseWordsForVideo(wordsArr) {

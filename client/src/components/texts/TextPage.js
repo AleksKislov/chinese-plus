@@ -2,7 +2,7 @@ import React, { useEffect, Fragment, useState } from "react";
 import { connect } from "react-redux";
 import { loadText, setLoading } from "../../actions/texts";
 import { getComments } from "../../actions/comments";
-import { parseChineseWords, chunkArrayFunc } from "../../actions/helpers";
+import { chunkArrayFunc } from "../../actions/helpers";
 import Spinner from "../layout/Spinner";
 import { v4 as uuid } from "uuid";
 import Paragraph from "./Paragraph";
@@ -65,10 +65,16 @@ const TextPage = ({
     }
 
     // setTimeout(async () => {
-    // const chineseChunkedWords = await parseChineseWords(txt);
-    // setChineseChunkedArr(chineseChunkedWords);
+    //   const chunks = chunkArrayFunc(txt.chinese_arr);
+    //   const promises = chunks.map((chunk) => newParseChineseWords(chunk));
+    //   const readyChunks = await Promise.all(promises);
+    //   setChineseChunkedArr(readyChunks);
     // });
-    setChineseChunkedArr(chunkArrayFunc(txt.chinese_arr));
+
+    setTimeout(async () => {
+      // const chineseChunkedWords = await parseChineseWords(txt);
+      setChineseChunkedArr(chunkArrayFunc(txt.chinese_arr));
+    });
   }, [text]);
 
   useEffect(() => {
@@ -101,6 +107,7 @@ const TextPage = ({
   const [isOkToEdit, setIsOkToEdit] = useState(false);
   const [isRedirected, setIsRedirected] = useState(false);
   const onClick = () => setHideFlag(!hideFlag);
+  const [readyChineseArr, setReadyChineseArr] = useState({});
 
   const deleteText = async () => {
     const config = {
