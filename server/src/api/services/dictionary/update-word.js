@@ -4,7 +4,7 @@ const { Notify } = require("../_misc");
 async function updateWord(req, res) {
   const { pinyin, russian, id } = req.body;
 
-  if ((!pinyin && !russian) || !id) throw new Error("nothing to update");
+  if ((!pinyin && !russian) || !id) throw new Error("no info or id to update");
 
   const wordToEdit = await Dictionary.findById(id);
 
@@ -16,7 +16,7 @@ async function updateWord(req, res) {
     newFields.russian = russian;
   }
 
-  if (!newFields.pinyin && !newFields.russian) throw new Error("nothing to update");
+  if (!newFields.pinyin && !newFields.russian) throw new Error("nothing new to update");
 
   newFields.edited = true;
   newFields.previous = wordToEdit.previous;

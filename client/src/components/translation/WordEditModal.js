@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from "react";
-// import { sanitizer } from "../../utils/sanitizer";
-// import { markUpRussianText } from "../../actions/helpers";
+import { sanitizer } from "../../utils/sanitizer";
+import { markUpRussianText } from "../../actions/helpers";
+import { NullUser, User } from "../../patterns/User";
 import axios from "axios";
 import { connect } from "react-redux";
 
-const WordEditModal = ({ word }) => {
+const WordEditModal = ({ word, user }) => {
   const { chinese, pinyin, russian, _id } = word;
 
   useEffect(() => {
     if (pinyin) setNewPinyin(pinyin.trim());
-  }, [pinyin]);
+    if (russian) {
+      setNewRussian(russian.trim());
+      setTranslation(markUpRussianText(russian, true));
+    }
+  }, [_id]);
 
   const [okToEdit, setOkToEdit] = useState(false);
   const [newPinyin, setNewPinyin] = useState("");
-
-  // const translation = markUpRussianText(russian, true);
+  const [newRussian, setNewRussian] = useState("");
+  const [translation, setTranslation] = useState("");
 
   const editPinyin = (e) => {
     setNewPinyin(e.target.value);
@@ -22,9 +27,15 @@ const WordEditModal = ({ word }) => {
     setOkToEdit(true);
   };
 
-  const editWord = () => {
-    console.log("here");
+  const editRussian = (e) => {
+    const val = e.target.value;
+    setNewRussian(val);
+    if (!val) return setOkToEdit(false);
+    setTranslation(markUpRussianText(val, true));
+    setOkToEdit(true);
+  };
 
+  const editWord = () => {
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -34,7 +45,7 @@ const WordEditModal = ({ word }) => {
     const body = JSON.stringify({
       id: _id,
       pinyin: newPinyin,
-      russian,
+      russian: newRussian,
     });
     axios.put("/api/dictionary/updateWord", body, config).catch(console.log);
   };
@@ -76,6 +87,33 @@ const WordEditModal = ({ word }) => {
                 />
               </div>
             </div>
+
+            {user.isAdmin && (
+              <div className=''>
+                <div className='form-group row'>
+                  <label htmlFor='russianInput' className='col-sm-4 col-form-label'>
+                    Перевод
+                  </label>
+                  <div className='col-sm-12'>
+                    <textarea
+                      className='form-control'
+                      id='russianInput'
+                      rows={5}
+                      value={newRussian || ""}
+                      onChange={editRussian}
+                    ></textarea>
+                  </div>
+                </div>
+                <div className='row'>
+                  <div
+                    className='col-sm-12'
+                    dangerouslySetInnerHTML={{
+                      __html: sanitizer(translation),
+                    }}
+                  ></div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className='modal-footer'>
@@ -98,6 +136,7 @@ const WordEditModal = ({ word }) => {
 
 const mapStateToProps = (state) => ({
   word: state.userwords.modalWordToEdit,
+  user: state.auth.user ? new User(state.auth.user) : new NullUser(),
 });
 
 export default connect(mapStateToProps, {})(WordEditModal);

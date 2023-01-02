@@ -144,7 +144,6 @@ const TextForm = ({ loadUserWords, userToCheck, textToEdit, location }) => {
         );
       }
     } else {
-      console.log("тута");
       setIsTranslated(false);
       setIsLongText(false);
     }

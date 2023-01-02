@@ -55,9 +55,7 @@ const Paragraph = ({
       });
     }
 
-    return () => {
-      console.log("тута");
-    };
+    return () => {};
   }, []);
 
   useEffect(() => {
