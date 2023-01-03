@@ -14,12 +14,12 @@ import {
   READ_TODAY,
   READ_TODAY_ERR,
   GOOGLE_LOGIN_SUCCESS,
-  MARK_TEXT_READ
+  MARK_TEXT_READ,
 } from "./types";
 import { setAuthToken, setGoogleAuth } from "../utils/setAuthToken";
 
 //load user
-export const loadUser = () => async dispatch => {
+export const loadUser = () => async (dispatch) => {
   if (localStorage.token) {
     setAuthToken(localStorage.token);
   } else if (localStorage.userid) {
@@ -31,7 +31,7 @@ export const loadUser = () => async dispatch => {
 
     dispatch({
       type: USER_LOADED,
-      payload: res.data
+      payload: res.data,
     });
   } catch (err) {
     dispatch({ type: AUTH_ERROR });
@@ -39,41 +39,43 @@ export const loadUser = () => async dispatch => {
 };
 
 // register user
-export const register = ({ name, email, password }) => async dispatch => {
-  const config = {
-    headers: {
-      "Content-Type": "application/json"
+export const register =
+  ({ name, email, password }) =>
+  async (dispatch) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const body = JSON.stringify({ name, email, password });
+
+    try {
+      const res = await axios.post("/api/users", body, config);
+
+      dispatch({
+        type: REGISTER_SUCCESS,
+        payload: res.data,
+      });
+
+      dispatch(loadUser());
+    } catch (err) {
+      const errors = err.response.data.errors;
+
+      if (errors) {
+        errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+      } else {
+      }
+      dispatch({ type: REGISTER_FAIL });
     }
   };
 
-  const body = JSON.stringify({ name, email, password });
-
-  try {
-    const res = await axios.post("/api/users", body, config);
-
-    dispatch({
-      type: REGISTER_SUCCESS,
-      payload: res.data
-    });
-
-    dispatch(loadUser());
-  } catch (err) {
-    const errors = err.response.data.errors;
-
-    if (errors) {
-      errors.forEach(error => dispatch(setAlert(error.msg, "danger")));
-    } else {
-    }
-    dispatch({ type: REGISTER_FAIL });
-  }
-};
-
 // login user
-export const login = (email, password) => async dispatch => {
+export const login = (email, password) => async (dispatch) => {
   const config = {
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   };
 
   const body = JSON.stringify({ email, password });
@@ -83,7 +85,7 @@ export const login = (email, password) => async dispatch => {
 
     dispatch({
       type: LOGIN_SUCCESS,
-      payload: data
+      payload: data,
     });
 
     dispatch(loadUser());
@@ -91,18 +93,18 @@ export const login = (email, password) => async dispatch => {
     const errors = err.response.data.errors;
 
     if (errors) {
-      errors.forEach(error => dispatch(setAlert(error.msg, "danger")));
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
     } else {
     }
     dispatch({ type: LOGIN_FAIL });
   }
 };
 
-export const googleLogin = id => async dispatch => {
+export const googleLogin = (id) => async (dispatch) => {
   const config = {
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   };
 
   const body = JSON.stringify({ id });
@@ -112,14 +114,14 @@ export const googleLogin = id => async dispatch => {
 
     dispatch({
       type: GOOGLE_LOGIN_SUCCESS,
-      payload: data
+      payload: data,
     });
     dispatch(loadUser());
   } catch (err) {
     const errors = err.response.data.errors;
 
     if (errors) {
-      errors.forEach(error => dispatch(setAlert(error.msg, "danger")));
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
     } else {
     }
     dispatch({ type: LOGIN_FAIL });
@@ -127,7 +129,7 @@ export const googleLogin = id => async dispatch => {
 };
 
 // logout
-export const logout = () => dispatch => {
+export const logout = () => (dispatch) => {
   dispatch({ type: CLEAR_PROFILE });
   dispatch({ type: LOGOUT });
 };
@@ -136,11 +138,11 @@ export const logout = () => dispatch => {
  * for setting daily reading goal (number of Chinese Characters to read)
  * @param {number} num - of Chinese chars to read per day
  */
-export const setReadGoal = num => async dispatch => {
+export const setReadGoal = (num) => async (dispatch) => {
   const config = {
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   };
 
   try {
@@ -148,7 +150,7 @@ export const setReadGoal = num => async dispatch => {
 
     dispatch({
       type: SET_GOAL_SUCCESS,
-      payload: data
+      payload: data,
     });
 
     dispatch(loadUser());
@@ -157,63 +159,67 @@ export const setReadGoal = num => async dispatch => {
   }
 };
 
-export const readToday = ({ num, path, ind }) => async dispatch => {
-  const config = {
-    headers: {
-      "Content-Type": "application/json"
+export const readToday =
+  ({ num, path, ind }) =>
+  async (dispatch) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const body = JSON.stringify({ num, path, ind });
+
+    try {
+      const { data } = await axios.post(`/api/users/read_today`, body, config);
+
+      dispatch({
+        type: READ_TODAY,
+        payload: data,
+      });
+
+      // dispatch(loadUser());
+    } catch (err) {
+      dispatch({ type: READ_TODAY_ERR });
     }
   };
 
-  const body = JSON.stringify({ num, path, ind });
+export const unreadToday =
+  ({ num, path, ind }) =>
+  async (dispatch) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
 
-  try {
-    const { data } = await axios.post(`/api/users/read_today`, body, config);
+    const body = JSON.stringify({ num, path, ind });
 
-    dispatch({
-      type: READ_TODAY,
-      payload: data
-    });
+    try {
+      const { data } = await axios.post(`/api/users/unread_today`, body, config);
 
-    // dispatch(loadUser());
-  } catch (err) {
-    dispatch({ type: READ_TODAY_ERR });
-  }
-};
+      dispatch({
+        type: READ_TODAY,
+        payload: data,
+      });
 
-export const unreadToday = ({ num, path, ind }) => async dispatch => {
-  const config = {
-    headers: {
-      "Content-Type": "application/json"
+      // dispatch(loadUser());
+    } catch (err) {
+      dispatch({ type: READ_TODAY_ERR });
     }
   };
-
-  const body = JSON.stringify({ num, path, ind });
-
-  try {
-    const { data } = await axios.post(`/api/users/unread_today`, body, config);
-
-    dispatch({
-      type: READ_TODAY,
-      payload: data
-    });
-
-    // dispatch(loadUser());
-  } catch (err) {
-    dispatch({ type: READ_TODAY_ERR });
-  }
-};
 
 /**
  * @param {string} id           - text id
  * @param {boolean} alreadyRead   -
  */
-export const markAsRead = (id, alreadyRead) => async dispatch => {
+export const markAsRead = (id, alreadyRead) => async (dispatch) => {
   const url = alreadyRead ? "unmark_finished_texts" : "mark_finished_texts";
 
   const config = {
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   };
 
   try {
@@ -221,11 +227,11 @@ export const markAsRead = (id, alreadyRead) => async dispatch => {
 
     dispatch({
       type: MARK_TEXT_READ,
-      payload: data
+      payload: data,
     });
   } catch (err) {
     dispatch({
-      type: LOGIN_FAIL
+      type: LOGIN_FAIL,
     });
   }
 };

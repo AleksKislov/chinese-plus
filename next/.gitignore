@@ -33,9 +33,4 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-.DS_Store
-node_modules
-.next
-
-.env
-constants/urls.ts
+next-env.d.ts
