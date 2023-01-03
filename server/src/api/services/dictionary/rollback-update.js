@@ -12,6 +12,7 @@ async function rollbackUpdate(req, res) {
     newFields.pinyin = prev.pinyin;
     prevArr.splice(+prevInd, 1);
     newFields.previous = prevArr;
+    newFields.updatedAt = new Date().toISOString();
   }
 
   const editedWord = await Dictionary.findByIdAndUpdate(wordId, { $set: newFields }, { new: true });

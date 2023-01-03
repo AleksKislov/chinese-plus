@@ -18,13 +18,15 @@ async function updateWord(req, res) {
 
   if (!newFields.pinyin && !newFields.russian) throw new Error("nothing new to update");
 
+  const newDate = new Date().toISOString();
   newFields.edited = true;
+  newFields.updatedAt = newDate;
   newFields.previous = wordToEdit.previous;
   newFields.previous.unshift({
     russian: wordToEdit.russian,
     pinyin: wordToEdit.pinyin,
     editor: req.user.id,
-    date: new Date().toISOString(),
+    date: newDate,
   });
 
   const editedWord = await Dictionary.findByIdAndUpdate(id, { $set: newFields }, { new: true });

@@ -7,7 +7,7 @@ const auth = require("../../middleware/auth");
 
 const Dictionary = require("../../src/models/Dictionary");
 
-const { updateWord, rollbackUpdate } = require("../../src/api/services/dictionary");
+const { updateWord, rollbackUpdate, getEditedWords } = require("../../src/api/services/dictionary");
 
 /**
  * @route     GET api/dictionary?word=...
@@ -33,6 +33,13 @@ router.get("/", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+
+/**
+ * @route     GET api/dictionary/editedWords
+ * @desc      get words with previously edited values
+ * @access    Public
+ */
+router.get("/editedWords", getEditedWords);
 
 /**
  * @route       POST api/dictionary

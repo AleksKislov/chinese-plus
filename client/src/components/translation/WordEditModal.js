@@ -48,6 +48,11 @@ const WordEditModal = ({ word, user }) => {
       russian: newRussian,
     });
     axios.put("/api/dictionary/updateWord", body, config).catch(console.log);
+
+    setTimeout(() => {
+      localStorage.removeItem("currentText");
+      window.location.reload();
+    }, 500);
   };
 
   return (

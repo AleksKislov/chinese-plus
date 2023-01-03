@@ -56,6 +56,7 @@ import CreateContent from "../common/CreateContent";
 import Radicals from "../for-newbies/Radicals";
 import AdminMenu from "../admin/AdminMenu";
 import AdNotices from "../admin/AdNotices";
+import EditedWords from "../admin/EditedWords";
 
 // import TranslateForm from "../translation/TranslateForm";
 // <PrivateRoute exact path='/translate' component={TranslateForm} />
@@ -91,6 +92,7 @@ const Routes = () => {
           <PrivateRoute exact path='/mentions' component={Mentions} />
           <AdminRoute exact path='/ad' component={AdminMenu} />
           <AdminRoute exact path='/ad/notices' component={AdNotices} />
+          <AdminRoute exact path='/ad/words' component={EditedWords} />
 
           <Route exact path='/hsk-table' render={() => <Redirect to='/hsk-table/1' />} />
           <Route exact path='/hsk-search' component={SearchHSK} />

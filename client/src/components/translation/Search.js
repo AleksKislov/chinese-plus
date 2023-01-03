@@ -42,7 +42,7 @@ const Search = ({
   userWords,
   removeWord,
   setModalEditWord,
-  modalWordToEdit,
+  // modalWordToEdit,
   // dictResponse
   // puppeteerFunc
 }) => {
@@ -385,7 +385,7 @@ Search.propTypes = {};
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
   userWords: state.userwords.userwords,
-  modalWordToEdit: state.userwords.modalWordToEdit,
+  // modalWordToEdit: state.userwords.modalWordToEdit,
   // dictResponse: state.userwords.dictResponse
 });
 

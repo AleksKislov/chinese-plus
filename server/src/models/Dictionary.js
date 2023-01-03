@@ -14,6 +14,10 @@ const DictionarySchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = Dictionary = mongoose.model("dictionary", DictionarySchema);
