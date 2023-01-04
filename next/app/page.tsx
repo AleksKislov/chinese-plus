@@ -1,6 +1,5 @@
-async function getSmth() {
+async function getSmth(): Promise<Object> {
   const res = await fetch("http://127.0.0.1:5000/api/notices");
-  console.log("тута", res);
   const data = await res.json();
   return data;
 }

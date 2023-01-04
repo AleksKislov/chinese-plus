@@ -1,0 +1,18 @@
+version: "3.1"
+services:
+  mongo:
+    image: mongo
+    container_name: mongo_chin_dev
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodata:/data/db
+
+  nodeserver:
+    image: nodechin
+    container_name: nodechin_dev
+    ports:
+      - 5000:5000
+
+volumes:
+  mongodata:
