@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Footer() {
   return (
-    <footer className='text-center text-muted myFooter'>
+    <footer className='text-center text-muted mt-auto bg-primary py-3'>
       <div className='container'>
         <div>
           <span>
@@ -17,7 +17,9 @@ export default function Footer() {
             Следите за проектом:{" "}
             {media.map((x, ind) => (
               <Link href={x.href} target='_blank' key={ind}>
-                <FontAwesomeIcon icon={x.icon} className='iconSize mx-1' />
+                <span>
+                  <FontAwesomeIcon icon={x.icon} className='iconSize mx-1' />
+                </span>
               </Link>
             ))}
           </span>

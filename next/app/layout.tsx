@@ -1,19 +1,15 @@
 /* eslint-disable @next/next/no-head-element */
-
-import Footer from "../components/layout/footer";
-import "bootstrap/dist/css/bootstrap.css";
+// import "bootstrap/dist/css/bootstrap.css";
+import "./bootstrap.css";
 import "./global.css";
+import MainLayout from "../components/layout/main-layout";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html>
       <head></head>
       <body>
-        <main>
-          <nav>haha</nav>
-          {children}
-          <Footer />
-        </main>
+        <MainLayout>{children}</MainLayout>
       </body>
     </html>
   );
