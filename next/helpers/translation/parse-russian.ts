@@ -1,5 +1,5 @@
 import { markUpRuText } from "./mark-up-ru-text";
-import { sanitizer } from "./sanitizer";
+// import { sanitizer } from "./sanitizer";
 
 export const parseRussian = (translation: string, showExamples: boolean): string => {
   if (!translation) return " ";
@@ -10,5 +10,5 @@ export const parseRussian = (translation: string, showExamples: boolean): string
     russian = russian.slice(0, ind + 800);
   }
 
-  return sanitizer(russian);
+  return russian;
 };

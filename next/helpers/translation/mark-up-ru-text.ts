@@ -1,4 +1,4 @@
-import { sanitizer } from "./sanitizer";
+// import { sanitizer } from "./sanitizer";
 
 export const markUpRuText = (text: string, showExamples: boolean = false): string => {
   if (!text) return " ";
@@ -23,5 +23,5 @@ export const markUpRuText = (text: string, showExamples: boolean = false): strin
   for (let i = 0; i < 12; i++) {
     text = text.replace(regex, `<a href="/search/$1" target="_blank">$1</a>`);
   }
-  return sanitizer(text);
+  return text;
 };

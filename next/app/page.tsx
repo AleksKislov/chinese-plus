@@ -2,34 +2,38 @@ import Image from "next/image";
 import Link from "next/link";
 import SellPoints from "../components/landing/points";
 import landingBg from "../assets/img/land-bg.jpg";
+import CommentsCard from "../components/dashboard/comments-card";
+import PostsCard from "../components/landing/posts-card";
 
 export default function HomePage() {
   return (
-    <>
-      <Image
-        src={landingBg}
-        fill
-        style={{
-          zIndex: -1,
-          opacity: 0.3,
-          backgroundColor: "black",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-        quality={50}
-        alt='Иероглифы'
-      />
-      <div className='container'>
+    <div>
+      <div className='bgwrap'>
+        <Image
+          src={landingBg}
+          fill
+          style={{
+            zIndex: -1,
+            opacity: 0.3,
+            backgroundColor: "black",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+          quality={80}
+          alt='Иероглифы'
+        />
+      </div>
+      <div>
         <div className='row my-5'>
-          <div className='col-md-12 text-center'>
+          <div className='col-12 text-center'>
             <h2 className='LandingWhiteTxt'>Клуб Chinese+</h2>
             <p className='lead LandingWhiteTxt'>Приложение для изучения китайского языка</p>
             <div className='buttons'>
-              <Link href='/register' className='btn btn-dark mx-1'>
+              <Link href='/auth/register' className='btn btn-dark mx-1'>
                 Регистрация
               </Link>
-              <Link href='/login' className='btn btn-light mx-1'>
+              <Link href='/auth/login' className='btn btn-light mx-1'>
                 Войти
               </Link>
             </div>
@@ -39,8 +43,9 @@ export default function HomePage() {
         <SellPoints />
 
         <div className='row my-5'>
-          <div className='col-12 d-flex justify-content-center'>
-            <div className='embed-responsive embed-responsive-16by9' style={{ maxWidth: "50rem" }}>
+          <div className='col-sm-1'></div>
+          <div className='col-sm-10'>
+            <div className='ratio ratio-16x9'>
               <iframe
                 className='embed-responsive-item'
                 width='560'
@@ -51,22 +56,21 @@ export default function HomePage() {
               ></iframe>
             </div>
           </div>
+          <div className='col-sm-1'></div>
         </div>
 
-        {/* <div className='row mb-5'>
-          <div className='col-sm-6 LandingWhiteTxt mb-3'>
+        <div className='row mb-5'>
+          <div className='col-sm-6 mb-3'>
+            {/* @ts-expect-error Server Component */}
             <CommentsCard />
           </div>
           <div className='col-sm-6'>
-            <h4 className='LandingWhiteTxt'>Последние записи в Гостевой:</h4>
-
-            {posts.map((post) => (
-              <Post key={post._id} post={post} />
-            ))}
+            {/* @ts-expect-error Server Component */}
+            <PostsCard />
           </div>
-        </div> */}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

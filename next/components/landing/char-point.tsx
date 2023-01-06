@@ -1,8 +1,8 @@
 "use client";
 import { useEffect } from "react";
-import Link from "next/link";
 
 import HanziWriter from "hanzi-writer";
+import UndecLink from "../layout/undec-link";
 
 const charAnimDiv = "showCharDiv";
 export default function CharPoint() {
@@ -21,15 +21,15 @@ export default function CharPoint() {
     writer.loopCharacterAnimation();
   });
   return (
-    <div className='col-sm-4'>
+    <div className='col-sm-4 px-4'>
       <div className='card border-light mb-3'>
         <div className='card-header h5'>Словарь с анимацией</div>
         <div className='card-body row'>
-          <div className='col-md-2' id={charAnimDiv}></div>
-          <div className='col-md-10'>
+          <div className='col-2' id={charAnimDiv}></div>
+          <div className='col-10'>
             <p className='card-text'>
-              Каждый иероглиф в <Link href='/search'>словаре</Link> снабжен анимированным порядком
-              написания черт иероглифа.
+              Каждый иероглиф в <UndecLink href='/search' txt='словаре' /> снабжен анимированным
+              порядком написания черт иероглифа.
             </p>
           </div>
         </div>

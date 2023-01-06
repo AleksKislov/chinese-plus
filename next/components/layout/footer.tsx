@@ -1,7 +1,7 @@
 import Link from "next/link";
-
 import { faTelegram, faVk, faYoutube } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import UndecLink from "./undec-link";
 
 export default function Footer() {
   return (
@@ -9,20 +9,16 @@ export default function Footer() {
       <div className='container'>
         <div>
           <span>
-            Связь с <Link href='/contacts'>админом</Link>
+            Связь с <UndecLink href='/contacts' txt='админом' />
           </span>
         </div>
         <div>
-          <span>
-            Следите за проектом:{" "}
-            {media.map((x, ind) => (
-              <Link href={x.href} target='_blank' key={ind}>
-                <span>
-                  <FontAwesomeIcon icon={x.icon} className='iconSize mx-1' />
-                </span>
-              </Link>
-            ))}
-          </span>
+          Следите за проектом:{" "}
+          {media.map((x, ind) => (
+            <Link href={x.href} target='_blank' key={ind}>
+              <FontAwesomeIcon icon={x.icon} className='iconSize mx-1' />
+            </Link>
+          ))}
         </div>
       </div>
     </footer>
