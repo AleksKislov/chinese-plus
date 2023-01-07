@@ -100,7 +100,7 @@ export default function TrPopover({ word, isCurrent }: { word: WordFromDB; isCur
       >
         {chinese}
       </span>
-      <Overlay show={show} placement='bottom' target={target.current}>
+      <Overlay show={show} placement='bottom' target={target.current} rootClose>
         {content}
       </Overlay>
       {modal}

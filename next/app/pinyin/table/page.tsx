@@ -1,106 +1,116 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState, MouseEvent } from "react";
+import styles from "./Pinyin.module.css";
+
+import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+
 // import tippy from "tippy.js";
 // import "tippy.js/dist/tippy.css"; // optional for styling
-// import { myAudioURL } from "../../../helpers/constants/consts";
-const myAudioURL = "";
+import constUrls from "../../../helpers/constants/urls";
+const myAudioURL = constUrls.myAudioURL;
+
 export default function PinyinTable() {
+  const [show, setShow] = useState(true);
+  const [curSound, setCurSound] = useState("");
+
   useEffect(() => {
-    loaded();
-    // eslint-disable-next-line
-  }, []);
+    initHiglights();
+  });
 
-  const loaded = () => {
-    const tbody = document.querySelector("tbody");
-
+  const initHiglights = () => {
+    const tbody = document.querySelector("tbody") as HTMLTableSectionElement;
+    const tableHead = document.querySelector("#tableHead2") as Element;
     const tds = tbody.getElementsByTagName("td");
-    const trs = tbody.getElementsByTagName("tr");
-
-    const tableHead = document.querySelector("#tableHead2");
     const ths = tableHead.getElementsByTagName("th");
 
-    let tdsArr = Array.from(tds);
-    let trsArr = Array.from(trs);
-    let thsArr = Array.from(ths);
+    const tdsArr = Array.from(tds);
+    const thsArr = Array.from(ths);
 
-    tdsArr.forEach((td, i) => {
-      td.addEventListener("mouseover", (e) => {
-        let ind = i % 36;
+    function higlightEvent(i: number, action: string) {
+      const cols = i % 36;
 
-        for (let index = 0; index < 22; index++) {
-          tdsArr[ind + index * 36].setAttribute("class", "highlighted");
-        }
-        thsArr[ind + 1].setAttribute("class", "highlighted");
+      for (let index = 0; index < 22; index++) {
+        const el = tdsArr[cols + index * 36];
+        action === "set"
+          ? el.setAttribute("class", styles.highlighted)
+          : el.classList.remove(styles.highlighted);
+      }
+      action === "set"
+        ? thsArr[cols + 1].setAttribute("class", styles.highlighted)
+        : thsArr[cols + 1].classList.remove(styles.highlighted);
+    }
 
-        tdsArr[i].setAttribute("class", "highlightedItem");
-      });
-
-      td.addEventListener("mouseout", (e) => {
-        let ind = i % 36;
-        for (let index = 0; index < 22; index++) {
-          tdsArr[ind + index * 36].classList.remove("highlighted");
-        }
-        thsArr[ind + 1].classList.remove("highlighted");
-
-        tdsArr[i].classList.remove("highlightedItem");
-      });
-    });
-
-    trsArr.forEach((tr, i) => {
-      tr.addEventListener("mouseover", (e) => {
-        trsArr[i].setAttribute("class", "highlighted");
-      });
-
-      tr.addEventListener("mouseout", (e) => {
-        for (let index = 0; index < 22; index++) {
-          trsArr[index].classList.remove("highlighted");
-        }
-      });
-    });
-
-    const pinyinToggler = document.getElementsByClassName("pinjin-toggler");
-    let pinyinTogArr = Array.from(pinyinToggler);
-
-    pinyinTogArr.forEach((el) => {
-      let cont = el.parentNode.getElementsByClassName("dropdown-menu");
-      cont[0].innerHTML = cont[0].innerHTML.replace(/data-pinyin/gi, "onclick");
-
-      tippy(el, {
-        content: `<ul class="pinyinTippy">${cont[0].innerHTML}</ul>`,
-        allowHTML: true,
-        trigger: "click",
-        interactive: true,
-        theme: "translucent",
-        placement: "bottom",
-      });
+    tdsArr.forEach((td, ind) => {
+      td.addEventListener("mouseover", () => higlightEvent(ind, "set"));
+      td.addEventListener("mouseout", () => higlightEvent(ind, "remove"));
     });
   };
 
+  const playAudio = (e: MouseEvent<HTMLButtonElement>) => {
+    const target = e.target as Element;
+    new Audio(`${myAudioURL}pinyin/${target.id}.mp3`).play();
+  };
+
+  const popover = (
+    <Popover className='bg-secondary'>
+      <Popover.Body>
+        <ButtonGroup>
+          {curSound &&
+            pinyinMap[curSound] &&
+            Object.keys(pinyinMap[curSound]).map((x, ind) => (
+              <Button
+                variant={pinyinMap[curSound][x] ? "info" : "danger"}
+                key={ind}
+                onClick={(e) => {
+                  if (pinyinMap[curSound][x]) playAudio(e);
+                }}
+                id={pinyinMap[curSound][x]}
+              >
+                {x}
+              </Button>
+            ))}
+        </ButtonGroup>
+      </Popover.Body>
+    </Popover>
+  );
+
+  const setSound = (e: MouseEvent<HTMLTableCellElement>) => {
+    const target = e.target as Element;
+    setCurSound(target.innerHTML);
+  };
+
+  const consonansts = Object.keys(tableMap);
+
   return (
-    <div className='row justify-content-center'>
-      <div className='col-auto'>
-        <h1 className=''>Таблица Пиньиня с Озвучкой</h1>
+    <div className='row'>
+      <h1>Таблица Пиньиня с Озвучкой</h1>
 
-        <div className='alert alert-dismissible alert-info'>
-          <button type='button' className='close' data-dismiss='alert'>
-            &times;
-          </button>
-          Кликайте на слоги, чтобы услышать озвучку носителем языка
-        </div>
+      <div>
+        {show && (
+          <Alert variant={"info"} onClose={() => setShow(false)} dismissible>
+            Кликайте на слоги, чтобы услышать озвучку носителем языка
+          </Alert>
+        )}
+      </div>
 
-        <table className='table table-bordered table-responsive' id='table-pinjin'>
+      <div className='table-responsive'>
+        <table className='table table-bordered table-dark table-hover'>
           <thead>
-            <tr id='tableHead'>
-              <th id='tableBlank'>&nbsp;</th>
-              <th colSpan='5'>a</th>
-              <th colSpan='3'>o</th>
-              <th colSpan='5'>e</th>
-              <th colSpan='10'>i</th>
-              <th colSpan='9'>u</th>
-              <th colSpan='4'>ü</th>
+            <tr>
+              <th>&nbsp;</th>
+              <th colSpan={5}>a</th>
+              <th colSpan={3}>o</th>
+              <th colSpan={5}>e</th>
+              <th colSpan={10}>i</th>
+              <th colSpan={9}>u</th>
+              <th colSpan={4}>ü</th>
             </tr>
             <tr id='tableHead2'>
-              <th id='tableBlank'>&nbsp;</th>
+              <th>&nbsp;</th>
               <th>a</th>
               <th>ai</th>
               <th>ao</th>
@@ -139,1596 +149,24 @@ export default function PinyinTable() {
               <th>ün</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <th id='tableHead' scope='row'>
-                -
-              </th>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>a</div>
+          <tbody id={styles.pinyinTable}>
+            {consonansts.map((conson, k) => (
+              <tr key={k}>
+                <th scope='row'>{conson}</th>
+                {tableMap[conson].map((pySound, ind) => (
+                  <OverlayTrigger
+                    key={ind}
+                    trigger='click'
+                    placement='bottom'
+                    overlay={popover}
+                    rootClose
+                  >
+                    <td onClick={(e) => setSound(e)}>{pySound}</td>
+                  </OverlayTrigger>
+                ))}
+              </tr>
+            ))}
 
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/a1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ā
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/a2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        á
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/a3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ǎ
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/a4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        à
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>ai</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ai1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        āi
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ai2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ái
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ai3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ǎi
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ai4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ài
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>ao</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ao1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        āo
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ao2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        áo
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ao3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ǎo
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ao4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ào
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>an</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/an1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ān
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/an2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        án
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/an3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ǎn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/an4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        àn
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>ang</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ang1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        āng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ang2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        áng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ang3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ǎng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ang4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        àng
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>o</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/o1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ō
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/o2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ó
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/o3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ǒ
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/o4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ò
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>ong</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ong1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ōng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ong2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        óng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ong3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ǒng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ong4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        òng
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>ou</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ou1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ōu
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ou2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        óu
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ou3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ǒu
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ou4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        òu
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>e</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/e1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ē
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/e2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        é
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/e3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ě
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/e4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        è
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>ei</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ei1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ēi
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ei2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        éi
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ei3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ěi
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ei4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        èi
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>en</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/en1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ēn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/en2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        én
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/en3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ěn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/en4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        èn
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>eng</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/eng1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ēng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/eng2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        éng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/eng3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ěng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/eng4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        èng
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>er</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/er1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ēr
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/er2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ér
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/er3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        ěr
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/er4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        èr
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>yi</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yi1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yī
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yi2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yí
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yi3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yǐ
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yi4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yì
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>ya</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ya1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yā
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ya2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yá
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ya3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yǎ
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ya4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yà
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>yao</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yao1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yāo
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yao2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yáo
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yao3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yǎo
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yao4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yào
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>ye</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ye1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yē
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ye2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yé
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ye3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yě
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ye4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yè
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>you</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/you1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yōu
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/you2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yóu
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/you3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yǒu
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/you4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yòu
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>yan</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yan1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yān
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yan2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yán
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yan3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yǎn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yan4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yàn
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>yang</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yang1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yāng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yang2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yáng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yang3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yǎng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yang4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yàng
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>yin</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yin1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yīn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yin2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yín
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yin3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yǐn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yin4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yìn
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>ying</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ying1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yīng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ying2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yíng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ying3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yǐng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/ying4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yìng
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>yong</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yong1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yōng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yong2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yóng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yong3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yǒng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yong4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yòng
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>wu</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wu1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wū
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wu2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wú
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wu3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wǔ
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wu4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wù
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>wa</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wa1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wā
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wa2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wá
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wa3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wǎ
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wa4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wà
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>wo</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wo1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wō
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wo2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wó
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wo3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wǒ
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wo4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wò
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>wei</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wei1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wēi
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wei2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wéi
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wei3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wěi
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wei4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wèi
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>wai</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wai1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wāi
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wai2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wái
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wai3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wǎi
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wai4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wài
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>wan</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wan1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wān
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wan2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wán
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wan3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wǎn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wan4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wàn
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>wen</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wen1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wēn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wen2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wén
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wen3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wěn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wen4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wèn
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>wang</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wang1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wāng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wang2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wáng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wang3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wǎng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/wang4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wàng
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>weng</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/weng1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wēng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/weng2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wéng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/weng3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wěng
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/weng4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        wèng
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>yu</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yu1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yū
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yu2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yú
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yu3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yǔ
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yu4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yù
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>yue</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yue1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yuē
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yue2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yué
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yue3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yuě
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yue4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yuè
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>yuan</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yuan1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yuān
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yuan2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yuán
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yuan3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yuǎn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yuan4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yuàn
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <td>
-                <div className='btn-group dropdown'>
-                  <div className='pinjin-toggler'>yun</div>
-
-                  <ul className='dropdown-menu'>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yun1.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yūn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yun2.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yún
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yun3.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yǔn
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className='btn btn-outline-info'
-                        data-pinyin={`new Audio('${myAudioURL}pinyin/yun4.mp3').play(); return false;`}
-                        type='button'
-                      >
-                        yùn
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
             <tr>
               <th id='tableHead' scope='row'>
                 m
@@ -17143,7 +15581,6 @@ export default function PinyinTable() {
               <td>
                 <div className='btn-group dropup'>
                   <div className='pinjin-toggler'>huan</div>
-
                   <ul className='dropdown-menu'>
                     <li>
                       <button
@@ -17280,3 +15717,530 @@ export default function PinyinTable() {
     </div>
   );
 }
+
+const pinyinMap: { [key: string]: { [key: string]: string } } = {
+  a: {
+    ā: "a1",
+    á: "a2",
+    ǎ: "a3",
+    à: "a4",
+  },
+  ai: {
+    āi: "ai1",
+    ái: "ai2",
+    ǎi: "ai3",
+    ài: "ai4",
+  },
+  ao: {
+    āo: "ao1",
+    áo: "ao2",
+    ǎo: "ao3",
+    ào: "ao4",
+  },
+  an: {
+    ān: "an1",
+    án: "an2",
+    ǎn: "an3",
+    àn: "an4",
+  },
+  ang: {
+    āng: "ang1",
+    áng: "ang2",
+    ǎng: "ang3",
+    àng: "ang4",
+  },
+  o: {
+    ō: "o1",
+    ó: "o2",
+    ǒ: "o3",
+    ò: "o4",
+  },
+  ong: {
+    ōng: "ong1",
+    óng: "ong2",
+    ǒng: "ong3",
+    òng: "ong4",
+  },
+  ou: {
+    ōu: "ou1",
+    óu: "ou2",
+    ǒu: "ou3",
+    òu: "ou4",
+  },
+  e: {
+    ē: "e1",
+    é: "e2",
+    ě: "e3",
+    è: "e4",
+  },
+  ei: {
+    ēi: "ei1",
+    éi: "ei2",
+    ěi: "ei3",
+    èi: "ei4",
+  },
+  en: {
+    ēn: "en1",
+    én: "en2",
+    ěn: "en3",
+    èn: "en4",
+  },
+  eng: {
+    ēng: "eng1",
+    éng: "eng2",
+    ěng: "eng3",
+    èng: "eng4",
+  },
+  er: {
+    ēr: "er1",
+    ér: "er2",
+    ěr: "er3",
+    èr: "er4",
+  },
+  yi: {
+    yī: "yi1",
+    yí: "yi2",
+    yǐ: "yi3",
+    yì: "yi4",
+  },
+  ya: {
+    yā: "ya1",
+    yá: "ya2",
+    yǎ: "ya3",
+    yà: "ya4",
+  },
+  yao: {
+    yāo: "yao1",
+    yáo: "yao2",
+    yǎo: "yao3",
+    yào: "yao4",
+  },
+  ye: {
+    yē: "ye1",
+    yé: "ye2",
+    yě: "ye3",
+    yè: "ye4",
+  },
+  you: {
+    yōu: "you1",
+    yóu: "you2",
+    yǒu: "you3",
+    yòu: "you4",
+  },
+  yan: {
+    yān: "yan1",
+    yán: "yan2",
+    yǎn: "yan3",
+    yàn: "yan4",
+  },
+  yang: {
+    yāng: "yang1",
+    yáng: "yang2",
+    yǎng: "yang3",
+    yàng: "yang4",
+  },
+  yin: {
+    yīn: "yin1",
+    yín: "yin2",
+    yǐn: "yin3",
+    yìn: "yin4",
+  },
+  ying: {
+    yīng: "ying1",
+    yíng: "ying2",
+    yǐng: "ying3",
+    yìng: "ying4",
+  },
+  yong: {
+    yōng: "yong1",
+    yóng: "yong2",
+    yǒng: "yong3",
+    yòng: "yong4",
+  },
+  wu: {
+    wū: "wu1",
+    wú: "wu2",
+    wǔ: "wu3",
+    wù: "wu4",
+  },
+  wa: {
+    wā: "wa1",
+    wá: "wa2",
+    wǎ: "wa3",
+    wà: "wa4",
+  },
+  wo: {
+    wō: "wo1",
+    wó: "wo2",
+    wǒ: "wo3",
+    wò: "wo4",
+  },
+  wei: {
+    wēi: "wei1",
+    wéi: "wei2",
+    wěi: "wei3",
+    wèi: "wei4",
+  },
+  wai: {
+    wāi: "wai1",
+    wái: "wai2",
+    wǎi: "wai3",
+    wài: "wai4",
+  },
+  wan: {
+    wān: "wan1",
+    wán: "wan2",
+    wǎn: "wan3",
+    wàn: "wan4",
+  },
+  wen: {
+    wēn: "wen1",
+    wén: "wen2",
+    wěn: "wen3",
+    wèn: "wen4",
+  },
+  wang: {
+    wāng: "wang1",
+    wáng: "wang2",
+    wǎng: "wang3",
+    wàng: "wang4",
+  },
+  weng: {
+    wēng: "weng1",
+    wéng: "weng2",
+    wěng: "weng3",
+    wèng: "weng4",
+  },
+  yu: {
+    yū: "yu1",
+    yú: "yu2",
+    yǔ: "yu3",
+    yù: "yu4",
+  },
+  yue: {
+    yuē: "yue1",
+    yué: "yue2",
+    yuě: "yue3",
+    yuè: "yue4",
+  },
+  yuan: {
+    yuān: "yuan1",
+    yuán: "yuan2",
+    yuǎn: "yuan3",
+    yuàn: "yuan4",
+  },
+  yun: {
+    yūn: "yun1",
+    yún: "yun2",
+    yǔn: "yun3",
+    yùn: "yun4",
+  },
+  // m
+  ma: {
+    mā: "ma1",
+    má: "ma2",
+    mǎ: "ma3",
+    mà: "ma4",
+  },
+  mai: {
+    māi: "",
+    mái: "mai2",
+    mǎi: "mai3",
+    mài: "mai4",
+  },
+  mao: {
+    māo: "mao1",
+    máo: "mao2",
+    mǎo: "mao3",
+    mào: "mao4",
+  },
+  man: {
+    mān: "man1",
+    mán: "man2",
+    mǎn: "man3",
+    màn: "man4",
+  },
+  mang: {
+    māng: "mang1",
+    máng: "mang2",
+    mǎng: "mang3",
+    màng: "mang4",
+  },
+  mo: {
+    mō: "mo1",
+    mó: "mo2",
+    mǒ: "mo3",
+    mò: "mo4",
+  },
+  mou: {
+    mōu: "mou1",
+    móu: "mou2",
+    mǒu: "mou3",
+    mòu: "",
+  },
+  me: {
+    me: "me0",
+    mē: "",
+    mé: "",
+    mě: "",
+    mè: "",
+  },
+  mei: {
+    mēi: "",
+    méi: "mei2",
+    měi: "mei3",
+    mèi: "mei4",
+  },
+  men: {
+    mēn: "men1",
+    mén: "men2",
+    měn: "men3",
+    mèn: "men4",
+  },
+  meng: {
+    mēng: "meng1",
+    méng: "meng2",
+    měng: "meng3",
+    mèng: "meng4",
+  },
+  mi: {
+    mī: "mi1",
+    mí: "mi2",
+    mǐ: "mi3",
+    mì: "mi4",
+  },
+  miao: {
+    miāo: "miao1",
+    miáo: "miao2",
+    miǎo: "miao3",
+    miào: "miao4",
+  },
+  mie: {
+    miē: "mie1",
+    mié: "",
+    miě: "",
+    miè: "mie4",
+  },
+  miu: {
+    miū: "",
+    miú: "",
+    miǔ: "",
+    miù: "miu4",
+  },
+  mian: {
+    miān: "",
+    mián: "mian2",
+    miǎn: "mian3",
+    miàn: "mian4",
+  },
+  min: {
+    mīn: "min1",
+    mín: "min2",
+    mǐn: "min3",
+    mìn: "min4",
+  },
+  ming: {
+    mīng: "ming1",
+    míng: "ming2",
+    mǐng: "ming3",
+    mìng: "ming4",
+  },
+  mu: {
+    mū: "",
+    mú: "mu2",
+    mǔ: "mu3",
+    mù: "mu4",
+  },
+  // f
+  fa: {
+    fā: "fa1",
+    fá: "fa2",
+    fǎ: "fa3",
+    fà: "fa4",
+  },
+  fan: {
+    fān: "fan1",
+    fán: "fan2",
+    fǎn: "fan3",
+    fàn: "fan4",
+  },
+  fang: {
+    fāng: "fang1",
+    fáng: "fang2",
+    fǎng: "fang3",
+    fàng: "fang4",
+  },
+  fo: {
+    fō: "",
+    fó: "fo2",
+    fǒ: "",
+    fò: "",
+  },
+  fou: {
+    fōu: "",
+    fóu: "",
+    fǒu: "fou3",
+    fòu: "",
+  },
+  fei: {
+    fēi: "fei1",
+    féi: "fei2",
+    fěi: "fei3",
+    fèi: "fei4",
+  },
+  fen: {
+    fēn: "fen1",
+    fén: "fen2",
+    fěn: "fen3",
+    fèn: "fen4",
+  },
+  feng: {
+    fēng: "feng1",
+    féng: "feng2",
+    fěng: "feng3",
+    fèng: "feng4",
+  },
+  fu: {
+    fū: "fu1",
+    fú: "fu2",
+    fǔ: "fu3",
+    fù: "fu4",
+  },
+  // b
+};
+
+const tableMap = {
+  "-": [
+    "a",
+    "ai",
+    "ao",
+    "an",
+    "ang",
+    "o",
+    "ong",
+    "ou",
+    "e",
+    "ei",
+    "en",
+    "eng",
+    "er",
+    "yi",
+    "ya",
+    "yao",
+    "ye",
+    "you",
+    "yan",
+    "yang",
+    "yin",
+    "ying",
+    "yong",
+    "wu",
+    "wa",
+    "wo",
+    "wei",
+    "wai",
+    "wan",
+    "wen",
+    "wang",
+    "weng",
+    "yu",
+    "yue",
+    "yuan",
+    "yun",
+  ],
+  m: [
+    "ma",
+    "mai",
+    "mao",
+    "man",
+    "mang",
+    "mo",
+    "",
+    "mou",
+    "me",
+    "mei",
+    "men",
+    "meng",
+    "",
+    "mi",
+    "",
+    "miao",
+    "mie",
+    "miu",
+    "mian",
+    "",
+    "min",
+    "ming",
+    "",
+    "mu",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ],
+  f: [
+    "fa",
+    "",
+    "",
+    "fan",
+    "fang",
+    "fo",
+    "",
+    "fou",
+    "",
+    "fei",
+    "fen",
+    "feng",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "fu",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ],
+  b: [],
+  p: [],
+  d: [],
+  t: [],
+  n: [],
+  l: [],
+  z: [],
+  c: [],
+  s: [],
+  zh: [],
+  ch: [],
+  sh: [],
+  r: [],
+  j: [],
+  q: [],
+  x: [],
+  g: [],
+  k: [],
+  h: [],
+};
