@@ -3,7 +3,7 @@ let HANZI_DICT = {};
 const checkIfWordExists = (word) => HANZI_DICT[word];
 const segmenter = new LongestMatchSegmenter(checkIfWordExists);
 
-const isDevelopment = process.env.NODE_ENV === "development";
+const isDevelopment = process.env.NO_AGGR === "yes";
 
 /**
  * @description load all chinese words in memory into HANZI_DICT{word: 1}

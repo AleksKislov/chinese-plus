@@ -1,7 +1,7 @@
 import "../app/bootstrap.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoffee } from "@fortawesome/free-solid-svg-icons";
-import MainLayout from "../components/layout/main-layout";
+import MainLayout from "../src/components/layout/main-layout";
 
 export default function Custom404() {
   return (

@@ -3,8 +3,8 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import GoogleButton from "../../../components/auth/google-button";
-import UndecLink from "../../../components/layout/undec-link";
+import GoogleButton from "../../../src/components/auth/google-button";
+import UndecLink from "../../../src/components/layout/undec-link";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({

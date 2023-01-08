@@ -2,8 +2,8 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faSmile } from "@fortawesome/free-solid-svg-icons";
-import GoogleButton from "../../../components/auth/google-button";
-import UndecLink from "../../../components/layout/undec-link";
+import GoogleButton from "../../../src/components/auth/google-button";
+import UndecLink from "../../../src/components/layout/undec-link";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({

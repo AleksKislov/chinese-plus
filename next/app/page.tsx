@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import SellPoints from "../components/landing/points";
-import landingBg from "../assets/img/land-bg.jpg";
-import CommentsCard from "../components/dashboard/comments-card";
-import PostsCard from "../components/landing/posts-card";
+import SellPoints from "../src/components/landing/points";
+import landingBg from "../public/img/land-bg.jpg";
+import CommentsCard from "../src/components/dashboard/comments-card";
+import PostsCard from "../src/components/landing/posts-card";
 
 export default function HomePage() {
   return (

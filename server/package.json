@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js",
+    "server": "NO_AGGR=yes nodemon server.js",
     "client": "npm start --prefix ../client",
     "dev": "NODE_ENV=development concurrently \"npm run server\" \"npm run client\"",
     "dev-clean": "concurrently \"npm run server\" \"npm run client\"",
@@ -21,6 +21,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
     "cookie-session": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

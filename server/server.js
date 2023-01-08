@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const morgan = require("morgan");
 const cookieSession = require("cookie-session");
+const cookieParser = require("cookie-parser");
 const compression = require("compression");
 const cors = require("cors");
 
@@ -25,6 +26,7 @@ if (isDevelopment) {
   );
 }
 
+app.use(cookieParser());
 app.use(cors({ origin: "*" }));
 app.use(compression());
 // app.use(express.json({ extended: false }));

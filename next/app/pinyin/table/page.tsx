@@ -8,8 +8,8 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 
-import constUrls from "../../../helpers/constants/urls";
-import { pinyinMap, tableMap } from "../../../helpers/constants/pinyin";
+import constUrls from "../../../src/helpers/constants/urls";
+import { pinyinMap, tableMap } from "../../../src/helpers/constants/pinyin";
 
 const myAudioURL = constUrls.myAudioURL;
 

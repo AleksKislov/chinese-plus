@@ -11,6 +11,15 @@ const sessionDays = 3;
 
 const User = require("../../src/models/User");
 
+function encodeJWT(id) {
+  return new Promise((resolve, reject) => {
+    jwt.sign({ user: { id } }, process.env.JWT_SECRET, { expiresIn: "30d" }, (err, token) => {
+      if (err) return reject(err);
+      else return resolve(token);
+    });
+  });
+}
+
 // @route   GET api/auth
 // @desc    Authenticate user
 // access   Public
@@ -31,10 +40,9 @@ router.post(
   "/",
   [
     check("email", "Please include a valid email").isEmail(),
-    check("password", "Password is required").exists()
+    check("password", "Password is required").exists(),
   ],
   async (req, res) => {
-    // console.log(req.body);
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -51,23 +59,23 @@ router.post(
 
       if (!isMatch) return res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
 
-      // return jwt
-      const payload = {
-        user: {
-          id: user.id
-        }
-      };
-
-      jwt.sign(
-        payload,
-        // config.get("jwtSecret"),
-        process.env.JWT_SECRET,
-        { expiresIn: 3600 * 24 * sessionDays },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
+      // jwt.sign(
+      //   {
+      //     user: {
+      //       id: user._id,
+      //     },
+      //   },
+      //   process.env.JWT_SECRET,
+      //   { expiresIn: 3600 * 24 * sessionDays },
+      //   (err, token) => {
+      //     if (err) throw err;
+      //     res.cookie("xtok", token);
+      //     res.json({ auth: "ok" });
+      //   }
+      // );
+      const token = await encodeJWT(user._id);
+      res.cookie("xtok", token);
+      res.json({ auth: "ok" });
     } catch (err) {
       console.log(err.message);
       res.status(500).send("Server error");
@@ -78,9 +86,15 @@ router.post(
 /**
  * @route   GET api/auth/google/redirect
  */
-router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
+router.get("/google/redirect", passport.authenticate("google"), async (req, res) => {
   // res.send(req.user);
-  res.redirect(`${process.env.BASE_URL}/login_success/${req.user._id}`);
+  try {
+    const token = await encodeJWT(req.user._id);
+    res.cookie("xtok", token);
+    res.redirect(`${process.env.BASE_URL}/login_success`);
+  } catch (err) {
+    res.status(500).send("Server error", err.message);
+  }
 });
 
 router.post("/google_success", async (req, res) => {
@@ -99,7 +113,7 @@ router.post("/google_success", async (req, res) => {
 router.get(
   "/google",
   passport.authenticate("google", {
-    scope: ["profile", "email"]
+    scope: ["profile", "email"],
   })
 );
 
