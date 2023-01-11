@@ -1,11 +1,18 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faSmile } from "@fortawesome/free-solid-svg-icons";
 import GoogleButton from "../../../src/components/auth/google-button";
 import UndecLink from "../../../src/components/layout/undec-link";
 
+import { loadUser, login } from "../../../src/context/auth/actions";
+import { saveTokenLocally } from "../../../src/context/auth/save-tok-locally";
+import { useAuthCtx } from "../../../src/context/auth/store";
+
 export default function LoginPage() {
+  const router = useRouter();
+  const { setLoggedIn, setUser, loggedIn } = useAuthCtx();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -17,12 +24,24 @@ export default function LoginPage() {
     setFormData({ ...formData, [target.name]: target.value });
   };
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // login(email, password);
+    try {
+      const { token } = await login(email, password);
+      const user = await loadUser(token);
+      userLoggedEvent(user, token);
+    } catch (err) {
+      console.log("упс, не смогли залогиниться");
+    }
   };
 
-  // if (isAuthenticated) return <Redirect to='/dashboard' />;
+  const userLoggedEvent = (user: UserType, token: string) => {
+    setLoggedIn(true);
+    setUser(user);
+    saveTokenLocally(token);
+  };
+
+  if (loggedIn) router.push("/newbie/pinyin-chart");
 
   return (
     <div className='row'>

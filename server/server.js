@@ -3,8 +3,8 @@ const connectDB = require("./src/mongo_db/db");
 const bodyParser = require("body-parser");
 const path = require("path");
 const morgan = require("morgan");
-const cookieSession = require("cookie-session");
-const cookieParser = require("cookie-parser");
+// const cookieSession = require("cookie-session");
+// const cookieParser = require("cookie-parser");
 const compression = require("compression");
 const cors = require("cors");
 
@@ -26,21 +26,15 @@ if (isDevelopment) {
   );
 }
 
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(cors({ origin: "*" }));
 app.use(compression());
 // app.use(express.json({ extended: false }));
-app.use(bodyParser.json({ limit: "10mb" }));
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true, parameterLimit: 50000 }));
+app.use(bodyParser.json({ limit: "5mb" }));
+// app.use(bodyParser.urlencoded({ limit: "10mb", extended: true, parameterLimit: 50000 }));
 // app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(
-  cookieSession({
-    maxAge: 24 * 60 * 60 * 1000, // milliseconds of a day
-    keys: [process.env.COOKIE_SECRET],
-  })
-);
 app.use(passport.initialize());
 app.use(passport.session());
 

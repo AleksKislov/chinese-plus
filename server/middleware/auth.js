@@ -1,20 +1,13 @@
 const jwt = require("jsonwebtoken");
 
-const isDevMode = process.env.NODE_ENV === "development";
+// const isDevMode = process.env.NODE_ENV === "development";
 
 module.exports = function (req, res, next) {
-  // const token = req.header("x-auth-token");
+  const token = req.header("x-auth-token");
   // const id = req.header("x-google-userid");
 
-  const token = req.cookies["xtok"];
-
-  if (isDevMode) {
-    req.user = { id: process.env.SNUM23_ID };
-    return next();
-  }
-
-  // if (id) {
-  //   req.user = { id };
+  // if (isDevMode) {
+  //   req.user = { id: process.env.SNUM23_ID };
   //   return next();
   // }
 

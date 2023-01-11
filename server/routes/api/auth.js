@@ -1,13 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth");
-// const config = require("config");
 const { check, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { passport } = require("../../src/auth");
-
-const sessionDays = 3;
 
 const User = require("../../src/models/User");
 
@@ -74,8 +71,7 @@ router.post(
       //   }
       // );
       const token = await encodeJWT(user._id);
-      res.cookie("xtok", token);
-      res.json({ auth: "ok" });
+      res.json({ token });
     } catch (err) {
       console.log(err.message);
       res.status(500).send("Server error");
@@ -90,8 +86,7 @@ router.get("/google/redirect", passport.authenticate("google"), async (req, res)
   // res.send(req.user);
   try {
     const token = await encodeJWT(req.user._id);
-    res.cookie("xtok", token);
-    res.redirect(`${process.env.BASE_URL}/login_success`);
+    res.redirect(`${process.env.BASE_URL}/login_success/${token}`);
   } catch (err) {
     res.status(500).send("Server error", err.message);
   }

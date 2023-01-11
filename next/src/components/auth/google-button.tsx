@@ -1,9 +1,9 @@
 "use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getBaseUrl } from "../../helpers/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { useState, useEffect } from "react";
 
 export default function GoogleButton() {
   const [baseUrl, setBaseUrl] = useState("https://www.chineseplus.club");
