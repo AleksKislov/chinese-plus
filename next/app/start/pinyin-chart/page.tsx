@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import Link from "next/link";
 import Alert from "react-bootstrap/Alert";
-import PinyinTable from "../../../src/components/newbie/pinyin-table";
+import PinyinTable from "../../../src/components/start/pinyin-table";
 
 export default function PinyinChartPage() {
   const [show, setShow] = useState(true);

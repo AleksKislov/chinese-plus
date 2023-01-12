@@ -44,8 +44,8 @@ export default function TopNavbar() {
               <NavDropdown.Item href='/watch/not_approved_videos'>На проверке</NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title='Пиньинь' id='basic-nav-dropdown'>
-              <NavDropdown.Item href='/newbie/pinyin-chart'>Таблица</NavDropdown.Item>
-              <NavDropdown.Item href='/newbie/pinyin-tests'>Тесты</NavDropdown.Item>
+              <NavDropdown.Item href='/start/pinyin-chart'>Таблица</NavDropdown.Item>
+              <NavDropdown.Item href='/start/pinyin-tests'>Тесты</NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title='HSK' id='basic-nav-dropdown'>
               <NavDropdown.ItemText className='text-info small'>HSK 2.0</NavDropdown.ItemText>

@@ -7,10 +7,8 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 
-import constUrls from "../../helpers/constants/urls";
 import { pinyinMap, tableMap } from "../../helpers/constants/pinyin";
-
-const myAudioURL = constUrls.myAudioURL;
+import { playAudioFromBtn } from "./play-audio";
 
 export default function PinyinTable() {
   const [curSound, setCurSound] = useState("");
@@ -48,11 +46,6 @@ export default function PinyinTable() {
     });
   };
 
-  const playAudio = (e: MouseEvent<HTMLButtonElement>) => {
-    const target = e.target as Element;
-    new Audio(`${myAudioURL}pinyin/${target.id}.mp3`).play();
-  };
-
   const popover = (
     <Popover className='bg-secondary'>
       <Popover.Body>
@@ -64,7 +57,7 @@ export default function PinyinTable() {
                 variant={pinyinMap[curSound][x] ? "info" : "danger"}
                 key={ind}
                 onClick={(e) => {
-                  if (pinyinMap[curSound][x]) playAudio(e);
+                  if (pinyinMap[curSound][x]) playAudioFromBtn(e);
                 }}
                 id={pinyinMap[curSound][x]}
               >
