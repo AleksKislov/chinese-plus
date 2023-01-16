@@ -1,10 +1,11 @@
 "use client";
 import { ChangeEvent, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSyncAlt } from "@fortawesome/free-solid-svg-icons";
+import { faSyncAlt, faPlay } from "@fortawesome/free-solid-svg-icons";
 
 import { allPinyinSounds } from "../../helpers/constants/pinyin";
-import { playAudioFromBtn } from "./play-audio";
+import { playAudio } from "./play-audio";
+import { getRandElem } from "../../helpers/tools";
 
 type AnswersObj = {
   [key: string]: string;
@@ -27,7 +28,8 @@ export default function PinyinTests() {
   function getRandAnswers(): string[] {
     const sounds: string[] = [];
     while (sounds.length < answersNum) {
-      const randSound = allPinyinSounds[Math.floor(Math.random() * allPinyinSounds.length)];
+      // const randSound = allPinyinSounds[Math.floor(Math.random() * allPinyinSounds.length)];
+      const randSound = getRandElem(allPinyinSounds);
       if (!sounds.includes(randSound)) {
         sounds.push(randSound);
       }
@@ -86,18 +88,24 @@ export default function PinyinTests() {
     setInputs({ ...inputs, [target.id]: target.value });
   };
 
+  const buttons = [
+    {
+      func: checkAnswers,
+      txt: "Проверить",
+    },
+    {
+      func: showAnswers,
+      txt: "Показать Ответы",
+    },
+    {
+      func: init,
+      txt: <FontAwesomeIcon icon={faSyncAlt} />,
+    },
+  ];
+
   return (
     <>
       <div className='row my-2'>
-        {/* <div className='col-sm-4'>
-          <div className='input-group'></div>
-        </div>
-        <div className='col-sm-4'>
-          <div className='input-group'></div>
-        </div>
-        <div className='col-sm-4'>
-          <div className='input-group'></div>
-        </div> */}
         {columns.map((col, k) => (
           <div className='col-sm-4' key={col}>
             {answers.map((quest, i) => (
@@ -106,10 +114,10 @@ export default function PinyinTests() {
                   className='btn btn-secondary'
                   id={sounds[i + answers.length * k]}
                   type='button'
-                  onClick={playAudioFromBtn}
+                  onClick={() => playAudio(sounds[i + answers.length * k])}
                 >
-                  {/* <FontAwesomeIcon icon={faPlay} /> */}
-                  {sounds[i + answers.length * k]}
+                  <FontAwesomeIcon icon={faPlay} />
+                  {/* {sounds[i + answers.length * k]} */}
                 </button>
 
                 <input
@@ -124,16 +132,12 @@ export default function PinyinTests() {
         ))}
       </div>
 
-      <div className='pinyinButtons'>
-        <button type='button' className='btn btn-primary btn-sm' onClick={checkAnswers}>
-          Проверить
-        </button>
-        <button type='button' className='btn btn-primary btn-sm' onClick={showAnswers}>
-          Показать Ответы
-        </button>
-        <button type='button' className='btn btn-primary btn-sm' onClick={init}>
-          <FontAwesomeIcon icon={faSyncAlt} />
-        </button>
+      <div>
+        {buttons.map(({ func, txt }, ind) => (
+          <button type='button' className='btn btn-primary btn-sm me-1' onClick={func} key={ind}>
+            {txt}
+          </button>
+        ))}
       </div>
     </>
   );

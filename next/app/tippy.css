@@ -5,20 +5,16 @@
 
 .tippyTooltips:hover {
   background-color: var(--bs-info);
-  /* color: #fff; */
   border-radius: 4px;
   cursor: pointer;
-  /* text-align: left; */
 }
 
 .tippySelected {
   background-color: var(--bs-green);
-  /* color: #fff; */
   border-radius: 4px;
 }
 
 .tippyBold {
-  /* display: block; */
   font-weight: bold;
 }
 
