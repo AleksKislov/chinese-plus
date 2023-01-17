@@ -6,11 +6,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faSyncAlt } from "@fortawesome/free-solid-svg-icons";
 
 import constUrls from "../../../../src/helpers/constants/urls";
-// import TypingGame from "../userWords/TypingGame";
 import { parseRussian } from "../../../../src/helpers/translation";
 import TableCard from "../../../../src/components/hsk/table-card";
 import { getRandElem } from "../../../../src/helpers/tools";
 import { shuffleArr } from "../../../../src/helpers/tools/shuffle-arr";
+import TypingGame from "../../../../src/components/hsk/typing-game";
 
 const OPTIONS_NUM = 5;
 const QUEST_NUM = 5;
@@ -174,7 +174,7 @@ export default function NewHskTests({}) {
 
       <div className='col-sm-9'>
         <h1>Тесты на знание HSK 3</h1>
-        {/* <TypingGame words={lexicons} testStarted={() => {}} level={level} />  */}
+        <TypingGame words={hskWords} testStarted={() => {}} level={level} />
 
         <button type='button' className='btn btn-primary btn-sm mb-3' onClick={preInit}>
           Обновить тесты <FontAwesomeIcon icon={faSyncAlt} />

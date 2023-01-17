@@ -73,9 +73,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-// async function getSmth(): Promise<Object> {
-//   const res = await fetch("http://127.0.0.1:5000/api/notices");
-//   const data = await res.json();
-//   return data;
-// }

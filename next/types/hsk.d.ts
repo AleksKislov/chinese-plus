@@ -9,3 +9,11 @@ type NewHskWordType = {
   ru: string;
   lvl: string;
 };
+
+type TestWord = {
+  chinese: string;
+  level: string;
+  id: number;
+  pinyin: string;
+  translation: string;
+};
