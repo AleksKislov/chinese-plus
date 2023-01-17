@@ -228,14 +228,16 @@ export default function TypingGame({ words, testStarted, level }: TypingGameProp
           {[...new Array(QUEST_NUM)].map((x, ind) => (
             <div
               key={ind}
-              className={`col-1 questionColorDiv ${
+              className={`col-1 badge rounded-pill ${
                 wrongAnswers.length > ind
                   ? wrongAnswers[ind]
-                    ? "question-danger"
-                    : "question-success"
-                  : "question-grey"
+                    ? "bg-danger"
+                    : "bg-success"
+                  : "bg-secondary"
               }`}
-            ></div>
+            >
+              {" "}
+            </div>
           ))}
         </div>
       </div>
