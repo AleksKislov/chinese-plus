@@ -44,7 +44,7 @@ export default function HideButtons({
 
   return (
     <div>
-      <span className='btn-group mb-2' role='group'>
+      <span className='btn-group mb-2 float-start' role='group'>
         {btns.map(({ txt, flag, func, disabled }) => (
           <button
             key={txt}

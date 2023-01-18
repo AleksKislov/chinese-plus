@@ -11,7 +11,7 @@
   height: 100%;
   backface-visibility: hidden;
   text-align: center;
-  border: var(--secondary) solid 1px;
+  border: var(--bs-primary) solid 1px;
   border-radius: 0.25rem;
 }
 
@@ -22,7 +22,7 @@
   backface-visibility: hidden;
   text-align: center;
   transform: rotateY(180deg);
-  border: var(--secondary) solid 1px;
+  border: var(--bs-primary) solid 1px;
   border-radius: 0.25rem;
 }
 
