@@ -24,8 +24,7 @@ export default function LoginPage() {
     setFormData({ ...formData, [target.name]: target.value });
   };
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async () => {
     try {
       const { token } = await login(email, password);
       const user = await loadUser(token);
@@ -39,9 +38,12 @@ export default function LoginPage() {
     setLoggedIn(true);
     setUser(new User(user));
     saveTokenLocally(token);
+    router.push("/start/pinyin-chart");
   };
 
-  if (loggedIn) router.push("/start/pinyin-chart");
+  if (loggedIn) {
+    return router.push("/start/pinyin-chart");
+  }
 
   return (
     <div className='row'>
@@ -54,7 +56,7 @@ export default function LoginPage() {
 
         <GoogleButton />
         <p>или с помощью</p>
-        <form onSubmit={(e) => onSubmit(e)}>
+        <form>
           <div className='mb-3'>
             <input
               type='email'
@@ -78,7 +80,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <input type='submit' className='btn btn-primary mb-2' value='Войти' />
+          <input type='button' className='btn btn-primary mb-2' value='Войти' onClick={onSubmit} />
         </form>
         <p className='my-1'>
           Еще нет аккаунта? Самое время <UndecLink href='/auth/register' txt='зарегистрироваться' />{" "}
