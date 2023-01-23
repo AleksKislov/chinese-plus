@@ -78,7 +78,7 @@ export default function PinyinTable() {
 
   return (
     <div className='table-responsive'>
-      <table className='table table-bordered table-dark table-hover'>
+      <table className='table table-bordered table-dark table-hover table-sm'>
         <thead>
           <tr>
             <th>&nbsp;</th>

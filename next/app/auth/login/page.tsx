@@ -8,7 +8,7 @@ import UndecLink from "../../../src/components/layout/undec-link";
 
 import { loadUser, login } from "../../../src/context/auth/actions";
 import { saveTokenLocally } from "../../../src/context/auth/save-tok-locally";
-import { useAuthCtx } from "../../../src/context/auth/store";
+import { useAuthCtx, User } from "../../../src/context/auth/store";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -35,13 +35,13 @@ export default function LoginPage() {
     }
   };
 
-  const userLoggedEvent = (user: UserType, token: string) => {
+  const userLoggedEvent = (user: UserFromBE, token: string) => {
     setLoggedIn(true);
-    setUser(user);
+    setUser(new User(user));
     saveTokenLocally(token);
   };
 
-  if (loggedIn) router.push("/newbie/pinyin-chart");
+  if (loggedIn) router.push("/start/pinyin-chart");
 
   return (
     <div className='row'>

@@ -36,6 +36,16 @@ export async function apiPostReq(path: string, body: Object, token?: string): Pr
   }
 }
 
+export async function apiDeleteReq(path: string, token?: string): Promise<any> {
+  const opts = getReqOptions("DELETE", null, token);
+  try {
+    const res = await fetch(BASE_URL + path, opts);
+    return await res.json();
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 function getReqOptions(method: string, body: string | null, token?: string): ReqOptions {
   const options: ReqOptions = {
     headers,

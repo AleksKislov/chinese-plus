@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NewHskTableRow from "./new-hsk-table-row";
 import HideButtons from "./hide-buttons";
 import OldHskTableRow from "./old-hsk-table-row";
 import TableOrCardsBtns from "./table-or-cards-btns";
 import FlipCards from "./flip-cards";
+import { useAuthCtx } from "../../context/auth/store";
+import { loadUserHsk2Words } from "../../context/hsk/actions";
+import { useHskCtx } from "../../context/hsk/store";
 
 type HskTable = {
   isOldHsk: boolean;
@@ -15,10 +18,26 @@ export default function HskTable({ isOldHsk, hskWords }: HskTable) {
   const [hideRussian, setHideRussian] = useState(false);
   const [displayCards, setDisplayCards] = useState(false);
 
+  const { loggedIn } = useAuthCtx();
+  const { setUserHsk2Words, userHsk2Words } = useHskCtx();
+
+  useEffect(() => {
+    if (!(loggedIn && isOldHsk)) return;
+    setTimeout(async () => {
+      try {
+        const userWords = await loadUserHsk2Words(localStorage.token);
+        if (!userWords) throw new Error("not authorized");
+        setUserHsk2Words(userWords);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  }, [loggedIn]);
+
   return (
     <>
-      <div className=''>
-        {isOldHsk && !displayCards && (
+      <div>
+        {!displayCards && (
           <HideButtons
             hideChinese={hideChinese}
             hideRussian={hideRussian}
@@ -35,7 +54,7 @@ export default function HskTable({ isOldHsk, hskWords }: HskTable) {
       {isOldHsk && displayCards ? (
         <FlipCards words={hskWords as OldHskWordType[]} />
       ) : (
-        <table className='table table-hover table-responsive'>
+        <table className='table table-hover table-responsive table-sm'>
           <thead style={{ visibility: "collapse" }}>
             <tr>
               <th></th>
@@ -56,6 +75,9 @@ export default function HskTable({ isOldHsk, hskWords }: HskTable) {
                     hideChinese={hideChinese}
                     hideRussian={hideRussian}
                     hidePinyin={hidePinyin}
+                    userSelected={userHsk2Words?.some(
+                      (x) => x.word_id === (word as OldHskWordType).word_id
+                    )}
                   />
                 ) : (
                   <NewHskTableRow

@@ -1,37 +1,18 @@
 "use client";
-import { useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { loadUser } from "../../context/auth/actions";
-import { NullUser, useAuthCtx } from "../../context/auth/store";
+import UserNav from "./user-nav";
 
 export default function TopNavbar() {
-  const { user, setLoggedIn, setUser } = useAuthCtx();
-
-  useEffect(() => {
-    setTimeout(async () => {
-      try {
-        const user = await loadUser(localStorage.token);
-        if (!user) throw new Error("not authorized");
-        setLoggedIn(true);
-        setUser(user);
-      } catch (err) {
-        console.log(err);
-        setLoggedIn(false);
-        setUser(NullUser);
-      }
-    });
-  }, []);
-
   return (
     <Navbar bg='primary' expand='lg' variant='dark'>
       <Container>
         <Navbar.Brand href='/'>Chinese+Club</Navbar.Brand>
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav'>
-          <Nav>
+          <Nav className='me-auto'>
             <NavDropdown title='Читалка'>
               <NavDropdown.Item href='/read/texts'>Тексты</NavDropdown.Item>
               <NavDropdown.Item href='/read/book'>Книги</NavDropdown.Item>
@@ -64,8 +45,8 @@ export default function TopNavbar() {
               <NavDropdown.Item href='/translate'>Pop-up перевод</NavDropdown.Item>
             </NavDropdown>
             <Nav.Link href='/feedback'>Гостевая</Nav.Link>
-            <Nav.Link href='#'>{user.name}</Nav.Link>
           </Nav>
+          <UserNav />
         </Navbar.Collapse>
       </Container>
     </Navbar>

@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import TableItem from "./TableItem";
 import HideButtons from "./HideButtons";
 import FlipCardsGrid from "./FlipCardsGrid";

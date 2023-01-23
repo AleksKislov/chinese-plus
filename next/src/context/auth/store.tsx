@@ -2,35 +2,128 @@
 
 import { createContext, useContext, Dispatch, SetStateAction, useState } from "react";
 
-export const NullUser: UserType = {
-  id: "",
-  name: "unknown",
-  avatar: "",
-  role: "unknown",
-};
+export class User {
+  private _id;
+  private _role;
+  private _name;
+  private googleId;
+  private email;
+  private date;
+  private avatar;
+  public readTodayNum;
+  public readTodayArr;
+  public dailyReadingGoal;
+  public finishedTexts;
+  public seenVideos;
+  constructor({
+    _id,
+    role,
+    name,
+    googleId,
+    email,
+    avatar,
+    read_today_num,
+    read_today_arr,
+    daily_reading_goal,
+    finished_texts,
+    seenVideos,
+    date,
+  }: UserFromBE) {
+    this._id = _id;
+    this._role = role || "Изучающий";
+    this._name = name;
+    this.googleId = googleId;
+    this.email = email;
+    this.avatar = avatar;
+    this.readTodayArr = read_today_arr;
+    this.readTodayNum = read_today_num;
+    this.dailyReadingGoal = daily_reading_goal;
+    this.finishedTexts = finished_texts;
+    this.seenVideos = seenVideos;
+    this.date = date;
+  }
+
+  get isNull() {
+    return false;
+  }
+
+  get role() {
+    return this._role;
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  get isAdmin() {
+    return this.role === "admin";
+  }
+
+  get isModerator() {
+    return this.role === "moderator";
+  }
+
+  get avatarPic() {
+    return `https://${this.avatar}`;
+  }
+}
+
+export class NullUser {
+  private _role = "Ноунэйм";
+  private _id = "-1";
+  private googleId = "-1";
+  private _name = "Ноунэйм";
+  private avatar = "";
+  private date = "";
+  public seenVideos = [];
+  public finishedTexts = [];
+  public email = "";
+  public readTodayNum = 0;
+  public readTodayArr = [];
+  public dailyReadingGoal = 0;
+
+  get isNull() {
+    return true;
+  }
+
+  get role() {
+    return this._role;
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  get isAdmin() {
+    return false;
+  }
+
+  get isModerator() {
+    return false;
+  }
+
+  get avatarPic() {
+    return "";
+  }
+}
 
 interface ContextProps {
-  // token: string;
-  // setToken: Dispatch<SetStateAction<string>>;
   loggedIn: boolean;
   setLoggedIn: Dispatch<SetStateAction<boolean>>;
-  user: UserType;
-  setUser: Dispatch<SetStateAction<UserType>>;
+  user: User | NullUser;
+  setUser: Dispatch<SetStateAction<User | NullUser>>;
 }
 
 const GlobalContext = createContext<ContextProps>({
-  // token: "",
-  // setToken: (): string => "",
   loggedIn: false,
   setLoggedIn: (): boolean => false,
-  user: NullUser,
-  setUser: (): UserType => NullUser,
+  user: new NullUser(),
+  setUser: (): User | NullUser => new NullUser(),
 });
 
 export const AuthCtxProvider = ({ children }) => {
-  // const [token, setToken] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [user, setUser] = useState<UserType>(NullUser);
+  const [user, setUser] = useState<User | NullUser>(new NullUser());
 
   return (
     <GlobalContext.Provider value={{ loggedIn, user, setLoggedIn, setUser }}>
