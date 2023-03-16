@@ -10,6 +10,7 @@ export default function CardInfo({
   const isNewHskTable = !isOldHsk && !isForTests;
   const isOldHskTable = isOldHsk && !isForTests;
   const isNewHskTests = !isOldHsk && isForTests;
+  const isOldHskTests = isOldHsk && isForTests;
 
   if (isOldHskTable) {
     text = "Все 5000 слов HSK, отсортированные по уровням сложности: от 1 до 6";
@@ -21,9 +22,12 @@ export default function CardInfo({
     title = "Слова HSK 3";
     subtitle = "Вся лексика";
   } else if (isNewHskTests) {
-    text =
-      "Проверьте насколько хорошо вы знаете лексику нового HSK 3.0 для разных уровней сложности.";
+    text = "Проверьте насколько хорошо вы знаете лексику нового HSK 3.0 разных уровней сложности.";
     title = "HSK 3.0";
+    subtitle = "Короткие тесты";
+  } else if (isOldHskTests) {
+    text = "Проверьте насколько хорошо вы знаете лексику HSK 2.0 разных уровней сложности.";
+    title = "HSK 2.0";
     subtitle = "Короткие тесты";
   }
 

@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-head-element */
-// import "bootstrap/dist/css/bootstrap.css";
 import "./bootstrap.css";
 import "./global.css";
 import "./tippy.css";
@@ -10,6 +9,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html>
       <head></head>
       <body>
+        {/* @ts-expect-error Server Component */}
         <MainLayout>{children}</MainLayout>
       </body>
     </html>

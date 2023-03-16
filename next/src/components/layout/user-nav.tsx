@@ -1,42 +1,24 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import Image from "next/image";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { loadUser } from "../../context/auth/actions";
-import { NullUser, useAuthCtx, User } from "../../context/auth/store";
+import { removeCookie } from "../../context/auth/cookie-manager";
+import { User } from "../../context/auth/store";
+import { useRouter } from "next/navigation";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightToBracket, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss = false;
 
-export default function UserNav() {
+export default function UserNav({ userFromBE }: { userFromBE: UserFromBE | null }) {
   const router = useRouter();
-  const { user, setLoggedIn, setUser, loggedIn } = useAuthCtx();
-
-  useEffect(() => {
-    if (loggedIn) return;
-    setTimeout(async () => {
-      try {
-        const user = await loadUser(localStorage.token);
-        if (!user) throw new Error("not authorized");
-        setLoggedIn(true);
-        setUser(new User(user));
-      } catch (err) {
-        console.log(err);
-        setLoggedIn(false);
-        setUser(new NullUser());
-      }
-    });
-  }, []);
+  let user: User | null = null;
+  if (userFromBE) user = new User(userFromBE);
 
   const logout = () => {
-    localStorage.removeItem("token");
-    setLoggedIn(false);
-    setUser(new NullUser());
-    router.push("/");
+    removeCookie("token");
+    router.refresh();
   };
 
   const unAuthorithed = (
@@ -46,13 +28,14 @@ export default function UserNav() {
     </NavDropdown>
   );
 
-  return user.isNull ? (
+  return !user ? (
     unAuthorithed
   ) : (
     <NavDropdown
       placement={"auto"}
       title={
         <Image
+          loader={() => user!.avatarPic}
           src={user.avatarPic}
           height={30}
           width={30}

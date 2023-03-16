@@ -8,9 +8,7 @@ import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 export default function GoogleButton() {
   const [baseUrl, setBaseUrl] = useState("https://www.chineseplus.club");
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setBaseUrl(getBaseUrl(window.location.href));
-    }
+    setBaseUrl(getBaseUrl(window.location.href));
   });
 
   return (

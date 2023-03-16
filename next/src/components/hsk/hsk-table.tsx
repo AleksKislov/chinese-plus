@@ -18,11 +18,11 @@ export default function HskTable({ isOldHsk, hskWords }: HskTable) {
   const [hideRussian, setHideRussian] = useState(false);
   const [displayCards, setDisplayCards] = useState(false);
 
-  const { loggedIn } = useAuthCtx();
+  const { user } = useAuthCtx();
   const { setUserHsk2Words, userHsk2Words } = useHskCtx();
 
   useEffect(() => {
-    if (!(loggedIn && isOldHsk)) return;
+    if (!(user.isLoggedIn && isOldHsk)) return;
     setTimeout(async () => {
       try {
         const userWords = await loadUserHsk2Words(localStorage.token);
@@ -32,7 +32,7 @@ export default function HskTable({ isOldHsk, hskWords }: HskTable) {
         console.log(err);
       }
     });
-  }, [loggedIn]);
+  }, [user?.isLoggedIn]);
 
   return (
     <>

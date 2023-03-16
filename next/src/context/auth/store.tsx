@@ -1,5 +1,4 @@
 "use client";
-
 import { createContext, useContext, Dispatch, SetStateAction, useState } from "react";
 
 export class User {
@@ -43,8 +42,8 @@ export class User {
     this.date = date;
   }
 
-  get isNull() {
-    return false;
+  get isLoggedIn() {
+    return true;
   }
 
   get role() {
@@ -82,8 +81,8 @@ export class NullUser {
   public readTodayArr = [];
   public dailyReadingGoal = 0;
 
-  get isNull() {
-    return true;
+  get isLoggedIn() {
+    return false;
   }
 
   get role() {
@@ -108,28 +107,19 @@ export class NullUser {
 }
 
 interface ContextProps {
-  loggedIn: boolean;
-  setLoggedIn: Dispatch<SetStateAction<boolean>>;
   user: User | NullUser;
   setUser: Dispatch<SetStateAction<User | NullUser>>;
 }
 
 const GlobalContext = createContext<ContextProps>({
-  loggedIn: false,
-  setLoggedIn: (): boolean => false,
   user: new NullUser(),
   setUser: (): User | NullUser => new NullUser(),
 });
 
-export const AuthCtxProvider = ({ children }) => {
-  const [loggedIn, setLoggedIn] = useState(false);
+export const AuthCtxProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | NullUser>(new NullUser());
 
-  return (
-    <GlobalContext.Provider value={{ loggedIn, user, setLoggedIn, setUser }}>
-      {children}
-    </GlobalContext.Provider>
-  );
+  return <GlobalContext.Provider value={{ user, setUser }}>{children}</GlobalContext.Provider>;
 };
 
 export const useAuthCtx = () => useContext(GlobalContext);

@@ -1,22 +1,32 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faSmile } from "@fortawesome/free-solid-svg-icons";
 import GoogleButton from "../../../src/components/auth/google-button";
 import UndecLink from "../../../src/components/layout/undec-link";
 
 import { loadUser, login } from "../../../src/context/auth/actions";
-import { saveTokenLocally } from "../../../src/context/auth/save-tok-locally";
-import { useAuthCtx, User } from "../../../src/context/auth/store";
+import { saveCookie, getCookie } from "../../../src/context/auth/cookie-manager";
+
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { config } from "@fortawesome/fontawesome-svg-core";
+config.autoAddCss = false;
 
 export default function LoginPage() {
   const router = useRouter();
-  const { setLoggedIn, setUser, loggedIn } = useAuthCtx();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [domLoaded, setDomLoaded] = useState(false);
+
+  useEffect(() => {
+    setDomLoaded(true);
+    const token = getCookie("token");
+    if (!token) return;
+    loadUser(token).then((user) => user && router.push("/me"));
+  }, []);
 
   const { email, password } = formData;
   const onChange = (e: ChangeEvent) => {
@@ -27,27 +37,19 @@ export default function LoginPage() {
   const onSubmit = async () => {
     try {
       const { token } = await login(email, password);
-      const user = await loadUser(token);
-      userLoggedEvent(user, token);
+      saveCookie("token", token);
+      router.push("/me");
+      setTimeout(router.refresh);
     } catch (err) {
       console.log("упс, не смогли залогиниться");
     }
   };
 
-  const userLoggedEvent = (user: UserFromBE, token: string) => {
-    setLoggedIn(true);
-    setUser(new User(user));
-    saveTokenLocally(token);
-    router.push("/start/pinyin-chart");
-  };
-
-  if (loggedIn) {
-    return router.push("/start/pinyin-chart");
-  }
+  if (!domLoaded) return null;
 
   return (
     <div className='row'>
-      <div className='col-3'></div>
+      {/* <div className='col-3'></div>
       <div className='col-6 text-center'>
         <h1>Войти</h1>
         <p className='lead'>
@@ -87,7 +89,7 @@ export default function LoginPage() {
           <FontAwesomeIcon icon={faSmile} />
         </p>
       </div>
-      <div className='col-md-3'></div>
+      <div className='col-md-3'></div> */}
     </div>
   );
 }

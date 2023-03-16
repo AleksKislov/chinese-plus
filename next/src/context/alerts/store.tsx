@@ -11,7 +11,7 @@ const GlobalContext = createContext<ContextProps>({
   setAlerts: (): AlertProps[] => [],
 });
 
-export const AlertCtxProvider = ({ children }) => {
+export const AlertCtxProvider = ({ children }: { children: React.ReactNode }) => {
   const [alerts, setAlerts] = useState<AlertProps[]>([]);
 
   return <GlobalContext.Provider value={{ alerts, setAlerts }}>{children}</GlobalContext.Provider>;

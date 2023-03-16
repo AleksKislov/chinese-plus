@@ -11,7 +11,7 @@ const GlobalContext = createContext<ContextProps>({
   setUserHsk2Words: (): OldHskWordType[] => [],
 });
 
-export const HskCtxProvider = ({ children }) => {
+export const HskCtxProvider = ({ children }: { children: React.ReactNode }) => {
   const [userHsk2Words, setUserHsk2Words] = useState<OldHskWordType[]>([]);
 
   return (
