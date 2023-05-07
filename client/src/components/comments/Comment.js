@@ -7,7 +7,7 @@ import Tippy from "@tippyjs/react";
 import { HashLink } from "react-router-hash-link";
 import { sanitizer } from "../../utils/sanitizer";
 
-const Comment = ({
+const CommentType = ({
   comment,
   currentUser,
   isAuthenticated,
@@ -130,4 +130,6 @@ const mapStateToProps = (state) => ({
   currentUser: state.auth.user,
 });
 
-export default connect(mapStateToProps, { setCommentToDelete, setCommentReply, addLike })(Comment);
+export default connect(mapStateToProps, { setCommentToDelete, setCommentReply, addLike })(
+  CommentType
+);

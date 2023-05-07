@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import WordModal from "../translation/WordModal";
 import WordEditModal from "../translation/WordEditModal";
 import { loadUserWords } from "../../actions/userWords";
-import Comment from "../comments/Comment";
+import CommentType from "../comments/CommentType";
 import LeaveComment from "../comments/LeaveComment";
 import ReadingCard from "../dashboard/ReadingCard";
 import { Helmet } from "react-helmet";
@@ -264,7 +264,7 @@ const VideoPage = ({
             <div className='my-2'>
               <h4>Комментарии:</h4>
               {comments.length > 0 &&
-                comments.map((comment) => <Comment key={comment._id} comment={comment} />)}
+                comments.map((comment) => <CommentType key={comment._id} comment={comment} />)}
               <LeaveComment _id={video._id} where={"video"} />
             </div>
           </div>

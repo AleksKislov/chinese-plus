@@ -1,8 +1,0 @@
-.highlighted {
-  color: var(--bs-table-hover-color);
-  background-color: var(--bs-table-hover-bg) !important;
-}
-
-#pinyinTable td:hover {
-  color: var(--bs-danger);
-}

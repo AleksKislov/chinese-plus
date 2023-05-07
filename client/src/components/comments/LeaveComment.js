@@ -20,15 +20,6 @@ const LeaveComment = ({
   const [text, setText] = useState("");
   const [addressedUsers, setAddressedUsers] = useState([]);
 
-  // useEffect(() => {
-  //   if (commentIdToReply) {
-  //     setAddressedUsers([
-  //       ...addressedUsers,
-  //       { id: commentIdToReply.userId, name: commentIdToReply.name }
-  //     ]);
-  //   }
-  // }, [commentIdToReply]);
-
   useEffect(() => {
     setAddressedUsers(checkIfAddressed(text));
   }, [text]);

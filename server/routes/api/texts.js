@@ -64,7 +64,7 @@ router.get("/statistics", getTextsPerUserStats);
 
 /**
  * @route     DELETE api/texts/comment/:id/:comment_id
- * @desc      Delete a Comment of a text
+ * @desc      Delete a CommentType of a text
  * @access    Private
  */
 router.delete("/comment/:id/:comment_id", auth, deleteComment);

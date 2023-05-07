@@ -237,7 +237,7 @@ export const levelStars = (lvl) => {
 };
 
 /**
- * for Analytics, Post, TextCard, Comment
+ * for Analytics, Post, TextCard, CommentType
  * @param {string} date
  * @param {boolean} onlyDate
  */

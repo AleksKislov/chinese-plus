@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { loadPost, clearPost, clearPosts } from "../../actions/posts";
 import { getComments } from "../../actions/comments";
 import Post from "./Post";
-import Comment from "../comments/Comment";
+import CommentType from "../comments/CommentType";
 import LeaveComment from "../comments/LeaveComment";
 import ConfirmModal from "../comments/ConfirmModal";
 
@@ -46,7 +46,7 @@ const PostPage = ({
             <h4>Комментарии:</h4>
 
             {comments.length > 0 &&
-              comments.map((comment) => <Comment key={comment._id} comment={comment} />)}
+              comments.map((comment) => <CommentType key={comment._id} comment={comment} />)}
           </div>
         </div>
       </div>

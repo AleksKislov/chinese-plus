@@ -10,7 +10,7 @@ const { updateOrCreate, fetchReading } = require("../api/services");
 
 const User = require("../../src/models/User");
 const Post = require("../../src/models/Post");
-const Comment = require("../../src/models/Comment");
+const CommentType = require("../../src/models/CommentType");
 
 const { Notify } = require("../../src/api/services/_misc");
 
@@ -237,7 +237,7 @@ router.post("/set_my_avatar", auth, async (req, res) => {
   try {
     await User.findByIdAndUpdate(user_id, { $set: { avatar } }, { new: true });
     await Post.updateMany({ user: user_id }, { $set: { avatar } }, { new: true });
-    await Comment.updateMany({ user: user_id }, { $set: { avatar } }, { new: true });
+    await CommentType.updateMany({ user: user_id }, { $set: { avatar } }, { new: true });
 
     res.json({ ok: "200 OK" });
   } catch (err) {

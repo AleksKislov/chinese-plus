@@ -12,7 +12,7 @@ import { v4 as uuid } from "uuid";
 import Paragraph from "../texts/Paragraph";
 import ImageCard from "./info/ImageCard";
 import LeaveComment from "../comments/LeaveComment";
-import Comment from "../comments/Comment";
+import CommentType from "../comments/CommentType";
 import BookTitle from "./info/BookTitle";
 import ConfirmModal from "../comments/ConfirmModal";
 // import PageButtons from "./info/PageButtons";
@@ -122,7 +122,7 @@ const ChapterPage = ({
                   />
                   <h4>Комментарии:</h4>
                   {comments.length > 0 &&
-                    comments.map((comment) => <Comment key={comment._id} comment={comment} />)}
+                    comments.map((comment) => <CommentType key={comment._id} comment={comment} />)}
                 </div>
               )}
             </div>

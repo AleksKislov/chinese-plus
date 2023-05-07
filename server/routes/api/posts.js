@@ -192,7 +192,7 @@ router.put("/dislike/:id", auth, async (req, res) => {
 });
 
 // @route   POST api/posts/comment/:id
-// @desc    Comment on a post
+// @desc    CommentType on a post
 // access   Private
 router.post(
   "/comment/:id",
@@ -226,18 +226,18 @@ router.post(
 );
 
 // @route   DELETE api/posts/comment/:id/:comment_id
-// @desc    Delete a Comment of a post
+// @desc    Delete a CommentType of a post
 // access   Private
 router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    const comment = await Comment.findById(req.params.comment_id);
+    const comment = await CommentType.findById(req.params.comment_id);
 
     // pull comment
     // const comment = post.comments_id.find(comment => comment.id === req.params.comment_id);
 
     // console.log(comment);
-    // if (!comment) return res.status(404).json({ msg: "Comment doesn't exist" });
+    // if (!comment) return res.status(404).json({ msg: "CommentType doesn't exist" });
 
     // if (comment.user.toString() !== req.user.id)
     //   return res.status(401).json({ msg: "User not authorized" });

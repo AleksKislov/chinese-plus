@@ -4,7 +4,7 @@ const auth = require("../../middleware/auth");
 const { check, validationResult } = require("express-validator");
 
 const User = require("../../src/models/User");
-const Comment = require("../../src/models/Comment");
+const CommentType = require("../../src/models/CommentType");
 const Post = require("../../src/models/Post");
 const Text = require("../../src/models/Text");
 const Video = require("../../src/models/Video");
@@ -45,7 +45,7 @@ router.post("/", [auth, [check("text", "Нужен текст").not().isEmpty()]
     if (where === "video") destination = await Video.findById(id);
     if (where === "book") destination = await Chapterpage.findById(id);
 
-    const newComment = new Comment({
+    const newComment = new CommentType({
       text: req.body.text,
       name: user.name,
       avatar: user.avatar,
@@ -73,7 +73,7 @@ router.post("/", [auth, [check("text", "Нужен текст").not().isEmpty()]
 router.post("/edit", auth, async (req, res) => {
   const { text, id } = req.body;
   try {
-    await Comment.findByIdAndUpdate(id, { $set: { text } }, { new: true });
+    await CommentType.findByIdAndUpdate(id, { $set: { text } }, { new: true });
 
     res.json({ status: "OK 200" });
   } catch (err) {
@@ -88,15 +88,15 @@ router.get("/to_me/:seen_it", auth, async (req, res) => {
   let comments;
   try {
     if (seen_it === "false") {
-      // comments = await Comment.find({
+      // comments = await CommentType.find({
       //   "addressees.id": req.user.id,
       //   "addressees.seenIt": false
       // }).sort({ date: -1 });
-      comments = await Comment.find({
+      comments = await CommentType.find({
         addressees: { $elemMatch: { id: req.user.id, seenIt: false } },
       }).sort({ date: -1 });
     } else {
-      comments = await Comment.find({
+      comments = await CommentType.find({
         "addressees.id": req.user.id,
         "addressees.seenIt": true,
       })
@@ -125,7 +125,7 @@ router.get("/", async (req, res) => {
     if (where === "video") destination = await Video.findById(id);
     if (where === "book") destination = await Chapterpage.findById(id);
 
-    const comments = await Comment.find({
+    const comments = await CommentType.find({
       _id: { $in: destination.comments_id },
     }).sort({ date: 1 });
 
@@ -144,7 +144,7 @@ router.get("/", async (req, res) => {
 router.put("/like/:id", auth, async (req, res) => {
   try {
     const userName = await User.findById(req.user.id);
-    const post = await Comment.findById(req.params.id);
+    const post = await CommentType.findById(req.params.id);
 
     // check if already liked
     if (post.likes.filter((like) => like.user.toString() === req.user.id).length > 0) {
@@ -170,7 +170,7 @@ router.put("/like/:id", auth, async (req, res) => {
  */
 router.get("/last", async (req, res) => {
   try {
-    const comments = await Comment.find().sort({ date: -1 }).limit(10);
+    const comments = await CommentType.find().sort({ date: -1 }).limit(10);
 
     res.json(comments);
   } catch (err) {
@@ -181,7 +181,7 @@ router.get("/last", async (req, res) => {
 
 router.post("/mark_mentions_as_seen", auth, async (req, res) => {
   try {
-    await Comment.updateMany(
+    await CommentType.updateMany(
       { "addressees.id": req.user.id },
       { "addressees.$.seenIt": true },
       { new: true }

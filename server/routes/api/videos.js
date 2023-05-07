@@ -86,7 +86,7 @@ router.put("/like/:id", auth, likeVideo);
 
 /**
  * @route     DELETE api/videos/comment/:id/:comment_id
- * @desc      Delete a Comment of a video
+ * @desc      Delete a CommentType of a video
  * @access    Private
  */
 router.delete("/comment/:id/:comment_id", auth, deleteComment);
