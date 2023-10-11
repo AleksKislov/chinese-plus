@@ -1,0 +1,21 @@
+version: "3.1"
+services:
+  mongo:
+    image: mongo
+    container_name: mongo_chin_dev
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodata:/data/db
+
+  nodeserver:
+    container_name: chinese_server
+    restart: unless-stopped
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+
+volumes:
+  mongodata:

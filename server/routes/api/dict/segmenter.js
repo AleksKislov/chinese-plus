@@ -1,14 +1,14 @@
 class LongestMatchSegmenter {
-  constructor(dict){
+  constructor(dict) {
     // dict should be a function that takes a chinese string as the
     // first param and returns something falsey if item is not in dict
     this.dict = dict;
   }
 
   /**
-  * @param {string} str - input string 
-  * @returns {string|undefined}
-  */
+   * @param {string} str - input string
+   * @returns {string|undefined}
+   */
   getLongestMatch(str) {
     let i, slice;
     const maxWordLen = 8;
@@ -18,27 +18,27 @@ class LongestMatchSegmenter {
       if (this.dict(slice)) return slice;
       i--;
     }
-  };
+  }
 
   /**
-   * @description loop through the input str, slicing off each 
+   * @description loop through the input str, slicing off each
    * longestMatch and appending it to the segments array
-   * @param {string} str - input string 
-   * @returns {Array}
+   * @param {string} str
+   * @returns {string[]}
    */
   segment(str) {
     let seg;
-    let segments = [];
+    const segments = [];
 
     while (str.length > 0) {
       seg = this.getLongestMatch(str);
       if (!seg) seg = str.substr(0, 1);
-      
+
       str = str.slice(seg.length);
       segments.push(seg);
     }
     return segments;
-  };
+  }
 }
 
 module.exports = { LongestMatchSegmenter };

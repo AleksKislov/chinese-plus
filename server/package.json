@@ -1,17 +1,14 @@
 {
   "name": "bylh",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js",
-    "client": "npm start --prefix ../client",
-    "dev": "NODE_ENV=development concurrently \"npm run server\" \"npm run client\"",
-    "dev-clean": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "bash build-client.sh"
+    "nodict": "NO_AGGR=yes nodemon server.js",
+    "dev": "NODE_ENV=development node server.js"
   },
-  "author": "",
+  "author": "Aleks Kislov",
   "license": "ISC",
   "dependencies": {
     "@google-cloud/dialogflow": "^3.0.0",
@@ -21,7 +18,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
-    "cookie-session": "^1.4.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.6.0",
@@ -32,11 +29,7 @@
     "morgan": "^1.10.0",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
-    "redis": "^4.0.1",
     "uuid": "^8.2.0",
     "youtube-captions-scraper": "^2.0.0"
-  },
-  "devDependencies": {
-    "concurrently": "^5.2.0"
   }
 }

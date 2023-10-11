@@ -3,7 +3,6 @@ const router = express.Router();
 const gravatar = require("gravatar");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-// const config = require("config");
 const { check, validationResult } = require("express-validator");
 const auth = require("../../middleware/auth");
 const { updateOrCreate, fetchReading } = require("../api/services");
@@ -11,8 +10,6 @@ const { updateOrCreate, fetchReading } = require("../api/services");
 const User = require("../../src/models/User");
 const Post = require("../../src/models/Post");
 const Comment = require("../../src/models/Comment");
-
-const { Notify } = require("../../src/api/services/_misc");
 
 /**
  * @route     POST api/users

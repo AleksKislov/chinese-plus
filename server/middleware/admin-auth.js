@@ -17,7 +17,7 @@ module.exports = function (req, res, next) {
   // verify token
   try {
     const { user } = jwt.verify(token, process.env.JWT_SECRET);
-    if (user.id !== process.env.ADMIN_ID) throw new Error("No!");
+    if (user.id !== process.env.ADMIN_ID) throw new Error("Not admin!");
     req.user = user;
     next();
   } catch (err) {

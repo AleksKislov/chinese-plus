@@ -5,8 +5,8 @@ const { check, validationResult } = require("express-validator");
 const { Notify } = require("../../src/api/services/_misc");
 
 const User = require("../../src/models/User");
-const Profile = require("../../src/models/Profile");
 const Post = require("../../src/models/Post");
+const Comment = require("../../src/models/Comment");
 
 // @route   POST api/posts
 // @desc    Create a post

@@ -6,6 +6,7 @@ const { check, validationResult } = require("express-validator");
 const Book = require("../../src/models/Book");
 const Bookauthor = require("../../src/models/Bookauthor");
 const Chapterpage = require("../../src/models/Chapterpage");
+const Comment = require("../../src/models/Comment");
 
 router.post("/new_author", auth, async (req, res) => {
   const { nameRus, nameChinese, yearBorn, yearDead, about, pictureUrl, isChinese } = req.body;
@@ -17,7 +18,7 @@ router.post("/new_author", auth, async (req, res) => {
     yearDead,
     about,
     isChinese,
-    pictureUrl
+    pictureUrl,
   });
 
   try {
@@ -31,14 +32,7 @@ router.post("/new_author", auth, async (req, res) => {
 
 router.post(
   "/new_book",
-  [
-    auth,
-    [
-      check("author", "Нужен автор!")
-        .not()
-        .isEmpty()
-    ]
-  ],
+  [auth, [check("author", "Нужен автор!").not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -55,17 +49,17 @@ router.post(
       contents,
       annotation,
       genre,
-      pictureUrl
+      pictureUrl,
     } = req.body;
 
-    genre = genre.split(",").map(word => word.trim());
+    genre = genre.split(",").map((word) => word.trim());
 
     try {
       const bookAuthor = await Bookauthor.findById(author);
 
       const authorName = {
         nameRus: bookAuthor.nameRus,
-        nameChinese: bookAuthor.nameChinese
+        nameChinese: bookAuthor.nameChinese,
       };
 
       const newBook = new Book({
@@ -79,7 +73,7 @@ router.post(
         contents,
         annotation,
         genre,
-        pictureUrl
+        pictureUrl,
       });
 
       const book = await newBook.save();
@@ -96,14 +90,7 @@ router.post(
 
 router.post(
   "/new_chapter",
-  [
-    auth,
-    [
-      check("book", "Нужно указать книгу!")
-        .not()
-        .isEmpty()
-    ]
-  ],
+  [auth, [check("book", "Нужно указать книгу!").not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -120,7 +107,7 @@ router.post(
         chineseTitle,
         russianTitle,
         length: 0, // 0 by default
-        pages: []
+        pages: [],
       });
 
       const editedBook = await bookToEdit.save();
@@ -140,29 +127,14 @@ router.post(
  */
 router.post(
   "/new_chapterpage",
-  [
-    auth,
-    [
-      check("origintext", "Нужен текст")
-        .not()
-        .isEmpty()
-    ]
-  ],
+  [auth, [check("origintext", "Нужен текст").not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     // book - ObjectId for Book, chapter - index in Book.contents[]
-    let {
-      book,
-      chapter,
-      origintext,
-      chinese_arr,
-      translation,
-      page_number,
-      length,
-      pageId
-    } = req.body;
+    let { book, chapter, origintext, chinese_arr, translation, page_number, length, pageId } =
+      req.body;
 
     // update
     if (pageId) {
@@ -176,7 +148,7 @@ router.post(
         const updatedPage = await Chapterpage.findByIdAndUpdate(
           pageId,
           {
-            $set: newFields
+            $set: newFields,
           },
           { new: true }
         );
@@ -195,7 +167,7 @@ router.post(
           length,
           translation,
           chinese_arr,
-          page_number
+          page_number,
         });
 
         // create new page for the chapter
@@ -205,7 +177,7 @@ router.post(
         await Book.findByIdAndUpdate(
           book,
           {
-            $push: { "contents.$[outer].pages": page._id }
+            $push: { "contents.$[outer].pages": page._id },
           },
           { arrayFilters: [{ "outer.chapterId": parseInt(chapter) }] }
         );
@@ -220,9 +192,7 @@ router.post(
 
 router.get("/allbooks", async (req, res) => {
   try {
-    const books = await Book.find()
-      .sort({ date: -1 })
-      .select("-contents");
+    const books = await Book.find().sort({ date: -1 }).select("-contents");
     res.json(books);
   } catch (err) {
     console.error(err);
@@ -266,8 +236,8 @@ router.post("/chapter_length", async (req, res) => {
 
     const allPages = await Chapterpage.find({
       _id: {
-        $in: allPagesId
-      }
+        $in: allPagesId,
+      },
     }).select("-origintext -translation -chinese_arr");
     // console.log(allPagesId);
     const chapterLength = allPages.reduce((acc, currentVal) => acc + currentVal.length, 0);
@@ -276,10 +246,10 @@ router.post("/chapter_length", async (req, res) => {
     const editedBook = await Book.updateOne(
       {
         _id: bookId,
-        "contents.chapterId": chapterId
+        "contents.chapterId": chapterId,
       },
       {
-        $set: { "contents.$.length": chapterLength }
+        $set: { "contents.$.length": chapterLength },
       }
     );
     res.json(editedBook);
@@ -301,7 +271,7 @@ router.post("/book_length", async (req, res) => {
     const editedBook = await Book.findByIdAndUpdate(
       bookId,
       {
-        $set: { length }
+        $set: { length },
       },
       { new: true }
     );
@@ -321,7 +291,7 @@ router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
     const post = await Chapterpage.findById(req.params.id);
     const comment = await Comment.findById(req.params.comment_id);
 
-    post.comments_id = post.comments_id.filter(comment => comment.id !== req.params.comment_id);
+    post.comments_id = post.comments_id.filter((comment) => comment.id !== req.params.comment_id);
 
     await post.save();
     await comment.remove();

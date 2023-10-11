@@ -1,9 +1,6 @@
 node_modules
 config
-build
-#keyfile.json
 routes/api/dict/dict.js
 .env.*
 .DS_Store
-audio
 cedict_db
