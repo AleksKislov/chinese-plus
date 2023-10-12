@@ -7,7 +7,7 @@ const cors = require("cors");
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
-require("dotenv").config({ path: isDevelopment ? ".env.dev" : ".env.prod" });
+require("dotenv").config({ path: isDevelopment ? "./config/.env.dev" : "./config/.env.prod" });
 const { passport } = require("./src/auth");
 
 const app = express();

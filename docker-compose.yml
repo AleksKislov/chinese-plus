@@ -8,8 +8,8 @@ services:
     volumes:
       - mongodata:/data/db
 
-  nodeserver:
-    container_name: chinese_server
+  chin_plus_be:
+    container_name: chin_plus_be
     restart: unless-stopped
     build:
       context: ./server

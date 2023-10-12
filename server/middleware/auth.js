@@ -1,7 +1,5 @@
 const jwt = require("jsonwebtoken");
 
-// const isDevMode = process.env.NODE_ENV === "development";
-
 module.exports = function (req, res, next) {
   const token = req.header("x-auth-token");
 
