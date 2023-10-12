@@ -36,7 +36,6 @@ app.use(passport.session());
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/posts", require("./routes/api/posts"));
-app.use("/api/plans", require("./routes/api/plans"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/lexicon", require("./routes/api/lexicon"));
 app.use("/api/newhskwords", require("./routes/api/newhskwords"));
@@ -51,7 +50,6 @@ app.use("/api/notices", require("./routes/api/notices"));
 app.use("/api/videos", require("./routes/api/videos"));
 
 // glcoud services routes
-app.use("/gcloud/dialogflow", require("./routes/gcloud/dialogflow"));
 app.use("/gcloud/youtube", require("./routes/gcloud/youtube"));
 
 const PORT = process.env.PORT || 5000;
