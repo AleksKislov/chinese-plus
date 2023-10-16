@@ -4,15 +4,11 @@ const Schema = mongoose.Schema;
 const CommentSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: "users",
+    ref: "user",
   },
   post_id: {
     type: Schema.Types.ObjectId,
     ref: "posts",
-  },
-  text_id: {
-    type: Schema.Types.ObjectId,
-    ref: "texts",
   },
   destination: { type: String }, // WHERE a comment sits
   path: { type: String },

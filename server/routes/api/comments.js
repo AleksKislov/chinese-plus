@@ -88,19 +88,20 @@ router.get("/to_me/:seen_it", auth, async (req, res) => {
   let comments;
   try {
     if (seen_it === "false") {
-      // comments = await Comment.find({
-      //   "addressees.id": req.user.id,
-      //   "addressees.seenIt": false
-      // }).sort({ date: -1 });
       comments = await Comment.find({
         addressees: { $elemMatch: { id: req.user.id, seenIt: false } },
-      }).sort({ date: -1 });
+      })
+        .populate("user", ["_id", "name", "newAvatar"])
+        .select("-avatar -name")
+        .sort({ date: -1 });
     } else {
       comments = await Comment.find({
         "addressees.id": req.user.id,
         "addressees.seenIt": true,
       })
         .sort({ date: -1 })
+        .populate("user", ["_id", "name", "newAvatar"])
+        .select("-avatar -name")
         .limit(30);
     }
 
@@ -115,8 +116,7 @@ router.get("/to_me/:seen_it", auth, async (req, res) => {
 // @desc    Get all comments
 // access   Public
 router.get("/", async (req, res) => {
-  const where = req.query.where;
-  const id = req.query.id;
+  const { where, id } = req.query;
 
   try {
     let destination;
@@ -127,7 +127,10 @@ router.get("/", async (req, res) => {
 
     const comments = await Comment.find({
       _id: { $in: destination.comments_id },
-    }).sort({ date: 1 });
+    })
+      .populate("user", ["_id", "name", "newAvatar"])
+      .select("-avatar -name")
+      .sort({ date: 1 });
 
     res.json(comments);
   } catch (err) {

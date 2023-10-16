@@ -222,23 +222,44 @@ router.post("/reset_reading", async (req, res) => {
 });
 
 /**
- * set new avatar and change it everywhere for comments and posts
- * @route     PUT api/users/set_my_avatar
+ * set new avatar
+ * @route     POST api/users/set_my_avatar
  * @desc      Change avatar
  * @access    Private
  */
 router.post("/set_my_avatar", auth, async (req, res) => {
-  const user_id = req.user.id;
-  const { avatar } = req.body;
+  const userId = req.user.id;
+  const { type, background, seed } = req.body;
 
+  if (!seed || !type || !background) {
+    return res.status(400).json({ errors: [{ msg: "Не хватает параметров" }] });
+  }
+
+  const newAvatar = { type, background, seed };
   try {
-    await User.findByIdAndUpdate(user_id, { $set: { avatar } }, { new: true });
-    await Post.updateMany({ user: user_id }, { $set: { avatar } }, { new: true });
-    await Comment.updateMany({ user: user_id }, { $set: { avatar } }, { new: true });
+    await User.findByIdAndUpdate(userId, { $set: { newAvatar } }, { new: true });
 
-    res.json({ ok: "200 OK" });
+    res.json(newAvatar);
   } catch (err) {
     console.log(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+/**
+ * @route     GET api/users/:userId
+ * @desc      Get one user info
+ * @access    Public
+ */
+router.get("/:userId", async (req, res) => {
+  try {
+    const profile = await User.findById(req.params.userId).select("name newAvatar _id role");
+    if (!profile) return res.status(400).json({ msg: "Profile not found" });
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+
+    if (err.kind == "ObjectId") return res.status(400).json({ msg: "Profile not found" });
     res.status(500).send("Server error");
   }
 });
