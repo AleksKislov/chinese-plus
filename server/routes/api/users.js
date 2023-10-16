@@ -1,16 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const gravatar = require("gravatar");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const { check, validationResult } = require("express-validator");
 const auth = require("../../middleware/auth");
-const { updateOrCreate, fetchReading } = require("../api/services");
+const { updateOrCreate, fetchReading, encodeJWT } = require("../api/services");
 
 const User = require("../../src/models/User");
-const Post = require("../../src/models/Post");
-const Comment = require("../../src/models/Comment");
-
 /**
  * @route     POST api/users
  * @desc      Register user
@@ -38,33 +33,24 @@ router.post(
       if (user) return res.status(400).json({ errors: [{ msg: "Такой пользователь уже есть" }] });
       if (namedUser) return res.status(400).json({ errors: [{ msg: "Имя уже занято" }] });
 
-      // Get gravatar
-      const avatar = gravatar.url(email, {
-        s: "200",
-        r: "pg",
-        d: "mm",
-      });
-
       user = new User({
         name,
         email,
-        avatar,
         password,
       });
 
-      // Encrypt password
       const salt = await bcrypt.genSalt(10);
-
       user.password = await bcrypt.hash(password, salt);
       await user.save();
 
-      // return jwt
-      const payload = { user: { id: user.id } };
+      // const payload = { user: { id: user.id } };
 
-      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
-        if (err) throw err;
-        res.json({ token });
-      });
+      // jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
+      //   if (err) throw err;
+      //   res.json({ token });
+      // });
+      const token = await encodeJWT(user._id);
+      res.json({ token });
     } catch (err) {
       console.log(err.message);
       res.status(500).send("Server error");

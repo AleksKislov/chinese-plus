@@ -2,20 +2,11 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth");
 const { check, validationResult } = require("express-validator");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { passport } = require("../../src/auth");
 
 const User = require("../../src/models/User");
-
-function encodeJWT(id) {
-  return new Promise((resolve, reject) => {
-    jwt.sign({ user: { id } }, process.env.JWT_SECRET, { expiresIn: "30d" }, (err, token) => {
-      if (err) return reject(err);
-      else return resolve(token);
-    });
-  });
-}
+const { encodeJWT } = require("./services");
 
 // @route   GET api/auth
 // @desc    Authenticate user
