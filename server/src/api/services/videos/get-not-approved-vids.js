@@ -1,4 +1,5 @@
 const Video = require("../../../models/Video");
+const { shortUserInfoFields } = require("../../consts");
 
 async function getNotApprovedVids(req, res) {
   const querySkip = req.query.skip;
@@ -8,7 +9,8 @@ async function getNotApprovedVids(req, res) {
     limit: 10,
   })
     .sort({ date: -1 })
-    .select("-cnSubs -ruSubs -pySubs -chineseArr");
+    .select("-cnSubs -ruSubs -pySubs -chineseArr -userName")
+    .populate("user", shortUserInfoFields);
 
   const videos = foundVideos.sort((a, b) => b.date - a.date);
   return res.json(videos);

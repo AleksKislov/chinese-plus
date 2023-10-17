@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const VideoSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: "users" },
-  userName: { type: String }, // user name
+  user: { type: Schema.Types.ObjectId, ref: "user" },
+  userName: { type: String }, // user name deprecated
   title: { type: String, required: true },
   desc: { type: String },
   category: {

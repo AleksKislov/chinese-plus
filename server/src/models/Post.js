@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const PostSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: "users",
+    ref: "user",
   },
   title: {
     type: String,
@@ -18,9 +18,11 @@ const PostSchema = new Schema({
     type: String, // wish, bug or news
     enum: ["wish", "bug", "news"],
   },
+  // deprecated
   name: {
     type: String,
   },
+  // deprecated
   avatar: {
     type: String,
   },

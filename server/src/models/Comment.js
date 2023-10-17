@@ -17,9 +17,11 @@ const CommentSchema = new Schema({
     required: true,
   },
   addressees: { type: Array },
+  // deprecated
   name: {
     type: String,
   },
+  // deprecated
   avatar: {
     type: String,
   },

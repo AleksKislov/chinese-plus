@@ -10,6 +10,7 @@ const Text = require("../../src/models/Text");
 const Video = require("../../src/models/Video");
 const Chapterpage = require("../../src/models/Chapterpage");
 const { Notify } = require("../../src/api/services/_misc");
+const { shortUserInfoFields } = require("../../src/api/consts");
 
 // @route   POST api/comments?where=...&id=
 // @desc    Create a comment
@@ -47,8 +48,6 @@ router.post("/", [auth, [check("text", "Нужен текст").not().isEmpty()]
 
     const newComment = new Comment({
       text: req.body.text,
-      name: user.name,
-      avatar: user.avatar,
       user: req.user.id,
       post_id: id,
       destination: where,
@@ -91,7 +90,7 @@ router.get("/to_me/:seen_it", auth, async (req, res) => {
       comments = await Comment.find({
         addressees: { $elemMatch: { id: req.user.id, seenIt: false } },
       })
-        .populate("user", ["_id", "name", "newAvatar"])
+        .populate("user", shortUserInfoFields)
         .select("-avatar -name")
         .sort({ date: -1 });
     } else {
@@ -100,7 +99,7 @@ router.get("/to_me/:seen_it", auth, async (req, res) => {
         "addressees.seenIt": true,
       })
         .sort({ date: -1 })
-        .populate("user", ["_id", "name", "newAvatar"])
+        .populate("user", shortUserInfoFields)
         .select("-avatar -name")
         .limit(30);
     }
@@ -128,7 +127,7 @@ router.get("/", async (req, res) => {
     const comments = await Comment.find({
       _id: { $in: destination.comments_id },
     })
-      .populate("user", ["_id", "name", "newAvatar"])
+      .populate("user", shortUserInfoFields)
       .select("-avatar -name")
       .sort({ date: 1 });
 
@@ -146,7 +145,7 @@ router.get("/", async (req, res) => {
  */
 router.put("/like/:id", auth, async (req, res) => {
   try {
-    const userName = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id);
     const post = await Comment.findById(req.params.id);
 
     // check if already liked
@@ -154,7 +153,7 @@ router.put("/like/:id", auth, async (req, res) => {
       // return res.status(400).json({ msg: "Уже поставили лайк" });
       post.likes = post.likes.filter((like) => like.user.toString() !== req.user.id);
     } else {
-      post.likes.unshift({ user: req.user.id, name: userName.name });
+      post.likes.unshift({ user: req.user.id, name: user.name });
     }
 
     await post.save();

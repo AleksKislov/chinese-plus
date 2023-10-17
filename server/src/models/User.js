@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  // deprecated, use newAvatar
   avatar: {
     type: String,
   },

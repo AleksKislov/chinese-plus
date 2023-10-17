@@ -4,6 +4,7 @@ const Hanzi = require("../../../../routes/api/dict/dictionary");
 
 const CHARS_PER_PAGE = 800;
 const Text = require("../../../models/Text");
+const { shortUserInfoFields } = require("../../consts");
 
 async function createTxt(req, res) {
   const errors = validationResult(req);
@@ -20,7 +21,6 @@ async function createTxt(req, res) {
     pic_url,
     chinese_arr,
     theme_word,
-    name,
     categoryInd,
     source,
     isLongText,
@@ -43,7 +43,6 @@ async function createTxt(req, res) {
     tags,
     translation: isLongText ? [] : translation,
     chinese_arr: isLongText ? [] : chinese_arr,
-    name,
     isApproved: 0,
     categoryInd,
     source,
@@ -53,14 +52,16 @@ async function createTxt(req, res) {
   });
 
   const text = await newText.save();
-  Notify.admin(`New TEXT from ${name}. Title: ${title}`);
-  return res.json(text);
+  const resultTxt = await Text.findById(text._id).populate("user", shortUserInfoFields);
+
+  Notify.admin(`New TEXT from ${resultTxt.user.name}. Title: ${title}`);
+  return res.json(resultTxt);
 }
 
 /**
- * @param {Array<string>} origintext
- * @param {Array<string>} translation
- * @return {Array<Page>}
+ * @param {string[]} origintext
+ * @param {string[]} translation
+ * @return {Page[]}
  */
 function getPagesForLngTxt(origintext, translation) {
   let pageText = "";
@@ -118,7 +119,6 @@ module.exports = { createTxt };
 [0]   "theme_word": "",
 [0]   "categoryInd": 0,
 [0]   "source": "",
-[0]   "name": "Aleksandr Kislov"
 [0] } - 469
  */
 

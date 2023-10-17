@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const DaySchema = new mongoose.Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "users",
+    ref: "user",
   },
   have_read: { type: Number },
   daily_goal: { type: Number },

@@ -57,10 +57,10 @@ router.post(
 );
 
 /**
+ * @deprecated should be deprecated in v3.0.0
  * @route   GET api/auth/google/redirect
  */
 router.get("/google/redirect", passport.authenticate("google"), async (req, res) => {
-  // res.send(req.user);
   try {
     const token = await encodeJWT(req.user._id);
     res.redirect(`${process.env.BASE_URL}/login_success/${token}`);

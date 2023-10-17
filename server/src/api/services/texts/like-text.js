@@ -2,7 +2,7 @@ const Text = require("../../../models/Text");
 const User = require("../../../models/User");
 
 async function likeText(req, res) {
-  const userName = await User.findById(req.user.id);
+  const user = await User.findById(req.user.id);
   const post = await Text.findById(req.params.id);
 
   // check if already liked
@@ -10,7 +10,7 @@ async function likeText(req, res) {
     // return res.status(400).json({ msg: "Уже поставили лайк" });
     post.likes = post.likes.filter((like) => like.user.toString() !== req.user.id);
   } else {
-    post.likes.unshift({ user: req.user.id, name: userName.name });
+    post.likes.unshift({ user: req.user.id, name: user.name });
   }
 
   await post.save();

@@ -2,6 +2,7 @@ const { validationResult } = require("express-validator");
 
 const Video = require("../../../models/Video");
 const { Notify } = require("../_misc");
+const { shortUserInfoFields } = require("../../consts");
 
 async function createVideo(req, res) {
   const errors = validationResult(req);
@@ -17,7 +18,7 @@ async function createVideo(req, res) {
     ruSubs,
     length,
     chineseArr,
-    userName,
+    // userName,
     category,
     source,
   } = req.body;
@@ -32,7 +33,7 @@ async function createVideo(req, res) {
     ruSubs,
     length,
     chineseArr,
-    userName,
+    // userName,
     category,
     source,
     isApproved: 0,
@@ -40,8 +41,10 @@ async function createVideo(req, res) {
   });
 
   const video = await newVideo.save();
-  Notify.admin(`New VIDEO from ${userName}. Title: ${title}`);
-  return res.json(video);
+  const resultVid = await Video.findById(video._id).populate("user", shortUserInfoFields);
+
+  Notify.admin(`New VIDEO from ${resultVid.user.name}. Title: ${title}`);
+  return res.json(resultVid);
 }
 
 module.exports = { createVideo };
