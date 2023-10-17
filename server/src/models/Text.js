@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const TextSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "user" },
   title: { type: String, required: true },
-  // belongsToLongText: { type: Schema.Types.ObjectId, ref: "longtexts" },
   description: { type: String },
   origintext: [{ type: String }],
   translation: [{ type: String }],
@@ -12,7 +11,6 @@ const TextSchema = new Schema({
   tags: [{ type: String, lowercase: true }],
   length: { type: Number },
   level: { type: Number, required: true },
-  name: { type: String }, // user name deprecated
   pic_url: { type: String },
   theme_word: { type: String },
   isApproved: { type: Number }, // by admin or moderator, 1 or 0
@@ -24,7 +22,7 @@ const TextSchema = new Schema({
     {
       comment: {
         type: Schema.Types.ObjectId,
-        ref: "comments",
+        ref: "comment",
       },
     },
   ],
@@ -32,7 +30,7 @@ const TextSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "users",
+        ref: "user",
       },
       name: { type: String },
     },

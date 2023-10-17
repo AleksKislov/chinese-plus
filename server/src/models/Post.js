@@ -18,14 +18,6 @@ const PostSchema = new Schema({
     type: String, // wish, bug or news
     enum: ["wish", "bug", "news"],
   },
-  // deprecated
-  name: {
-    type: String,
-  },
-  // deprecated
-  avatar: {
-    type: String,
-  },
   likes: [
     {
       user: {

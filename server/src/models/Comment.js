@@ -8,7 +8,7 @@ const CommentSchema = new Schema({
   },
   post_id: {
     type: Schema.Types.ObjectId,
-    ref: "posts",
+    ref: "post",
   },
   destination: { type: String }, // WHERE a comment sits
   path: { type: String },
@@ -17,20 +17,12 @@ const CommentSchema = new Schema({
     required: true,
   },
   addressees: { type: Array },
-  // deprecated
-  name: {
-    type: String,
-  },
-  // deprecated
-  avatar: {
-    type: String,
-  },
   commentIdToReply: { type: Object }, // {commentId, userId, name} - info about comment we are replying to
   likes: [
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "users",
+        ref: "user",
       },
       name: { type: String },
     },

@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 
 const VideoSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "user" },
-  userName: { type: String }, // user name deprecated
   title: { type: String, required: true },
   desc: { type: String },
   category: {
@@ -31,7 +30,7 @@ const VideoSchema = new Schema({
     {
       comment: {
         type: Schema.Types.ObjectId,
-        ref: "comments",
+        ref: "comment",
       },
     },
   ],
@@ -39,7 +38,7 @@ const VideoSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "users",
+        ref: "user",
       },
       name: { type: String },
     },

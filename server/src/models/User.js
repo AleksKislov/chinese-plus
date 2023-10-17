@@ -14,10 +14,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // deprecated, use newAvatar
-  avatar: {
-    type: String,
-  },
   read_today_num: { type: Number, default: 0, min: 0 },
   read_today_arr: { type: Object, default: {} }, // object  { path<string>: paragraph_indexes<[int]> }
   daily_reading_goal: { type: Number, default: 0 }, // number of Chinese characters to read every day
