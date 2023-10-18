@@ -172,7 +172,11 @@ router.put("/like/:id", auth, async (req, res) => {
  */
 router.get("/last", async (req, res) => {
   try {
-    const comments = await Comment.find().sort({ date: -1 }).limit(10);
+    const comments = await Comment.find()
+      .sort({ date: -1 })
+      .populate("user", shortUserInfoFields)
+      .select("-avatar -name")
+      .limit(10);
 
     res.json(comments);
   } catch (err) {
