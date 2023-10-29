@@ -7,6 +7,11 @@ const { passport } = require("../../src/auth");
 
 const User = require("../../src/models/User");
 const { encodeJWT } = require("./services");
+const {
+  resetPassword,
+  verifyResetPassToken,
+  sendResetPasswordEmail,
+} = require("../../src/api/services/auth");
 
 // @route   GET api/auth
 // @desc    Authenticate user
@@ -93,5 +98,9 @@ router.get("/logout", (req, res) => {
   req.logout();
   res.send(req.user);
 });
+
+router.post("/reset_password", resetPassword);
+router.post("/send_reset_pass_email", sendResetPasswordEmail);
+router.post("/verify_reset_pass_token", verifyResetPassToken);
 
 module.exports = router;

@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const isDevelopment = process.env.NODE_ENV === "development";
 
 module.exports = function (req, res, next) {
-  // get token from header
   const token = req.header("x-auth-token");
 
   if (isDevelopment) {
@@ -11,10 +10,8 @@ module.exports = function (req, res, next) {
     return next();
   }
 
-  // check if no token
   if (!token) return res.status(401).json({ msg: "No token, authorization denied" });
 
-  // verify token
   try {
     const { user } = jwt.verify(token, process.env.JWT_SECRET);
     if (user.id !== process.env.ADMIN_ID) throw new Error("Not admin!");
