@@ -20,7 +20,7 @@ async function sendResetPasswordEmail(req, res) {
       TemplateModel: {
         product_name: "Chinese+",
         name: user.name,
-        action_url: "https://www.chineseplus.club/password-reset/?token=" + token,
+        action_url: "https://www.chineseplus.club/password-reset/" + token,
       },
     })
     .then(() => res.json({ msg: "Письмо отправлено" }))
