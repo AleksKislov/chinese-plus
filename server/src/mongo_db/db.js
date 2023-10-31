@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 
-const connectDB = async () => {
-  const MONGO_DB = process.env.LOCAL_DB ? process.env.MONGO_DB_LOCAL : process.env.MONGO_DB;
+const connectDB = async (mongoUrl) => {
   try {
-    await mongoose.connect(MONGO_DB, {
+    await mongoose.connect(mongoUrl, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
@@ -16,4 +15,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+module.exports = { connectDB };

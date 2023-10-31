@@ -1,17 +1,21 @@
 const express = require("express");
-const connectDB = require("./src/mongo_db/db");
+const { connectDB } = require("./src/mongo_db/db");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const compression = require("compression");
 const cors = require("cors");
 
 const isDevelopment = process.env.NODE_ENV === "development";
+module.exports = { isDevelopment };
 
 require("dotenv").config({ path: isDevelopment ? "./config/.env.dev" : "./config/.env.prod" });
+const MONGO_DB = process.env.MONGO_IN_CONTAINER
+  ? process.env.CONTAINER_MONGO_DB
+  : process.env.MONGO_DB;
 const { passport } = require("./src/auth");
 
 const app = express();
-connectDB();
+connectDB(MONGO_DB);
 
 // Init Middleware
 if (isDevelopment) {

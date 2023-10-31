@@ -1,7 +1,6 @@
 const axios = require("axios");
 const qs = require("qs");
-
-const isDevelopment = process.env.NODE_ENV === "development";
+const { isDevelopment } = require("../../../../server");
 
 const tgUrl = process.env.TELEGRAM_NOTICE_URL;
 const testChatId = process.env.TEST_CHAT_ID;

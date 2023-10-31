@@ -2,5 +2,5 @@ FROM node:slim
 WORKDIR /app
 COPY . .
 RUN npm install
-CMD npm run dev
+CMD npm run container
 EXPOSE 5000

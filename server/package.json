@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "NODE_ENV=development node server.js",
-    "loc": "LOCAL_DB=true NODE_ENV=development node server.js"
+    "container": "MONGO_IN_CONTAINER=true NODE_ENV=development node server.js",
+    "dev": "NODE_ENV=development node server.js"
   },
   "author": "Aleks Kislov",
   "license": "ISC",
