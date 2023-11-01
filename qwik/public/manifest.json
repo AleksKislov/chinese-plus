@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "chinese-plus",
+  "short_name": "ChinesePlus",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "ChinesePlus App"
+}

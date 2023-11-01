@@ -1,0 +1,10 @@
+FROM node:slim
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN echo "PUBLIC_BASE_URL=http://chin_plus_be:5000" >> /app/.env
+RUN echo "PUBLIC_ENV=production" >> /app/.env
+RUN npm run build.client
+RUN npm run build.server
+ENTRYPOINT ["node", "server/entry.express.js"]
+EXPOSE 3000

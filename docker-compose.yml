@@ -16,6 +16,22 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5000:5000
+    networks:
+      bylh_net:
+
+  chin_plus_fe:
+    container_name: chin_plus_fe
+    restart: unless-stopped
+    build:
+      context: ./qwik
+      dockerfile: Dockerfile.prod
+    ports:
+      - 4000:3000
+    networks:
+      bylh_net:
 
 volumes:
   mongodata:
+
+networks:
+  bylh_net:
