@@ -1,10 +1,11 @@
 import { component$ } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { OurSocialMedia } from "../media/our-social-media";
+import { serverStackSvg } from "../media/svg";
 
 export const Footer = component$(() => {
   return (
-    <footer class='footer footer-center p-10 text-neutral-content rounded bg-neutral mt-4'>
+    <footer class='footer footer-center gap-6 p-10 text-neutral-content rounded bg-neutral mt-4'>
       <div>
         <Link class='link link-hover' href='/contacts'>
           Контакты
@@ -16,10 +17,14 @@ export const Footer = component$(() => {
         </div>
       </div>
       <div>
-        <p>
+        <div>
           <span class='font-bold'>Chinese</span>
           <span class={`text-success font-extrabold text-lg`}>+</span> © {new Date().getFullYear()}
-        </p>
+        </div>
+        <div class='flex flex-row'>
+          <div class='mr-1'>{serverStackSvg}</div>
+          <div>v3.0.1</div>
+        </div>
       </div>
     </footer>
   );
