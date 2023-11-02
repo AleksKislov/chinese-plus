@@ -97,13 +97,8 @@ export const EditTextPreprocessForm = component$(({ store }: TextPreprocessFormP
     origTranslation.value = translationParagraphs.join("\n\n");
     chineseText.value = chineseTextParagraphs.join("\n\n");
 
-    // let allwords;
-    // if (store.isLongText) { ??
-    //   tooltipTxt.value = chineseTextParagraphs; // as is, segementation is done while u edit pages
-    // } else {
     const allwords = (await segmenter(trimmedChineseTxt)).filter((word) => word !== " ");
     tooltipTxt.value = parseTextWords(allwords, await getWordsForTooltips(allwords));
-    // }
 
     store.length = countZnChars(chineseText.value);
     store.chineseTextParagraphs = chineseTextParagraphs;

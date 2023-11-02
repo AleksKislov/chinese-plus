@@ -13,7 +13,7 @@ type CardImgProps = {
 
 export const CardImg = component$(
   ({ contentId, contentType, picUrl, isUnapproved }: CardImgProps) => {
-    const imageSrc = useSignal(picUrl);
+    const errorPic = useSignal("");
 
     return (
       <figure class={`lg:w-1/3 max-h-full ${contentType === WHERE.text ? "max-h-52" : ""}`}>
@@ -21,10 +21,10 @@ export const CardImg = component$(
           <img
             width='400'
             height='600'
-            src={imageSrc.value}
+            src={errorPic.value || picUrl}
             alt='Content pic'
             class='w-full h-full lg:object-cover'
-            onError$={() => (imageSrc.value = CONST_URLS.defaultTextPic)}
+            onError$={() => (errorPic.value = CONST_URLS.defaultTextPic)}
           />
         </Link>
       </figure>

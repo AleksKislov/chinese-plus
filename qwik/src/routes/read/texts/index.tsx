@@ -1,5 +1,5 @@
-import { $, component$, useSignal, useTask$ } from "@builder.io/qwik";
-import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city";
+import { component$, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
+import { type DocumentHead, routeLoader$, routeAction$ } from "@builder.io/qwik-city";
 import { ApiService } from "~/misc/actions/request";
 
 import { FlexRow } from "~/components/common/layout/flex-row";
@@ -18,6 +18,8 @@ import {
   HasAudioFilter,
 } from "~/components/common/ui/has-audio-filter";
 import { ReadResultCard } from "~/components/me/read-result-card";
+import { Loader } from "~/components/common/ui/loader";
+import { MoreBtnAndLoader } from "~/components/common/ui/more-btn-and-loader";
 
 export type TextCardInfo = {
   _id: ObjectId;
@@ -45,38 +47,81 @@ export type TextsNumInfo = {
   withAudio: number;
 };
 
-export const getInitTexts = routeLoader$((): Promise<[TextCardInfo[], TextsNumInfo]> => {
-  return Promise.all([
-    ApiService.get(`/api/texts/infinite`, undefined, []),
-    ApiService.get(`/api/texts/texts_num`, undefined, {}),
-  ]);
+// export const getInitTexts = routeLoader$((): Promise<TextCardInfo[]> => {
+//   return ApiService.get(`/api/texts/infinite`, undefined, []);
+// });
+
+export const getTextsNumInfo = routeLoader$((): Promise<TextsNumInfo> => {
+  return ApiService.get(`/api/texts/texts_num`, undefined, {});
+});
+
+export const getTextsWithParams = routeAction$((params): Promise<TextCardInfo[]> => {
+  const { category, lvl, audio } = params;
+  const catParam = category && `&categoryInd=${category}`;
+  const lvlParam = !lvl ? "" : `&level=${lvl}`;
+  const audioParam = audio === AudioFilter.HasAudio ? "&audioSrc=1" : "";
+  return ApiService.get(
+    `/api/texts/infinite?skip=0${catParam}${lvlParam}${audioParam}`,
+    undefined,
+    []
+  );
+});
+
+export const getTextsWithSkip = routeAction$((params): Promise<TextCardInfo[]> => {
+  const { skip, category, lvl, audio } = params;
+  const catParam = category && `&categoryInd=${category}`;
+  const lvlParam = !lvl ? "" : `&level=${lvl}`;
+  const audioParam = audio === AudioFilter.HasAudio ? "&audioSrc=1" : "";
+  return ApiService.get(
+    `/api/texts/infinite?skip=${skip}${catParam}${lvlParam}${audioParam}`,
+    undefined,
+    []
+  );
 });
 
 export default component$(() => {
-  const initTexts = getInitTexts();
-  const texts = useSignal<TextCardInfo[]>(initTexts.value[0]);
+  const textsNumInfo = getTextsNumInfo();
+  const texts = useSignal<TextCardInfo[]>([]);
+  const getTexts = getTextsWithParams();
+  const getSkipTexts = getTextsWithSkip();
   const levelSignal = useSignal<LevelUnion>("0");
   const categorySignal = useSignal("");
-  const skip = useSignal(0);
+  const skipSignal = useSignal(0);
   const audioSignal = useSignal<AudioFilterUnion>(AudioFilter.All);
-  // console.log(initTexts.value[1]);
-  const getTexts = $((): Promise<TextCardInfo[]> => {
-    const cat = categorySignal.value;
-    const catParam = cat && `&categoryInd=${cat}`;
-    const lvlParam = !+levelSignal.value ? "" : `&level=${levelSignal.value}`;
-    const audioParam = audioSignal.value === AudioFilter.HasAudio ? "&audioSrc=1" : "";
-    return ApiService.get(
-      `/api/texts/infinite?skip=${skip.value}${catParam}${lvlParam}${audioParam}`,
-      undefined,
-      []
-    );
+
+  useVisibleTask$(({ track }) => {
+    const category = track(() => categorySignal.value);
+    const audio = track(() => audioSignal.value);
+    const lvl = track(() => +levelSignal.value);
+    texts.value = [];
+    getTexts.submit({
+      category,
+      lvl,
+      audio,
+    });
   });
 
-  useTask$(async ({ track }) => {
-    track(() => categorySignal.value);
-    track(() => audioSignal.value);
-    track(() => levelSignal.value);
-    texts.value = await getTexts();
+  useVisibleTask$(({ track }) => {
+    const skip = track(() => skipSignal.value);
+    if (skip === 0) return;
+    getSkipTexts.submit({
+      skip,
+      category: categorySignal.value,
+      audio: audioSignal.value,
+      lvl: +levelSignal.value,
+    });
+  });
+
+  useVisibleTask$(({ track }) => {
+    const res = track(() => getTexts.value);
+    if (!res) return;
+    texts.value = res;
+  });
+
+  useVisibleTask$(({ track }) => {
+    const res = track(() => getSkipTexts.value);
+    if (!res) return;
+    texts.value = [...texts.value, ...res];
   });
 
   return (
@@ -89,11 +134,11 @@ export default component$(() => {
               <h2 class='card-title'>Читай и учись</h2>
               <p>Чтение китайских текстов с умным переводом.</p>
               <p>
-                Проверенные: <span class='badge badge-accent'>{initTexts.value[1]?.approved}</span>
+                Проверенные: <span class='badge badge-accent'>{textsNumInfo.value?.approved}</span>
               </p>
               <p>
                 На проверке:{" "}
-                <span class='badge badge-accent'>{initTexts.value[1]?.notApproved}</span>
+                <span class='badge badge-accent'>{textsNumInfo.value?.notApproved}</span>
               </p>
             </div>
           </div>
@@ -103,13 +148,13 @@ export default component$(() => {
 
         <MainContent>
           <div class='grid sm:grid-cols-4 grid-cols-2 gap-1 mb-3'>
-            <HasAudioFilter audioSignal={audioSignal} num={initTexts.value[1]?.withAudio} />
+            <HasAudioFilter audioSignal={audioSignal} num={textsNumInfo.value?.withAudio} />
             <LevelFilter levelSignal={levelSignal} />
             <CategoryFilter categorySignal={categorySignal} contentType={WHERE.text} />
             <UnsetFiltersBtn
               levelSignal={levelSignal}
               categorySignal={categorySignal}
-              skipSignal={skip}
+              skipSignal={skipSignal}
               audioSignal={audioSignal}
             />
           </div>
@@ -118,18 +163,10 @@ export default component$(() => {
             <TextCard key={ind} text={text} />
           ))}
 
-          <div class={"flex flex-col items-center mt-1"}>
-            <button
-              type='button'
-              class={`btn btn-sm btn-info btn-outline`}
-              onClick$={async () => {
-                skip.value += 10;
-                texts.value = [...texts.value, ...(await getTexts())];
-              }}
-            >
-              Еще
-            </button>
-          </div>
+          <MoreBtnAndLoader
+            skipSignal={skipSignal}
+            isLoading={getTexts.isRunning || getSkipTexts.isRunning}
+          />
         </MainContent>
       </FlexRow>
     </>

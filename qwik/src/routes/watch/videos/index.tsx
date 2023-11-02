@@ -1,5 +1,5 @@
-import { $, component$, useSignal, useTask$ } from "@builder.io/qwik";
-import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city";
+import { component$, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
+import { type DocumentHead, routeAction$ } from "@builder.io/qwik-city";
 import { ApiService } from "~/misc/actions/request";
 
 import { FlexRow } from "~/components/common/layout/flex-row";
@@ -7,10 +7,10 @@ import { Sidebar } from "~/components/common/layout/sidebar";
 import { MainContent } from "~/components/common/layout/main-content";
 import { PageTitle } from "~/components/common/layout/title";
 import { VideoCard } from "~/components/watch/video-card";
-// import { LevelFilter } from "~/components/common/ui/level-filter";
 import { UnsetFiltersBtn } from "~/components/common/ui/unset-filters-btn";
 import { CategoryFilter } from "~/components/common/ui/category-filter";
 import { WHERE } from "~/components/common/comments/comment-form";
+import { MoreBtnAndLoader } from "~/components/common/ui/more-btn-and-loader";
 
 export type VideoCategory =
   | "misc"
@@ -48,25 +48,53 @@ export type VideoCardInfo = {
   date: ISODate;
 };
 
-export const getInitVideos = routeLoader$((): Promise<VideoCardInfo[]> => {
-  return ApiService.get(`/api/videos/infinite?skip=0&category=`, undefined, []);
-});
+// export const getInitVideos = routeLoader$((): Promise<VideoCardInfo[]> => {
+//   return ApiService.get(`/api/videos/infinite?skip=0&category=`, undefined, []);
+// });
 
 export type LevelUnion = "0" | "1" | "2" | "3";
 
-export default component$(() => {
-  const videos = useSignal<VideoCardInfo[]>(getInitVideos().value);
-  const categorySignal = useSignal("");
-  const skip = useSignal(0);
+export const getVideosWithParams = routeAction$((params): Promise<VideoCardInfo[]> => {
+  return ApiService.get(`/api/videos/infinite?skip=0&category=${params.category}`, undefined, []);
+});
 
-  const getVideos = $((): Promise<VideoCardInfo[]> => {
-    const cat = categorySignal.value;
-    return ApiService.get(`/api/videos/infinite?skip=${skip.value}&category=${cat}`, undefined, []);
+export const getVideosWithSkip = routeAction$((params): Promise<VideoCardInfo[]> => {
+  const { skip, category } = params;
+  return ApiService.get(`/api/videos/infinite?skip=${skip}&category=${category}`, undefined, []);
+});
+
+export default component$(() => {
+  const videos = useSignal<VideoCardInfo[]>([]);
+  const getVideos = getVideosWithParams();
+  const getSkipVideos = getVideosWithSkip();
+  const categorySignal = useSignal("");
+  const skipSignal = useSignal(0);
+
+  useVisibleTask$(({ track }) => {
+    const category = track(() => categorySignal.value);
+    videos.value = [];
+    getVideos.submit({ category });
   });
 
-  useTask$(async ({ track }) => {
-    track(() => categorySignal.value);
-    videos.value = await getVideos();
+  useVisibleTask$(({ track }) => {
+    const skip = track(() => skipSignal.value);
+    if (skip === 0) return;
+    getSkipVideos.submit({
+      skip,
+      category: categorySignal.value,
+    });
+  });
+
+  useVisibleTask$(({ track }) => {
+    const res = track(() => getVideos.value);
+    if (!res) return;
+    videos.value = res;
+  });
+
+  useVisibleTask$(({ track }) => {
+    const res = track(() => getSkipVideos.value);
+    if (!res) return;
+    videos.value = [...videos.value, ...res];
   });
 
   return (
@@ -87,25 +115,17 @@ export default component$(() => {
         <MainContent>
           <div class='grid sm:grid-cols-4 grid-cols-2 gap-1 mb-3'>
             <CategoryFilter categorySignal={categorySignal} contentType={WHERE.video} />
-            <UnsetFiltersBtn categorySignal={categorySignal} skipSignal={skip} />
+            <UnsetFiltersBtn categorySignal={categorySignal} skipSignal={skipSignal} />
           </div>
 
           {videos.value.map((video, ind) => (
             <VideoCard key={ind} video={video} />
           ))}
 
-          <div class={"flex flex-col items-center"}>
-            <button
-              type='button'
-              class={`btn btn-sm btn-info btn-outline`}
-              onClick$={async () => {
-                skip.value += 10;
-                videos.value = [...videos.value, ...(await getVideos())];
-              }}
-            >
-              Еще
-            </button>
-          </div>
+          <MoreBtnAndLoader
+            isLoading={getVideos.isRunning || getSkipVideos.isRunning}
+            skipSignal={skipSignal}
+          />
         </MainContent>
       </FlexRow>
     </>

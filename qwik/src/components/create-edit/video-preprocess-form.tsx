@@ -23,6 +23,7 @@ import {
   type VideoSub,
 } from "~/routes/(content)/create/video";
 import { WordTooltip } from "../common/tooltips/word-tooltip";
+import { Loader } from "../common/ui/loader";
 
 type VideoPreprocessFormProps = {
   store: NewVideoStore;
@@ -253,9 +254,7 @@ export const VideoPreprocessForm = component$(
 
         {/* loading and pinyin source select */}
         <FlexRow>
-          <div class='w-full basis-4/12'>
-            {getCnCaptions.isRunning && <span class='loading loading-spinner loading-sm'></span>}
-          </div>
+          <div class='w-full basis-4/12'>{getCnCaptions.isRunning && <Loader size={"sm"} />}</div>
           <div class='w-full basis-3/12 mx-3'>
             <div class='join mr-2'>
               <input
@@ -272,11 +271,9 @@ export const VideoPreprocessForm = component$(
                 aria-label='youtube'
               />
             </div>
-            {getPyCaptions.isRunning && <span class='loading loading-spinner loading-sm'></span>}
+            {getPyCaptions.isRunning && <Loader size={"sm"} />}
           </div>
-          <div class='w-full basis-5/12'>
-            {getRuCaptions.isRunning && <span class='loading loading-spinner loading-sm'></span>}
-          </div>
+          <div class='w-full basis-5/12'>{getRuCaptions.isRunning && <Loader size={"sm"} />}</div>
         </FlexRow>
 
         {/* textareas */}
@@ -284,7 +281,7 @@ export const VideoPreprocessForm = component$(
           <div class='w-full basis-4/12 flex flex-row'>
             <div class='-ml-1 mt-1 text-secondary'>
               <div class='mb-5 mr-1'>sec.</div>
-              {getCnCaptions.isRunning && <span class='loading loading-spinner loading-sm'></span>}
+              {getCnCaptions.isRunning && <Loader size={"sm"} />}
               {getCnCaptions.value?.map?.((sub: VideoSub) => (
                 <p key={sub.start}>{sub.start}</p>
               ))}

@@ -24,6 +24,7 @@ import { OtherVideoFields } from "~/components/create-edit/other-video-fields";
 import { VideoPreprocessForm } from "~/components/create-edit/video-preprocess-form";
 import { arrorUturnDown } from "~/components/common/media/svg";
 import { YoutubeService } from "~/misc/actions/youtube-service";
+import { Loader } from "~/components/common/ui/loader";
 
 export type NewVideoStore = {
   title: string;
@@ -156,7 +157,11 @@ export default component$(() => {
         </div>
       </div>
 
-      {getVideoInfo.isRunning && <span class='loading loading-spinner loading-lg mx-6 my-3'></span>}
+      {getVideoInfo.isRunning && (
+        <span class='mx-6 my-3'>
+          <Loader />
+        </span>
+      )}
 
       {getVideoInfo.value && (
         <>

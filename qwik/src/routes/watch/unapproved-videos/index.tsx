@@ -1,4 +1,4 @@
-import { $, component$, useSignal, useTask$ } from "@builder.io/qwik";
+import { component$, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
 import { ApiService } from "~/misc/actions/request";
 
 import { FlexRow } from "~/components/common/layout/flex-row";
@@ -7,19 +7,27 @@ import { MainContent } from "~/components/common/layout/main-content";
 import { PageTitle } from "~/components/common/layout/title";
 import { VideoCard } from "~/components/watch/video-card";
 import { type VideoCardInfo } from "../videos";
-import { type DocumentHead } from "@builder.io/qwik-city";
+import { routeAction$, type DocumentHead } from "@builder.io/qwik-city";
+import { MoreBtnAndLoader } from "~/components/common/ui/more-btn-and-loader";
+
+export const getVideosWithSkip = routeAction$((params): Promise<VideoCardInfo[]> => {
+  return ApiService.get(`/api/videos/not_approved?skip=${params.skip}`, undefined, []);
+});
 
 export default component$(() => {
   const videos = useSignal<VideoCardInfo[]>([]);
-  const skip = useSignal(0);
+  const skipSignal = useSignal(0);
+  const getSkipVideos = getVideosWithSkip();
 
-  const getVideos = $((): Promise<VideoCardInfo[]> => {
-    return ApiService.get(`/api/videos/not_approved?skip=${skip.value}`, undefined, []);
+  useVisibleTask$(({ track }) => {
+    const skip = track(() => skipSignal.value);
+    getSkipVideos.submit({ skip });
   });
 
-  useTask$(async ({ track }) => {
-    track(() => skip.value);
-    videos.value = await getVideos();
+  useVisibleTask$(({ track }) => {
+    const res = track(() => getSkipVideos.value);
+    if (!res) return;
+    videos.value = [...videos.value, ...res];
   });
 
   return (
@@ -40,18 +48,7 @@ export default component$(() => {
             <VideoCard key={ind} video={video} isUnapproved={true} />
           ))}
 
-          <div class={"flex flex-col items-center"}>
-            <button
-              type='button'
-              class={`btn btn-sm btn-info btn-outline`}
-              onClick$={async () => {
-                skip.value += 10;
-                videos.value = [...videos.value, ...(await getVideos())];
-              }}
-            >
-              Еще
-            </button>
-          </div>
+          <MoreBtnAndLoader isLoading={getSkipVideos.isRunning} skipSignal={skipSignal} />
         </MainContent>
       </FlexRow>
     </>

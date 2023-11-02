@@ -1,4 +1,4 @@
-import { component$, useContext, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
+import { component$, useContext, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { userContext } from "~/root";
 import { logout } from "~/misc/actions/auth";
 import { Link } from "@builder.io/qwik-city";
@@ -16,9 +16,9 @@ export default component$(() => {
   const userState = useContext(userContext);
   const isMobile = useSignal(false);
 
-  useTask$(() => {
-    userState.newMentions = newMentions.value;
-  });
+  // useTask$(() => {
+  //   userState.newMentions = newMentions.value;
+  // });
 
   useVisibleTask$(() => {
     isMobile.value = window.innerWidth <= 768;
@@ -142,7 +142,14 @@ export const authMenu = (
     <hr class='h-px my-1 bg-primary border-0' />
 
     <li>
-      <a onClick$={() => logout()}>Выйти {exitSvg}</a>
+      <a
+        onClick$={() => {
+          logout();
+          location.reload();
+        }}
+      >
+        Выйти {exitSvg}
+      </a>
     </li>
   </>
 );

@@ -17,6 +17,7 @@ import { getTokenFromCookie } from "~/misc/actions/auth";
 import { PersonalMentions } from "~/components/me/mentions";
 import { type CommentType } from "~/components/common/comments/comment-card";
 import { UserMainInfo } from "~/components/me/user-main-info";
+import { getNewMentions } from "../layout";
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
@@ -33,7 +34,6 @@ export const getOldMentions = routeLoader$(async ({ cookie }): Promise<CommentTy
   return ApiService.get("/api/comments/to_me/true", token, []);
 });
 
-// await axios.post("/api/comments/mark_mentions_as_seen", {}, config);
 export const markMentionsAsOld = routeAction$((_param, ev) => {
   const token = getTokenFromCookie(ev.cookie);
   return ApiService.post("/api/comments/mark_mentions_as_seen", {}, token);
@@ -56,6 +56,7 @@ export const getReadStats = routeLoader$(async ({ cookie }): Promise<ReadStatTyp
 });
 
 export default component$(() => {
+  const newMentions = getNewMentions();
   const textsStats = getTextsStats();
   const readStats = getReadStats();
   const {
@@ -64,7 +65,6 @@ export default component$(() => {
     finishedTexts,
     readDailyGoal,
     readTodayNum,
-    newMentions,
     hsk2WordsTotal,
     words,
     role,
@@ -106,7 +106,7 @@ export default component$(() => {
       </FlexRow>
 
       <FlexRow>
-        <PersonalMentions newMentions={newMentions} />
+        <PersonalMentions newMentions={newMentions.value} />
       </FlexRow>
     </>
   );

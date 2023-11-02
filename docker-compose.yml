@@ -7,6 +7,8 @@ services:
       - 27017:27017
     volumes:
       - mongodata:/data/db
+    networks:
+      bylh_net:
 
   chin_plus_be:
     container_name: chin_plus_be
@@ -24,7 +26,7 @@ services:
     restart: unless-stopped
     build:
       context: ./qwik
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     ports:
       - 4000:3000
     networks:
