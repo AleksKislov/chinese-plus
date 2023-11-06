@@ -1,6 +1,6 @@
 export const BASE_URL = import.meta.env.PUBLIC_BASE_URL;
 
-console.log(import.meta.env.PUBLIC_ENV);
+console.log(import.meta.env.PUBLIC_ENV, import.meta.env.PUBLIC_VERSION);
 type ReqHeaders = {
   "Content-Type": string;
   "x-auth-token"?: string;

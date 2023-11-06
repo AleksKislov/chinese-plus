@@ -2,6 +2,7 @@ const { validationResult } = require("express-validator");
 const { Notify } = require("../_misc");
 
 const Text = require("../../../models/Text");
+const { shortUserInfoFields } = require("../../consts");
 
 async function updateTxt(req, res) {
   const errors = validationResult(req);
@@ -61,9 +62,16 @@ async function updateTxt(req, res) {
     };
   }
 
-  const updatedTxt = await Text.findByIdAndUpdate(textId, { $set: newFields }, { new: true });
+  const updatedTxt = await Text.findByIdAndUpdate(
+    textId,
+    { $set: newFields },
+    { new: true }
+  ).populate("user", shortUserInfoFields);
+
+  console.log("here", updatedTxt);
 
   if (foundText && !foundText.isApproved && isApproved) {
+    console.log("here", updatedTxt);
     Notify.socialMedia(updatedTxt);
   }
 

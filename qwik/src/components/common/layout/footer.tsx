@@ -23,7 +23,7 @@ export const Footer = component$(() => {
         </div>
         <div class='flex flex-row'>
           <div class='mr-1'>{serverStackSvg}</div>
-          <div>v3.0.1</div>
+          <div>v{import.meta.env.PUBLIC_VERSION}</div>
         </div>
       </div>
     </footer>

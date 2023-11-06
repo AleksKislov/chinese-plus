@@ -4,7 +4,7 @@ import { routeLoader$ } from "@builder.io/qwik-city";
 import { ApiService } from "~/misc/actions/request";
 import { getTokenFromCookie, logout, type UserFromDB } from "~/misc/actions/auth";
 import { Footer } from "~/components/common/layout/footer";
-import { type UserWord } from "~/root";
+import { IsLightThemeCookieName, type UserWord } from "~/root";
 import { userContext } from "~/root";
 import { type CommentType } from "~/components/common/comments/comment-card";
 
@@ -31,6 +31,11 @@ export const useGetUserWords = routeLoader$(async ({ cookie }): Promise<UserWord
   const token = getTokenFromCookie(cookie);
   if (!token) return [];
   return ApiService.get("/api/userwords", token, []);
+});
+
+export const useCheckTheme = routeLoader$(({ cookie }): boolean => {
+  const isLightTheme = Boolean(+(cookie.get(IsLightThemeCookieName)?.value || "0"));
+  return !isLightTheme;
 });
 
 export default component$(() => {

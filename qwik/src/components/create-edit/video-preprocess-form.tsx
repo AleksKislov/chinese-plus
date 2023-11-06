@@ -144,7 +144,7 @@ export const VideoPreprocessForm = component$(
       canPublish.value = true;
     });
 
-    const publishVideo = $(async () => {
+    const publishVideo = $(() => {
       const {
         lvl,
         desc,
@@ -159,7 +159,7 @@ export const VideoPreprocessForm = component$(
         pySubs,
       } = store;
 
-      await publishVideoAction.submit({
+      publishVideoAction.submit({
         lvl,
         desc,
         title,

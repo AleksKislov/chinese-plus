@@ -18,7 +18,6 @@ import {
   HasAudioFilter,
 } from "~/components/common/ui/has-audio-filter";
 import { ReadResultCard } from "~/components/me/read-result-card";
-import { Loader } from "~/components/common/ui/loader";
 import { MoreBtnAndLoader } from "~/components/common/ui/more-btn-and-loader";
 
 export type TextCardInfo = {
@@ -46,10 +45,6 @@ export type TextsNumInfo = {
   notApproved: number;
   withAudio: number;
 };
-
-// export const getInitTexts = routeLoader$((): Promise<TextCardInfo[]> => {
-//   return ApiService.get(`/api/texts/infinite`, undefined, []);
-// });
 
 export const getTextsNumInfo = routeLoader$((): Promise<TextsNumInfo> => {
   return ApiService.get(`/api/texts/texts_num`, undefined, {});

@@ -55,7 +55,7 @@ app.use("/api/videos", require("./routes/api/videos"));
 // glcoud services routes
 app.use("/gcloud/youtube", require("./routes/gcloud/youtube"));
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Server is up on port ${PORT}. Is development MODE: ${isDevelopment}`);
 });

@@ -56,7 +56,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Китайские видео с субтитрами",
+  title: "Chinese+ Видео на китайском с субтитрами",
   meta: [
     {
       name: "description",

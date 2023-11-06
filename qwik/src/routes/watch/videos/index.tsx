@@ -48,10 +48,6 @@ export type VideoCardInfo = {
   date: ISODate;
 };
 
-// export const getInitVideos = routeLoader$((): Promise<VideoCardInfo[]> => {
-//   return ApiService.get(`/api/videos/infinite?skip=0&category=`, undefined, []);
-// });
-
 export type LevelUnion = "0" | "1" | "2" | "3";
 
 export const getVideosWithParams = routeAction$((params): Promise<VideoCardInfo[]> => {
@@ -99,7 +95,7 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={"Китайские видео с субтитрами"} />
+      <PageTitle txt={"Видео на китайском с субтитрами"} />
       <FlexRow>
         <Sidebar>
           <div class='card bg-primary text-primary-content'>
@@ -133,7 +129,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Китайские видео с субтитрами",
+  title: "Chinese+ Видео на китайском с субтитрами",
   meta: [
     {
       name: "description",

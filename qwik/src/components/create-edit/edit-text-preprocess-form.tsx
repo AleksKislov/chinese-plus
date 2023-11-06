@@ -8,27 +8,26 @@ import {
 } from "@builder.io/qwik";
 import CONSTANTS from "~/misc/consts/consts";
 import { AlertColorEnum, alertsContext } from "~/root";
-import { countZnChars, parseTags, parseTextWords } from "~/misc/helpers/content";
+import { countZnChars, parseTags } from "~/misc/helpers/content";
 import { FlexRow } from "../common/layout/flex-row";
-import { segmenter } from "~/routes/search";
-import { getWordsForTooltips } from "~/routes/read/texts/[id]";
 import { Paragraph } from "../read/paragraph";
 import { FontSizeBtns } from "../common/content-cards/content-page-card";
 import { useNavigate } from "@builder.io/qwik-city";
 import { type EditTextStore, useEditText } from "~/routes/(content)/edit/text/[id]";
+import { useSegmentAndGetTooltips } from "~/routes/(content)/create/text";
 
 type TextPreprocessFormProps = {
   store: EditTextStore;
 };
 
 export const EditTextPreprocessForm = component$(({ store }: TextPreprocessFormProps) => {
+  const segmentAction = useSegmentAndGetTooltips();
   const editTextAction = useEditText();
   const canPublish = useSignal(false);
   const nav = useNavigate();
 
   const alertsState = useContext(alertsContext);
   const chineseText = useSignal(store.chineseTextParagraphs.join("\n\n"));
-  // const textLengthSignal = useSignal("text-primary");
   const origTranslation = useSignal(store.translationParagraphs.join("\n\n"));
   const tooltipTxt = useSignal<(string | DictWord)[][] | string[]>([]);
   const currentWord = useSignal<DictWord | undefined>(undefined);
@@ -36,26 +35,6 @@ export const EditTextPreprocessForm = component$(({ store }: TextPreprocessFormP
   useTask$(({ track }) => {
     track(() => chineseText.value.length);
     canPublish.value = false;
-
-    // if (chineseText.value.length > CONSTANTS.bgTextLen) {
-    //   store.isLongText = true;
-    //   alertsState.push({
-    //     bg: AlertColorEnum.error,
-    //     text: `Текст превышает лимит в ${CONSTANTS.bgTextLen}字. Опубликуйте его частями`,
-    //   });
-    //   textLengthSignal.value = "text-error";
-    // }
-    // if (chineseText.value.length > CONSTANTS.smTextLen) {
-    //   store.isLongText = true;
-    //   // alertsState.push({
-    //   //   bg: AlertColorEnum.warning,
-    //   //   text: `Большие тексты можно будет отредактировать позже на конкретных страницах`,
-    //   // });
-    //   textLengthSignal.value = "text-warning";
-    // } else {
-    //   store.isLongText = false;
-    //   textLengthSignal.value = "text-primary";
-    // }
   });
 
   useTask$(({ track }) => {
@@ -67,13 +46,21 @@ export const EditTextPreprocessForm = component$(({ store }: TextPreprocessFormP
     track(() => editTextAction.value);
 
     if (editTextAction.value?.status === "done") {
-      setTimeout(() => {
-        nav(`/read/${store.isApproved ? "" : "unapproved-"}texts/${store.textId}`);
-      }, 3000);
+      // setTimeout(() => {
+      nav(`/read/${store.isApproved ? "" : "unapproved-"}texts/${store.textId}`);
+      // }, 3000);
     }
   });
 
-  const preprocessForm = $(async () => {
+  useTask$(({ track }) => {
+    const val = track(() => segmentAction.value);
+    if (!val) return;
+    store.allwords = val.allwords;
+    tooltipTxt.value = val.tooltipTxt;
+    canPublish.value = true;
+  });
+
+  const preprocessForm = $(() => {
     const translationParagraphs = origTranslation.value
       .trim()
       .split("\n")
@@ -97,15 +84,10 @@ export const EditTextPreprocessForm = component$(({ store }: TextPreprocessFormP
     origTranslation.value = translationParagraphs.join("\n\n");
     chineseText.value = chineseTextParagraphs.join("\n\n");
 
-    const allwords = (await segmenter(trimmedChineseTxt)).filter((word) => word !== " ");
-    tooltipTxt.value = parseTextWords(allwords, await getWordsForTooltips(allwords));
-
     store.length = countZnChars(chineseText.value);
     store.chineseTextParagraphs = chineseTextParagraphs;
     store.translationParagraphs = translationParagraphs;
-    store.allwords = allwords as string[];
-
-    canPublish.value = true;
+    segmentAction.submit({ txt: trimmedChineseTxt });
   });
 
   const editText = $(async () => {
@@ -128,7 +110,7 @@ export const EditTextPreprocessForm = component$(({ store }: TextPreprocessFormP
       curPage,
     } = store;
 
-    await editTextAction.submit({
+    editTextAction.submit({
       textId,
       length,
       source,
@@ -150,7 +132,7 @@ export const EditTextPreprocessForm = component$(({ store }: TextPreprocessFormP
 
     alertsState.push({
       bg: AlertColorEnum.info,
-      text: "Спасибо! Через 3 секунды вы попадете на страницу отредактированного текста",
+      text: "Спасибо! Пару секунд, и вы попадете на страницу отредактированного текста",
     });
   });
 
@@ -238,7 +220,11 @@ export const EditTextPreprocessForm = component$(({ store }: TextPreprocessFormP
 
       <FlexRow>
         <div class='mt-3 ml-7'>
-          <button class='btn btn-primary w-48' disabled={!canPublish.value} onClick$={editText}>
+          <button
+            class='btn btn-primary w-48'
+            disabled={!canPublish.value || editTextAction.isRunning}
+            onClick$={editText}
+          >
             Отредактировать
           </button>
         </div>

@@ -46,17 +46,17 @@ class Notify {
 function getTxt(content) {
   const obj = {};
   if (content.cnSubs) {
-    obj.type = `📺 Опубликовано новое видео от пользователя ${content.userName}`;
-    obj.link = `https://www.chineseplus.club/videos/${content._id}`;
+    obj.type = `📺 Опубликовано новое видео от пользователя ${content.user.name}`;
+    obj.link = `https://www.chineseplus.club/watch/videos/${content._id}`;
     obj.desc = content.desc;
   } else if (content.origintext) {
-    obj.type = `📚 Опубликован новый текст от пользователя ${content.name}`;
-    obj.link = `https://www.chineseplus.club/texts/${content._id}`;
+    obj.type = `📚 Опубликован новый текст от пользователя ${content.user.name}`;
+    obj.link = `https://www.chineseplus.club/read/texts/${content._id}`;
     obj.desc = content.description;
   } else {
     obj.type = `🚀 Новости от админа`;
     obj.desc = content.text.replace(/\<br \/>/g, "\n");
-    obj.link = `https://www.chineseplus.club/posts/${content._id}`;
+    obj.link = `https://www.chineseplus.club/feedback/${content._id}`;
   }
 
   obj.title = content.title;

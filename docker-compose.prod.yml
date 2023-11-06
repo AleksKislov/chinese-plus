@@ -1,11 +1,12 @@
 version: "3.8"
 
 services:
-  mongo:
+  mongo_chin_dev:
     image: mongo
     container_name: mongo_chin_dev
+    restart: unless-stopped
     ports:
-      - 27017:27017
+      - "127.0.0.1:27017:27017"
     volumes:
       - mongodata:/data/db
     networks:
@@ -16,7 +17,7 @@ services:
     restart: unless-stopped
     build:
       context: ./server
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     ports:
       - 10000:10000
     networks:
@@ -24,15 +25,8 @@ services:
 
   chin_plus_fe:
     container_name: chin_plus_fe
-    environment:
-      - VERSION=${VERSION}
+    image: std016039/chin_plus_fe:${VERSION}
     restart: unless-stopped
-    build:
-      context: ./qwik
-      dockerfile: Dockerfile
-      args:
-        VERSION: ${VERSION}
-        BE_PORT: 10000
     ports:
       - 4000:3000
     networks:

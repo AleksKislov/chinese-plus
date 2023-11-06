@@ -10,7 +10,7 @@ type CategoryFilterProps = {
 
 export const CategoryFilter = component$(({ categorySignal, contentType }: CategoryFilterProps) => {
   return (
-    <div class='form-control'>
+    <div class='form-control text-base-content'>
       <select
         class='select select-bordered'
         value={categorySignal.value}

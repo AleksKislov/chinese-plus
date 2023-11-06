@@ -6,13 +6,15 @@ import {
   useTask$,
   type QwikMouseEvent,
 } from "@builder.io/qwik";
-import { usePublishText, type NewTextStore } from "~/routes/(content)/create/text";
+import {
+  usePublishText,
+  type NewTextStore,
+  useSegmentAndGetTooltips,
+} from "~/routes/(content)/create/text";
 import CONSTANTS from "~/misc/consts/consts";
 import { AlertColorEnum, alertsContext } from "~/root";
-import { countZnChars, parseTags, parseTextWords } from "~/misc/helpers/content";
+import { countZnChars, parseTags } from "~/misc/helpers/content";
 import { FlexRow } from "../common/layout/flex-row";
-import { segmenter } from "~/routes/search";
-import { getWordsForTooltips } from "~/routes/read/texts/[id]";
 import { Paragraph } from "../read/paragraph";
 import { FontSizeBtns } from "../common/content-cards/content-page-card";
 import { useNavigate } from "@builder.io/qwik-city";
@@ -22,6 +24,7 @@ type TextPreprocessFormProps = {
 };
 
 export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps) => {
+  const segmentAction = useSegmentAndGetTooltips();
   const publishTextAction = usePublishText();
   const canPublish = useSignal(false);
   const nav = useNavigate();
@@ -67,13 +70,21 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
     track(() => publishTextAction.value);
 
     if (publishTextAction.value?._id) {
-      setTimeout(() => {
-        nav("/read/unapproved-texts/" + publishTextAction.value?._id);
-      }, 3000);
+      // setTimeout(() => {
+      nav("/read/unapproved-texts/" + publishTextAction.value._id);
+      // }, 3000);
     }
   });
 
-  const preprocessForm = $(async () => {
+  useTask$(({ track }) => {
+    const val = track(() => segmentAction.value);
+    if (!val) return;
+    store.allwords = val.allwords;
+    tooltipTxt.value = val.tooltipTxt;
+    canPublish.value = true;
+  });
+
+  const preprocessForm = $(() => {
     const translationParagraphs = origTranslation.value
       .trim()
       .split("\n")
@@ -97,23 +108,19 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
     origTranslation.value = translationParagraphs.join("\n\n");
     chineseText.value = chineseTextParagraphs.join("\n\n");
 
-    let allwords;
     if (store.isLongText) {
       tooltipTxt.value = chineseTextParagraphs; // as is, segementation is done while u edit pages
+      canPublish.value = true;
     } else {
-      allwords = (await segmenter(trimmedChineseTxt)).filter((word) => word !== " ");
-      tooltipTxt.value = parseTextWords(allwords, await getWordsForTooltips(allwords));
+      segmentAction.submit({ txt: trimmedChineseTxt });
     }
 
     store.length = countZnChars(chineseText.value);
     store.chineseTextParagraphs = chineseTextParagraphs;
     store.translationParagraphs = translationParagraphs;
-    store.allwords = allwords as string[];
-
-    canPublish.value = true;
   });
 
-  const publishText = $(async () => {
+  const publishText = $(() => {
     const {
       lvl,
       tags,
@@ -129,7 +136,7 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
       translationParagraphs,
     } = store;
 
-    await publishTextAction.submit({
+    publishTextAction.submit({
       length,
       source,
       isLongText,
@@ -148,7 +155,7 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
 
     alertsState.push({
       bg: AlertColorEnum.info,
-      text: "Спасибо! Через 3 секунды вы попадете на страницу нового текста",
+      text: "Спасибо! Пару секунд, и вы попадете на страницу нового текста",
     });
   });
 
@@ -247,7 +254,11 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
 
       <FlexRow>
         <div class='mt-3 ml-7'>
-          <button class='btn btn-primary w-48' disabled={!canPublish.value} onClick$={publishText}>
+          <button
+            class='btn btn-primary w-48'
+            disabled={!canPublish.value || publishTextAction.isRunning}
+            onClick$={publishText}
+          >
             Опубликовать
           </button>
         </div>

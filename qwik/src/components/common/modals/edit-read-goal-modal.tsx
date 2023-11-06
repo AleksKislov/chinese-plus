@@ -1,11 +1,12 @@
-import { $, component$, useContext, useSignal } from "@builder.io/qwik";
+import { $, component$, useContext, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { globalAction$, z, zod$ } from "@builder.io/qwik-city";
+import { getTokenFromCookie } from "~/misc/actions/auth";
 import { ApiService } from "~/misc/actions/request";
 import { alertsContext, userContext } from "~/root";
 
 export const useEditDailyGoal = globalAction$((params, ev) => {
-  const token = ev.cookie.get("token")?.value;
-  ApiService.post(`/api/users/daily_reading_goal/${params.num}`, {}, token);
+  const token = getTokenFromCookie(ev.cookie);
+  return ApiService.post(`/api/users/daily_reading_goal/${params.num}`, {}, token);
 }, zod$({ num: z.number().positive() }));
 
 export const EditReadGoalModal = component$(
@@ -21,7 +22,12 @@ export const EditReadGoalModal = component$(
         return alertsState.push({ text: "Нужно положительное число", bg: "alert-error" });
       }
       await editGoal.submit({ num });
-      userState.readDailyGoal = num;
+    });
+
+    useVisibleTask$(({ track }) => {
+      const val = track(() => editGoal.value);
+      if (!val) return;
+      userState.readDailyGoal = parseInt(newNum.value);
     });
 
     return (

@@ -7,6 +7,8 @@ import { ApiService } from "~/misc/actions/request";
 import { alertsContext } from "~/root";
 import { minusSvg, plusSvg, playSvg } from "../common/media/svg";
 import { HideBtnsEnum } from "./hide-buttons";
+import { globalAction$ } from "@builder.io/qwik-city";
+import { getTokenFromCookie } from "~/misc/actions/auth";
 
 type TableRowType = {
   word: OldHskWordType;
@@ -29,16 +31,20 @@ export const pronounce = (id: number, lvl: number) => {
   new Audio(`${CONST_URLS.myAudioURL}hsk${lvl}/${wordId}.mp3`).play();
 };
 
-export const addUserHskWord = async (word: OldHskWordType, token: string) => {
-  await ApiService.post("/api/words/", word, token);
-};
+export const useAddUserHskWord = globalAction$((params, ev) => {
+  const token = getTokenFromCookie(ev.cookie);
+  return ApiService.post("/api/words/", params.word, token);
+});
 
-export const removeUserHskWord = async (wordId: number, token: string) => {
-  await ApiService.delete("/api/words/" + wordId, token);
-};
+export const useRemoveUserHskWord = globalAction$((params, ev) => {
+  const token = getTokenFromCookie(ev.cookie);
+  return ApiService.delete("/api/words/" + params.wordId, token);
+});
 
 export const OldHskTableRow = component$(
   ({ word, hideBtnsSig, userSelected: clickedByUser, userWordsLen, isPrivate }: TableRowType) => {
+    const addUserHskWord = useAddUserHskWord();
+    const removeUserHskWord = useRemoveUserHskWord();
     const userSelectedSignal = useSignal(clickedByUser);
     const userSelected = userSelectedSignal.value && !isPrivate;
     const userWordsLenSignal = useSignal(userWordsLen);
@@ -56,7 +62,7 @@ export const OldHskTableRow = component$(
       }
 
       if (userSelectedSignal.value) {
-        removeUserHskWord(word.word_id, token);
+        removeUserHskWord.submit({ wordId: word.word_id });
         userWordsLenSignal.value--;
         userSelectedSignal.value = !userSelectedSignal.value;
         return alertsState.push({ bg: "alert-info", text: "Слово удалено из вашего словарика" });
@@ -69,7 +75,7 @@ export const OldHskTableRow = component$(
         });
       }
 
-      addUserHskWord(word, token);
+      addUserHskWord.submit({ word });
       userWordsLenSignal.value++;
       userSelectedSignal.value = !userSelectedSignal.value;
       return alertsState.push({ bg: "alert-success", text: "Слово добавлено в ваш словарик" });

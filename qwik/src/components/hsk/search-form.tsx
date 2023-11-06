@@ -24,7 +24,7 @@ export const useGetHskWords = globalAction$(
     return ApiService.post(path, { chinese }, undefined, []);
   },
   zod$({
-    path: z.string().nonempty(),
+    path: z.string(),
     chinese: z.string(),
   })
 );

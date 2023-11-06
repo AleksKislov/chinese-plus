@@ -47,15 +47,15 @@ export const segmenter = async (text: string): Promise<string[]> => {
   return ApiService.post("/api/dictionary/segmenter", { text }, undefined, []);
 };
 
-export const useLoadTranslation = routeLoader$(async (ev): Promise<(string | DictWord)[]> => {
-  const q = ev.query.get("q") || "";
-  return getWordsForTooltips(await getChineseWordsArr(q));
-});
-
 export const getChineseWordsArr = async (input: string): Promise<string[]> => {
   const arr = await segmenter(input);
   return arr.filter((word) => /\p{Script=Han}/u.test(word));
 };
+
+export const useLoadTranslation = routeLoader$(async (ev): Promise<(string | DictWord)[]> => {
+  const q = ev.query.get("q") || "";
+  return getWordsForTooltips(await getChineseWordsArr(q));
+});
 
 export default component$(() => {
   const loc = useLocation();

@@ -5,7 +5,7 @@ type LvlFilterProps = {
 };
 export const LevelFilter = component$(({ levelSignal }: LvlFilterProps) => {
   return (
-    <div class='form-control'>
+    <div class='form-control text-base-content'>
       <select
         class='select select-bordered'
         value={levelSignal.value}

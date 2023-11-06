@@ -11,6 +11,8 @@ import { RouterHead } from "./components/router-head/router-head";
 import globalStyles from "./global.css?inline";
 import { QwikPartytown } from "./components/partytown/partytown";
 
+export const IsLightThemeCookieName = "isLightTheme";
+
 type ReadTodayMap = {
   [key: string]: number[];
 };
@@ -36,7 +38,6 @@ export interface User {
   readDailyGoal: number;
   readTodayNum: number;
   readTodayMap: ReadTodayMap;
-  // newMentions: CommentType[];
   hsk2WordsTotal: number;
   role?: "admin" | "moderator";
   newAvatar?: NewAvatar;
@@ -75,7 +76,6 @@ export default component$(() => {
     readDailyGoal: 0,
     readTodayNum: 0,
     readTodayMap: {},
-    // newMentions: [],
     role: undefined,
     newAvatar: undefined,
   });

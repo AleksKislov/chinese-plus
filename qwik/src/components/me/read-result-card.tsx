@@ -50,7 +50,7 @@ export const ReadResultCard = component$(() => {
               style={`width: ${
                 progress.value < 100 ? progress.value : 100
               }%; transition: width 2s;`}
-              value={progress.value}
+              value={100}
               max='100'
             ></progress>
           </div>

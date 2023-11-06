@@ -15,7 +15,7 @@ type AudioFilterProps = {
 export const HasAudioFilter = component$(({ audioSignal, num }: AudioFilterProps) => {
   const text = `С аудио ${num}`;
   return (
-    <div class='form-control'>
+    <div class='form-control text-base-content'>
       <select
         class='select select-bordered'
         value={audioSignal.value}

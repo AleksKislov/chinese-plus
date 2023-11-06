@@ -100,7 +100,13 @@ export const CommentCard = component$(
             </div>
 
             <div class={"mt-2 flex justify-between"}>
-              <UserDateDiv userId={userId} userName={userName} date={date} ptNum={2} />
+              <UserDateDiv
+                userId={userId}
+                userName={userName}
+                date={date}
+                ptNum={2}
+                isComment={true}
+              />
 
               <div>
                 {canEdit && (
