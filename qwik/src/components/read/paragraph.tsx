@@ -25,7 +25,7 @@ export const Paragraph = component$(
     showTranslation,
     forEditing,
   }: ParagraphProps) => {
-    const blockClass = "my-1 border border-neutral-focus rounded-md p-2 relative bg-neutral";
+    const blockClass = "my-1 rounded-md p-2 relative bg-base-200";
     const paragNum = ind + 1;
 
     return (

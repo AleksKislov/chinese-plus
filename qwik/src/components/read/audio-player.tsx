@@ -53,7 +53,7 @@ export const AudioPlayer = component$(({ textId }: { textId: ObjectId }) => {
   return !audioPlayer.value ? null : (
     <div class='flex items-center justify-center w-full my-2'>
       <audio class='hidden'></audio>
-      <div class='w-full bg-neutral rounded-lg p-4'>
+      <div class='w-full bg-base-300 rounded-lg p-4'>
         <div class='flex flex-row'>
           <div class='mr-4'>
             <button class='btn btn-sm btn-outline' onClick$={playPauseAudio}>

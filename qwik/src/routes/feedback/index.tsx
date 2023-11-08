@@ -88,7 +88,7 @@ export default component$(() => {
       <PageTitle txt={"Гостевая и Новости Проекта"} />
       <FlexRow>
         <div class='w-full md:w-1/2 mb-3 mr-4 h-24'>
-          <div class='card w-full bg-neutral h-full'>
+          <div class='card w-full bg-base-200 h-full'>
             <div class='card-body'>
               <div class={"flex"}>
                 За проектом можно следить и в соцсетях: <OurSocialMedia />
@@ -98,7 +98,7 @@ export default component$(() => {
         </div>
 
         <div class='w-full md:w-1/2'>
-          <div class='card w-full bg-neutral mb-3'>
+          <div class='card w-full bg-base-200 mb-3'>
             <div class='card-body'>
               <div class='btn-group'>
                 {DisplayBtns?.map((btnType, ind) => (

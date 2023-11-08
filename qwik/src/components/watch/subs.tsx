@@ -23,7 +23,7 @@ export const Subs = component$(
 
     return (
       <div>
-        <div class='card card-compact w-full bg-neutral border border-neutral-focus mb-3'>
+        <div class='card card-compact w-full bg-base-200 mb-3'>
           <div class='card-body items-center text-center'>
             {!hideBtnsSig.value.includes(HideBtnsEnum.cn) && (
               <div

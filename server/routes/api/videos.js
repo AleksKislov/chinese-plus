@@ -13,6 +13,8 @@ const {
   getVidsInChunks,
   updateVideo,
   getVideosNum,
+  getMarkedVideos,
+  getByUserId,
 } = require("../../src/api/services/videos");
 
 /**
@@ -52,6 +54,22 @@ router.post("/unmark_as_seen/:id", auth, markAsSeen);
  * @access  Public
  */
 router.get("/infinite", getVidsInChunks);
+
+/**
+ * @method    GET
+ * @route     api/videos/marked
+ * @desc      get all marked videos
+ * @access    Private
+ */
+router.get("/marked", auth, getMarkedVideos);
+
+/**
+ * @method    GET
+ * @route     GET api/videos/user/:userId
+ * @desc      Get all the videos by user who published them
+ * @access    Public
+ */
+router.get("/user/:userId", getByUserId);
 
 /**
  * @route     GET api/videos

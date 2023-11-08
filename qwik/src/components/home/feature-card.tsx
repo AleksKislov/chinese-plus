@@ -18,12 +18,12 @@ export const FeatureCard = component$(({ ind }: FeatureCardProps) => {
   });
 
   return (
-    <div class='card bg-neutral shadow-xl text-neutral-content'>
+    <div class='card bg-base-300'>
       <div class='card-body relative'>
         <h2 class='card-title'>{title}</h2>
 
         <div>
-          <div class={`float-left mr-2 text-info ${ind === 0 ? "mt-1" : ""}`}>{pic}</div>
+          <div class={`float-left mr-2 text-secondary ${ind === 0 ? "mt-1" : ""}`}>{pic}</div>
           {desc}
         </div>
       </div>

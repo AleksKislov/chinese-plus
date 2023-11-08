@@ -14,9 +14,10 @@ services:
   chin_plus_be:
     container_name: chin_plus_be
     restart: unless-stopped
+    image: bylh_chin_plus_be:${VERSION}
     build:
       context: ./server
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - 10000:10000
     networks:

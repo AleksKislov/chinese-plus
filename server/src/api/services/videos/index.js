@@ -10,7 +10,8 @@ const { markAsSeen } = require("./mark-as-seen");
 const { getVidsInChunks } = require("./get-vids-in-chunks");
 const { updateVideo } = require("./update");
 const { getVideosNum } = require("./get-videos-num");
-
+const { getMarkedVideos } = require("./get-marked-videos");
+const { getByUserId } = require("./get-by-user-id");
 module.exports = {
   getVideosNum: apiDecorator(getVideosNum),
   updateVideo: apiDecorator(updateVideo),
@@ -22,4 +23,6 @@ module.exports = {
   getById: apiDecorator(getById),
   createVideo: apiDecorator(createVideo),
   getAllApprovedVids: apiDecorator(getAllApprovedVids),
+  getMarkedVideos: apiDecorator(getMarkedVideos),
+  getByUserId: apiDecorator(getByUserId),
 };

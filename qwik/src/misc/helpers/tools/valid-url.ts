@@ -7,7 +7,6 @@ export function validURL(str: string): boolean {
       "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
       "(\\#[-a-z\\d_]*)?$",
     "i"
-  ); // fragment locator
-  // console.log(pattern.test(str));
+  );
   return !!pattern.test(str);
 }

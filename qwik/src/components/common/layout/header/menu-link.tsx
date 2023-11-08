@@ -9,7 +9,10 @@ export type MenuLinkProps = {
 export default component$(({ href, text }: MenuLinkProps) => {
   return (
     <li>
-      <Link href={href} class='my-1 hover:text-success active:text-success focus:text-success'>
+      <Link
+        href={href}
+        class='my-1 hover:text-secondary active:text-secondary focus:text-secondary'
+      >
         {text}
       </Link>
     </li>

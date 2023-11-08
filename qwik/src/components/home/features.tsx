@@ -31,15 +31,15 @@ export const featuresArr = [
     desc: (
       <p>
         Все{" "}
-        <Link href='/read/texts' class='link link-info'>
+        <Link href='/read/texts' class='link link-secondary'>
           тексты
         </Link>{" "}
         и{" "}
-        <Link href='/watch/videos' class='link link-info'>
+        <Link href='/watch/videos' class='link link-secondary'>
           видео
         </Link>{" "}
         не только с параллельным переводом, но и с переводом каждого слова. Кликните на{" "}
-        <span class='text-info'>иероглиф</span>
+        <span class='text-secondary'>иероглиф</span>
       </p>
     ),
   },
@@ -49,11 +49,11 @@ export const featuresArr = [
     desc: (
       <p>
         Пользователи регулярно добавляют новые{" "}
-        <Link href='/read/texts' class='link link-info'>
+        <Link href='/read/texts' class='link link-secondary'>
           тексты
         </Link>{" "}
         и{" "}
-        <Link href='/watch/videos' class='link link-info'>
+        <Link href='/watch/videos' class='link link-secondary'>
           видео
         </Link>
         . Поделитесь и Вы своими переводами
@@ -66,15 +66,15 @@ export const featuresArr = [
     desc: (
       <p>
         Любые слова из лексики{" "}
-        <Link href='/hsk/2/table' class='link link-info'>
+        <Link href='/hsk/2/table' class='link link-secondary'>
           HSK
         </Link>
         ,{" "}
-        <Link href='/read/texts' class='link link-info'>
+        <Link href='/read/texts' class='link link-secondary'>
           текстов
         </Link>{" "}
         или{" "}
-        <Link href='/search' class='link link-info'>
+        <Link href='/search' class='link link-secondary'>
           словаря
         </Link>{" "}
         можно добавить в личный вокабуляр и повторять отдельно
@@ -87,15 +87,15 @@ export const featuresArr = [
     desc: (
       <p>
         Много полезного для новичков:{" "}
-        <Link href='/start/radicals' class='link link-info'>
+        <Link href='/start/radicals' class='link link-secondary'>
           ключи
         </Link>{" "}
         иероглифов, а также озвучка{" "}
-        <Link href='/hsk/2/table' class='link link-info'>
+        <Link href='/hsk/2/table' class='link link-secondary'>
           HSK
         </Link>
         -лексики ,{" "}
-        <Link href='/start/pinyin-chart' class='link link-info'>
+        <Link href='/start/pinyin-chart' class='link link-secondary'>
           пиньиня
         </Link>
         , некоторых текстов
@@ -109,7 +109,7 @@ export const featuresArr = [
     desc: (
       <p>
         Каждый иероглиф в{" "}
-        <Link href='/search' class='link link-info'>
+        <Link href='/search' class='link link-secondary'>
           словаре
         </Link>{" "}
         снабжен анимированным порядком написания черт иероглифа

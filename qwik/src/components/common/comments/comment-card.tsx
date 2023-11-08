@@ -62,7 +62,7 @@ export const CommentCard = component$(
     const anchor = `${_id.slice(-3)}`;
     return (
       <>
-        <div class='card w-full bg-neutral mb-3' id={anchor}>
+        <div class='card w-full bg-base-200 mb-3' id={anchor}>
           <div class='text-neutral-500 absolute right-0 top-0'>
             <Link
               href={`${href}#${anchor}`}

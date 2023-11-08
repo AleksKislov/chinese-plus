@@ -27,7 +27,7 @@ export default component$(() => {
       <div class='text-center mt-8'>
         <article class={"prose max-w-none"}>
           <h1>
-            Клуб Chinese<span class='text-success font-extrabold text-5xl'>+</span>
+            Клуб Chinese<span class='text-secondary font-extrabold text-5xl'>+</span>
           </h1>
           <p class='font-semibold -mt-6 mb-5'>web-приложение для изучения китайского языка</p>
         </article>

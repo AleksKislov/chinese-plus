@@ -14,6 +14,7 @@ const { likeText } = require("./like-text");
 const { markAsRead } = require("./mark-as-read");
 const { markAsNotRead } = require("./mark-as-not-read");
 const { deleteText } = require("./delete-text");
+const { getMarkedTexts } = require("./get-marked-texts");
 module.exports = {
   markAsNotRead: apiDecorator(markAsNotRead),
   markAsRead: apiDecorator(markAsRead),
@@ -29,4 +30,5 @@ module.exports = {
   getById: apiDecorator(getById),
   getByUserId: apiDecorator(getByUserId),
   deleteText: apiDecorator(deleteText),
+  getMarkedTexts: apiDecorator(getMarkedTexts),
 };

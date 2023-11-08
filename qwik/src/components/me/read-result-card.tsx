@@ -19,7 +19,7 @@ export const ReadResultCard = component$(() => {
   });
 
   return !loggedIn ? null : (
-    <div class='card bg-neutral shadow-xl mt-3'>
+    <div class='card bg-base-200 mt-3'>
       <div class='card-body'>
         <h2 class='card-title'>Дневник чтения 📚</h2>
         <div class={"w-full flex justify-between"}>

@@ -12,7 +12,7 @@ type PersonalStatsType = {
 export const PersonalStats = component$(
   ({ finishedTextsTotal, approvedTextsNum, userWordsTotal, hsk2Total }: PersonalStatsType) => {
     return (
-      <div class='card'>
+      <div class='card mr-3'>
         <div class='stats shadow'>
           <div class='stat'>
             <div class='stat-figure text-secondary'>{academicCapBigSvg}</div>
@@ -34,11 +34,11 @@ export const PersonalStats = component$(
 
           <div class='stat'>
             <div class='stat-figure text-secondary'>{bookBigSvg}</div>
-            <div class='stat-title'>Прочитано текстов</div>
+            <div class='stat-title'>Помечено текстов</div>
             <div class='stat-value'>
               {finishedTextsTotal} / {approvedTextsNum}
             </div>
-            <div class='stat-desc'>в Читалке</div>
+            <div class='stat-desc'>в закладках</div>
           </div>
         </div>
       </div>

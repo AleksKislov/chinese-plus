@@ -19,7 +19,7 @@ export const PostCard = component$(({ post, isPostPage, addressees }: PostCardPr
   const ownsPost = userState._id === userInfo._id;
 
   return (
-    <div class='card w-full bg-neutral mb-3'>
+    <div class='card w-full bg-base-200 mb-3'>
       <div class='card-body'>
         <div class='flex'>
           <div

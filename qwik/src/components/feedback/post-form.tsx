@@ -41,9 +41,9 @@ export const PostForm = component$(() => {
 
   return (
     <>
-      <div class='card w-full bg-neutral text-base-content'>
+      <div class='card w-full bg-base-300'>
         <div class='card-body'>
-          <h2 class='card-title text-neutral-content'>Чем хотите поделиться?</h2>
+          <h2 class='card-title'>Чем хотите поделиться?</h2>
           <p class={"mb-2"}>
             {Object.keys(msgTypes)?.map((msg, ind) => (
               <span

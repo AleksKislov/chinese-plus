@@ -21,14 +21,6 @@ export const ReadingDiagram = component$(
     const maxX = useSignal(1000);
     const MONTH_DAYS = 31;
     const CHART_COLUMNS: [string, string, string] = ["Дата", "Прочитано, 字", "Цель, 字"];
-    // if (+localStorage.isDarkTheme) {
-    //   const textColor = { color: "#fff" };
-    //   options.hAxis.titleTextStyle = textColor;
-    //   options.vAxis.titleTextStyle = textColor;
-    //   options.vAxis.textStyle = textColor;
-    //   options.backgroundColor = "#222";
-    //   options.legend = { textStyle: textColor };
-    // }
 
     useVisibleTask$(({ track }) => {
       track(() => readDailyGoal);

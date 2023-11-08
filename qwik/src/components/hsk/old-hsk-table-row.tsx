@@ -56,7 +56,6 @@ export const OldHskTableRow = component$(
     const addOrRemoveHskWord = $(async () => {
       const token = Cookies.get("token");
 
-      // console.log(userWordsLenSignal.value);
       if (!token) {
         return alertsState.push({ bg: "alert-error", text: "Нужно войти" });
       }
@@ -84,26 +83,26 @@ export const OldHskTableRow = component$(
     return (
       <>
         <tr class={"hover"}>
-          <td class={userSelected ? "bg-secondary" : ""}>{id}</td>
+          <td class={userSelected ? "bg-base-300" : ""}>{id}</td>
           {!hideBtnsSig.value.includes(HideBtnsEnum.cn) && (
-            <td class={`prose ${userSelected ? "bg-secondary" : ""}`}>
+            <td class={`prose ${userSelected ? "bg-base-300" : ""}`}>
               <h2>{cn}</h2>
             </td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.py) && (
-            <td class={userSelected ? "bg-secondary" : ""}>{py}</td>
+            <td class={userSelected ? "bg-base-300" : ""}>{py}</td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.ru) && (
-            <td class={userSelected ? "bg-secondary" : ""} style={{ maxWidth: "50%" }}>
+            <td class={userSelected ? "bg-base-300" : ""} style={{ maxWidth: "50%" }}>
               <div style={{ wordWrap: "break-word", whiteSpace: "normal" }}>{ru}</div>
             </td>
           )}
-          <td class={userSelected ? "bg-secondary" : ""}>
+          <td class={userSelected ? "bg-base-300" : ""}>
             <button class='btn btn-sm btn-info' onClick$={() => pronounce(id, lvl)}>
               {playSvg}
             </button>
           </td>
-          <td class={userSelected ? "bg-secondary" : ""}>
+          <td class={userSelected ? "bg-base-300" : ""}>
             {userSelectedSignal.value ? (
               <button class='btn btn-sm btn-warning' onClick$={addOrRemoveHskWord}>
                 {minusSvg}

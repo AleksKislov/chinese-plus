@@ -16,16 +16,12 @@ export default component$(() => {
   const userState = useContext(userContext);
   const isMobile = useSignal(false);
 
-  // useTask$(() => {
-  //   userState.newMentions = newMentions.value;
-  // });
-
   useVisibleTask$(() => {
     isMobile.value = window.innerWidth <= 768;
   });
 
   return (
-    <header class='bg-neutral mb-4'>
+    <header class='bg-base-300 mb-4'>
       <div class='md:container md:mx-auto'>
         <div class='navbar h-12'>
           <div class='navbar-start lg:w-full'>
@@ -68,7 +64,7 @@ export default component$(() => {
                 <MenuItem name={start.name} links={start.links} />
 
                 <li tabIndex={0} class='dropdown dropdown-hover hover:text-success'>
-                  <label class='my-1 hover:text-success'>
+                  <label class='my-1 hover:text-secondary'>
                     HSK
                     {dropdownArrowBottom}
                   </label>
@@ -136,11 +132,12 @@ export const unAuthMenu = (
 export const authMenu = (
   <>
     <MenuLink href='/me' text='Личный кабинет' />
-    <MenuLink href='/me/hsk/2' text='Мой словарик HSK' />
-    <MenuLink href='/me/words' text='Мой словарик' />
+    <MenuLink href='/me/hsk/2' text={`Мой словарик HSK`} />
+    <MenuLink href='/me/words' text={`Мой словарик`} />
+    <MenuLink href='/me/marked' text={`Закладки`} />
     <MenuLink href='/create' text='Поделиться контентом' />
-    <hr class='h-px my-1 bg-primary border-0' />
 
+    <hr class='h-px my-1 bg-primary border-0' />
     <li>
       <a
         onClick$={() => {

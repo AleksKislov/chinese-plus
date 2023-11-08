@@ -63,7 +63,7 @@ export const ContentPageCard = component$(
     const imageSrc = useSignal(picUrl);
 
     return (
-      <div class='card w-full bg-neutral mb-3'>
+      <div class='card w-full bg-base-200 mb-3'>
         <figure>
           <img
             src={imageSrc.value}

@@ -112,10 +112,10 @@ export default component$(() => {
         {columns.map((col, k) => (
           <div class='w-full' key={col}>
             {answers.map((quest, i) => (
-              <div class='form-control my-2 pr-2 text-base-content'>
+              <div class='form-control my-2 pr-2'>
                 <label class='input-group'>
                   <button
-                    class='btn btn-secondary'
+                    class='btn btn-info'
                     id={store.sounds[i + answers.length * k]}
                     type='button'
                     onClick$={() => playAudio(store.sounds[i + answers.length * k])}

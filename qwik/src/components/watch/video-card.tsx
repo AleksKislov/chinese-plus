@@ -38,7 +38,7 @@ export const VideoCard = component$(({ video, isUnapproved }: VideoCardProps) =>
 
   const likesSignal = useSignal(likes);
   return (
-    <div class='card lg:card-side w-full bg-neutral mb-3'>
+    <div class='card lg:card-side w-full bg-base-200 mb-3'>
       <CardImg
         contentId={videoId}
         contentType={WHERE.video}

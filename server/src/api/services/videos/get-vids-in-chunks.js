@@ -1,4 +1,5 @@
 const Video = require("../../../models/Video");
+const { shortUserInfoFields } = require("../../consts");
 
 async function getVidsInChunks(req, res) {
   const { skip, category } = req.query;
@@ -10,7 +11,8 @@ async function getVidsInChunks(req, res) {
     limit: 10,
   })
     .sort({ date: -1 })
-    .select("-cnSubs -ruSubs -pySubs -chineseArr");
+    .select("-cnSubs -ruSubs -pySubs -chineseArr")
+    .populate("user", shortUserInfoFields);
 
   return res.json(texts);
 }

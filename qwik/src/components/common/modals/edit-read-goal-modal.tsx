@@ -31,7 +31,7 @@ export const EditReadGoalModal = component$(
     });
 
     return (
-      <div class='text-base-content'>
+      <div class=''>
         <input type='checkbox' id={modalId} class='modal-toggle' />
         <label class='modal text-left' for={modalId}>
           <label class='modal-box relative' for=''>

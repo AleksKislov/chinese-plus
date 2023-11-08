@@ -59,7 +59,9 @@ export const ParagPlus = component$(({ strLen, ind }: ParagPlusProps) => {
             alreadyRead.value = !alreadyRead.value;
           }}
           class={`rounded-full cursor-pointer ${
-            alreadyRead.value ? "bg-success text-success-content" : "bg-neutral-focus"
+            alreadyRead.value
+              ? "bg-success text-success-content"
+              : "bg-neutral text-neutral-content"
           }`}
         >
           {plusSvg}

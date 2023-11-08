@@ -8,6 +8,7 @@ import {
   useStore,
   useTask$,
   type QwikKeyboardEvent,
+  useStyles$,
 } from "@builder.io/qwik";
 
 type TypingGameProps = {
@@ -23,6 +24,7 @@ type WrongStore = {
 export const QUEST_NUM = 10;
 
 export const TypingGame = component$(({ words, level }: TypingGameProps) => {
+  useStyles$(shakeCss);
   const start = useSignal(false);
   const progress = useSignal(0);
   const questionNum = useSignal(1);
@@ -32,16 +34,21 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
   const wrongStore = useStore<WrongStore>({ answers: [], num: 0 });
   const question = useSignal(words[0]);
   const answer = useSignal("");
+  const isWrong = useSignal(false);
+  const isCorrect = useSignal(false);
 
   const setNewQuestion = $(() => {
     progress.value = 0;
     question.value = shuffled.words[questionNum.value];
     questionNum.value++;
+    answer.value = "";
   });
 
   const skipQuestion = $(() => {
     wrongStore.answers.push(question.value.chinese);
     wrongStore.num++;
+    isWrong.value = true;
+    setTimeout(() => (isWrong.value = false), 1000);
     setNewQuestion();
   });
 
@@ -51,7 +58,6 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
     if (questionNum.value > QUEST_NUM) {
       resultWords.value =
         corrects.value > 8 ? "Отличный результат!" : corrects.value > 5 ? "Неплохо!" : "Н-да уж...";
-      // testStarted(false);
       start.value = false;
     }
 
@@ -71,10 +77,14 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
       corrects.value++;
       wrongStore.answers.push("");
       setNewQuestion();
+      isCorrect.value = true;
+      setTimeout(() => (isCorrect.value = false), 1000);
+      setTimeout(() => (answer.value = ""), 200);
+    } else {
+      isWrong.value = true;
+      setTimeout(() => (isWrong.value = false), 1000);
+      setTimeout(() => (answer.value = ""), 500);
     }
-    setTimeout(() => {
-      answer.value = "";
-    });
   });
 
   const setNewGame = $(() => {
@@ -94,7 +104,7 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
 
   return (
     shuffled.words && (
-      <div class='card bg-neutral w-full mb-6'>
+      <div class='card bg-base-200 text-base-content w-full mb-6'>
         <div class='card-body'>
           {start.value ? (
             <div>
@@ -111,7 +121,7 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
                 </button>
               </div>
               <div class='prose mb-3'>
-                <h4 class='card-title text-neutral-content'>
+                <h4 class='card-title'>
                   Вопрос {questionNum}/{QUEST_NUM}
                 </h4>
               </div>
@@ -121,12 +131,10 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
                 <div class='input-group w-full '>
                   <input
                     type='text'
-                    class='input input-bordered w-full'
+                    class={`input input-bordered w-full ${isCorrect.value ? `border-success` : ""}`}
+                    style={isWrong.value ? `animation: shake 0.2s ease-in-out 0s 2` : ""}
                     placeholder='汉字'
-                    value={answer.value}
-                    onChange$={(e) => {
-                      answer.value = e.target.value;
-                    }}
+                    bind:value={answer}
                     onKeyDown$={(e: QwikKeyboardEvent<HTMLInputElement>) => {
                       if (e.key === "Enter") return setTimeout(checkIt);
                     }}
@@ -141,7 +149,7 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
           ) : (
             <div>
               <div class='prose mb-2'>
-                <h3 class='card-title text-neutral-content'>
+                <h3 class='card-title'>
                   {questionNum.value > QUEST_NUM ? (
                     "Результат"
                   ) : level ? (
@@ -197,7 +205,7 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
                             ? "Нужно повторить "
                             : ""
                         } ${wrongStore.answers.filter((x) => Boolean(x)).join(", ")}`
-                      : "Проверьте насколько хорошо вы знаете эти слова. Впишите нужные слова на время!"}
+                      : "Впишите нужные слова на время"}
                   </span>
                 </div>
               )}
@@ -209,11 +217,13 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
           {[...new Array(QUEST_NUM)].map((x, ind) => (
             <div
               key={ind}
-              class={`badge mx-2 mb-2 ${
+              class={`badge mx-2 mb-2 border border-base-300 ${
                 wrongStore.answers.length > ind
                   ? wrongStore.answers[ind]
                     ? "bg-error"
                     : "bg-success"
+                  : start.value && questionNum.value === ind + 1
+                  ? "bg-warning"
                   : "bg-neutral-content"
               }`}
             >
@@ -225,3 +235,24 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
     )
   );
 });
+
+export const shakeCss = `
+@keyframes shake {
+  0% {
+    margin-left: 0rem;
+    border-color: rgb(251 113 133);
+  }
+  25% {
+    margin-left: 0.5rem;
+    border-color: rgb(251 113 133);
+  }
+  75% {
+    margin-left: -0.5rem;
+    border-color: rgb(251 113 133);
+  }
+  100% {
+    margin-left: 0rem;
+    border-color: rgb(251 113 133);
+  }
+}
+`;

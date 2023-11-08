@@ -5,7 +5,7 @@ import { serverStackSvg } from "../media/svg";
 
 export const Footer = component$(() => {
   return (
-    <footer class='footer footer-center gap-6 p-10 text-neutral-content rounded bg-neutral mt-4'>
+    <footer class='footer footer-center gap-6 p-10 rounded bg-base-300 mt-4'>
       <div>
         <Link class='link link-hover' href='/contacts'>
           Контакты
@@ -19,7 +19,8 @@ export const Footer = component$(() => {
       <div>
         <div>
           <span class='font-bold'>Chinese</span>
-          <span class={`text-success font-extrabold text-lg`}>+</span> © {new Date().getFullYear()}
+          <span class={`text-secondary font-extrabold text-lg`}>+</span> ©{" "}
+          {new Date().getFullYear()}
         </div>
         <div class='flex flex-row'>
           <div class='mr-1'>{serverStackSvg}</div>

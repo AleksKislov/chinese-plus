@@ -83,9 +83,9 @@ export default component$(() => {
 
   return (
     <>
-      <main class={"flex flex-col min-h-screen"}>
+      <main class={"flex flex-col min-h-screen text-base-content"}>
         <Header />
-        <section class={"relative flex flex-col min-h-screen justify-between"}>
+        <section class={"relative flex flex-col min-h-screen justify-between "}>
           <div class='relative container mx-auto px-4 lg:px-28'>
             <Slot />
           </div>

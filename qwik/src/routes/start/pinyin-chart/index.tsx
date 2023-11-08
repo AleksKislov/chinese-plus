@@ -123,7 +123,7 @@ export default component$(() => {
                         </label>
                         <div
                           tabIndex={0}
-                          class='card compact dropdown-content shadow bg-neutral rounded-box z-[1]'
+                          class='card compact dropdown-content bg-neutral rounded-box z-[1]'
                         >
                           <div class='card-body'>
                             <div class='btn-group'>

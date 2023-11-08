@@ -18,6 +18,7 @@ const {
   markAsRead,
   markAsNotRead,
   deleteText,
+  getMarkedTexts,
 } = require("../../src/api/services/texts");
 
 /**
@@ -46,6 +47,14 @@ router.post(
  * @access    Private
  */
 router.post("/update", auth, updateTxt);
+
+/**
+ * @method    GET
+ * @route     api/texts/marked
+ * @desc      get all marked texts
+ * @access    Private
+ */
+router.get("/marked", auth, getMarkedTexts);
 
 /**
  * @route     GET api/texts

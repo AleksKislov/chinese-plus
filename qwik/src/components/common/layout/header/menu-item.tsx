@@ -10,8 +10,8 @@ export type MenuItemProps = {
 
 export const MenuItem = component$(({ links, name }: MenuItemProps) => {
   return (
-    <li class='dropdown dropdown-hover hover:text-success'>
-      <label tabIndex={0} class='my-1 hover:text-success'>
+    <li class='dropdown dropdown-hover hover:text-secondary'>
+      <label tabIndex={0} class='my-1 hover:text-secondary'>
         {name}
         {dropdownArrowBottom}
       </label>
