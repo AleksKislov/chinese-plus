@@ -112,7 +112,7 @@ export default component$(() => {
         {columns.map((col, k) => (
           <div class='w-full' key={col}>
             {answers.map((quest, i) => (
-              <div class='form-control my-2 pr-2'>
+              <div class='form-control my-2 pr-2' key={i}>
                 <label class='input-group'>
                   <button
                     class='btn btn-info'

@@ -6,6 +6,7 @@ import { Sidebar } from "~/components/common/layout/sidebar";
 import { PageTitle } from "~/components/common/layout/title";
 import CONST_URLS from "~/misc/consts/urls";
 import PinyinTests from "./pinyin-tests";
+import { PhoneticsLinkCard } from "~/components/common/content-cards/phonetics-link-card";
 
 export const playAudioFromBtn = (sound: string) => {
   if (!sound) return;
@@ -26,12 +27,13 @@ export default component$(() => {
               <p>Проверьте насколько хорошо вы понимаете на слух звуки и тоны китайского языка.</p>
             </div>
           </div>
+          <PhoneticsLinkCard />
         </Sidebar>
         <MainContent>
           <small class='text-base-content'>
             Введите соответствующий пиньинь для аудио в виде{" "}
-            <code class='text-warning'>[латынь][цифра]</code>, например,{" "}
-            <span class='text-success'>huang2</span> или <span class='text-success'>lv4</span>
+            <code class='text-primary'>[латынь][цифра]</code>, например,{" "}
+            <span class='text-secondary'>huang2</span> или <span class='text-secondary'>lv4</span>
           </small>
           <PinyinTests />
         </MainContent>

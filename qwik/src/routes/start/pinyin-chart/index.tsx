@@ -5,6 +5,7 @@ import styles from "./table.css?inline";
 import CONST_URLS from "~/misc/consts/urls";
 import { PageTitle } from "~/components/common/layout/title";
 import { infoAlertSvg } from "~/components/common/media/svg";
+import { PhoneticsLinkCard } from "~/components/common/content-cards/phonetics-link-card";
 
 export const initHiglights = () => {
   const tbody = document.querySelector("tbody") as HTMLTableSectionElement;
@@ -53,10 +54,12 @@ export default component$(() => {
     <>
       <PageTitle txt={"Таблица пиньиня с озвучкой"} />
 
-      <div class='alert shadow-lg my-3'>
+      <div class='alert mt-3 flex'>
         {infoAlertSvg}
         <span>Таблица озвучена носителем языка. Кликайте на слог, чтобы прослушать</span>
       </div>
+
+      <PhoneticsLinkCard />
 
       <div class='overflow-x-auto'>
         <table class='table table-compact text-base-content'>

@@ -163,6 +163,10 @@ export const start: MenuItemProps = {
       text: "Тесты на пиньинь",
     },
     {
+      href: "/watch/phonetics-lessons",
+      text: "Уроки фонетики",
+    },
+    {
       href: "/start/radicals",
       text: "Таблица ключей иероглифов",
     },
@@ -179,6 +183,10 @@ export const watch: MenuItemProps = {
     {
       href: "/watch/unapproved-videos",
       text: "На проверке",
+    },
+    {
+      href: "/watch/phonetics-lessons",
+      text: "Уроки фонетики",
     },
   ],
 };

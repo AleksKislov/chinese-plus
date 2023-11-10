@@ -125,8 +125,8 @@ export default component$(() => {
         <MainContent>
           <TypingGame words={testWords.value} level={loc.url.searchParams.get("lvl") || "1"} />
 
-          {questions.map(({ type, title }) => (
-            <>
+          {questions.map(({ type, title }, ind) => (
+            <div key={ind}>
               <div class='prose mb-2'>
                 <h4>Выберите верный перевод для {title}</h4>
               </div>
@@ -175,7 +175,7 @@ export default component$(() => {
                 Проверить
               </button>
               {type !== QuestKinds.audio && <hr class='h-px my-8' />}
-            </>
+            </div>
           ))}
         </MainContent>
       </FlexRow>

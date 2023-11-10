@@ -11,6 +11,7 @@ import { FlexRow } from "~/components/common/layout/flex-row";
 import { Sidebar } from "~/components/common/layout/sidebar";
 import { MainContent } from "~/components/common/layout/main-content";
 import { getTokenFromCookie } from "~/misc/actions/auth";
+import { PhoneticsLinkCard } from "~/components/common/content-cards/phonetics-link-card";
 
 export type OldHskWordType = {
   _id: ObjectId;
@@ -61,6 +62,7 @@ export default component$(() => {
             isOldHsk={true}
             isForTests={false}
           />
+          <PhoneticsLinkCard />
         </Sidebar>
 
         <MainContent>

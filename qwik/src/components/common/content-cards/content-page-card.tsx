@@ -21,7 +21,7 @@ type ContentPageCardProps = {
   date: ISODate;
   lvl: 1 | 2 | 3;
   category: string;
-  length: number;
+  length?: number;
   desc: string;
   likes: ContentLike[];
   textSource?: string;
@@ -63,7 +63,7 @@ export const ContentPageCard = component$(
     const imageSrc = useSignal(picUrl);
 
     return (
-      <div class='card w-full bg-base-200 mb-3'>
+      <div class='card w-full bg-base-300 mb-3'>
         <figure>
           <img
             src={imageSrc.value}
@@ -88,7 +88,7 @@ export const ContentPageCard = component$(
           </div>
           <ContentLvl lvl={lvl} />
           <ContentCat txt={category} />
-          <ContentLen len={length} />
+          {length && <ContentLen len={length} />}
           {textSource && <TextSource source={textSource} />}
           <TextDesc desc={desc} />
           <EditBtn

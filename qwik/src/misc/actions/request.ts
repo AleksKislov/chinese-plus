@@ -33,8 +33,9 @@ function getReqOptions(method: string, body: string | null, token?: string): Req
 async function myFetch(path: string, opts: ReqOptions, defaultVal?: any): Promise<any> {
   try {
     const res = await fetch(BASE_URL + path, opts);
-    // if (!res.ok) throw new Error(`Error!!! status: ${res.status} - ${await res.text()}`);
-    if (!res.ok) throw new Error(`Error!!! status: ${res.status}`);
+    if (!res.ok) {
+      throw new Error(`REQUEST ERR for ${path}! Status: ${res.status}, ${await res?.text()}`);
+    }
     return await res.json();
   } catch (err) {
     console.log(err);

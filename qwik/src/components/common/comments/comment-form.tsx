@@ -11,9 +11,10 @@ export enum WHERE {
   video = "video",
   text = "text",
   book = "book",
+  phoneticsLesson = "phoneticsLesson",
 }
 
-export type WhereType = "post" | "video" | "text" | "book";
+export type WhereType = "post" | "video" | "text" | "book" | "phoneticsLesson";
 
 export const useAddComment = globalAction$(
   (params, ev) => {

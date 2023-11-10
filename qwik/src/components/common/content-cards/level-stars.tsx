@@ -9,7 +9,7 @@ export const LevelStars = component$(({ lvl }: LevelStarsProps) => {
     <>
       <div class={"flex pt-1"}>
         {[...new Array(STARS_NUM)].map((_, ind) => (
-          <span key={ind} class={lvl > ind ? "text-warning" : ""}>
+          <span key={ind} class={lvl > ind ? "text-warning" : "text-neutral-content"}>
             {solidStarSvg}
           </span>
         ))}

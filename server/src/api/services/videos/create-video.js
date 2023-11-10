@@ -8,20 +8,8 @@ async function createVideo(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const {
-    title,
-    desc,
-    lvl,
-    tags,
-    cnSubs,
-    pySubs,
-    ruSubs,
-    length,
-    chineseArr,
-    // userName,
-    category,
-    source,
-  } = req.body;
+  const { title, desc, lvl, tags, cnSubs, pySubs, ruSubs, length, chineseArr, category, source } =
+    req.body;
 
   const newVideo = new Video({
     title,
@@ -33,7 +21,6 @@ async function createVideo(req, res) {
     ruSubs,
     length,
     chineseArr,
-    // userName,
     category,
     source,
     isApproved: 0,

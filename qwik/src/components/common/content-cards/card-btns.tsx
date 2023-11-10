@@ -1,5 +1,5 @@
 import { component$, type Signal } from "@builder.io/qwik";
-import { type WhereType } from "../comments/comment-form";
+import { WHERE, type WhereType } from "../comments/comment-form";
 import { audioSvg } from "../media/svg";
 import { BookmarkBtn } from "./bookmark-btn";
 import { CommentsBtn } from "./comments-btn";
@@ -35,7 +35,9 @@ export const CardBtns = component$(
           </div>
         )}
 
-        <BookmarkBtn contentType={contentType} contentId={contentId} />
+        {contentType !== WHERE.phoneticsLesson && (
+          <BookmarkBtn contentType={contentType} contentId={contentId} />
+        )}
         <LikeBtn likes={likes} contentType={contentType} contentId={contentId} creatorId={userId} />
 
         <CommentsBtn

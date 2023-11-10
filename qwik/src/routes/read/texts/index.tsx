@@ -19,6 +19,7 @@ import {
 } from "~/components/common/ui/has-audio-filter";
 import { ReadResultCard } from "~/components/me/read-result-card";
 import { MoreBtnAndLoader } from "~/components/common/ui/more-btn-and-loader";
+import { CreateTextCard } from "~/components/read/create-text-card";
 
 export type TextCardInfo = {
   _id: ObjectId;
@@ -138,6 +139,7 @@ export default component$(() => {
             </div>
           </div>
 
+          <CreateTextCard />
           <ReadResultCard />
         </Sidebar>
 

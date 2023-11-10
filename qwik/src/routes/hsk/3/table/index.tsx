@@ -9,6 +9,7 @@ import { PageTitle } from "~/components/common/layout/title";
 import { FlexRow } from "~/components/common/layout/flex-row";
 import { Sidebar } from "~/components/common/layout/sidebar";
 import { MainContent } from "~/components/common/layout/main-content";
+import { PhoneticsLinkCard } from "~/components/common/content-cards/phonetics-link-card";
 
 export type NewHskWordType = {
   _id: ObjectId;
@@ -40,6 +41,7 @@ export default component$(() => {
             isOldHsk={false}
             isForTests={false}
           />
+          <PhoneticsLinkCard />
         </Sidebar>
 
         <MainContent>

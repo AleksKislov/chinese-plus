@@ -41,7 +41,7 @@ export const TextCard = component$(({ text, isUnapproved }: TextCardProps) => {
   const likesSignal = useSignal(likes);
 
   return (
-    <div class='card lg:card-side w-full bg-base-200 mb-3 lg:max-h-96'>
+    <div class='card lg:card-side w-full bg-base-300 mb-3 lg:max-h-96'>
       <CardImg
         contentId={textId}
         contentType={WHERE.text}

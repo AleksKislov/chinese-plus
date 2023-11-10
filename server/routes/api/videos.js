@@ -15,7 +15,10 @@ const {
   getVideosNum,
   getMarkedVideos,
   getByUserId,
+  getAllVideoLessons,
+  getVideoLessonById,
 } = require("../../src/api/services/videos");
+const VideoLesson = require("../../src/models/VideoLesson");
 
 /**
  * @method    POST
@@ -54,6 +57,16 @@ router.post("/unmark_as_seen/:id", auth, markAsSeen);
  * @access  Public
  */
 router.get("/infinite", getVidsInChunks);
+
+router.get("/all-video-lessons", getAllVideoLessons);
+
+router.get("/video-lessons/:id", getVideoLessonById);
+
+// router.post("/create-lesson", async (req, res) => {
+//   const newLesson = new VideoLesson(req.body);
+//   await newLesson.save();
+//   res.json({ ok: "ok" });
+// });
 
 /**
  * @method    GET

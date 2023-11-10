@@ -51,6 +51,7 @@ app.use("/api/books", require("./routes/api/books"));
 app.use("/api/translation", require("./routes/api/translation"));
 app.use("/api/notices", require("./routes/api/notices"));
 app.use("/api/videos", require("./routes/api/videos"));
+app.use("/api/phoneticsLessons", require("./routes/api/phoneticsLessons"));
 
 // glcoud services routes
 app.use("/gcloud/youtube", require("./routes/gcloud/youtube"));

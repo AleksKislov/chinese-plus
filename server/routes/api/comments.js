@@ -11,6 +11,7 @@ const Video = require("../../src/models/Video");
 const Chapterpage = require("../../src/models/Chapterpage");
 const { Notify } = require("../../src/api/services/_misc");
 const { shortUserInfoFields } = require("../../src/api/consts");
+const VideoLesson = require("../../src/models/VideoLesson");
 
 // @route   POST api/comments?where=...&id=
 // @desc    Create a comment
@@ -36,15 +37,11 @@ router.post("/", [auth, [check("text", "Нужен текст").not().isEmpty()]
       addressees_id.push({ id: commentIdToReply.userId, seenIt: false });
   }
 
-  let destination; // where the comment goes
-
   try {
-    const user = await User.findById(req.user.id).select("-password");
-
-    if (where === "post") destination = await Post.findById(id);
-    if (where === "text") destination = await Text.findById(id);
-    if (where === "video") destination = await Video.findById(id);
-    if (where === "book") destination = await Chapterpage.findById(id);
+    const [user, destination] = await Promise.all([
+      User.findById(req.user.id).select("-password"),
+      getCommentDestinationById(where, id),
+    ]);
 
     const newComment = new Comment({
       text: req.body.text,
@@ -68,6 +65,15 @@ router.post("/", [auth, [check("text", "Нужен текст").not().isEmpty()]
     res.status(500).send("Server error");
   }
 });
+
+async function getCommentDestinationById(where, id) {
+  if (where === "post") return Post.findById(id);
+  if (where === "text") return Text.findById(id);
+  if (where === "video") return Video.findById(id);
+  if (where === "book") return Chapterpage.findById(id);
+  if (where === "phoneticsLesson") return VideoLesson.findById(id);
+  throw new Error("No destination for the comment!");
+}
 
 router.post("/edit", auth, async (req, res) => {
   const { text, id } = req.body;
@@ -118,12 +124,7 @@ router.get("/", async (req, res) => {
   const { where, id } = req.query;
 
   try {
-    let destination;
-    if (where === "post") destination = await Post.findById(id);
-    if (where === "text") destination = await Text.findById(id);
-    if (where === "video") destination = await Video.findById(id);
-    if (where === "book") destination = await Chapterpage.findById(id);
-
+    const destination = await getCommentDestinationById(where, id);
     const comments = await Comment.find({
       _id: { $in: destination.comments_id },
     })
@@ -150,7 +151,6 @@ router.put("/like/:id", auth, async (req, res) => {
 
     // check if already liked
     if (post.likes.filter((like) => like.user.toString() === req.user.id).length > 0) {
-      // return res.status(400).json({ msg: "Уже поставили лайк" });
       post.likes = post.likes.filter((like) => like.user.toString() !== req.user.id);
     } else {
       post.likes.unshift({ user: req.user.id, name: user.name });
