@@ -4,6 +4,7 @@ import { type DocumentHead } from "@builder.io/qwik-city";
 import { MainContent } from "~/components/common/layout/main-content";
 import { Sidebar } from "~/components/common/layout/sidebar";
 import { PageTitle } from "~/components/common/layout/title";
+import { CharactersLinkCard } from "~/components/common/content-cards/characters-link-card";
 
 export default component$(() => {
   return (
@@ -22,6 +23,7 @@ export default component$(() => {
               </p>{" "}
             </div>
           </div>
+          <CharactersLinkCard />
         </Sidebar>
 
         <MainContent>

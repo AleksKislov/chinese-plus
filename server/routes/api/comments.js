@@ -71,7 +71,9 @@ async function getCommentDestinationById(where, id) {
   if (where === "text") return Text.findById(id);
   if (where === "video") return Video.findById(id);
   if (where === "book") return Chapterpage.findById(id);
-  if (where === "phoneticsLesson") return VideoLesson.findById(id);
+  if (["phoneticsLesson", "charactersLesson"].includes(where)) {
+    return VideoLesson.findById(id);
+  }
   throw new Error("No destination for the comment!");
 }
 

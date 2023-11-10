@@ -1,6 +1,6 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import { YoutubeService } from "~/misc/actions/youtube-service";
-import { WHERE } from "../common/comments/comment-form";
+import { type WhereType } from "../common/comments/comment-form";
 import { UserDateDiv } from "../common/comments/user-with-date";
 import { TagsLine } from "../common/content-cards/tags-line";
 import { TextDesc } from "../common/content-cards/text-desc";
@@ -14,6 +14,7 @@ import { type VideoLessonInfo } from "~/routes/watch/phonetics-lessons";
 
 type VideoCardProps = {
   video: VideoLessonInfo;
+  contentType: WhereType;
 };
 
 export const VideoLessonCategory = {
@@ -21,7 +22,7 @@ export const VideoLessonCategory = {
   characters: "Иероглифы",
 };
 
-export const VideoLessonCard = component$(({ video }: VideoCardProps) => {
+export const VideoLessonCard = component$(({ video, contentType }: VideoCardProps) => {
   const {
     _id: videoId,
     title,
@@ -42,17 +43,12 @@ export const VideoLessonCard = component$(({ video }: VideoCardProps) => {
     <div class='card lg:card-side w-full bg-base-300 mb-3'>
       <CardImg
         contentId={videoId}
-        contentType={WHERE.phoneticsLesson}
+        contentType={contentType}
         picUrl={YoutubeService.getVideoPicUrl(source)}
       />
 
       <div class='card-body lg:w-2/3'>
-        <CardTitle
-          contentId={videoId}
-          contentType={WHERE.phoneticsLesson}
-          hits={hits}
-          title={title}
-        />
+        <CardTitle contentId={videoId} contentType={contentType} hits={hits} title={title} />
         <TagsLine tags={tags} />
         <UserDateDiv userId={userId} userName={userName} date={date} ptNum={0} />
 
@@ -67,7 +63,7 @@ export const VideoLessonCard = component$(({ video }: VideoCardProps) => {
         <CardBtns
           userId={userId}
           contentId={videoId}
-          contentType={WHERE.phoneticsLesson}
+          contentType={contentType}
           likes={likesSignal}
           commentIdsLen={commentIds.length}
           withAudio={false}

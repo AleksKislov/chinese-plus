@@ -1,7 +1,7 @@
 const VideoLesson = require("../../../models/VideoLesson");
 const User = require("../../../models/User");
 
-async function likePhoneticsVideo(req, res) {
+async function likeVideoLesson(req, res) {
   const userName = await User.findById(req.user.id);
   const post = await VideoLesson.findById(req.params.id);
 
@@ -16,4 +16,4 @@ async function likePhoneticsVideo(req, res) {
   return res.json(post.likes);
 }
 
-module.exports = { likePhoneticsVideo };
+module.exports = { likeVideoLesson };

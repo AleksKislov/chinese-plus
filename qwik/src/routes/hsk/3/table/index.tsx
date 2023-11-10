@@ -10,6 +10,7 @@ import { FlexRow } from "~/components/common/layout/flex-row";
 import { Sidebar } from "~/components/common/layout/sidebar";
 import { MainContent } from "~/components/common/layout/main-content";
 import { PhoneticsLinkCard } from "~/components/common/content-cards/phonetics-link-card";
+import { CharactersLinkCard } from "~/components/common/content-cards/characters-link-card";
 
 export type NewHskWordType = {
   _id: ObjectId;
@@ -42,6 +43,7 @@ export default component$(() => {
             isForTests={false}
           />
           <PhoneticsLinkCard />
+          <CharactersLinkCard />
         </Sidebar>
 
         <MainContent>

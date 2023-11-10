@@ -170,6 +170,10 @@ export const start: MenuItemProps = {
       href: "/start/radicals",
       text: "Таблица ключей иероглифов",
     },
+    {
+      href: "/watch/characters-lessons",
+      text: "Уроки иероглифики",
+    },
   ],
 };
 
@@ -187,6 +191,10 @@ export const watch: MenuItemProps = {
     {
       href: "/watch/phonetics-lessons",
       text: "Уроки фонетики",
+    },
+    {
+      href: "/watch/characters-lessons",
+      text: "Уроки иероглифики",
     },
   ],
 };

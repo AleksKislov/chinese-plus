@@ -35,7 +35,7 @@ export const CardBtns = component$(
           </div>
         )}
 
-        {contentType !== WHERE.phoneticsLesson && (
+        {contentType !== WHERE.phoneticsLesson && contentType !== WHERE.charactersLesson && (
           <BookmarkBtn contentType={contentType} contentId={contentId} />
         )}
         <LikeBtn likes={likes} contentType={contentType} contentId={contentId} creatorId={userId} />

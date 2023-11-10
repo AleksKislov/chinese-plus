@@ -14,7 +14,7 @@ const { getMarkedVideos } = require("./get-marked-videos");
 const { getByUserId } = require("./get-by-user-id");
 const { getAllVideoLessons } = require("./get-all-video-lessons");
 const { getVideoLessonById } = require("./get-video-lesson-by-id");
-const { likePhoneticsVideo } = require("./like-phonetics-video");
+const { likeVideoLesson } = require("./like-phonetics-video");
 
 module.exports = {
   getVideosNum: apiDecorator(getVideosNum),
@@ -31,5 +31,5 @@ module.exports = {
   getByUserId: apiDecorator(getByUserId),
   getAllVideoLessons: apiDecorator(getAllVideoLessons),
   getVideoLessonById: apiDecorator(getVideoLessonById),
-  likePhoneticsVideo: apiDecorator(likePhoneticsVideo),
+  likeVideoLesson: apiDecorator(likeVideoLesson),
 };

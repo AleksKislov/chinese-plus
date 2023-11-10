@@ -6,6 +6,7 @@ import { MainContent } from "~/components/common/layout/main-content";
 import { PageTitle } from "~/components/common/layout/title";
 import { VideoLessonCard } from "~/components/watch/video-lesson-card";
 import { ApiService } from "~/misc/actions/request";
+import { WHERE } from "~/components/common/comments/comment-form";
 
 export type VideoLessonInfo = {
   _id: ObjectId;
@@ -46,7 +47,7 @@ export default component$(() => {
 
         <MainContent>
           {videos.map((video, ind) => (
-            <VideoLessonCard key={ind} video={video} />
+            <VideoLessonCard key={ind} video={video} contentType={WHERE.phoneticsLesson} />
           ))}
         </MainContent>
       </FlexRow>

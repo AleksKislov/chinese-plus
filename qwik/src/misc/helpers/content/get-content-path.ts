@@ -14,6 +14,8 @@ export const getContentPath = (
       return `/watch/${s}videos/${contentId}`;
     case WHERE.phoneticsLesson:
       return `/watch/phonetics-lessons/${contentId}`;
+    case WHERE.charactersLesson:
+      return `/watch/characters-lessons/${contentId}`;
     case WHERE.post:
       return `/feedback/${contentId}`;
   }

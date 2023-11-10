@@ -4,7 +4,7 @@ const auth = require("../../middleware/auth");
 const { likeVideoLesson } = require("../../src/api/services/videos");
 
 /**
- *  @route    PUT api/phoneticsLessons/like/:id
+ *  @route    PUT api/charactersLessons/like/:id
  *  @desc     Like a video lesson on phonetics
  *  @access   Private
  */
