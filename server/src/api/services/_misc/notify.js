@@ -10,7 +10,9 @@ const vkToken = process.env.VKCHANNEL_TOKEN;
 
 class Notify {
   static admin(txt) {
-    return axios.get(encodeURI(`${tgUrl}&text=${txt}&chat_id=${testChatId}`)).catch(console.log);
+    return axios
+      .get(encodeURI(`${tgUrl}&text=${txt.replace(/<[^>]*>?/gm, "")}&chat_id=${testChatId}`))
+      .catch(console.log);
   }
 
   static telegramPublic(txt) {
