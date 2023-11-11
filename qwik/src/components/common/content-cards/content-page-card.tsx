@@ -6,10 +6,11 @@ import { ContentLvl } from "./content-lvl";
 import { LikeBtn } from "./like-btn";
 import { TagsLine } from "./tags-line";
 import { TextDesc } from "./text-desc";
-import { type WhereType } from "../comments/comment-form";
+import { WHERE, type WhereType } from "../comments/comment-form";
 import { TextSource } from "./text-source";
 import { EditBtn } from "./edit-btn";
 import CONST_URLS from "~/misc/consts/urls";
+import { BookmarkBtn } from "./bookmark-btn";
 
 type ContentPageCardProps = {
   contentType: WhereType;
@@ -90,6 +91,12 @@ export const ContentPageCard = component$(
           <ContentCat txt={category} />
           {length && <ContentLen len={length} />}
           {textSource && <TextSource source={textSource} />}
+          {(contentType === WHERE.video || contentType === WHERE.text) && (
+            <div>
+              <span class={"font-bold"}>В закладки: </span>
+              <BookmarkBtn contentType={contentType} contentId={contentId} />
+            </div>
+          )}
           <TextDesc desc={desc} />
           <EditBtn
             contentType={contentType}

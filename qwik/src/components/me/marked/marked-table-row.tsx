@@ -1,5 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
+import { WHERE } from "~/components/common/comments/comment-form";
+import { BookmarkBtn } from "~/components/common/content-cards/bookmark-btn";
 import { AvatarImg } from "~/components/common/media/avatar-img";
 
 type MarkedTableRowProps = {
@@ -50,6 +52,9 @@ export const MarkedTableRow = component$(
         <td>{likesTotal}</td>
         <td>{commentsTotal}</td>
         <td>{hitsTotal}</td>
+        <td>
+          <BookmarkBtn contentType={isVideo ? WHERE.video : WHERE.text} contentId={contentId} />
+        </td>
       </tr>
     );
   }

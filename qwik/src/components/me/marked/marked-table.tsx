@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { WHERE } from "~/components/common/comments/comment-form";
 import { type MarkedText, type MarkedVideo } from "~/routes/me/marked";
-import { commentSvg, eyeSvg, heartSvg } from "~/components/common/media/svg";
+import { bookMarkSvg, commentSvg, eyeSvg, heartSvg } from "~/components/common/media/svg";
 import { MarkedTableRow } from "./marked-table-row";
 import CONSTANTS from "~/misc/consts/consts";
 
@@ -21,6 +21,7 @@ export const MarkedTable = component$(({ content, contentType }: MarkedTableProp
           <th>{heartSvg}</th>
           <th>{commentSvg}</th>
           <th>{eyeSvg}</th>
+          <th>{bookMarkSvg}</th>
         </tr>
       </thead>
       <tbody>
