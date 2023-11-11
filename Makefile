@@ -19,6 +19,12 @@ push:
 	docker push $(DOCKER_HUB_REPO):$(VERSION)
 
 # commands for production
+build-up-back: build-back up-back
+
+build-back:
+	@echo "Build $(BE_IMAGE_NAME) v$(VERSION)"
+	docker compose -f docker-compose.prod.yml build $(BE_IMAGE_NAME)
+
 up-back:
 	@echo "Compose UP for backend"
 	docker compose -f docker-compose.prod.yml up -d chin_plus_be
@@ -26,7 +32,3 @@ up-back:
 up-front:
 	@echo "Compose UP for frontend v${VERSION}"
 	docker compose -f docker-compose.prod.yml up -d chin_plus_fe
-
-build-back:
-	@echo "Build $(BE_IMAGE_NAME) v$(VERSION)"
-	docker compose -f docker-compose.prod.yml build $(BE_IMAGE_NAME)
