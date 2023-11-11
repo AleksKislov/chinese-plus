@@ -91,11 +91,21 @@ export default component$(() => {
       <head>
         <meta charSet='utf-8' />
         {/* <link rel='manifest' href='/manifest.json' /> */}
-        <QwikPartytown forward={["dataLayer.push"]} />
+        <QwikPartytown forward={["gtag", "dataLayer.push"]} />
+        <script
+          type='text/partytown'
+          dangerouslySetInnerHTML={`
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function() {
+              dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'G-PN0P7BPQCV');`}
+        />
         <script
           async
           type='text/partytown'
-          src='https://www.googletagmanager.com/gtag/js?id=UA-73132243-4'
+          src='https://www.googletagmanager.com/gtag/js?id=G-PN0P7BPQCV'
         />
         <RouterHead />
       </head>
