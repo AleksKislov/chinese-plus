@@ -69,7 +69,7 @@ export default component$(() => {
   const checkAnswers = $(() => {
     for (let i = 0; i < store.sounds.length; i++) {
       const answer = store.sounds[i];
-      const userInput = store.inputs[getInputId(answer)];
+      const userInput = store.inputs[getInputId(answer)].toLowerCase().trim();
       const ansBtn = document.getElementById(answer);
       ansBtn?.classList.add(userInput === answer ? "bg-success" : "bg-error");
     }

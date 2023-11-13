@@ -4,3 +4,4 @@ routes/api/dict/dict.js
 .env.*
 .DS_Store
 cedict_db
+books

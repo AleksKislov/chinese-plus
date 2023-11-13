@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const auth = require("../../middleware/auth");
-const adminAuth = require("../../middleware/admin-auth");
+// const adminAuth = require("../../middleware/admin-auth");
 const { check } = require("express-validator");
 
 const {
@@ -17,9 +17,11 @@ const {
   likeText,
   markAsRead,
   markAsNotRead,
-  deleteText,
+  // deleteText,
   getMarkedTexts,
+  editChineseArr,
 } = require("../../src/api/services/texts");
+const adminAuth = require("../../middleware/admin-auth");
 
 /**
  * @method    POST
@@ -49,6 +51,14 @@ router.post(
 router.post("/update", auth, updateTxt);
 
 /**
+ * @method    PUT
+ * @route     api/texts/edit-chinese-arr
+ * @desc      Update text's chinese_arr
+ * @access    Private
+ */
+router.put("/edit-chinese-arr", adminAuth, editChineseArr);
+
+/**
  * @method    GET
  * @route     api/texts/marked
  * @desc      get all marked texts
@@ -73,12 +83,12 @@ router.get("/", getAllApprovedTexts);
  */
 router.get("/statistics", getTextsPerUserStats);
 
-/**
- * @route     DELETE api/texts/:id
- * @desc      Delete a Text
- * @access    Private
- */
-router.delete("/delete/:id", adminAuth, deleteText);
+// /**
+//  * @route     DELETE api/texts/:id
+//  * @desc      Delete a Text
+//  * @access    Private
+//  */
+// router.delete("/delete/:id", adminAuth, deleteText);
 
 /**
  * @route     DELETE api/texts/comment/:id/:comment_id

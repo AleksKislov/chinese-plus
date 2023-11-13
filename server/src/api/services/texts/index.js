@@ -15,6 +15,8 @@ const { markAsRead } = require("./mark-as-read");
 const { markAsNotRead } = require("./mark-as-not-read");
 const { deleteText } = require("./delete-text");
 const { getMarkedTexts } = require("./get-marked-texts");
+const { editChineseArr } = require("./edit-chinese-arr");
+
 module.exports = {
   markAsNotRead: apiDecorator(markAsNotRead),
   markAsRead: apiDecorator(markAsRead),
@@ -31,4 +33,5 @@ module.exports = {
   getByUserId: apiDecorator(getByUserId),
   deleteText: apiDecorator(deleteText),
   getMarkedTexts: apiDecorator(getMarkedTexts),
+  editChineseArr: apiDecorator(editChineseArr),
 };

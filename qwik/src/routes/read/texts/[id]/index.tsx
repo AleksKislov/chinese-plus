@@ -1,4 +1,4 @@
-import { component$, useSignal, useStore } from "@builder.io/qwik";
+import { component$, useContext, useSignal, useStore } from "@builder.io/qwik";
 import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city";
 import { ApiService } from "~/misc/actions/request";
 
@@ -30,6 +30,8 @@ import { FontSizeBtnGroup } from "~/components/common/content-cards/font-size-bt
 import { LongTxtPagination } from "~/components/read/long-txt-pagination";
 import { AudioPlayer } from "~/components/read/audio-player";
 import { ReadResultCard } from "~/components/me/read-result-card";
+import { userContext } from "~/root";
+import { EditChineseArrModal } from "~/components/common/modals/edit-chinese-arr-modal";
 
 export type TextContent = {
   origintext: string[];
@@ -76,6 +78,7 @@ export const useGetText = routeLoader$(
 );
 
 export default component$(() => {
+  const { isAdmin } = useContext(userContext);
   const text = useGetText();
   const comments = getComments();
   const fontSizeSig = useSignal(FontSizeBtns.md);
@@ -100,6 +103,7 @@ export default component$(() => {
     likes,
     length,
     translation,
+    chinese_arr: chineseArr,
     tooltipTxt,
     origintext,
     pages,
@@ -111,6 +115,8 @@ export default component$(() => {
   const isLongTxt = Boolean(pages && pages.length);
   const currentWord = useSignal<DictWord | undefined>(undefined);
   const showTranslation = useSignal(true);
+
+  const editChineseArrModalId = "editChineseArrModalId";
 
   return (
     <>
@@ -176,6 +182,16 @@ export default component$(() => {
             />
           ))}
 
+          {isAdmin && (
+            <label
+              for={editChineseArrModalId}
+              class={`btn btn-sm btn-outline btn-warning mt-2`}
+              onClick$={() => {}}
+            >
+              edit chinese
+            </label>
+          )}
+
           <div class={"mt-2"}>
             <CommentsBlockTitle />
             <CommentForm
@@ -207,6 +223,14 @@ export default component$(() => {
                 modalId={moreInfoModalId}
               />
             </div>
+          )}
+
+          {isAdmin && (
+            <EditChineseArrModal
+              chineseArr={chineseArr}
+              modalId={editChineseArrModalId}
+              textId={textId}
+            />
           )}
         </MainContent>
       </FlexRow>

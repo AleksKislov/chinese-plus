@@ -68,10 +68,7 @@ async function updateTxt(req, res) {
     { new: true }
   ).populate("user", shortUserInfoFields);
 
-  console.log("here", updatedTxt);
-
   if (foundText && !foundText.isApproved && isApproved) {
-    console.log("here", updatedTxt);
     Notify.socialMedia(updatedTxt);
   }
 
