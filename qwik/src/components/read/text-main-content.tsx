@@ -97,11 +97,7 @@ export const TextMainContent = component$(({ text, comments }: TextMainContentPr
       ))}
 
       {isAdmin && (
-        <label
-          for={editChineseArrModalId}
-          class={`btn btn-sm btn-outline btn-warning mt-2`}
-          onClick$={() => {}}
-        >
+        <label for={editChineseArrModalId} class={`btn btn-sm btn-outline btn-warning mt-2`}>
           edit chinese
         </label>
       )}
