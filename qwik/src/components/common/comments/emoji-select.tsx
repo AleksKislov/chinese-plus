@@ -9,7 +9,7 @@ export const EmojiSelect = component$(({ emoji }: { emoji: Signal<string> }) => 
       </label>
       <div
         tabIndex={0}
-        class={`rounded-box dropdown-content card card-compact bg-base-300 w-40 p-1 shadow`}
+        class={`rounded-box dropdown-content card card-compact bg-neutral w-40 p-1 shadow z-10`}
       >
         <div class='card-body text-center'>
           <span>
