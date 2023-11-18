@@ -14,9 +14,7 @@ export const CategoryFilter = component$(({ categorySignal, contentType }: Categ
       <select
         class='select select-bordered'
         value={categorySignal.value}
-        onChange$={(e) => {
-          categorySignal.value = e.target.value;
-        }}
+        onChange$={(e) => (categorySignal.value = e.target.value)}
       >
         <option selected value={""}>
           {categorySignal.value === "" ? "Все Категории" : "Все Категории"}

@@ -1,10 +1,11 @@
 import { component$ } from "@builder.io/qwik";
+import { CategoryBadge } from "./category-badge";
 
 export const ContentCat = component$(({ txt }: { txt: string }) => {
   return (
     <div>
       <span class={"font-bold"}>Категория: </span>
-      <div class='badge badge-accent badge-outline'>{txt}</div>
+      <CategoryBadge txt={txt} />
     </div>
   );
 });

@@ -34,7 +34,16 @@ export default component$(() => {
                 tabIndex={0}
                 class='dropdown-content z-[1] menu bg-base-200 w-64 rounded-box text-base-content'
               >
-                <MenuItemNew name={read.name} links={read.links} />
+                {/* <MenuItemNew name={read.name} links={read.links} /> */}
+                <li>
+                  <details class='z-40'>
+                    <summary>{read.name}</summary>
+                    <ul class='w-52 bg-base-200'>
+                      <MenuItemNew name={"Тексты"} links={read.links} />
+                      <MenuLink href={"/read/unapproved-texts"} text={"На проверке"} />
+                    </ul>
+                  </details>
+                </li>
                 <MenuItemNew name={watch.name} links={watch.links} />
                 <MenuItemNew name={start.name} links={start.links} />
                 <li>
@@ -59,7 +68,18 @@ export default component$(() => {
                 <Brand />
               </Link>
               <ul class='menu menu-horizontal mt-1'>
-                <MenuItem name={read.name} links={read.links} />
+                {/* <MenuItem name={read.name} links={read.links} /> */}
+                <li tabIndex={0} class='dropdown dropdown-hover hover:text-success'>
+                  <label class='my-1 hover:text-secondary'>
+                    {read.name}
+                    {dropdownArrowBottom}
+                  </label>
+                  <ul class='dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content'>
+                    <MenuItemNew name={"Тексты"} links={read.links} />
+                    <MenuLink href={"/read/unapproved-texts"} text={"На проверке"} />
+                  </ul>
+                </li>
+
                 <MenuItem name={watch.name} links={watch.links} />
                 <MenuItem name={start.name} links={start.links} />
 
@@ -204,14 +224,19 @@ export const read: MenuItemProps = {
   links: [
     {
       href: "/read/texts",
-      text: "Тексты",
+      text: "Карточки",
     },
     {
-      href: "/read/unapproved-texts",
-      text: "На проверке",
+      href: "/read/texts/all",
+      text: "Весь список",
     },
   ],
 };
+
+// {
+//   href: "/read/unapproved-texts",
+//   text: "На проверке",
+// },
 
 export const hsk3: MenuItemProps = {
   name: "HSK 3.0",

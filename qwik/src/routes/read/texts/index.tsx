@@ -20,6 +20,8 @@ import {
 import { ReadResultCard } from "~/components/me/read-result-card";
 import { MoreBtnAndLoader } from "~/components/common/ui/more-btn-and-loader";
 import { CreateTextCard } from "~/components/read/create-text-card";
+import { getTextsNumInfo } from "~/misc/actions/texts/get-texts-num-info";
+import { TextsNumInfoCard } from "~/components/read/text-num-info-card";
 
 export type TextCardInfo = {
   _id: ObjectId;
@@ -47,9 +49,7 @@ export type TextsNumInfo = {
   withAudio: number;
 };
 
-export const getTextsNumInfo = routeLoader$((): Promise<TextsNumInfo> => {
-  return ApiService.get(`/api/texts/texts_num`, undefined, {});
-});
+export const useGetTextsNumInfo = routeLoader$(getTextsNumInfo);
 
 export const getTextsWithParams = routeAction$((params): Promise<TextCardInfo[]> => {
   const { category, lvl, audio } = params;
@@ -76,7 +76,7 @@ export const getTextsWithSkip = routeAction$((params): Promise<TextCardInfo[]> =
 });
 
 export default component$(() => {
-  const textsNumInfo = getTextsNumInfo();
+  const textsNumInfo = useGetTextsNumInfo();
   const texts = useSignal<TextCardInfo[]>([]);
   const getTexts = getTextsWithParams();
   const getSkipTexts = getTextsWithSkip();
@@ -125,20 +125,11 @@ export default component$(() => {
       <PageTitle txt={"Китайские тексты с озвучкой"} />
       <FlexRow>
         <Sidebar>
-          <div class='card bg-primary text-primary-content'>
-            <div class='card-body'>
-              <h2 class='card-title'>Читай и учись</h2>
-              <p>Чтение китайских текстов с умным переводом.</p>
-              <p>
-                Проверенные: <span class='badge badge-accent'>{textsNumInfo.value?.approved}</span>
-              </p>
-              <p>
-                На проверке:{" "}
-                <span class='badge badge-accent'>{textsNumInfo.value?.notApproved}</span>
-              </p>
-            </div>
-          </div>
-
+          <TextsNumInfoCard
+            approved={textsNumInfo.value?.approved}
+            // notApproved={textsNumInfo.value?.notApproved}
+            withAudio={textsNumInfo.value?.withAudio}
+          />
           <CreateTextCard />
           <ReadResultCard />
         </Sidebar>

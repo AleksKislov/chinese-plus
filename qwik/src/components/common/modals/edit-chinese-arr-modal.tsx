@@ -18,7 +18,6 @@ export const EditChineseArrModal = component$(
     const submitEdition = $(async () => {
       const readyChineseArr = newChineseArr.value.join(" \n ").split(" ").filter(Boolean);
       const originText = newChineseArr.value.map((x) => x.trim());
-      // console.log({ originText });
       await editChineseArr.submit({ textId, chineseArr: readyChineseArr, originText });
       location.reload();
     });

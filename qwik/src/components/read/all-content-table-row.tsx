@@ -2,36 +2,42 @@ import { component$ } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { WHERE } from "~/components/common/comments/comment-form";
 import { BookmarkBtn } from "~/components/common/content-cards/bookmark-btn";
-import { CategoryBadge } from "~/components/common/content-cards/category-badge";
-import { AvatarImg } from "~/components/common/media/avatar-img";
+import { CategoryBadge } from "../common/content-cards/category-badge";
+import { LevelStars } from "../common/content-cards/level-stars";
+// import { AvatarImg } from "~/components/common/media/avatar-img";
 
-type MarkedTableRowProps = {
+type AllContentTableRowProps = {
+  // user: ShortUserInfo;
   contentId: ObjectId;
-  user: ShortUserInfo;
   title: string;
   category: string;
   commentsTotal: number;
   likesTotal: number;
   hitsTotal: number;
   isVideo: boolean;
+  date: ISODate;
+  lvl: 1 | 2 | 3;
 };
 
-export const MarkedTableRow = component$(
+export const AllContentTableRow = component$(
   ({
+    // user,
+    date,
     contentId,
-    user,
     title,
     category,
     commentsTotal,
     likesTotal,
     hitsTotal,
     isVideo,
-  }: MarkedTableRowProps) => {
+    lvl,
+  }: AllContentTableRowProps) => {
     const contentHref = (isVideo ? "/watch/videos/" : "/read/texts/") + contentId;
 
     return (
       <tr>
-        <td>
+        <td class='text-xs'>{date}</td>
+        {/* <td>
           <div
             class='tooltip tooltip-info before:z-50 before:content-[attr(data-tip)]'
             data-tip={user.name}
@@ -44,11 +50,18 @@ export const MarkedTableRow = component$(
               </div>
             </Link>
           </div>
-        </td>
+        </td> */}
         <td>
-          <Link href={contentHref}>{title}</Link>
+          <Link href={contentHref} class='text-lg link link-hover'>
+            {title}
+          </Link>
           <br />
-          <CategoryBadge txt={category} size='badge-xs' />
+          <div class='flex'>
+            <LevelStars lvl={lvl} />
+            <div class='ml-1'>
+              <CategoryBadge txt={category} size='badge-xs' />
+            </div>
+          </div>
         </td>
         <td>{likesTotal}</td>
         <td>{commentsTotal}</td>

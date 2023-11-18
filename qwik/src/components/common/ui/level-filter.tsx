@@ -9,9 +9,7 @@ export const LevelFilter = component$(({ levelSignal }: LvlFilterProps) => {
       <select
         class='select select-bordered'
         value={levelSignal.value}
-        onChange$={(e) => {
-          levelSignal.value = e.target.value;
-        }}
+        onChange$={(e) => (levelSignal.value = e.target.value)}
       >
         <option selected value={"0"}>
           Все уровни
