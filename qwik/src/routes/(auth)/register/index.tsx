@@ -37,7 +37,7 @@ export default component$(() => {
       return;
     }
 
-    Cookies.set("token", res.token);
+    Cookies.set("token", res.token, { expires: 27 });
     location.reload();
   });
 

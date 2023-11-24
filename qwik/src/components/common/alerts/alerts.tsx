@@ -11,7 +11,7 @@ export const Alerts = component$(() => {
     if (alertsState.length) {
       timer = window.setTimeout(() => {
         alertsState.shift();
-      }, 3000);
+      }, 2000);
     }
     return () => {
       clearTimeout(timer);

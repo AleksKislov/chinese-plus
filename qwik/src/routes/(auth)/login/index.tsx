@@ -55,8 +55,8 @@ export default component$(() => {
       return;
     }
 
-    Cookies.set("token", res.token);
-    setTimeout(() => nav("/me"), 500);
+    Cookies.set("token", res.token, { expires: 27 });
+    setTimeout(() => nav("/me"), 200);
   });
 
   useVisibleTask$(({ track }) => {

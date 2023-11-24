@@ -16,7 +16,7 @@ export const ThemeChanger = component$(() => {
   useVisibleTask$(({ track }) => {
     const isDark = track(() => themeChangedToDark.value);
     isDarkTheme.bool = isDark;
-    Cookies.set(IsLightThemeCookieName, isDark ? "0" : "1");
+    Cookies.set(IsLightThemeCookieName, isDark ? "0" : "1", { expires: 600 });
   });
 
   return (

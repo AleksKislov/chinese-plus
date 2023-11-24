@@ -26,23 +26,26 @@ export const getUserHsk2Words = routeLoader$(async ({ cookie }): Promise<UserOld
 export default component$(() => {
   const userHskWords = getUserHsk2Words();
   const lvlSignal = useSignal("1");
-  const wordsSignal = useSignal(userHskWords?.value || []);
+  const wordsSignal = useSignal<UserOldHskWordType[] | null>(userHskWords?.value || []);
   const lvlWordsNum = useSignal({
-    1: wordsSignal.value.filter((word) => word.level === 1).length,
-    2: wordsSignal.value.filter((word) => word.level === 2).length,
-    3: wordsSignal.value.filter((word) => word.level === 3).length,
-    4: wordsSignal.value.filter((word) => word.level === 4).length,
-    5: wordsSignal.value.filter((word) => word.level === 5).length,
-    6: wordsSignal.value.filter((word) => word.level === 6).length,
-    total: wordsSignal.value.length,
+    1: wordsSignal.value?.filter((word) => word.level === 1).length || 0,
+    2: wordsSignal.value?.filter((word) => word.level === 2).length || 0,
+    3: wordsSignal.value?.filter((word) => word.level === 3).length || 0,
+    4: wordsSignal.value?.filter((word) => word.level === 4).length || 0,
+    5: wordsSignal.value?.filter((word) => word.level === 5).length || 0,
+    6: wordsSignal.value?.filter((word) => word.level === 6).length || 0,
+    total: wordsSignal.value?.length || 0,
   });
   useTask$(({ track }) => {
     track(() => lvlSignal.value);
-    if (!+lvlSignal.value) {
-      wordsSignal.value = userHskWords?.value;
-    } else {
-      wordsSignal.value = userHskWords?.value.filter((word) => word.level === +lvlSignal.value);
-    }
+    wordsSignal.value = null;
+    setTimeout(() => {
+      if (!+lvlSignal.value) {
+        wordsSignal.value = userHskWords?.value;
+      } else {
+        wordsSignal.value = userHskWords?.value.filter((word) => word.level === +lvlSignal.value);
+      }
+    }, 100);
   });
 
   return (
@@ -57,20 +60,50 @@ export default component$(() => {
         </Sidebar>
 
         <MainContent>
-          <TypingGame
-            words={wordsSignal.value.map((x) => ({
-              chinese: x.chinese,
-              level: "" + x.level,
-              id: x.word_id,
-              pinyin: x.pinyin,
-              translation: x.translation,
-            }))}
-          />
-          <OldHskTable
-            hskWords={wordsSignal.value}
-            userHskWords={wordsSignal.value}
-            isPrivate={true}
-          />
+          {/* это костыль */}
+          {wordsSignal.value ? (
+            <TypingGame
+              words={wordsSignal.value?.map((x) => ({
+                chinese: x.chinese,
+                level: "" + x.level,
+                id: x.word_id,
+                pinyin: x.pinyin,
+                translation: x.translation,
+              }))}
+            />
+          ) : (
+            <div class='card bg-base-200 text-base-content w-full mb-6'>
+              <div class='card-body'>
+                <div>
+                  <div class='prose mb-2'>
+                    <h3 class='card-title'>Успей напечатать</h3>
+                  </div>
+                  <p>
+                    Наберите хотя бы 10 слов в список ниже, чтобы активировать тест и проверить свои
+                    знания
+                  </p>
+                </div>
+              </div>
+              <div class='flex justify-center'>
+                {[...new Array(10)].map((x, ind) => (
+                  <div
+                    key={ind}
+                    class={`badge mx-2 mb-2 border border-base-300 ${"bg-neutral-content"}`}
+                  >
+                    {" "}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {wordsSignal.value && (
+            <OldHskTable
+              hskWords={wordsSignal.value}
+              userHskWords={wordsSignal.value}
+              isPrivate={true}
+            />
+          )}
         </MainContent>
       </FlexRow>
     </>

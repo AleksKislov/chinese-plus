@@ -186,7 +186,7 @@ export const CommentTextArea = component$(
 
     useTask$(({ track }) => {
       track(() => addressees.value.length);
-      const addressee = addressees.value.at(-1);
+      const addressee = addressees.value[addressees.value.length - 1];
 
       if (!addressee) return;
       const str = getAddresseeStr(addressee);

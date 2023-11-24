@@ -44,11 +44,9 @@ export const EditChineseArrModal = component$(
                   class='textarea textarea-bordered h-24'
                   placeholder='汉字...'
                   value={parag}
-                  onKeyDown$={(e) => {
-                    // console.log(e.target.value);
-                    // @ts-ignore
-                    newChineseArr.value[ind] = e.target.value;
-                  }}
+                  onInput$={(ev) =>
+                    (newChineseArr.value[ind] = (ev.target as HTMLInputElement).value)
+                  }
                 ></textarea>
               </div>
             ))}

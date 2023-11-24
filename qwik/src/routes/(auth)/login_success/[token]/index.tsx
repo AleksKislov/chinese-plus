@@ -15,7 +15,7 @@ export default component$(() => {
   const loc = useLocation();
   useVisibleTask$(() => {
     const token = loc.params.token;
-    Cookies.set("token", token);
+    Cookies.set("token", token, { expires: 27 });
     location.reload();
   });
 

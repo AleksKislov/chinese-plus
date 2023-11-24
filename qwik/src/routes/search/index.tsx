@@ -58,6 +58,7 @@ export const useLoadTranslation = routeLoader$(async (ev): Promise<(string | Dic
 });
 
 export default component$(() => {
+  const CHAR_SVG_DIV_ID = "showCharDiv";
   const loc = useLocation();
   const nav = useNavigate();
   const loadTranslation = useLoadTranslation();
@@ -75,19 +76,23 @@ export default component$(() => {
   useVisibleTask$(({ track }) => {
     track(() => words.value);
 
-    if (
-      words.value &&
-      words.value.length === 1 &&
-      typeof words.value[0] !== "string" &&
-      words.value[0].chinese.length === 1
-    ) {
-      const writer = HanziWriter.create("showCharDiv", words.value[0].chinese, HanziWriterSettings);
-      writer.loopCharacterAnimation();
-    }
+    const chars = (words.value || [])
+      .map((word) => {
+        if (typeof word === "string") return word;
+        return [...word.chinese];
+      })
+      .flat();
+
+    setTimeout(() => {
+      chars.forEach((char) => {
+        const writer = HanziWriter.create(CHAR_SVG_DIV_ID, char, HanziWriterSettings);
+        writer.loopCharacterAnimation();
+      });
+    }, 100);
   });
 
-  const getTranslation = $(async () => {
-    const charDiv = document.getElementById("showCharDiv");
+  const getTranslation = $(() => {
+    const charDiv = document.getElementById(CHAR_SVG_DIV_ID);
     if (charDiv) charDiv!.innerHTML = "";
 
     const chineseStr = input.value.trim();
@@ -139,11 +144,10 @@ export default component$(() => {
               </div>
             </div>
 
+            <div id={CHAR_SVG_DIV_ID} class='flex mt-3'></div>
             <div>
               {words.value && words.value.length === 1 && (
                 <>
-                  {/* <div>{words.value[0].chinese}</div> */}
-                  <div id='showCharDiv' class={"mt-3"}></div>
                   <div class={"mt-3 flex justify-between"}>
                     <div class={"flex"}>
                       <OwnWordBtn word={words.value[0] as DictWord} />
@@ -153,13 +157,13 @@ export default component$(() => {
 
                     <ShowHideBtn showExamples={showExamples} />
                   </div>
-
                   <DictWordTranslation
                     ru={
                       typeof words.value[0] === "string"
                         ? "перевод отсутствует или не найден :("
                         : words.value[0].russian
                     }
+                    py={(words.value[0] as DictWord).pinyin}
                     showExamples={showExamples.value}
                   />
 

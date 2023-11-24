@@ -188,7 +188,7 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
                   </div>
                 </div>
               )}
-              {words && words.length < QUEST_NUM ? (
+              {words.length < QUEST_NUM ? (
                 <p>
                   Наберите хотя бы 10 слов в список ниже, чтобы активировать тест и проверить свои
                   знания
