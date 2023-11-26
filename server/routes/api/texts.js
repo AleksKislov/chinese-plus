@@ -20,6 +20,7 @@ const {
   // deleteText,
   getMarkedTexts,
   editChineseArr,
+  getSimilarTexts,
 } = require("../../src/api/services/texts");
 const adminAuth = require("../../middleware/admin-auth");
 
@@ -72,6 +73,13 @@ router.get("/marked", auth, getMarkedTexts);
  * @access    Public
  */
 router.get("/", getAllApprovedTexts);
+
+/**
+ * @route     GET api/texts/similar
+ * @desc      Get similar texts using tags and lvl
+ * @access    Public
+ */
+router.get("/similar", getSimilarTexts);
 
 /**
  * @route   GET api/texts/statistics

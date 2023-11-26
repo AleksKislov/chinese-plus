@@ -16,6 +16,7 @@ const { markAsNotRead } = require("./mark-as-not-read");
 const { deleteText } = require("./delete-text");
 const { getMarkedTexts } = require("./get-marked-texts");
 const { editChineseArr } = require("./edit-chinese-arr");
+const { getSimilarTexts } = require("./get-similar-texts");
 
 module.exports = {
   markAsNotRead: apiDecorator(markAsNotRead),
@@ -34,4 +35,5 @@ module.exports = {
   deleteText: apiDecorator(deleteText),
   getMarkedTexts: apiDecorator(getMarkedTexts),
   editChineseArr: apiDecorator(editChineseArr),
+  getSimilarTexts: apiDecorator(getSimilarTexts),
 };

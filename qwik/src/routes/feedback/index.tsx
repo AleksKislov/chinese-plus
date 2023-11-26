@@ -85,14 +85,12 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={"Гостевая и Новости Проекта"} />
+      <PageTitle txt={"Форум"} />
       <FlexRow>
         <div class='w-full md:w-1/2 mb-3 mr-4 h-24'>
           <div class='card w-full bg-base-200 h-full'>
             <div class='card-body'>
-              <div class={"flex"}>
-                За проектом можно следить и в соцсетях: <OurSocialMedia />
-              </div>
+              <p>Место для общения, фидбэка и новостей этого проекта</p>
             </div>
           </div>
         </div>

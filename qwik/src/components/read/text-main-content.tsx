@@ -19,129 +19,145 @@ import { MoreInfoModal } from "../common/modals/more-info-modal";
 import { EditChineseArrModal } from "../common/modals/edit-chinese-arr-modal";
 import { userContext } from "~/root";
 import { FontSizeBtns } from "../common/content-cards/content-page-card";
-import type { TextFromDB, TooltipText } from "~/routes/read/texts/[id]";
+import type { SimilarText, TextFromDB, TooltipText } from "~/routes/read/texts/[id]";
 import type { CommentType } from "../common/comments/comment-card";
 import { editWordModalId, moreInfoModalId } from "../common/tooltips/word-tooltip";
+import { Loader } from "../common/ui/loader";
+import { SimilarTxtImg } from "./similar-txt-img";
 
 type TextMainContentProps = {
   text: TextFromDB & TooltipText & { curPage: number };
   comments: CommentType[];
+  similarTexts: SimilarText[] | null;
 };
 
-export const TextMainContent = component$(({ text, comments }: TextMainContentProps) => {
-  const { isAdmin } = useContext(userContext);
-  const fontSizeSig = useSignal(FontSizeBtns.md);
-  const addressees = useSignal<Addressee[]>([]);
-  const commentIdToReplyStore = useStore<CommentIdToReply>({
-    commentId: "",
-    name: "",
-    userId: "",
-  });
+export const TextMainContent = component$(
+  ({ text, comments, similarTexts }: TextMainContentProps) => {
+    const { isAdmin } = useContext(userContext);
+    const fontSizeSig = useSignal(FontSizeBtns.md);
+    const addressees = useSignal<Addressee[]>([]);
+    const commentIdToReplyStore = useStore<CommentIdToReply>({
+      commentId: "",
+      name: "",
+      userId: "",
+    });
 
-  const {
-    _id: textId,
-    translation,
-    chinese_arr: chineseArr,
-    tooltipTxt,
-    origintext,
-    pages,
-    curPage,
-    audioSrc: hasAudio,
-  } = text;
+    const {
+      _id: textId,
+      translation,
+      chinese_arr: chineseArr,
+      tooltipTxt,
+      origintext,
+      pages,
+      curPage,
+      audioSrc: hasAudio,
+    } = text;
 
-  const isLongTxt = Boolean(pages && pages.length);
-  const currentWord = useSignal<DictWord | undefined>(undefined);
-  const showTranslation = useSignal(true);
+    const isLongTxt = Boolean(pages && pages.length);
+    const currentWord = useSignal<DictWord | undefined>(undefined);
+    const showTranslation = useSignal(true);
 
-  const editChineseArrModalId = "editChineseArrModalId";
+    const editChineseArrModalId = "editChineseArrModalId";
 
-  return (
-    <MainContent>
-      <Alerts />
+    return (
+      <MainContent>
+        <Alerts />
 
-      <div class={"flex justify-between w-full"}>
-        <div class={"pt-1"}>
-          <FontSizeBtnGroup fontSizeSig={fontSizeSig} />
+        <div class={"flex justify-between w-full"}>
+          <div class={"pt-1"}>
+            <FontSizeBtnGroup fontSizeSig={fontSizeSig} />
+          </div>
+          <div>
+            <label class='label cursor-pointer'>
+              <span class='label-text mr-3 font-bold'>
+                {showTranslation.value ? "Без перевода" : "С переводом"}
+              </span>
+
+              <input
+                type='checkbox'
+                class='toggle toggle-accent'
+                checked={!showTranslation.value}
+                onClick$={() => (showTranslation.value = !showTranslation.value)}
+              />
+            </label>
+          </div>
         </div>
-        <div>
-          <label class='label cursor-pointer'>
-            <span class='label-text mr-3 font-bold'>
-              {showTranslation.value ? "Без перевода" : "С переводом"}
-            </span>
 
-            <input
-              type='checkbox'
-              class='toggle toggle-accent'
-              checked={!showTranslation.value}
-              onClick$={() => (showTranslation.value = !showTranslation.value)}
-            />
+        {isLongTxt && <LongTxtPagination numOfPages={pages.length} curPage={curPage} />}
+
+        {!hasAudio ? null : <AudioPlayer textId={textId} />}
+
+        {tooltipTxt.map((parag, i) => (
+          <Paragraph
+            key={i}
+            fontSize={fontSizeSig.value}
+            tooltipedParag={parag}
+            translation={isLongTxt ? pages[curPage].translation[i] : translation[i]}
+            strLen={countZnChars(isLongTxt ? pages[curPage].origintext[i] : origintext[i])}
+            ind={i}
+            currentWord={currentWord}
+            showTranslation={showTranslation.value}
+          />
+        ))}
+
+        {isAdmin && (
+          <label for={editChineseArrModalId} class={`btn btn-sm btn-outline btn-warning mt-2`}>
+            edit chinese
           </label>
+        )}
+
+        <div class={"prose my-3"}>
+          <h3>Похожие тексты</h3>
         </div>
-      </div>
+        <div class='grid grid-cols-1 md:grid-cols-3 gap-3'>
+          {similarTexts && similarTexts.length ? (
+            similarTexts.map((txt, ind) => <SimilarTxtImg key={ind} txt={txt} />)
+          ) : (
+            <Loader />
+          )}
+        </div>
 
-      {isLongTxt && <LongTxtPagination numOfPages={pages.length} curPage={curPage} />}
-
-      {!hasAudio ? null : <AudioPlayer textId={textId} />}
-
-      {tooltipTxt.map((parag, i) => (
-        <Paragraph
-          key={i}
-          fontSize={fontSizeSig.value}
-          tooltipedParag={parag}
-          translation={isLongTxt ? pages[curPage].translation[i] : translation[i]}
-          strLen={countZnChars(isLongTxt ? pages[curPage].origintext[i] : origintext[i])}
-          ind={i}
-          currentWord={currentWord}
-          showTranslation={showTranslation.value}
-        />
-      ))}
-
-      {isAdmin && (
-        <label for={editChineseArrModalId} class={`btn btn-sm btn-outline btn-warning mt-2`}>
-          edit chinese
-        </label>
-      )}
-
-      <div class={"mt-2"}>
-        <CommentsBlockTitle />
-        <CommentForm
-          contentId={textId}
-          where={WHERE.text}
-          path={undefined}
-          commentIdToReply={commentIdToReplyStore}
-          addressees={addressees}
-        />
-        <CommentsBlock
-          comments={comments}
-          commentIdToReply={commentIdToReplyStore}
-          addressees={addressees}
-        />
-      </div>
-
-      {!currentWord.value ? null : (
-        <div>
-          <EditWordModal word={currentWord.value} modalId={editWordModalId} />
-          <MoreInfoModal
-            word={{
-              _id: currentWord.value._id,
-              cn: currentWord.value.chinese,
-              py: currentWord.value.pinyin,
-              ru: currentWord.value.russian,
-              lvl: "unknown",
-              id: 0,
-            }}
-            modalId={moreInfoModalId}
+        <div class={"mt-2"}>
+          <CommentsBlockTitle />
+          <CommentForm
+            contentId={textId}
+            where={WHERE.text}
+            path={undefined}
+            commentIdToReply={commentIdToReplyStore}
+            addressees={addressees}
+          />
+          <CommentsBlock
+            comments={comments}
+            commentIdToReply={commentIdToReplyStore}
+            addressees={addressees}
           />
         </div>
-      )}
 
-      {isAdmin && (
-        <EditChineseArrModal
-          chineseArr={chineseArr}
-          modalId={editChineseArrModalId}
-          textId={textId}
-        />
-      )}
-    </MainContent>
-  );
-});
+        {!currentWord.value ? null : (
+          <div>
+            <EditWordModal word={currentWord.value} modalId={editWordModalId} />
+            <MoreInfoModal
+              word={{
+                _id: currentWord.value._id,
+                cn: currentWord.value.chinese,
+                py: currentWord.value.pinyin,
+                ru: currentWord.value.russian,
+                lvl: "unknown",
+                id: 0,
+              }}
+              modalId={moreInfoModalId}
+            />
+          </div>
+        )}
+
+        {isAdmin && (
+          <EditChineseArrModal
+            chineseArr={chineseArr}
+            modalId={editChineseArrModalId}
+            textId={textId}
+          />
+        )}
+      </MainContent>
+    );
+  }
+);

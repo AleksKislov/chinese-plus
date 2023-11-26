@@ -66,7 +66,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Фидбэк",
+  title: "Chinese+ Форум",
   meta: [
     {
       name: "description",

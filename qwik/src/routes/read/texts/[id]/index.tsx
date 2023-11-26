@@ -1,5 +1,5 @@
-import { component$ } from "@builder.io/qwik";
-import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city";
+import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import { type DocumentHead, routeLoader$, routeAction$ } from "@builder.io/qwik-city";
 import { ApiService } from "~/misc/actions/request";
 import { FlexRow } from "~/components/common/layout/flex-row";
 import { Sidebar } from "~/components/common/layout/sidebar";
@@ -41,6 +41,18 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
   return getContentComments(WHERE.text, params.id);
 });
 
+export type SimilarText = {
+  _id: ObjectId;
+  audioSrc?: 0 | 1;
+  title: string;
+  picUrl: string;
+};
+
+export const useGetSimilarTexts = routeAction$((params): Promise<SimilarText[]> => {
+  const { lvl, tags } = params;
+  return ApiService.get(`/api/texts/similar?lvl=${lvl}&tags=${tags}`, undefined, []);
+});
+
 export const useGetText = routeLoader$(
   async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
     let curPage = 0;
@@ -59,8 +71,10 @@ export const useGetText = routeLoader$(
 );
 
 export default component$(() => {
+  const getSimilar = useGetSimilarTexts();
   const text = useGetText();
   const comments = getComments();
+  const similarTexts = useSignal<SimilarText[] | null>(null);
 
   const {
     _id: textId,
@@ -77,6 +91,15 @@ export default component$(() => {
     length,
     source,
   } = text.value;
+
+  useVisibleTask$(() => {
+    getSimilar.submit({ lvl, tags });
+  });
+
+  useVisibleTask$(({ track }) => {
+    const simTxts = track(() => getSimilar.value);
+    if (simTxts?.length) similarTexts.value = simTxts;
+  });
 
   return (
     <>
@@ -102,7 +125,11 @@ export default component$(() => {
           />
           <ReadResultCard />
         </Sidebar>
-        <TextMainContent text={text.value} comments={comments.value} />
+        <TextMainContent
+          text={text.value}
+          comments={comments.value}
+          similarTexts={similarTexts.value}
+        />
       </FlexRow>
     </>
   );
