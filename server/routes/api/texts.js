@@ -83,11 +83,7 @@ router.get("/similar", getSimilarTexts);
 
 /**
  * @route   GET api/texts/statistics
- * @desc    Get texts per user statistics info, who publish how many texts and chars
- * @example
- * [{ num: 16, name: "admin", userid: "5f301a8f0aa547478da68c18" },
- * { num: 9, name: "Aleksandr Kislov",userid: "5ee31c7847fd670ce93b83cc" },
- * { num: 7, name: "Sergei Guer", userid: "600728cd4c87149d9552bba7" }]
+ * @desc    Get texts per user statistics info, who publish how many texts
  */
 router.get("/statistics", getTextsPerUserStats);
 

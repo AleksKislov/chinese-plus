@@ -1770,7 +1770,7 @@ const pinyinMap: { [key: string]: { [key: string]: string } } = {
     shūn: "",
     shún: "",
     shǔn: "shun3",
-    shùn: "shui4",
+    shùn: "shun4",
   },
   shuang: {
     shuāng: "shuang1",

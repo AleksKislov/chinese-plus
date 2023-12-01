@@ -42,13 +42,13 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
       {typeof word !== "string" && (
         <div
           tabIndex={0}
-          class={`rounded-box dropdown-content card card-compact bg-neutral-focus text-neutral-content w-64 p-1 shadow z-[1] ${
+          class={`rounded-box dropdown-content card card-compact bg-neutral-focus text-neutral-content w-64 p-1 shadow z-30 ${
             showTooltip.value ? "" : "hidden"
           } ${isRightSide.value ? "-right-5" : "-left-5"}`}
         >
           <div class='card-body text-left'>
             <label
-              class='btn btn-sm btn-circle absolute right-1 top-1'
+              class='btn btn-sm btn-circle absolute right-1 top-1 opacity-50'
               onClick$={() => (showTooltip.value = false)}
             >
               ✕

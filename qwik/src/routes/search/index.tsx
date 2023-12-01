@@ -54,7 +54,17 @@ export const getChineseWordsArr = async (input: string): Promise<string[]> => {
 
 export const useLoadTranslation = routeLoader$(async (ev): Promise<(string | DictWord)[]> => {
   const q = ev.query.get("q") || "";
-  return getWordsForTooltips(await getChineseWordsArr(q));
+  const segmentedWords = await getChineseWordsArr(q);
+  const wordsWithInfo = await getWordsForTooltips(segmentedWords);
+
+  return segmentedWords.map((word) => {
+    for (let i = 0; i < wordsWithInfo.length; i++) {
+      if ((wordsWithInfo[i] as DictWord).chinese === word) {
+        return wordsWithInfo[i];
+      }
+    }
+    return word;
+  });
 });
 
 export default component$(() => {

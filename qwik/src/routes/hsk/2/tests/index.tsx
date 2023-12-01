@@ -11,7 +11,8 @@ import { shuffleArr } from "~/misc/helpers/tools/shuffle-arr";
 import { getRandElem } from "~/misc/helpers/tools";
 import { playSvg } from "~/components/common/media/svg";
 import CONST_URLS from "~/misc/consts/urls";
-import { TypingGame } from "~/components/hsk/typing-game";
+import { TypingGame } from "~/components/games/typing-game";
+import { CalligraphyGame } from "~/components/games/calligraphy-game";
 
 export type TestWord = {
   chinese: string;
@@ -123,6 +124,7 @@ export default component$(() => {
         </Sidebar>
 
         <MainContent>
+          <CalligraphyGame words={testWords.value} level={loc.url.searchParams.get("lvl") || "1"} />
           <TypingGame words={testWords.value} level={loc.url.searchParams.get("lvl") || "1"} />
 
           {questions.map(({ type, title }, ind) => (

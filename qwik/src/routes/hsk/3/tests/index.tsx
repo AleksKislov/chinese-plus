@@ -9,7 +9,7 @@ import { type NewHskWordType } from "../table";
 import { ApiService } from "~/misc/actions/request";
 import { playSvg } from "~/components/common/media/svg";
 import CONST_URLS from "~/misc/consts/urls";
-import { TypingGame } from "~/components/hsk/typing-game";
+import { TypingGame } from "~/components/games/typing-game";
 
 import {
   type TestWord,

@@ -1,5 +1,5 @@
 import { shuffleArr } from "~/misc/helpers/tools/shuffle-arr";
-import { arrorUturnDown, faceSadBigSvg, faceSmileBigSvg, thumbUpBigSvg } from "../common/media/svg";
+import { arrorUturnDown } from "../common/media/svg";
 import { type TestWord } from "~/routes/hsk/2/tests";
 import {
   $,
@@ -10,15 +10,17 @@ import {
   type QwikKeyboardEvent,
   useStyles$,
 } from "@builder.io/qwik";
+import { TypingGameIndicators } from "./typing-game-indicators";
+import { TypingGameTitle } from "./typing-game-title";
+import { TypingGameResults } from "./typing-game-results";
 
-type TypingGameProps = {
+export type TypingGameProps = {
   words: TestWord[];
   level?: string;
 };
 
-type WrongStore = {
+export type WrongStore = {
   answers: string[];
-  num: number;
 };
 
 export const QUEST_NUM = 10;
@@ -31,7 +33,7 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
   const shuffled = useStore({ words });
   const corrects = useSignal(0);
   const resultWords = useSignal("");
-  const wrongStore = useStore<WrongStore>({ answers: [], num: 0 });
+  const wrongStore = useStore<WrongStore>({ answers: [] });
   const question = useSignal(words[0]);
   const answer = useSignal("");
   const isWrong = useSignal(false);
@@ -46,7 +48,6 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
 
   const skipQuestion = $(() => {
     wrongStore.answers.push(question.value.chinese);
-    wrongStore.num++;
     isWrong.value = true;
     setTimeout(() => (isWrong.value = false), 1000);
     setNewQuestion();
@@ -90,7 +91,6 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
   const setNewGame = $(() => {
     start.value = true;
     wrongStore.answers = [];
-    wrongStore.num = 0;
     resultWords.value = "";
     questionNum.value = 1;
     answer.value = "";
@@ -148,89 +148,41 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
             </div>
           ) : (
             <div>
-              <div class='prose mb-2'>
-                <h3 class='card-title'>
-                  {questionNum.value > QUEST_NUM ? (
-                    "Результат"
-                  ) : level ? (
-                    <>
-                      Успей напечатать <small>[ур. {level}]</small>
-                    </>
-                  ) : (
-                    "Успей напечатать"
-                  )}
-                </h3>
-              </div>
-              {questionNum.value > QUEST_NUM && (
-                <div class='flex justify-center mb-3'>
-                  <div class=''>
-                    {corrects.value > 8
-                      ? thumbUpBigSvg
-                      : corrects.value < 6
-                      ? faceSadBigSvg
-                      : faceSmileBigSvg}
-                  </div>
-                  <div class='mx-4 text-center'>
-                    <div class='text-2xl text-neutral-content'>
-                      <h4>Верно</h4>
-                    </div>
-                    <p class='text-success'>
-                      <strong>{corrects.value}</strong>
-                    </p>
-                  </div>
-                  <div class='text-center'>
-                    <div class='text-2xl text-neutral-content'>
-                      <h4>Ошибки</h4>
-                    </div>
-                    <p class='h2 text-error'>
-                      <strong>{wrongStore.num}</strong>
-                    </p>
-                  </div>
-                </div>
-              )}
+              <TypingGameTitle questionNum={questionNum.value} level={level} />
+              <TypingGameResults
+                wrongs={wrongStore.answers.filter(Boolean).length}
+                corrects={corrects.value}
+                questionNum={questionNum.value}
+              />
+
               {words.length < QUEST_NUM ? (
                 <p>
                   Наберите хотя бы 10 слов в список ниже, чтобы активировать тест и проверить свои
                   знания
                 </p>
               ) : (
-                <div>
-                  <button class='btn btn-sm btn-info mr-2' onClick$={setNewGame}>
-                    {questionNum.value > QUEST_NUM ? "Еще раз" : "Старт"}
-                  </button>
-                  <span>
+                <div class='mt-4'>
+                  <p>
                     {questionNum.value > QUEST_NUM
                       ? `${resultWords.value} ${
-                          wrongStore.answers.filter((x) => Boolean(x)).length > 0
-                            ? "Нужно повторить "
-                            : ""
-                        } ${wrongStore.answers.filter((x) => Boolean(x)).join(", ")}`
+                          wrongStore.answers.filter(Boolean).length > 0 ? "Нужно повторить " : ""
+                        } ${wrongStore.answers.filter(Boolean).join(", ")}`
                       : "Впишите нужные слова на время"}
-                  </span>
+                  </p>
+                  <button class='btn btn-sm btn-info mr-2 float-right' onClick$={setNewGame}>
+                    {questionNum.value > QUEST_NUM ? "Еще раз" : "Старт"}
+                  </button>
                 </div>
               )}
             </div>
           )}
         </div>
 
-        <div class='flex justify-center'>
-          {[...new Array(QUEST_NUM)].map((x, ind) => (
-            <div
-              key={ind}
-              class={`badge mx-2 mb-2 border border-base-300 ${
-                wrongStore.answers.length > ind
-                  ? wrongStore.answers[ind]
-                    ? "bg-error"
-                    : "bg-success"
-                  : start.value && questionNum.value === ind + 1
-                  ? "bg-warning"
-                  : "bg-neutral-content"
-              }`}
-            >
-              {" "}
-            </div>
-          ))}
-        </div>
+        <TypingGameIndicators
+          wrongAnswers={wrongStore.answers}
+          questionNum={questionNum.value}
+          isStarted={start.value}
+        />
       </div>
     )
   );

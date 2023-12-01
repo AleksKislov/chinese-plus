@@ -1,4 +1,14 @@
 const Text = require("../../../models/Text");
+const { shortUserInfoFields } = require("../../consts");
+
+const ReputationValueMap = {
+  pressedLike: 1,
+  leftComment: 4,
+  leftFeedback: 5,
+  gotLike: 6,
+  publishedText: 10,
+  publishedVideo: 15, // use when can publish videos
+};
 
 /**
  * @param {Object} req
@@ -6,21 +16,26 @@ const Text = require("../../../models/Text");
  * @returns {Promise<TextPerUserInfo[]>} sorted array
  */
 async function getTextsPerUserStats(req, res) {
-  const texts = await Text.find().sort({ date: -1 }).select("user name length");
-  let result = {};
+  const authors = (
+    await Text.find({ isApproved: 1 }).select("user -_id").populate("user", shortUserInfoFields)
+  ).filter((text) => text.user.name !== "admin");
 
-  for (let i = 0; i < texts.length; i++) {
-    if (result[texts[i].user]) {
-      result[texts[i].user].num++;
-      result[texts[i].user].length += texts[i].length;
+  console.log(authors[0]);
+  let result = {};
+  for (let i = 0; i < authors.length; i++) {
+    if (result[authors[i].user._id]) {
+      result[authors[i].user._id].num++;
     } else {
-      result[texts[i].user] = new TextPerUserInfo(1, texts[i]);
+      result[authors[i].user._id] = {
+        _id: authors[i].user._id,
+        name: authors[i].user.name,
+        newAvatar: authors[i].user.newAvatar,
+        num: 1,
+      };
     }
   }
 
-  const sorted = Object.values(result).sort((a, b) =>
-    b.num - a.num === 0 ? b.length - a.length : b.num - a.num
-  );
+  const sorted = Object.values(result).sort((a, b) => b.num - a.num);
 
   return res.json(sorted);
 }

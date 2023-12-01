@@ -10,7 +10,8 @@ import { MainContent } from "~/components/common/layout/main-content";
 import { getTokenFromCookie } from "~/misc/actions/auth";
 import { type UserOldHskWordType } from "~/routes/hsk/2/table";
 import { PrivateHskCard } from "~/components/me/hsk/private-hsk-card";
-import { TypingGame } from "~/components/hsk/typing-game";
+import { TypingGame } from "~/components/games/typing-game";
+import { CalligraphyGame } from "~/components/games/calligraphy-game";
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
@@ -62,15 +63,26 @@ export default component$(() => {
         <MainContent>
           {/* это костыль */}
           {wordsSignal.value ? (
-            <TypingGame
-              words={wordsSignal.value?.map((x) => ({
-                chinese: x.chinese,
-                level: "" + x.level,
-                id: x.word_id,
-                pinyin: x.pinyin,
-                translation: x.translation,
-              }))}
-            />
+            <>
+              <CalligraphyGame
+                words={wordsSignal.value?.map((x) => ({
+                  chinese: x.chinese,
+                  level: "" + x.level,
+                  id: x.word_id,
+                  pinyin: x.pinyin,
+                  translation: x.translation,
+                }))}
+              />
+              <TypingGame
+                words={wordsSignal.value?.map((x) => ({
+                  chinese: x.chinese,
+                  level: "" + x.level,
+                  id: x.word_id,
+                  pinyin: x.pinyin,
+                  translation: x.translation,
+                }))}
+              />
+            </>
           ) : (
             <div class='card bg-base-200 text-base-content w-full mb-6'>
               <div class='card-body'>
