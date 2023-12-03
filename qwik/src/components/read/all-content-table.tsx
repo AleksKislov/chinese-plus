@@ -27,6 +27,7 @@ export const AllContentTable = component$(
     const getSvg = $((str: SortByType) => {
       return sortBy.value !== str ? chevronSvg : sortSignal.value ? chevronUp : chevronDown;
     });
+
     const changeSort = $((str: SortByType) => {
       if (sortBy.value !== str) {
         sortBy.value = str;

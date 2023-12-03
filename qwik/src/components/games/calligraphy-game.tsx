@@ -15,6 +15,12 @@ import { TypingGameTitle } from "./typing-game-title";
 import { type WrongStore, type TypingGameProps, QUEST_NUM } from "./typing-game";
 import { TypingGameResults } from "./typing-game-results";
 
+export enum CharState {
+  info = "info",
+  error = "error",
+  success = "success",
+}
+
 export const CalligraphyGame = component$(({ words, level }: TypingGameProps) => {
   const charSvgId = "charSvgId";
   const svgDivId = "svgDivId";
@@ -29,6 +35,13 @@ export const CalligraphyGame = component$(({ words, level }: TypingGameProps) =>
   const hanziSignal = useSignal<NoSerialize<HanziWriter> | null>(null);
   const currentCharInd = useSignal(0);
   const wordFinished = useSignal(false);
+  const charState = useSignal("");
+
+  const addToWrongs = $(() => {
+    if (!wrongStore.answers.includes(question.value.chinese)) {
+      wrongStore.answers.push(question.value.chinese);
+    }
+  });
 
   const setNewQuestion = $(() => {
     progress.value = 0;
@@ -39,13 +52,16 @@ export const CalligraphyGame = component$(({ words, level }: TypingGameProps) =>
       currentCharInd.value = 0;
       question.value = shuffled.words[questionNum.value];
       questionNum.value++;
+      charState.value = [...new Array(question.value.chinese.length)]
+        .map(() => CharState.info)
+        .join(",");
     } else {
       currentCharInd.value++;
     }
   });
 
   const skipQuestion = $(() => {
-    wrongStore.answers.push(question.value.chinese);
+    addToWrongs();
     setNewQuestion();
   });
 
@@ -96,21 +112,26 @@ export const CalligraphyGame = component$(({ words, level }: TypingGameProps) =>
         onComplete: (summary) => {
           const wordLen = word.chinese.length;
           const isLastChar = wordLen - 1 === charInd;
-          const isCorrect = summary.totalMistakes / strokesNum < 0.3;
+          const isCorrect = summary.totalMistakes / strokesNum < 0.4;
 
-          if (isLastChar) wordFinished.value = true;
-
-          if (isCorrect && isLastChar) {
-            if (!wrongStore.answers.includes(word.chinese)) {
-              corrects.value++;
-              wrongStore.answers.push("");
+          if (isLastChar) {
+            wordFinished.value = true;
+            if (isCorrect) {
+              if (!wrongStore.answers.includes(word.chinese)) {
+                corrects.value++;
+                wrongStore.answers.push("");
+              }
             }
-          } else {
-            if (!wrongStore.answers.includes(word.chinese)) {
-              wrongStore.answers.push(word.chinese);
-            }
-            console.log(wrongStore.answers);
           }
+
+          const states = charState.value.split(",");
+          if (isCorrect) {
+            states[currentCharInd.value] = CharState.success;
+          } else {
+            states[currentCharInd.value] = CharState.error;
+            addToWrongs();
+          }
+          charState.value = states.join(",");
 
           setTimeout(setNewQuestion, 2000);
         },
@@ -130,7 +151,24 @@ export const CalligraphyGame = component$(({ words, level }: TypingGameProps) =>
     const newArr = words.slice(0, QUEST_NUM);
     shuffled.words = newArr;
     question.value = newArr[0];
+    charState.value = [...new Array(question.value.chinese.length)]
+      .map(() => CharState.info)
+      .join(",");
   });
+
+  const getTextColor = (ind: number) => {
+    const state = charState.value.split(",")[ind];
+    if (state === CharState.error) return "text-error-content";
+    if (state === CharState.success) return "text-success-content";
+    return "text-info-content";
+  };
+
+  const getBgColor = (ind: number) => {
+    const state = charState.value.split(",")[ind];
+    if (state === CharState.error) return "bg-error";
+    if (state === CharState.success) return "bg-success";
+    return "bg-info";
+  };
 
   return (
     shuffled.words && (
@@ -161,7 +199,9 @@ export const CalligraphyGame = component$(({ words, level }: TypingGameProps) =>
                   {[...question.value.chinese].map((char, ind) => (
                     <div
                       key={ind}
-                      class='border border-info rounded-md mr-1 w-9 h-9 flex items-center justify-center'
+                      class={`rounded-md mr-1 w-9 h-9 flex items-center justify-center ${getBgColor(
+                        ind
+                      )} ${getTextColor(ind)}`}
                     >
                       {currentCharInd.value > ind || wordFinished.value ? char : ""}
                     </div>
@@ -221,11 +261,7 @@ export const CalligraphyGame = component$(({ words, level }: TypingGameProps) =>
           </div>
         </div>
 
-        <TypingGameIndicators
-          wrongAnswers={wrongStore.answers}
-          questionNum={questionNum.value}
-          isStarted={start.value}
-        />
+        <TypingGameIndicators wrongAnswers={wrongStore.answers} />
       </div>
     )
   );

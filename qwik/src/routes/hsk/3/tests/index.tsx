@@ -22,6 +22,7 @@ import {
 } from "../../2/tests";
 
 import { parseRussian } from "~/misc/helpers/translation";
+import { CalligraphyGame } from "~/components/games/calligraphy-game";
 
 // get 150 words
 export const getTestWords = routeLoader$(async (ev): Promise<TestWord[]> => {
@@ -92,7 +93,7 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={"Тесты на знание HSK 2.0"} />
+      <PageTitle txt={"Тесты на знание HSK 3.0"} />
       <FlexRow>
         <Sidebar>
           <TableCard
@@ -103,6 +104,7 @@ export default component$(() => {
         </Sidebar>
 
         <MainContent>
+          <CalligraphyGame words={testWords.value} level={loc.url.searchParams.get("lvl") || "1"} />
           <TypingGame words={testWords.value} level={loc.url.searchParams.get("lvl") || "1"} />
 
           {questions.map(({ type, title }) => (

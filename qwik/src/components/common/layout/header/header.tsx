@@ -57,6 +57,7 @@ export default component$(() => {
                 </li>
                 <MenuLink href='/search' text='Словарь' />
                 <MenuLink href='/feedback' text='Форум' />
+                <MenuLink href='/heroes' text='Герои' />
                 <ThemeChanger />
               </ul>
             </div>
@@ -96,6 +97,7 @@ export default component$(() => {
 
                 <MenuLink href='/search' text='Словарь' />
                 <MenuLink href='/feedback' text='Форум' />
+                <MenuLink href='/heroes' text='Герои' />
                 <ThemeChanger />
               </ul>
             </div>

@@ -1,6 +1,8 @@
 const Text = require("../../../models/Text");
+const Video = require("../../../models/Video");
 const { shortUserInfoFields } = require("../../consts");
 
+// @todo
 const ReputationValueMap = {
   pressedLike: 1,
   leftComment: 4,
@@ -13,40 +15,47 @@ const ReputationValueMap = {
 /**
  * @param {Object} req
  * @param {Object} res
- * @returns {Promise<TextPerUserInfo[]>} sorted array
+ * @returns {Promise<[]>} sorted array
  */
 async function getTextsPerUserStats(req, res) {
-  const authors = (
-    await Text.find({ isApproved: 1 }).select("user -_id").populate("user", shortUserInfoFields)
-  ).filter((text) => text.user.name !== "admin");
+  const [texts, videos] = await Promise.all([
+    Text.find({ isApproved: 1 }).select("user -_id").populate("user", shortUserInfoFields),
+    Video.find({ isApproved: 1 }).select("user -_id").populate("user", shortUserInfoFields),
+  ]);
+  const withoutAdmin = (x) => x.user.name !== "admin";
+  const textsAuthors = texts.filter(withoutAdmin);
+  const videoAuthors = videos.filter(withoutAdmin);
 
-  console.log(authors[0]);
   let result = {};
-  for (let i = 0; i < authors.length; i++) {
-    if (result[authors[i].user._id]) {
-      result[authors[i].user._id].num++;
+  for (let i = 0; i < textsAuthors.length; i++) {
+    if (result[textsAuthors[i].user._id]) {
+      result[textsAuthors[i].user._id].texts++;
     } else {
-      result[authors[i].user._id] = {
-        _id: authors[i].user._id,
-        name: authors[i].user.name,
-        newAvatar: authors[i].user.newAvatar,
-        num: 1,
+      result[textsAuthors[i].user._id] = {
+        userId: textsAuthors[i].user._id,
+        name: textsAuthors[i].user.name,
+        newAvatar: textsAuthors[i].user.newAvatar,
+        texts: 1,
+        videos: 0,
       };
     }
   }
 
-  const sorted = Object.values(result).sort((a, b) => b.num - a.num);
-
-  return res.json(sorted);
-}
-
-class TextPerUserInfo {
-  constructor(num, { name, userid, length }) {
-    this.num = num; // quantity of texts published by user
-    this.name = name;
-    this.userid = userid;
-    this.length = length;
+  for (let i = 0; i < videoAuthors.length; i++) {
+    if (result[videoAuthors[i].user._id]) {
+      result[videoAuthors[i].user._id].videos++;
+    } else {
+      result[videoAuthors[i].user._id] = {
+        userId: videoAuthors[i].user._id,
+        name: videoAuthors[i].user.name,
+        newAvatar: videoAuthors[i].user.newAvatar,
+        texts: 0,
+        videos: 1,
+      };
+    }
   }
+
+  return res.json(Object.values(result).sort((a, b) => b.texts - a.texts));
 }
 
 module.exports = { getTextsPerUserStats };

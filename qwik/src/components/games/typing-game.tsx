@@ -178,11 +178,7 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
           )}
         </div>
 
-        <TypingGameIndicators
-          wrongAnswers={wrongStore.answers}
-          questionNum={questionNum.value}
-          isStarted={start.value}
-        />
+        <TypingGameIndicators wrongAnswers={wrongStore.answers} />
       </div>
     )
   );

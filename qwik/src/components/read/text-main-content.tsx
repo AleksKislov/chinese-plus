@@ -6,14 +6,7 @@ import { LongTxtPagination } from "./long-txt-pagination";
 import { AudioPlayer } from "./audio-player";
 import { Paragraph } from "./paragraph";
 import { countZnChars } from "~/misc/helpers/content";
-import { CommentsBlockTitle } from "../common/comments/comments-block-title";
-import {
-  type Addressee,
-  CommentForm,
-  type CommentIdToReply,
-  WHERE,
-} from "../common/comments/comment-form";
-import { CommentsBlock } from "../common/comments/comments-block";
+import { type Addressee, type CommentIdToReply, WHERE } from "../common/comments/comment-form";
 import { EditWordModal } from "../common/modals/edit-word-modal";
 import { MoreInfoModal } from "../common/modals/more-info-modal";
 import { EditChineseArrModal } from "../common/modals/edit-chinese-arr-modal";
@@ -24,6 +17,7 @@ import type { CommentType } from "../common/comments/comment-card";
 import { editWordModalId, moreInfoModalId } from "../common/tooltips/word-tooltip";
 import { Loader } from "../common/ui/loader";
 import { SimilarTxtImg } from "./similar-txt-img";
+import { CommentsFullBlock } from "../common/comments/comments-full-block";
 
 type TextMainContentProps = {
   text: TextFromDB & TooltipText & { curPage: number };
@@ -117,21 +111,14 @@ export const TextMainContent = component$(
           )}
         </div>
 
-        <div class={"mt-2"}>
-          <CommentsBlockTitle />
-          <CommentForm
-            contentId={textId}
-            where={WHERE.text}
-            path={undefined}
-            commentIdToReply={commentIdToReplyStore}
-            addressees={addressees}
-          />
-          <CommentsBlock
-            comments={comments}
-            commentIdToReply={commentIdToReplyStore}
-            addressees={addressees}
-          />
-        </div>
+        <CommentsFullBlock
+          contentId={textId}
+          where={WHERE.text}
+          path={undefined}
+          commentIdToReply={commentIdToReplyStore}
+          addressees={addressees}
+          comments={comments}
+        />
 
         {!currentWord.value ? null : (
           <div>

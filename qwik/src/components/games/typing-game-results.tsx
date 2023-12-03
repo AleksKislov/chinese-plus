@@ -16,7 +16,7 @@ export const TypingGameResults = component$(
           {corrects > 8 ? thumbUpBigSvg : corrects < 6 ? faceSadBigSvg : faceSmileBigSvg}
         </div>
         <div class='mx-4 text-center'>
-          <div class='text-2xl text-neutral-content'>
+          <div class='text-2xl'>
             <h4>Верно</h4>
           </div>
           <p class='text-success'>
@@ -24,7 +24,7 @@ export const TypingGameResults = component$(
           </p>
         </div>
         <div class='text-center'>
-          <div class='text-2xl text-neutral-content'>
+          <div class='text-2xl'>
             <h4>Ошибки</h4>
           </div>
           <p class='h2 text-error'>

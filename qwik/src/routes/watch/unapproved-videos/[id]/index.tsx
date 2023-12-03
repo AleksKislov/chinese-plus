@@ -14,15 +14,12 @@ import {
   type Addressee,
   type CommentIdToReply,
   WHERE,
-  CommentForm,
 } from "~/components/common/comments/comment-form";
 import { Subs } from "~/components/watch/subs";
 import { parseVideoWords } from "~/misc/helpers/content";
 import { Alerts } from "~/components/common/alerts/alerts";
 import { type CommentType } from "~/components/common/comments/comment-card";
 import { getContentComments } from "~/misc/actions/get-content-comments";
-import { CommentsBlock } from "~/components/common/comments/comments-block";
-import { CommentsBlockTitle } from "~/components/common/comments/comments-block-title";
 import { ContentPageHead } from "~/components/common/ui/content-page-head";
 import {
   type TooltipSubs,
@@ -30,6 +27,7 @@ import {
   getWordsForTooltips,
   PlayerState,
 } from "../../videos/[id]";
+import { CommentsFullBlock } from "~/components/common/comments/comments-full-block";
 
 export const getVideoFromDB = (id: ObjectId): Promise<VideoFromDB> => {
   return ApiService.get(`/api/videos/${id}`, undefined, null);
@@ -157,21 +155,14 @@ export default component$(() => {
             isPaused={isPaused}
           />
 
-          <div class={"mt-2"}>
-            <CommentsBlockTitle />
-            <CommentForm
-              contentId={videoId}
-              where={WHERE.video}
-              path={undefined}
-              commentIdToReply={commentIdToReplyStore}
-              addressees={addressees}
-            />
-            <CommentsBlock
-              comments={comments.value}
-              commentIdToReply={commentIdToReplyStore}
-              addressees={addressees}
-            />
-          </div>
+          <CommentsFullBlock
+            contentId={videoId}
+            where={WHERE.video}
+            path={undefined}
+            commentIdToReply={commentIdToReplyStore}
+            addressees={addressees}
+            comments={comments.value}
+          />
         </MainContent>
       </FlexRow>
     </>
