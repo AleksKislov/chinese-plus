@@ -53,6 +53,7 @@ app.use("/api/notices", require("./routes/api/notices"));
 app.use("/api/videos", require("./routes/api/videos"));
 app.use("/api/phoneticsLessons", require("./routes/api/phoneticsLessons"));
 app.use("/api/charactersLessons", require("./routes/api/charactersLessons"));
+app.use("/api/donate", require("./routes/api/donate"));
 
 // glcoud services routes
 app.use("/gcloud/youtube", require("./routes/gcloud/youtube"));

@@ -19,8 +19,8 @@ export const useAddPost = routeAction$((post, ev) => {
   return ApiService.post("/api/posts", post, token);
 });
 
-export type MsgType = "wish" | "bug" | "news";
-type MsgsType = "all" | "wish" | "bug" | "news";
+export type MsgType = "wish" | "bug" | "question" | "news" | "goal";
+type MsgsType = "all" | MsgType;
 
 export type Post = {
   _id: ObjectId;
@@ -35,7 +35,9 @@ export type Post = {
 export const msgTypes = {
   wish: "пожелание",
   bug: "баг",
+  question: "вопрос",
   news: "новости",
+  goal: "цели",
 };
 
 export const getPostsWithParams = routeAction$((params): Promise<Post[]> => {
@@ -81,7 +83,7 @@ export default component$(() => {
     posts.value = [...posts.value, ...res];
   });
 
-  const DisplayBtns: MsgsType[] = ["all", "wish", "bug", "news"];
+  const DisplayBtns: MsgsType[] = ["all", "wish", "bug", "question", "news", "goal"];
 
   return (
     <>

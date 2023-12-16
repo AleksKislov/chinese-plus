@@ -48,7 +48,7 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
         >
           <div class='card-body text-left'>
             <label
-              class='btn btn-sm btn-circle absolute right-1 top-1 opacity-50'
+              class='btn btn-sm btn-circle btn-ghost absolute right-1 top-1'
               onClick$={() => (showTooltip.value = false)}
             >
               ✕

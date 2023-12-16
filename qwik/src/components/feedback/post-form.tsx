@@ -18,6 +18,8 @@ export const PostForm = component$(() => {
     wish: true,
     bug: false,
     news: false,
+    goal: false,
+    question: false,
   });
 
   const submitPost = $(async () => {
@@ -144,4 +146,6 @@ type ChosenBtnStore = {
   wish: boolean;
   bug: boolean;
   news: boolean;
+  goal: boolean;
+  question: boolean;
 };

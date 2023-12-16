@@ -16,7 +16,7 @@ const PostSchema = new Schema({
   },
   tag: {
     type: String, // wish, bug or news
-    enum: ["wish", "bug", "news"],
+    enum: ["wish", "bug", "news", "goal", "question"],
   },
   likes: [
     {

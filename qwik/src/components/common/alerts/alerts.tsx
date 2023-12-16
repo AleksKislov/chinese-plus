@@ -19,7 +19,7 @@ export const Alerts = component$(() => {
   });
 
   return (
-    <div class='toast toast-top fixed z-10 top-14'>
+    <div class='toast toast-bottom fixed z-10 bottom-14'>
       {alertsState.map((alert, ind) => (
         <SingleAlert alert={alert} key={ind} />
       ))}

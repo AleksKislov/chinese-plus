@@ -23,7 +23,7 @@ export const CommentsBlock = component$(
             />
           ))
         ) : (
-          <div class='alert alert-info flex'>
+          <div class='alert alert-info flex mb-3'>
             {infoAlertSvg}
             <span>Еще никто не комментировал</span>
           </div>
