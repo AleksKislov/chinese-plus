@@ -24,20 +24,12 @@ import {
 } from "@dicebear/collection";
 import { BigAvatar } from "~/components/me/avatar/big-avatar";
 import { ApiService } from "~/misc/actions/request";
+import Alwan from "alwan";
+import "alwan/dist/css/alwan.min.css";
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
   if (!token) throw redirect(302, "/login");
-};
-
-export const ColorsMap: { [key: string]: string } = {
-  transparent: "transparent",
-  neutral: "d4d4d4",
-  red: "fda4af",
-  yellow: "fde68a",
-  green: "2dd4bf",
-  blue: "60a5fa",
-  purple: "d8b4fe",
 };
 
 export const AvatarTypes = {
@@ -58,6 +50,7 @@ export const useSetAvatar = routeAction$(async (params, ev): Promise<NewAvatar |
 });
 
 export default component$(() => {
+  const colorPickerId = "colorPicker";
   const setAvatar = useSetAvatar();
   const userState = useContext(userContext);
   const { _id, newAvatar, role, name } = userState;
@@ -68,7 +61,7 @@ export default component$(() => {
     seed: name,
   });
   const seedSignal = useSignal(name);
-  const background = useSignal(ColorsMap.transparent);
+  const background = useSignal("transparent");
 
   useVisibleTask$(({ track }) => {
     track(() => newAvatar?.seed);
@@ -82,6 +75,17 @@ export default component$(() => {
       seedSignal.value = newAvatar.seed;
       background.value = newAvatar.background;
     }
+
+    const alwan = new Alwan(`#${colorPickerId}`, {
+      inputs: { hex: false, rgb: false, hsl: false },
+      theme: "dark",
+      color: "#f957ff",
+      classname: "mt-2.5 mb-2.5 ml-1",
+    });
+
+    alwan.on("color", (ev) => {
+      background.value = ev.hex.slice(1);
+    });
   });
 
   useTask$(({ track }) => {
@@ -162,17 +166,12 @@ export default component$(() => {
             <span class='label-text'>По умолчанию - adventurer</span>
           </label>
         </div>
+
         <div class='form-control text-base-content w-full mr-2'>
           <label class='label'>
             <span class='label-text'>Цвет фона</span>
           </label>
-          <select class='select select-bordered' bind:value={background}>
-            {Object.keys(ColorsMap).map((colorKey, ind) => (
-              <option value={ColorsMap[colorKey]} key={ind}>
-                {colorKey}
-              </option>
-            ))}
-          </select>
+          <div id={colorPickerId}></div>
           <label class='label'>
             <span class='label-text'>По умолчанию - прозрачный</span>
           </label>

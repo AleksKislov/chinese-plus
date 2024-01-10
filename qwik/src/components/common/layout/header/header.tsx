@@ -1,20 +1,23 @@
 import { component$, useContext, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { userContext } from "~/root";
-import { logout } from "~/misc/actions/auth";
 import { Link } from "@builder.io/qwik-city";
 import { MenuItem, type MenuItemProps } from "./menu-item";
-import { dropdownArrowBottom, enterSvg, exitSvg, logoSvg } from "../../media/svg";
-import { getNewMentions } from "~/routes/layout";
+import { dropdownArrowBottom, enterSvg, logoSvg } from "../../media/svg";
+import { type PulseData, getNewMentions } from "~/routes/layout";
 import { AvatarImg } from "../../media/avatar-img";
 import MenuLink from "./menu-link";
 import { MenuItemNew } from "./menu-item-new";
 import { ThemeChanger } from "./theme-changer";
 import { Brand } from "./brand";
+import { ClubPulse } from "./club-pulse";
+import { AuthMenu } from "./auth-menu";
 
-export default component$(() => {
+export default component$(({ pulse }: { pulse: PulseData }) => {
   const newMentions = getNewMentions();
   const userState = useContext(userContext);
   const isMobile = useSignal(false);
+  const userHskWordsTotal = userState.hsk2WordsTotal;
+  const userWordsTotal = userState.words.length;
 
   useVisibleTask$(() => {
     isMobile.value = window.innerWidth <= 768;
@@ -22,12 +25,12 @@ export default component$(() => {
 
   return (
     <header class='bg-base-300 mb-4'>
-      <div class='md:container md:mx-auto'>
-        <div class='navbar h-12'>
-          <div class='navbar-start lg:w-full'>
+      <div class='md:container md:mx-auto '>
+        <div class='navbar h-12 flex justify-between'>
+          <div class='lg:w-full'>
             {/* mobile menu */}
             <div class='dropdown'>
-              <label tabIndex={0} class='btn btn-ghost lg:hidden'>
+              <label tabIndex={0} class='btn btn-ghost mt-2 lg:hidden'>
                 {logoSvg}
               </label>
               <ul
@@ -45,7 +48,16 @@ export default component$(() => {
                   </details>
                 </li>
                 <MenuItemNew name={watch.name} links={watch.links} />
-                <MenuItemNew name={start.name} links={start.links} />
+                <li>
+                  <details class='z-40'>
+                    <summary>Начинающим</summary>
+                    <ul class='w-52 bg-base-200'>
+                      <MenuLink href={"/start/how-to-start"} text={"С чего начать"} />
+                      <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
+                      <MenuItemNew name={startChars.name} links={startChars.links} />
+                    </ul>
+                  </details>
+                </li>
                 <li>
                   <details class='z-40'>
                     <summary>HSK</summary>
@@ -58,6 +70,7 @@ export default component$(() => {
                 <MenuLink href='/search' text='Словарь' />
                 <MenuLink href='/feedback' text='Форум' />
                 <MenuLink href='/heroes' text='Герои' />
+                <MenuLink href='/donate' text='Донат и цели' />
                 <ThemeChanger />
               </ul>
             </div>
@@ -82,7 +95,18 @@ export default component$(() => {
                 </li>
 
                 <MenuItem name={watch.name} links={watch.links} />
-                <MenuItem name={start.name} links={start.links} />
+
+                <li tabIndex={0} class='dropdown dropdown-hover hover:text-success'>
+                  <label class='my-1 hover:text-secondary'>
+                    Начинающим
+                    {dropdownArrowBottom}
+                  </label>
+                  <ul class='dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content'>
+                    <MenuLink href={"/start/how-to-start"} text={"С чего начать"} />
+                    <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
+                    <MenuItemNew name={startChars.name} links={startChars.links} />
+                  </ul>
+                </li>
 
                 <li tabIndex={0} class='dropdown dropdown-hover hover:text-success'>
                   <label class='my-1 hover:text-secondary'>
@@ -96,21 +120,28 @@ export default component$(() => {
                 </li>
 
                 <MenuLink href='/search' text='Словарь' />
-                <MenuLink href='/feedback' text='Форум' />
+                {/* <MenuLink href='/feedback' text='Форум' />
                 <MenuLink href='/heroes' text='Герои' />
+                <MenuLink href='/donate' text='Донат и цели' /> */}
+                <MenuItem name={ourClub.name} links={ourClub.links} />
+
                 <ThemeChanger />
+                <ClubPulse data={pulse} />
               </ul>
             </div>
           </div>
 
           {/* brand for mobile */}
           <div class='navbar-center lg:hidden'>
-            <Link class='btn btn-ghost normal-case text-2xl' href='/'>
-              <Brand isMobile={true} />
-            </Link>
+            <div class='flex'>
+              <ClubPulse data={pulse} />
+              <Link class='btn btn-ghost normal-case text-2xl' href='/'>
+                <Brand isMobile={true} />
+              </Link>
+            </div>
           </div>
 
-          <div class='navbar-end'>
+          <div>
             <div class='dropdown dropdown-hover dropdown-end mr-2'>
               <label
                 tabIndex={0}
@@ -134,7 +165,11 @@ export default component$(() => {
                 tabIndex={0}
                 class='dropdown-content z-[3] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content'
               >
-                {userState.name ? authMenu : unAuthMenu}
+                {userState.name ? (
+                  <AuthMenu hskWordsTotal={userHskWordsTotal} wordsTotal={userWordsTotal} />
+                ) : (
+                  unAuthMenu
+                )}
               </ul>
             </div>
           </div>
@@ -151,30 +186,8 @@ export const unAuthMenu = (
   </>
 );
 
-export const authMenu = (
-  <>
-    <MenuLink href='/me' text='Личный кабинет' />
-    <MenuLink href='/me/hsk/2' text={`Мой словарик HSK`} />
-    <MenuLink href='/me/words' text={`Мой словарик`} />
-    <MenuLink href='/me/marked' text={`Закладки`} />
-    <MenuLink href='/create' text='Поделиться контентом' />
-
-    <hr class='h-px my-1 bg-primary border-0' />
-    <li>
-      <a
-        onClick$={() => {
-          logout();
-          location.reload();
-        }}
-      >
-        Выйти {exitSvg}
-      </a>
-    </li>
-  </>
-);
-
-export const start: MenuItemProps = {
-  name: "Новичкам",
+export const startPhonetics: MenuItemProps = {
+  name: "Фонетика",
   links: [
     {
       href: "/start/pinyin-chart",
@@ -188,9 +201,19 @@ export const start: MenuItemProps = {
       href: "/watch/phonetics-lessons",
       text: "Уроки фонетики",
     },
+  ],
+};
+
+export const startChars: MenuItemProps = {
+  name: "Иероглифика",
+  links: [
+    {
+      href: "/start/strokes",
+      text: "Черты",
+    },
     {
       href: "/start/radicals",
-      text: "Таблица ключей иероглифов",
+      text: "Таблица ключей",
     },
     {
       href: "/watch/characters-lessons",
@@ -221,6 +244,24 @@ export const watch: MenuItemProps = {
   ],
 };
 
+export const ourClub: MenuItemProps = {
+  name: "Наш Клуб",
+  links: [
+    {
+      href: "/feedback",
+      text: "Форум",
+    },
+    {
+      href: "/heroes",
+      text: "Герои",
+    },
+    {
+      href: "/donate",
+      text: "Донат и цели",
+    },
+  ],
+};
+
 export const read: MenuItemProps = {
   name: "Читалка",
   links: [
@@ -234,11 +275,6 @@ export const read: MenuItemProps = {
     },
   ],
 };
-
-// {
-//   href: "/read/unapproved-texts",
-//   text: "На проверке",
-// },
 
 export const hsk3: MenuItemProps = {
   name: "HSK 3.0",

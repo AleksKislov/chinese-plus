@@ -77,6 +77,9 @@ export const DonateForm = component$(() => {
               </div>
             </div>
           </div>
+          <div class='label'>
+            <span class='label-text-alt'>Yoomoney удерживает 1-3% при переводах</span>
+          </div>
         </div>
       </div>
     </div>

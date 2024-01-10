@@ -1,8 +1,8 @@
 import { component$ } from "@builder.io/qwik";
 import { type DonateGoal } from "~/routes/(club)/donate";
-import { SmallDate } from "../common/ui/small-date";
 import { LevelStars } from "../common/content-cards/level-stars";
 import { checkBadgeSvg } from "../common/media/svg";
+import { dateToStr } from "~/misc/helpers/tools";
 
 type DonateCardProps = {
   goal: DonateGoal;
@@ -29,10 +29,8 @@ export const DonateGoalCard = component$(({ goal }: DonateCardProps) => {
         <div>
           <div class='label'>
             <span class='label-text'>
-              Собрано: {amountCollected} {currency}
-            </span>
-            <span class='label-text-alt'>
-              Нужно: {amountNeeded} {currency}
+              Собрано: {(amountCollected || 0).toFixed(2)} {currency} [
+              {((amountCollected / amountNeeded) * 100 || 0).toFixed(1)}%]
             </span>
           </div>
           <progress
@@ -40,9 +38,15 @@ export const DonateGoalCard = component$(({ goal }: DonateCardProps) => {
             value={collectedPercent || 1}
             max='100'
           ></progress>
+          <div class='label'>
+            <span class='label-text'>{dateToStr(createdAt, true)}</span>
+            <span class='label-text-alt'>
+              Нужно: {amountNeeded} {currency}
+            </span>
+          </div>
         </div>
 
-        <SmallDate onlyDate={false} date={createdAt} />
+        {/* <SmallDate onlyDate={true} date={createdAt} /> */}
       </div>
     </div>
   );

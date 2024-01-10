@@ -6,7 +6,7 @@ import { Features } from "~/components/home/features";
 import { LandingVideo } from "~/components/home/landing-video";
 import { ApiService } from "~/misc/actions/request";
 import { userContext } from "~/root";
-import { type Post } from "./feedback";
+import { type Post } from "./(club)/feedback";
 import { PostCard } from "~/components/feedback/post-card";
 import { CommentCard, type CommentType } from "~/components/common/comments/comment-card";
 

@@ -8,16 +8,16 @@ const { shortUserInfoFields } = require("../../src/api/consts");
 const DONATE_LABEL_START = "supportChinesePlus";
 const LABEL_SEPARATOR = "#";
 
-router.post("/create_goal", async (req, res) => {
-  const { donateIds, amountNeeded, desc, title, priority } = req.body;
+// router.post("/create_goal", async (req, res) => {
+//   const { donateIds, amountNeeded, desc, title, priority } = req.body;
 
-  try {
-    const newGoal = await new DonateGoal({ donateIds, amountNeeded, desc, title, priority }).save();
-    res.json(newGoal);
-  } catch (err) {
-    res.status(500).json({ err });
-  }
-});
+//   try {
+//     const newGoal = await new DonateGoal({ donateIds, amountNeeded, desc, title, priority }).save();
+//     res.json(newGoal);
+//   } catch (err) {
+//     res.status(500).json({ err });
+//   }
+// });
 
 router.post("/history", async (req, res) => {
   const records = +req.query.records || 30;
@@ -28,7 +28,6 @@ router.post("/history", async (req, res) => {
       getGoals(),
     ]);
 
-    // @todo update goals
     const higherPriorityGoal = oldGoals.filter((x) => !x.isFinished)[0];
 
     const newDonates = getNewDonates(yooMoneyDonates, mongoDonates);

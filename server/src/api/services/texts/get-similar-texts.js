@@ -3,12 +3,14 @@ const Text = require("../../../models/Text");
 async function getSimilarTexts(req, res) {
   const level = +req.query.lvl || 1;
   const tags = req.query.tags?.split(",") || [];
+  const isApproved = 1;
 
   const texts = await Text.aggregate([
     {
       $match: {
         tags: { $in: tags },
         level,
+        isApproved,
       },
     },
     {
@@ -22,6 +24,7 @@ async function getSimilarTexts(req, res) {
             $match: {
               tags: { $nin: tags },
               level,
+              isApproved,
             },
           },
         ],

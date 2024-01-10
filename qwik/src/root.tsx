@@ -10,8 +10,7 @@ import { RouterHead } from "./components/router-head/router-head";
 
 import globalStyles from "./global.css?inline";
 import { QwikPartytown } from "./components/partytown/partytown";
-
-export const IsLightThemeCookieName = "isLightTheme";
+import { ThemeTypes } from "./components/common/layout/header/theme-changer";
 
 type ReadTodayMap = {
   [key: string]: number[];
@@ -58,7 +57,6 @@ export const AlertColorEnum = {
 
 export const userContext = createContextId<User>("user-context");
 export const alertsContext = createContextId<Alert[]>("alerts-context");
-export const isDarkThemeContext = createContextId<{ bool: boolean }>("theme-context");
 
 export default component$(() => {
   useStyles$(globalStyles);
@@ -80,11 +78,9 @@ export default component$(() => {
     newAvatar: undefined,
   });
   const alertsState = useStore<Alert[]>([]);
-  const isDarkThemeState = useStore({ bool: true });
 
   useContextProvider(userContext, userState);
   useContextProvider(alertsContext, alertsState);
-  useContextProvider(isDarkThemeContext, isDarkThemeState);
 
   return (
     <QwikCityProvider>
@@ -108,12 +104,13 @@ export default component$(() => {
           src='https://www.googletagmanager.com/gtag/js?id=G-PN0P7BPQCV'
         />
         <RouterHead />
+        <script
+          dangerouslySetInnerHTML={`
+            document.documentElement.setAttribute('data-theme', localStorage.theme || '${ThemeTypes.dark}');
+          `}
+        />
       </head>
-      <body
-        lang='en'
-        data-theme={isDarkThemeState.bool ? "night" : "emerald"}
-        class='text-neutral-content'
-      >
+      <body lang='en' class='text-neutral-content'>
         <RouterOutlet />
         <ServiceWorkerRegister />
       </body>

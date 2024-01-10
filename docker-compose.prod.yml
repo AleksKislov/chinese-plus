@@ -21,6 +21,8 @@ services:
       dockerfile: Dockerfile.prod
     ports:
       - 10000:10000
+    environment:
+      BE_VERSION: ${VERSION}
     networks:
       bylh_net:
 

@@ -12,7 +12,7 @@ build-front:
 
 tag:
 	@echo "$(GREEN) Tag $(FE_IMAGE_NAME) with $(VERSION) $(GREEN)"
-	docker tag bylh_$(FE_IMAGE_NAME) $(DOCKER_HUB_REPO):$(VERSION)
+	docker tag bylh-$(FE_IMAGE_NAME) $(DOCKER_HUB_REPO):$(VERSION)
 
 push:
 	@echo "$(GREEN)Push image $(FE_IMAGE_NAME):$(VERSION) $(GREEN)"

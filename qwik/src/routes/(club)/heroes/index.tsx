@@ -16,6 +16,7 @@ export type ClubHero = {
   newAvatar?: NewAvatar;
   texts: number;
   videos: number;
+  donates: number;
 };
 
 export const useGetHeroes = routeLoader$((): Promise<ClubHero[]> => {
@@ -26,7 +27,7 @@ export default component$(() => {
   const heroes = useGetHeroes();
   const sorted = useSignal<ClubHero[] | null>(null);
 
-  type SortBy = "texts" | "videos";
+  type SortBy = "texts" | "videos" | "donates";
 
   const sortSignal = useSignal(false);
   const sortBy = useSignal<SortBy>("texts");
@@ -68,7 +69,7 @@ export default component$(() => {
         <Sidebar>
           <div class='card bg-primary text-primary-content'>
             <div class='card-body'>
-              <p>Эти пользователи делятся текстами и видео со всеми нами!</p>
+              <p>Герои делятся текстами и видео со всеми нами! А донаты держат проект на плаву</p>
             </div>
           </div>
           <CreateTextCard />
@@ -86,7 +87,7 @@ export default component$(() => {
                         class='flex cursor-pointer hover:text-secondary'
                         onClick$={() => changeSort("texts")}
                       >
-                        <span>Тектов</span>
+                        <span>Тексты</span>
                         {getSvg("texts")}
                       </div>
                     </th>
@@ -97,6 +98,15 @@ export default component$(() => {
                       >
                         <span>Видео</span>
                         {getSvg("videos")}
+                      </div>
+                    </th>
+                    <th>
+                      <div
+                        class='flex cursor-pointer hover:text-secondary'
+                        onClick$={() => changeSort("donates")}
+                      >
+                        <span>Донаты</span>
+                        {getSvg("donates")}
                       </div>
                     </th>
                   </tr>
@@ -122,6 +132,7 @@ export default component$(() => {
                       </td>
                       <td>{hero.texts}</td>
                       <td>{hero.videos || 0}</td>
+                      <td>{hero.donates || 0}</td>
                     </tr>
                   ))}
                 </tbody>

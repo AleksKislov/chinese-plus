@@ -19,7 +19,7 @@ export const DonateGoalsCard = component$(() => {
           разработчика)
         </p>
         <p>
-          Также по целям читайте на{" "}
+          Детальнее по целям читайте на{" "}
           <Link href='/feedback' class='link hover:link-success'>
             форуме
           </Link>

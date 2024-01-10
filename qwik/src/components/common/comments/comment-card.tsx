@@ -1,4 +1,4 @@
-import { component$, type Signal, useContext, useTask$, useSignal } from "@builder.io/qwik";
+import { component$, type Signal, useContext } from "@builder.io/qwik";
 import { arrorUturnDown, editSvg, thumbUpSvg } from "../media/svg";
 import { UserDateDiv } from "./user-with-date";
 import { userContext } from "~/root";
@@ -141,6 +141,7 @@ export const CommentCard = component$(
                       type='button'
                       disabled={!loggedIn}
                       onClick$={() => {
+                        if (!commentIdToReply) return;
                         commentIdToReply.commentId = _id;
                         commentIdToReply.name = userName;
                         commentIdToReply.userId = userId;

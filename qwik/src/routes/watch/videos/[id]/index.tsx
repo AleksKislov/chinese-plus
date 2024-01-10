@@ -233,6 +233,14 @@ export const head: DocumentHead = ({ resolveValue }) => {
         name: "description",
         content: `Видео на китайском языке с переводом и субтитрами: ${videoInfo.desc}`,
       },
+      {
+        name: "twitter:card",
+        content: "video_image_" + videoInfo._id,
+      },
+      {
+        name: "twitter:image",
+        content: YoutubeService.getVideoPicUrl(videoInfo.source),
+      },
     ],
   };
 };

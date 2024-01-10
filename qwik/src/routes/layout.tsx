@@ -4,7 +4,7 @@ import { routeLoader$ } from "@builder.io/qwik-city";
 import { ApiService } from "~/misc/actions/request";
 import { getTokenFromCookie, logout, type UserFromDB } from "~/misc/actions/auth";
 import { Footer } from "~/components/common/layout/footer";
-import { IsLightThemeCookieName, type UserWord } from "~/root";
+import { type UserWord } from "~/root";
 import { userContext } from "~/root";
 import { type CommentType } from "~/components/common/comments/comment-card";
 
@@ -20,6 +20,10 @@ export const useGetUser = routeLoader$(async ({ cookie }): Promise<UserFromDB | 
   return ApiService.get("/api/auth", token, null);
 });
 
+export const useGetBackendVersion = routeLoader$(async (): Promise<{ v: string } | null> => {
+  return ApiService.get("/api/project/version", undefined, null);
+});
+
 export const useGetUserHsk2WordsTotal = routeLoader$(async ({ cookie }): Promise<number> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return 0;
@@ -33,9 +37,29 @@ export const useGetUserWords = routeLoader$(async ({ cookie }): Promise<UserWord
   return ApiService.get("/api/userwords", token, []);
 });
 
-export const useCheckTheme = routeLoader$(({ cookie }): boolean => {
-  const isLightTheme = Boolean(+(cookie.get(IsLightThemeCookieName)?.value || "0"));
-  return !isLightTheme;
+export type PulseDataItem = {
+  lastMonth: number;
+  prevMonth: number;
+};
+
+export type PulseData = {
+  comment: PulseDataItem;
+  post: PulseDataItem;
+  text: PulseDataItem;
+  video: PulseDataItem;
+  donate: PulseDataItem;
+  user: PulseDataItem;
+};
+
+export const useGetPulse = routeLoader$((): Promise<PulseData> => {
+  return ApiService.get("/api/project/pulse", undefined, {
+    comment: {},
+    post: {},
+    text: {},
+    video: {},
+    donate: {},
+    user: {},
+  });
 });
 
 export default component$(() => {
@@ -43,6 +67,8 @@ export default component$(() => {
   const user = useGetUser();
   const hsk2WordsTotal = useGetUserHsk2WordsTotal();
   const userWords = useGetUserWords();
+  const beVersion = useGetBackendVersion();
+  const pulse = useGetPulse();
 
   useTask$(({ track }) => {
     track(() => user.value);
@@ -84,12 +110,12 @@ export default component$(() => {
   return (
     <>
       <main class={"flex flex-col min-h-screen text-base-content"}>
-        <Header />
+        <Header pulse={pulse.value} />
         <section class={"relative flex flex-col min-h-screen justify-between "}>
           <div class='relative container mx-auto px-4 lg:px-28'>
             <Slot />
           </div>
-          <Footer />
+          <Footer beVersion={beVersion.value?.v || "2.0.3"} />
         </section>
       </main>
     </>

@@ -5,7 +5,7 @@ import { PageTitle } from "~/components/common/layout/title";
 import { ApiService } from "~/misc/actions/request";
 import { PostForm } from "~/components/feedback/post-form";
 import { PostCard } from "~/components/feedback/post-card";
-import { OurSocialMedia } from "~/components/common/media/our-social-media";
+// import { OurSocialMedia } from "~/components/common/media/our-social-media";
 import { MoreBtnAndLoader } from "~/components/common/ui/more-btn-and-loader";
 
 export type newPostData = {

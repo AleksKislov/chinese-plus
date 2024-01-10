@@ -45,6 +45,7 @@ export const TextMainContent = component$(
       pages,
       curPage,
       audioSrc: hasAudio,
+      isApproved,
     } = text;
 
     const isLongTxt = Boolean(pages && pages.length);
@@ -100,16 +101,20 @@ export const TextMainContent = component$(
           </label>
         )}
 
-        <div class={"prose my-3"}>
-          <h3>Похожие тексты</h3>
-        </div>
-        <div class='grid grid-cols-1 md:grid-cols-3 gap-3'>
-          {similarTexts && similarTexts.length ? (
-            similarTexts.map((txt, ind) => <SimilarTxtImg key={ind} txt={txt} />)
-          ) : (
-            <Loader />
-          )}
-        </div>
+        {isApproved && (
+          <>
+            <div class={"prose my-3"}>
+              <h3>Похожие тексты</h3>
+            </div>
+            <div class='grid grid-cols-1 md:grid-cols-3 gap-3'>
+              {similarTexts && similarTexts.length ? (
+                similarTexts.map((txt, ind) => <SimilarTxtImg key={ind} txt={txt} />)
+              ) : (
+                <Loader />
+              )}
+            </div>
+          </>
+        )}
 
         <CommentsFullBlock
           contentId={textId}

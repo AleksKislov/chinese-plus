@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { type DocumentHead, Link } from "@builder.io/qwik-city";
+import { type DocumentHead } from "@builder.io/qwik-city";
 import { FlexRow } from "~/components/common/layout/flex-row";
 import { MainContent } from "~/components/common/layout/main-content";
 import { PageTitle } from "~/components/common/layout/title";
@@ -20,15 +20,7 @@ export default component$(() => {
               Быстрее реагирую на телеграм или комментарии здесь на сайте.
             </p>
             <h3>О нас</h3>
-            <p>
-              Проект делают 2 человека: Александр (разработка) и Вэйи (китайский язык).
-              <br />
-              Также еще жив наш старый{" "}
-              <Link href='http://chineseplus.ru/' target='_blank'>
-                сайт
-              </Link>
-              .
-            </p>
+            <p>Проект делают 2 человека: Александр (разработка) и Вэйи (китайский язык).</p>
           </div>
         </MainContent>
       </FlexRow>

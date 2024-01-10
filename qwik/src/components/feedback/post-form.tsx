@@ -1,7 +1,7 @@
 import { component$, useContext, useStore, $ } from "@builder.io/qwik";
 import CONSTANTS from "~/misc/consts/consts";
 import { userContext } from "~/root";
-import { msgTypes, useAddPost, type MsgType } from "~/routes/feedback";
+import { msgTypes, useAddPost, type MsgType } from "~/routes/(club)/feedback";
 
 export const PostForm = component$(() => {
   const TITLE_LENGTH = 80;

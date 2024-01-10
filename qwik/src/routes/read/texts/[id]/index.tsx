@@ -145,6 +145,14 @@ export const head: DocumentHead = ({ resolveValue }) => {
         name: "description",
         content: `Текст на китайском языке с переводом: ${textInfo.description}`,
       },
+      {
+        name: "twitter:card",
+        content: "text_image_" + textInfo._id,
+      },
+      {
+        name: "twitter:image",
+        content: textInfo.pic_url,
+      },
     ],
   };
 };

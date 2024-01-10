@@ -1,4 +1,4 @@
-FROM node:slim
+FROM node:18.19.0-slim
 ARG VERSION
 ARG BE_PORT
 WORKDIR /app

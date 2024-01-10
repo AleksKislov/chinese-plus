@@ -53,7 +53,7 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={"Донат"} />
+      <PageTitle txt={"Донат и цели проекта"} />
       <FlexRow>
         <div class='w-full md:w-1/2 mb-3 mr-4'>
           <DonateForm />

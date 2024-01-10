@@ -1,7 +1,7 @@
 import { component$, type Signal, useContext } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { userContext } from "~/root";
-import { msgTypes, type Post } from "~/routes/feedback";
+import { msgTypes, type Post } from "~/routes/(club)/feedback";
 import { WHERE, type Addressee } from "../common/comments/comment-form";
 import { UserDateDiv } from "../common/comments/user-with-date";
 import { CommentsBtn } from "../common/content-cards/comments-btn";
