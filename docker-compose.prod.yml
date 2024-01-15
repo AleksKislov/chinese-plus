@@ -28,8 +28,16 @@ services:
 
   chin_plus_fe:
     container_name: chin_plus_fe
-    image: std016039/chin_plus_fe:${VERSION}
+    image: new_bylh-chin_plus_fe:${VERSION}
     restart: unless-stopped
+    environment:
+      - VERSION=${VERSION}
+    build:
+      context: ./qwik
+      dockerfile: Dockerfile
+      args:
+        VERSION: ${VERSION}
+        BE_PORT: 10000
     ports:
       - 4000:3000
     networks:
