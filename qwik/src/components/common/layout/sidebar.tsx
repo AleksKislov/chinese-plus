@@ -10,7 +10,11 @@ export const Sidebar = component$(({ noAds }: { noAds?: boolean }) => {
   return (
     <div class='w-full md:w-1/4 mb-3 mr-4'>
       {!noAds && (
-        <Link href={(adsInfo?.link as string) || ""} class='card w-full bg-base-200 mb-3'>
+        <Link
+          href={(adsInfo?.link as string) || ""}
+          target={"_blank"}
+          class='card w-full bg-base-200 mb-3'
+        >
           <figure>
             <img
               class='pointer'
