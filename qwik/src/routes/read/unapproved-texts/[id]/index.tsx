@@ -81,7 +81,11 @@ export default component$(() => {
             isApproved={false}
           />
         </Sidebar>
-        <TextMainContent text={text.value} comments={comments.value} />
+        <TextMainContent
+          tooltipTxt={text.value.tooltipTxt}
+          text={text.value}
+          comments={comments.value}
+        />
       </FlexRow>
     </>
   );

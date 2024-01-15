@@ -1,5 +1,13 @@
-import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
-import { type DocumentHead, routeLoader$, routeAction$ } from "@builder.io/qwik-city";
+import { component$, useStore, useTask$, useVisibleTask$ } from "@builder.io/qwik";
+import {
+  type DocumentHead,
+  routeLoader$,
+  routeAction$,
+  useLocation,
+  z,
+  zod$,
+  globalAction$,
+} from "@builder.io/qwik-city";
 import { ApiService } from "~/misc/actions/request";
 import { FlexRow } from "~/components/common/layout/flex-row";
 import { Sidebar } from "~/components/common/layout/sidebar";
@@ -48,33 +56,70 @@ export type SimilarText = {
   picUrl: string;
 };
 
-export const useGetSimilarTexts = routeAction$((params): Promise<SimilarText[]> => {
-  const { lvl, tags } = params;
-  return ApiService.get(`/api/texts/similar?lvl=${lvl}&tags=${tags}`, undefined, []);
-});
+// export const useGetSimilarTexts = globalAction$((params): Promise<SimilarText[]> => {
+//   const { lvl, tags } = params;
+//   return ApiService.get(`/api/texts/similar?lvl=${lvl}&tags=${tags}`, undefined, []);
+// });
 
 export const useGetText = routeLoader$(
   async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
-    let curPage = 0;
-    const pg = query.get("pg") || "1";
-    if (+pg && +pg > 0) curPage = +pg - 1;
-
+    const curPage = getCurrentPageNum(query.get("pg"));
     const textFromDb = await getTextFromDB(params.id);
-    let chineseArr = textFromDb.chinese_arr;
-    if (textFromDb.pages && textFromDb.pages.length) {
-      chineseArr = textFromDb.pages[curPage].chinese_arr;
-    }
-    const dbWords = await getWordsForTooltips(chineseArr);
-    const tooltipTxt = parseTextWords(chineseArr, dbWords);
+    const chineseArr = getChineseArr(textFromDb, curPage);
+
+    // first load only the 1st parag
+    const firstParag = chineseArr.slice(0, chineseArr.indexOf("\n"));
+    const dbWords = await getWordsForTooltips(firstParag);
+    const tooltipTxt = parseTextWords(firstParag, dbWords);
+    // const dbWords = await getWordsForTooltips(chineseArr);
+    // const tooltipTxt = parseTextWords(chineseArr, dbWords);
     return { ...textFromDb, tooltipTxt, curPage };
   }
 );
 
+export const useGetRestTooltipTxt = routeAction$(
+  async (params): Promise<[(string | DictWord)[][], SimilarText[]]> => {
+    const { chineseArr, lvl, tags, isApproved } = params;
+    const dbWords = await getWordsForTooltips(chineseArr);
+    return Promise.all([
+      parseTextWords(chineseArr, dbWords),
+      isApproved
+        ? ApiService.get(`/api/texts/similar?lvl=${lvl}&tags=${tags}`, undefined, [])
+        : undefined,
+    ]);
+  },
+  zod$({
+    chineseArr: z.array(z.string()),
+    lvl: z.number().int(),
+    tags: z.array(z.string()),
+    isApproved: z.boolean(),
+  })
+);
+
+export function getCurrentPageNum(pg: string | null = "1"): number {
+  if (!pg) return 0;
+  if (+pg && +pg > 0) return +pg - 1;
+  return 0;
+}
+
+export function getChineseArr(textFromDb: TextFromDB, curPage: number): string[] {
+  let chineseArr = textFromDb.chinese_arr;
+  if (textFromDb.pages && textFromDb.pages.length) {
+    chineseArr = textFromDb.pages[curPage].chinese_arr;
+  }
+  return chineseArr;
+}
+
 export default component$(() => {
-  const getSimilar = useGetSimilarTexts();
+  // const getSimilar = useGetSimilarTexts();
+  const getRestParags = useGetRestTooltipTxt();
   const text = useGetText();
   const comments = getComments();
-  const similarTexts = useSignal<SimilarText[] | null>(null);
+  const paragsStore = useStore<{ tooltipTxt: (string | DictWord)[][] | null }>({
+    tooltipTxt: null,
+  });
+
+  const loc = useLocation();
 
   const {
     _id: textId,
@@ -90,15 +135,37 @@ export default component$(() => {
     likes,
     length,
     source,
+    isApproved,
   } = text.value;
 
-  useVisibleTask$(() => {
-    getSimilar.submit({ lvl, tags });
+  useTask$(({ track }) => {
+    track(() => text.value.curPage);
+    paragsStore.tooltipTxt = text.value.tooltipTxt;
+  });
+
+  useVisibleTask$(async () => {
+    // to get the rest of the tooltips / parags
+    const pg = loc.url.searchParams.get("pg");
+    const currentPage = getCurrentPageNum(pg);
+    const arr = getChineseArr(text.value, currentPage);
+    await getRestParags.submit({
+      chineseArr: arr.slice(arr.indexOf("\n") + 1),
+      lvl,
+      tags,
+      isApproved: Boolean(isApproved),
+    });
   });
 
   useVisibleTask$(({ track }) => {
-    const simTxts = track(() => getSimilar.value);
-    if (simTxts?.length) similarTexts.value = simTxts;
+    const restParags = track(() => getRestParags.value);
+
+    if (restParags?.[0]) {
+      for (let i = 0; i < restParags[0].length; i++) {
+        setTimeout(() => {
+          paragsStore.tooltipTxt?.push(restParags[0][i]);
+        }, i * 50);
+      }
+    }
   });
 
   return (
@@ -126,9 +193,11 @@ export default component$(() => {
           <ReadResultCard />
         </Sidebar>
         <TextMainContent
+          similarTexts={getRestParags.value?.[1]}
+          tooltipTxt={paragsStore.tooltipTxt}
           text={text.value}
           comments={comments.value}
-          similarTexts={similarTexts.value}
+          restLoading={getRestParags.isRunning}
         />
       </FlexRow>
     </>

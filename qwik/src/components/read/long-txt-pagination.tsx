@@ -12,11 +12,16 @@ export const LongTxtPagination = component$(({ numOfPages, curPage }: Pagination
       <div></div>
       <div>
         <ul class='btn-group'>
-          {Array.from(Array(numOfPages)).map((el, ind) => (
+          {Array.from(Array(numOfPages)).map((_el, ind) => (
             <Link
               class={`btn btn-sm ${curPage === ind ? "btn-active" : ""}`}
               key={ind}
               href={`?pg=${ind + 1}`}
+              onClick$={() => {
+                setTimeout(() => {
+                  location.reload();
+                }, 300);
+              }}
             >
               {ind + 1}
             </Link>

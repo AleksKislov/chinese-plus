@@ -86,7 +86,7 @@ export const ClubPulse = component$(({ data }: ClubPulseProps) => {
           <div class='card-body'>
             <h3 class='card-title'>Пульс клуба</h3>
             <div>
-              <span class='text-xs'>Текущий и предыдущий месяцы</span>
+              <span class='text-xs'>за последние 30 дней</span>
             </div>
             <div class='stats stats-vertical bg-base-100'>
               {metricsArr.map((x, ind) => {

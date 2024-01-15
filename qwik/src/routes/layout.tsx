@@ -4,8 +4,7 @@ import { routeLoader$ } from "@builder.io/qwik-city";
 import { ApiService } from "~/misc/actions/request";
 import { getTokenFromCookie, logout, type UserFromDB } from "~/misc/actions/auth";
 import { Footer } from "~/components/common/layout/footer";
-import { type UserWord } from "~/root";
-import { userContext } from "~/root";
+import { type UserWord, userContext, configContext, type Config } from "~/root";
 import { type CommentType } from "~/components/common/comments/comment-card";
 
 export const getNewMentions = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
@@ -62,6 +61,10 @@ export const useGetPulse = routeLoader$((): Promise<PulseData> => {
   });
 });
 
+export const useFeConfigs = routeLoader$((): Promise<Config[]> => {
+  return ApiService.get("/api/project/configs", undefined, []);
+});
+
 export default component$(() => {
   const userState = useContext(userContext);
   const user = useGetUser();
@@ -69,6 +72,8 @@ export default component$(() => {
   const userWords = useGetUserWords();
   const beVersion = useGetBackendVersion();
   const pulse = useGetPulse();
+  const feConfigs = useFeConfigs();
+  const configState = useContext(configContext);
 
   useTask$(({ track }) => {
     track(() => user.value);
@@ -101,10 +106,21 @@ export default component$(() => {
     userState.words = userWords.value;
   });
 
+  useTask$(({ track }) => {
+    track(() => userWords.value);
+    if (userWords.value === undefined) return;
+    userState.words = userWords.value;
+  });
+
   useVisibleTask$(({ track }) => {
     track(() => user.value);
     if (user.value === undefined) return;
     if (user.value === null) logout();
+  });
+
+  useTask$(({ track }) => {
+    const res = track(() => feConfigs.value);
+    configState.push(...res.filter((x) => x.isActive));
   });
 
   return (

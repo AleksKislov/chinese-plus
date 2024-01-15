@@ -12,7 +12,7 @@ type ContentPageHeadProps = {
 
 export const ContentPageHead = component$(({ path, title, hits }: ContentPageHeadProps) => (
   <div class={"flex flex-col md:flex-row"}>
-    <Sidebar>
+    <Sidebar noAds={true}>
       <BackBtn path={path} />
     </Sidebar>
 

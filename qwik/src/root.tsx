@@ -42,6 +42,12 @@ export interface User {
   newAvatar?: NewAvatar;
 }
 
+export interface Config {
+  type: string;
+  isActive: boolean;
+  [x: string]: unknown;
+}
+
 export interface Alert {
   bg: AlertBgUnion;
   text: string;
@@ -57,6 +63,7 @@ export const AlertColorEnum = {
 
 export const userContext = createContextId<User>("user-context");
 export const alertsContext = createContextId<Alert[]>("alerts-context");
+export const configContext = createContextId<Config[]>("config-context");
 
 export default component$(() => {
   useStyles$(globalStyles);
@@ -78,9 +85,11 @@ export default component$(() => {
     newAvatar: undefined,
   });
   const alertsState = useStore<Alert[]>([]);
+  const configState = useStore<Config[]>([]);
 
   useContextProvider(userContext, userState);
   useContextProvider(alertsContext, alertsState);
+  useContextProvider(configContext, configState);
 
   return (
     <QwikCityProvider>

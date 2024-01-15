@@ -31,6 +31,7 @@ import { alertsContext } from "~/root";
 import { getWordsForTooltips } from "~/routes/read/texts/[id]";
 import HanziWriter from "hanzi-writer";
 import { markUpRuText } from "~/misc/helpers/translation";
+import { Sidebar } from "~/components/common/layout/sidebar";
 
 export const HanziWriterSettings = {
   width: 60,
@@ -128,18 +129,26 @@ export default component$(() => {
       <PageTitle txt={"Китайско-русский словарь"} />
 
       <FlexRow>
+        <Sidebar>
+          <div class='card bg-base-200 mt-3'>
+            <div class='card-body'>
+              <span>
+                База слов взята с{" "}
+                <Link
+                  class='link link-hover link-secondary font-bold'
+                  href={"https://bkrs.info/"}
+                  target='_blank'
+                >
+                  БКРС
+                </Link>
+              </span>
+            </div>
+          </div>
+        </Sidebar>
         <Alerts />
         <MainContent>
           <div class='prose'>
             <div class='form-control'>
-              <label class='label'>
-                <span class='label-text'>
-                  База слов взята с{" "}
-                  <Link href={"https://bkrs.info/"} target='_blank'>
-                    БКРС
-                  </Link>
-                </span>
-              </label>
               <div class='input-group w-full'>
                 <input
                   type='text'

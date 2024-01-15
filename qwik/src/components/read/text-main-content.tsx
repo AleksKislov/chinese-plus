@@ -12,7 +12,7 @@ import { MoreInfoModal } from "../common/modals/more-info-modal";
 import { EditChineseArrModal } from "../common/modals/edit-chinese-arr-modal";
 import { userContext } from "~/root";
 import { FontSizeBtns } from "../common/content-cards/content-page-card";
-import type { SimilarText, TextFromDB, TooltipText } from "~/routes/read/texts/[id]";
+import { type SimilarText, type TextFromDB, type TooltipText } from "~/routes/read/texts/[id]";
 import type { CommentType } from "../common/comments/comment-card";
 import { editWordModalId, moreInfoModalId } from "../common/tooltips/word-tooltip";
 import { Loader } from "../common/ui/loader";
@@ -22,11 +22,13 @@ import { CommentsFullBlock } from "../common/comments/comments-full-block";
 type TextMainContentProps = {
   text: TextFromDB & TooltipText & { curPage: number };
   comments: CommentType[];
-  similarTexts: SimilarText[] | null;
+  similarTexts?: SimilarText[] | null;
+  restLoading?: boolean;
+  tooltipTxt: (string | DictWord)[][] | null;
 };
 
 export const TextMainContent = component$(
-  ({ text, comments, similarTexts }: TextMainContentProps) => {
+  ({ text, comments, restLoading, tooltipTxt, similarTexts }: TextMainContentProps) => {
     const { isAdmin } = useContext(userContext);
     const fontSizeSig = useSignal(FontSizeBtns.md);
     const addressees = useSignal<Addressee[]>([]);
@@ -40,7 +42,6 @@ export const TextMainContent = component$(
       _id: textId,
       translation,
       chinese_arr: chineseArr,
-      tooltipTxt,
       origintext,
       pages,
       curPage,
@@ -82,7 +83,7 @@ export const TextMainContent = component$(
 
         {!hasAudio ? null : <AudioPlayer textId={textId} />}
 
-        {tooltipTxt.map((parag, i) => (
+        {tooltipTxt?.map((parag, i) => (
           <Paragraph
             key={i}
             fontSize={fontSizeSig.value}
@@ -94,6 +95,7 @@ export const TextMainContent = component$(
             showTranslation={showTranslation.value}
           />
         ))}
+        <div>{restLoading && <Loader />}</div>
 
         {isAdmin && (
           <label for={editChineseArrModalId} class={`btn btn-sm btn-outline btn-warning mt-2`}>
@@ -101,20 +103,19 @@ export const TextMainContent = component$(
           </label>
         )}
 
-        {isApproved && (
+        {isApproved && similarTexts ? (
           <>
             <div class={"prose my-3"}>
               <h3>Похожие тексты</h3>
             </div>
+
             <div class='grid grid-cols-1 md:grid-cols-3 gap-3'>
-              {similarTexts && similarTexts.length ? (
-                similarTexts.map((txt, ind) => <SimilarTxtImg key={ind} txt={txt} />)
-              ) : (
-                <Loader />
-              )}
+              {similarTexts?.map((txt, ind) => (
+                <SimilarTxtImg key={ind} txt={txt} />
+              ))}
             </div>
           </>
-        )}
+        ) : null}
 
         <CommentsFullBlock
           contentId={textId}

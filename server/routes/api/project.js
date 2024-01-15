@@ -6,6 +6,7 @@ const Text = require("../../src/models/Text");
 const Video = require("../../src/models/Video");
 const Donate = require("../../src/models/Donate");
 const User = require("../../src/models/User");
+const Config = require("../../src/models/Config");
 
 // const ADMIN_ID = process.env.ADMIN_ID;
 const VERSION = process.env.BE_VERSION;
@@ -60,5 +61,15 @@ function getCountForLastMonth(arr, datePropName, currentDate, last1MonthStartDat
     return date >= last1MonthStartDate && date <= currentDate;
   }).length;
 }
+
+router.get("/configs", async (req, res) => {
+  try {
+    const conf = await Config.find();
+    return res.json(conf);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
 
 module.exports = router;
