@@ -6,6 +6,7 @@ import { WHERE, type Addressee } from "../common/comments/comment-form";
 import { UserDateDiv } from "../common/comments/user-with-date";
 import { CommentsBtn } from "../common/content-cards/comments-btn";
 import { SmallAvatar } from "../common/ui/small-avatar";
+import { SafeText } from "../common/comments/safe-text";
 
 type PostCardProps = {
   post: Post;
@@ -49,7 +50,7 @@ export const PostCard = component$(({ post, isPostPage, addressees }: PostCardPr
             <span class='badge badge-info mr-1 badge-outline ml-2'>{msgTypes[tag]}</span>
           </div>
         </div>
-        <p class={"mt-2"} dangerouslySetInnerHTML={text}></p>
+        <SafeText text={text} />
 
         <div class={"flex justify-between"}>
           <UserDateDiv userId={userInfo._id} userName={userInfo.name} date={date} ptNum={2} />

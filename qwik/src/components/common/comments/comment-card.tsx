@@ -9,6 +9,7 @@ import { EditCommentModal } from "./edit-comment-modal";
 import { getLikeBtnTooltipTxt } from "../content-cards/like-btn";
 import { SmallAvatar } from "../ui/small-avatar";
 import { getContentPath } from "~/misc/helpers/content";
+import { SafeText } from "./safe-text";
 
 export type CommentType = {
   addressees: string[];
@@ -95,7 +96,7 @@ export const CommentCard = component$(
                 </div>
               </div>
               <div>
-                <p class={"mt-2"} dangerouslySetInnerHTML={text}></p>
+                <SafeText text={text} />
               </div>
             </div>
 

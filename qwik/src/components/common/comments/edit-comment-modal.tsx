@@ -43,8 +43,7 @@ export const EditCommentModal = component$(({ modalId, comment }: EditCommentPro
   const addressees = useSignal<Addressee[]>([]);
 
   const submitPost = $(async () => {
-    let text = newText.value.replace(/\n/g, "<br />");
-
+    let text = newText.value;
     const foundUsers = parseForAddressees(newText.value);
     if (foundUsers.length) {
       foundUsers.forEach((user) => {

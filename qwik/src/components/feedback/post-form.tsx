@@ -25,7 +25,7 @@ export const PostForm = component$(() => {
   const submitPost = $(async () => {
     if (!newPostStore.text.length || !newPostStore.title.length) return;
 
-    const text = newPostStore.text.replace(/\n/g, "<br />");
+    const text = newPostStore.text;
     const tag = Object.keys(chosenBtn).find((tag) => chosenBtn[tag as MsgType]);
     await addPost.submit({
       title: `${newPostStore.emo} ${newPostStore.title}`,
@@ -67,6 +67,7 @@ export const PostForm = component$(() => {
               <select
                 class='select select-bordered w-full'
                 onChange$={(e) => {
+                  // @ts-ignore
                   newPostStore.emo = e.target.value;
                 }}
               >

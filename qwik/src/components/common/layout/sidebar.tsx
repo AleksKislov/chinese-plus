@@ -9,7 +9,7 @@ export const Sidebar = component$(({ noAds }: { noAds?: boolean }) => {
 
   return (
     <div class='w-full md:w-1/4 mb-3 mr-4'>
-      {!noAds && (
+      {!noAds && adsInfo && (
         <Link
           href={(adsInfo?.link as string) || ""}
           target={"_blank"}
