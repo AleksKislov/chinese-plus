@@ -9,6 +9,7 @@ import {
   type WhereType,
   parseForAddressees,
   getAddresseeStr,
+  AddresseeTag,
 } from "./comment-form";
 
 type EditCommentProps = {
@@ -49,7 +50,7 @@ export const EditCommentModal = component$(({ modalId, comment }: EditCommentPro
       foundUsers.forEach((user) => {
         text = text.replace(
           getAddresseeStr(user),
-          `<strong class='text-info'>${user.name}</strong>`
+          `${AddresseeTag.start}${user.name}${AddresseeTag.end}`
         );
       });
     }

@@ -77,6 +77,11 @@ export const getAddresseeStr = (add: Addressee): string => {
   return `@@[${add.id}]{${add.name}}@@`;
 };
 
+export const AddresseeTag = {
+  start: `<strong class='text-info'>`,
+  end: "</strong>",
+};
+
 export const CommentForm = component$(
   ({ contentId, where, path, commentIdToReply, addressees }: CommentFormProps) => {
     const userState = useContext(userContext);
@@ -98,7 +103,7 @@ export const CommentForm = component$(
         foundUsers.forEach((user) => {
           text = text.replace(
             getAddresseeStr(user),
-            `<strong class='text-info'>${user.name}</strong>`
+            `${AddresseeTag.start}${user.name}${AddresseeTag.end}`
           );
         });
       }
