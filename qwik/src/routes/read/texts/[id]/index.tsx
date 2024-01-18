@@ -1,4 +1,4 @@
-import { component$, useStore, useTask$, useVisibleTask$ } from "@builder.io/qwik";
+import { component$, useVisibleTask$ } from "@builder.io/qwik";
 import {
   type DocumentHead,
   routeLoader$,
@@ -6,7 +6,6 @@ import {
   useLocation,
   z,
   zod$,
-  globalAction$,
 } from "@builder.io/qwik-city";
 import { ApiService } from "~/misc/actions/request";
 import { FlexRow } from "~/components/common/layout/flex-row";
@@ -115,10 +114,6 @@ export default component$(() => {
   const getRestParags = useGetRestTooltipTxt();
   const text = useGetText();
   const comments = getComments();
-  const paragsStore = useStore<{ tooltipTxt: (string | DictWord)[][] | null }>({
-    tooltipTxt: null,
-  });
-
   const loc = useLocation();
 
   const {
@@ -138,34 +133,15 @@ export default component$(() => {
     isApproved,
   } = text.value;
 
-  useTask$(({ track }) => {
-    track(() => text.value.curPage);
-    paragsStore.tooltipTxt = text.value.tooltipTxt;
-  });
-
   useVisibleTask$(async () => {
-    // to get the rest of the tooltips / parags
     const pg = loc.url.searchParams.get("pg");
     const currentPage = getCurrentPageNum(pg);
-    const arr = getChineseArr(text.value, currentPage);
     await getRestParags.submit({
-      chineseArr: arr.slice(arr.indexOf("\n") + 1),
+      chineseArr: getChineseArr(text.value, currentPage),
       lvl,
       tags,
       isApproved: Boolean(isApproved),
     });
-  });
-
-  useVisibleTask$(({ track }) => {
-    const restParags = track(() => getRestParags.value);
-
-    if (restParags?.[0]) {
-      for (let i = 0; i < restParags[0].length; i++) {
-        setTimeout(() => {
-          paragsStore.tooltipTxt?.push(restParags[0][i]);
-        }, i * 50);
-      }
-    }
   });
 
   return (
@@ -194,7 +170,7 @@ export default component$(() => {
         </Sidebar>
         <TextMainContent
           similarTexts={getRestParags.value?.[1]}
-          tooltipTxt={paragsStore.tooltipTxt}
+          tooltipTxt={getRestParags.value?.[0] || text.value.tooltipTxt}
           text={text.value}
           comments={comments.value}
           restLoading={getRestParags.isRunning}
