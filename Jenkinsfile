@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     stages {
-        stage('Hello') {
+        stage('testing') {
             steps {
-                echo 'Hello World'
-                sh 'make VERSION=${APP_VERSION} build-up-back'
+                echo 'VERSION=${APP_VERSION}'
+                sh 'docker compose -f docker-compose.prod.yml build chin_plus_be'
             }
         }
     }
