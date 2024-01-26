@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('testing') {
             steps {
-                sh 'VERSION=${APP_VERSION}'
+                sh 'echo {VERSION}'
                 sh 'docker compose -f docker-compose.prod.yml build chin_plus_fe'
             }
         }
