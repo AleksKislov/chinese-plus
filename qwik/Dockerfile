@@ -1,4 +1,5 @@
-FROM node:18.19.0-slim
+# Stage 1: Build stage
+FROM node:20-slim AS build
 ARG VERSION
 ARG BE_PORT
 WORKDIR /app
@@ -10,5 +11,10 @@ RUN echo "PUBLIC_ENV=development" >> /app/.env
 RUN echo "PUBLIC_VERSION=${VERSION}" >> /app/.env
 RUN npm run build.client
 RUN npm run build.server
-ENTRYPOINT ["node", "server/entry.express.js"]
+
+# Stage 2: Production stage
+FROM node:20-slim
+WORKDIR /app
+COPY --from=build /app .
 EXPOSE 3000
+ENTRYPOINT ["node", "server/entry.express.js"]
