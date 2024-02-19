@@ -1,5 +1,5 @@
 # Stage 1: Build stage
-FROM node:20-slim AS build
+FROM node:18.19.0-slim AS build
 ARG VERSION
 ARG BE_PORT
 WORKDIR /app
@@ -13,7 +13,7 @@ RUN npm run build.client
 RUN npm run build.server
 
 # Stage 2: Production stage
-FROM node:20-slim
+FROM node:18.19.0-slim
 WORKDIR /app
 COPY --from=build /app .
 EXPOSE 3000
