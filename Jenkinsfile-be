@@ -1,0 +1,18 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('build') {
+            steps {
+                sh 'echo $BE_VERSION'
+                sh 'docker compose -f docker-compose.prod.yml build chin_plus_be'
+            }
+        }
+        stage('start') {
+            steps {
+                sh 'echo $BE_VERSION'
+                sh 'docker compose -f docker-compose.prod.yml up -d chin_plus_be'
+            }
+        }
+    }
+}

@@ -8,7 +8,6 @@ const Donate = require("../../src/models/Donate");
 const User = require("../../src/models/User");
 const Config = require("../../src/models/Config");
 
-// const ADMIN_ID = process.env.ADMIN_ID;
 const VERSION = process.env.BE_VERSION;
 
 router.get("/version", (req, res) => {
