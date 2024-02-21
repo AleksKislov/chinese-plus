@@ -14,7 +14,7 @@ services:
 
   chin_plus_be:
     container_name: chin_plus_be
-    image: chin_plus_be:${VERSION}
+    image: chin_plus_be:${BE_VERSION}
     restart: unless-stopped
     build:
       context: ./server
