@@ -4,6 +4,8 @@ pipeline {
     environment {
         TELEGRAM_NOTICE_URL = credentials('TELEGRAM_NOTICE_URL')
         MONGO_DB = credentials('MONGO_DB')
+        AUTH_GOOGLE_CLIENT_ID = credentials('AUTH_GOOGLE_CLIENT_ID')
+        AUTH_GOOGLE_SECRET = credentials('AUTH_GOOGLE_SECRET')
     }
 
     stages {

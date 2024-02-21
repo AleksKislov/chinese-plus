@@ -24,6 +24,8 @@ services:
     environment:
       BE_VERSION: ${BE_VERSION}
       MONGO_DB: ${MONGO_DB}
+      AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
+      AUTH_GOOGLE_SECRET: ${AUTH_GOOGLE_SECRET}
     networks:
       bylh_net:
 
