@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        TELEGRAM_NOTICE_URL = credentials('TELEGRAM_NOTICE_URL')
+        MONGO_DB = credentials('MONGO_DB')
+    }
+
     stages {
         stage('build') {
             steps {
