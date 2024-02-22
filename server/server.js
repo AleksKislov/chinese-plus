@@ -7,6 +7,7 @@ const cors = require("cors");
 
 const isDevelopment = process.env.NODE_ENV === "development";
 module.exports = { isDevelopment };
+console.log("MON~GO~OOO", process.env.MONGO_DB);
 
 require("dotenv").config({ path: isDevelopment ? "./config/.env.dev" : "./config/.env.prod" });
 const MONGO_DB = process.env.MONGO_IN_CONTAINER
