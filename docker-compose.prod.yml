@@ -10,7 +10,7 @@ services:
     volumes:
       - mongodata:/data/db
     networks:
-      bylh_net:
+      new_bylh_bylh_net:
 
   chin_plus_be:
     container_name: chin_plus_be
@@ -27,7 +27,7 @@ services:
       AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
       AUTH_GOOGLE_SECRET: ${AUTH_GOOGLE_SECRET}
     networks:
-      bylh_net:
+      new_bylh_bylh_net:
 
   chin_plus_fe:
     container_name: chin_plus_fe
@@ -44,10 +44,11 @@ services:
     ports:
       - 4000:3000
     networks:
-      bylh_net:
+      new_bylh_bylh_net:
 
 volumes:
   mongodata:
 
 networks:
-  bylh_net:
+  new_bylh_bylh_net:
+    external: true
