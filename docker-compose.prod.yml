@@ -22,10 +22,9 @@ services:
     ports:
       - 10000:10000
     environment:
-      BE_VERSION: ${BE_VERSION}
-      MONGO_DB: ${MONGO_DB}
-      AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
-      AUTH_GOOGLE_SECRET: ${AUTH_GOOGLE_SECRET}
+      BE_VERSION: ${VERSION}
+    env_file:
+      - ./server/config/.env.prod
     networks:
       new_bylh_bylh_net:
 
