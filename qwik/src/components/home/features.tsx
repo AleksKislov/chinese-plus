@@ -38,7 +38,7 @@ export const featuresArr = [
         <Link href='/watch/videos' class='link link-secondary'>
           видео
         </Link>{" "}
-        не только с параллельным переводом, но и с переводом каждого слова. Кликните на{" "}
+        с параллельным переводом и переводом каждого слова. Кликните на{" "}
         <span class='text-secondary'>иероглиф</span>
       </p>
     ),
@@ -86,19 +86,19 @@ export const featuresArr = [
     pic: academicCapExtraBigSvg,
     desc: (
       <p>
-        Смотрите страницу{" "}
+        Узнайте{" "}
         <Link href='/start/how-to-start' class='link link-secondary'>
-          С чего начать
+          с чего начать
         </Link>
-        , а также: озвучка{" "}
+        , слушайте озвучку{" "}
         <Link href='/hsk/2/table' class='link link-secondary'>
           HSK
         </Link>
-        -лексики, таблица
+        -лексики и{" "}
         <Link href='/start/pinyin-chart' class='link link-secondary'>
           пиньиня
         </Link>
-        , видео-уроки по{" "}
+        , смотрите уроки по{" "}
         <Link href='/watch/phonetics-lessons' class='link link-secondary'>
           фонетике
         </Link>{" "}
