@@ -16,6 +16,7 @@ type WordTooltipProps = {
 
 export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordTooltipProps) => {
   const isRightSide = useSignal(false);
+  const isScreenCenter = useSignal(false);
   const userState = useContext(userContext);
   const { loggedIn } = userState;
   const showTooltip = useSignal(false);
@@ -25,9 +26,16 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
   }
 
   return (
-    <div class={`dropdown dropdown-bottom ${isRightSide.value ? "dropdown-end" : ""}`}>
+    <div
+      class={`dropdown dropdown-bottom ${
+        isRightSide.value && !isScreenCenter.value ? "dropdown-end" : ""
+      }`}
+    >
       <label
-        onMouseEnter$={(ev) => (isRightSide.value = screen.width / 2 < ev.x)}
+        onMouseEnter$={(ev) => {
+          isRightSide.value = screen.width / 2 < ev.x;
+          isScreenCenter.value = screen.width / 3 < ev.x && 2 * (screen.width / 3) > ev.x;
+        }}
         tabIndex={0}
         onClick$={() => {
           currentWord.value = word as DictWord;
@@ -44,7 +52,9 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
           tabIndex={0}
           class={`rounded-box dropdown-content card card-compact bg-neutral-focus text-neutral-content w-64 p-1 shadow z-30 ${
             showTooltip.value ? "" : "hidden"
-          } ${isRightSide.value ? "-right-5" : "-left-5"}`}
+          } ${isScreenCenter.value && isRightSide.value ? "-right-14" : ""}
+          ${isScreenCenter.value && !isRightSide.value ? "-left-14" : ""} 
+          `}
         >
           <div class='card-body text-left'>
             <label

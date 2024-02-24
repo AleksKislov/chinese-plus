@@ -7,6 +7,7 @@ import { UserDateDiv } from "../common/comments/user-with-date";
 import { CommentsBtn } from "../common/content-cards/comments-btn";
 import { SmallAvatar } from "../common/ui/small-avatar";
 import { SafeText } from "../common/comments/safe-text";
+import { DeleteContentBtn } from "../common/content-cards/delete-content-btn";
 
 type PostCardProps = {
   post: Post;
@@ -54,7 +55,7 @@ export const PostCard = component$(({ post, isPostPage, addressees }: PostCardPr
 
         <div class={"flex justify-between"}>
           <UserDateDiv userId={userInfo._id} userName={userInfo.name} date={date} ptNum={2} />
-
+          <DeleteContentBtn contentId={post._id} contentType={WHERE.post} />
           {!isPostPage && (
             <CommentsBtn
               contentId={post._id}

@@ -21,12 +21,12 @@ export const SearchResultRow = component$(
         <tr class={"hover"}>
           {!hideBtnsSig.value.includes(HideBtnsEnum.cn) && (
             <td
-              class={"prose cursor-pointer"}
+              class='prose cursor-pointer'
               onClick$={() => {
                 nav("/search?q=" + (typeof word === "string" ? word : word.chinese));
               }}
             >
-              <h2>{typeof word === "string" ? word : word.chinese}</h2>
+              <h2 class='w-24'>{typeof word === "string" ? word : word.chinese}</h2>
             </td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.py) && (

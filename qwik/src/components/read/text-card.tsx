@@ -1,7 +1,6 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import CONSTANTS from "~/misc/consts/consts";
 import { type TextCardInfo } from "~/routes/read/texts";
-// import { type LevelUnion } from "~/routes/watch/videos";
 import { WHERE } from "../common/comments/comment-form";
 import { UserDateDiv } from "../common/comments/user-with-date";
 import { TagsLine } from "../common/content-cards/tags-line";

@@ -17,7 +17,7 @@ const {
   likeText,
   markAsRead,
   markAsNotRead,
-  // deleteText,
+  deleteText,
   getMarkedTexts,
   editChineseArr,
   getSimilarTexts,
@@ -92,7 +92,7 @@ router.get("/statistics", getTextsPerUserStats);
 //  * @desc      Delete a Text
 //  * @access    Private
 //  */
-// router.delete("/delete/:id", adminAuth, deleteText);
+router.delete("/delete/:id", adminAuth, deleteText);
 
 /**
  * @route     DELETE api/texts/comment/:id/:comment_id

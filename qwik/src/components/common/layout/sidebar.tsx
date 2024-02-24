@@ -5,7 +5,8 @@ import { configContext } from "~/root";
 export const Sidebar = component$(({ noAds }: { noAds?: boolean }) => {
   const configState = useContext(configContext);
 
-  const adsInfo = configState.find((x) => x.type === "ads");
+  const adsInfoArr = configState.filter((x) => x.type === "ads");
+  const adsInfo = adsInfoArr[Math.floor(Math.random() * adsInfoArr.length)];
 
   return (
     <div class='w-full md:w-1/4 mb-3 mr-4'>
@@ -17,7 +18,7 @@ export const Sidebar = component$(({ noAds }: { noAds?: boolean }) => {
         >
           <figure>
             <img
-              class='pointer'
+              class='pointer rounded-xl'
               width='648'
               height='240'
               src={(adsInfo?.mediaUrl as string) || ""}

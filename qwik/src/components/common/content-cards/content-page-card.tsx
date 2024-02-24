@@ -11,6 +11,7 @@ import { TextSource } from "./text-source";
 import { EditBtn } from "./edit-btn";
 import CONST_URLS from "~/misc/consts/urls";
 import { BookmarkBtn } from "./bookmark-btn";
+import { DeleteContentBtn } from "./delete-content-btn";
 
 type ContentPageCardProps = {
   contentType: WhereType;
@@ -104,6 +105,7 @@ export const ContentPageCard = component$(
             creatorId={userId}
             isApproved={isApproved}
           />
+          <DeleteContentBtn contentType={contentType} contentId={contentId} />
         </div>
       </div>
     );

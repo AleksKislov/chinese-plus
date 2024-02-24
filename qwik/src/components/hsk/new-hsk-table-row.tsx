@@ -26,7 +26,7 @@ export const NewHskTableRow = component$(
           <td>{id}</td>
           {!hideBtnsSig.value.includes(HideBtnsEnum.cn) && (
             <td class={"prose"}>
-              <h2>{cn}</h2>
+              <h2 class='w-24'>{cn}</h2>
             </td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.py) && (

@@ -18,7 +18,7 @@ export const EditBtn = component$(
     const ownsContent = _id === creatorId;
     const nav = useNavigate();
 
-    // если не модер, то публиковать только свое до публикации
+    // если не модер, то редактировать только свое до публикации
     return isAdmin || isModerator || (!isApproved && ownsContent) ? (
       <button
         class={`btn btn-sm btn-outline btn-warning mt-2`}

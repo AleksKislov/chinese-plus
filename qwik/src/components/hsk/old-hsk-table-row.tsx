@@ -86,7 +86,7 @@ export const OldHskTableRow = component$(
           <td class={userSelected ? "bg-base-300" : ""}>{id}</td>
           {!hideBtnsSig.value.includes(HideBtnsEnum.cn) && (
             <td class={`prose ${userSelected ? "bg-base-300" : ""}`}>
-              <h2>{cn}</h2>
+              <h2 class='w-24'>{cn}</h2>
             </td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.py) && (
