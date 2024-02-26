@@ -2,6 +2,7 @@ import { component$, type Signal } from "@builder.io/qwik";
 import { type FontSizeBtnsUnion, FontSizeMap } from "../common/content-cards/content-page-card";
 import { WordTooltip } from "../common/tooltips/word-tooltip";
 import { ParagPlus } from "./parag-plus";
+import { ParagNum } from "./parag-num";
 
 type ParagraphProps = {
   translation: string;
@@ -48,11 +49,3 @@ export const Paragraph = component$(
     );
   }
 );
-
-export const ParagNum = component$(({ num }: { num: number }) => (
-  <div class='absolute right-1 -top-1'>
-    <div class='tooltip tooltip-left text-sm text-info' data-tip={`Параграф ${num}`}>
-      {num}
-    </div>
-  </div>
-));

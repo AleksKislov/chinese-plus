@@ -5,9 +5,10 @@ import { type NewVideoStore } from "~/routes/(content)/create/video";
 
 type OtherVideoFieldsProps = {
   store: NewVideoStore;
+  isAdmin: boolean;
 };
 
-export const OtherVideoFields = component$(({ store }: OtherVideoFieldsProps) => {
+export const OtherVideoFields = component$(({ store, isAdmin }: OtherVideoFieldsProps) => {
   const STARS_LVL = [1, 2, 3];
 
   return (
@@ -16,6 +17,26 @@ export const OtherVideoFields = component$(({ store }: OtherVideoFieldsProps) =>
       <div class='collapse-title text-xl px-7'>Необязательные поля</div>
 
       <div class={`collapse-content`}>
+        {isAdmin && (
+          <FlexRow>
+            <div class='form-control'>
+              <div class='mx-4 label'>Для админа:</div>
+            </div>
+            <div>
+              <div class='form-control'>
+                <label class='label cursor-pointer'>
+                  <span class='label-text mr-2'>Опубликован</span>
+                  <input
+                    type='checkbox'
+                    checked={Boolean(store.isApproved)}
+                    class='checkbox checkbox-primary'
+                    onChange$={() => (store.isApproved = !store.isApproved ? 1 : 0)}
+                  />
+                </label>
+              </div>
+            </div>
+          </FlexRow>
+        )}
         {/* заголовок и описание */}
         <FlexRow>
           <div class='w-full basis-1/2 mx-3'>
@@ -28,7 +49,7 @@ export const OtherVideoFields = component$(({ store }: OtherVideoFieldsProps) =>
                 placeholder='Заголовок'
                 class='input input-bordered w-full'
                 value={store.title}
-                onChange$={(e) => (store.title = e.target.value)}
+                onChange$={(e) => (store.title = (e.target as HTMLTextAreaElement).value)}
               />
             </div>
           </div>
@@ -42,7 +63,7 @@ export const OtherVideoFields = component$(({ store }: OtherVideoFieldsProps) =>
                 placeholder='О чем видео'
                 class='input input-bordered w-full'
                 value={store.desc}
-                onChange$={(e) => (store.desc = e.target.value)}
+                onChange$={(e) => (store.desc = (e.target as HTMLTextAreaElement).value)}
               />
             </div>
           </div>
@@ -57,10 +78,10 @@ export const OtherVideoFields = component$(({ store }: OtherVideoFieldsProps) =>
               </label>
               <select
                 class='select select-bordered w-full'
-                onChange$={(e) => (store.category = e.target.value)}
+                onChange$={(e) => (store.category = (e.target as HTMLTextAreaElement).value)}
               >
                 {Object.entries(CONSTANTS.videoCategories).map(([engCategory, ruCategory], ind) => (
-                  <option key={ind} value={engCategory}>
+                  <option key={ind} value={engCategory} selected={store.category === engCategory}>
                     {ruCategory}
                   </option>
                 ))}
@@ -96,7 +117,7 @@ export const OtherVideoFields = component$(({ store }: OtherVideoFieldsProps) =>
                 placeholder='Тэги'
                 class='input input-bordered w-full'
                 value={store.tags}
-                onChange$={(e) => (store.tags = e.target.value)}
+                onChange$={(e) => (store.tags = (e.target as HTMLTextAreaElement).value)}
               />
             </div>
           </div>

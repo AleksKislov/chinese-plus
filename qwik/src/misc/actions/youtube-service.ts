@@ -6,7 +6,7 @@ export class YoutubeService {
   }
 
   static getVideoPicUrl(videoId: string) {
-    return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+    return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
   }
 
   static getVideoCaption(id: string, lang: string, token: string) {

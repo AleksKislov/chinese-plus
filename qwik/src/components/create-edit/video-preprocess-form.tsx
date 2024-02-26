@@ -1,12 +1,4 @@
-import {
-  $,
-  component$,
-  useContext,
-  useSignal,
-  useTask$,
-  type QwikMouseEvent,
-  useVisibleTask$,
-} from "@builder.io/qwik";
+import { $, component$, useContext, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import CONSTANTS from "~/misc/consts/consts";
 import { AlertColorEnum, alertsContext } from "~/root";
@@ -24,17 +16,22 @@ import {
 } from "~/routes/(content)/create/video";
 import { WordTooltip } from "../common/tooltips/word-tooltip";
 import { Loader } from "../common/ui/loader";
+import { ParagNum } from "../read/parag-num";
+import { useEditVideo, type EditVideoStore } from "~/routes/(content)/edit/video/[id]";
 
 type VideoPreprocessFormProps = {
-  store: NewVideoStore;
+  store: NewVideoStore | EditVideoStore;
   captionLangs: string[];
+  isEdit?: boolean;
+  tooltipSubs?: (DictWord | string)[][];
 };
 
 export const VideoPreprocessForm = component$(
-  ({ store, captionLangs }: VideoPreprocessFormProps) => {
+  ({ store, captionLangs, isEdit, tooltipSubs }: VideoPreprocessFormProps) => {
     const getCnCaptions = useGetCnCaptions();
     const getPyCaptions = useGetPyCaptions();
     const getRuCaptions = useGetRuCaptions();
+    const editVideoAction = useEditVideo();
     const publishVideoAction = usePublishVideo();
     const canPublish = useSignal(false);
     const nav = useNavigate();
@@ -54,12 +51,34 @@ export const VideoPreprocessForm = component$(
       canPublish.value = false;
     });
 
+    useTask$(() => {
+      if (isEdit && tooltipSubs) {
+        tooltipTxt.value = tooltipSubs;
+        chineseText.value = store.cnSubs.join("\n");
+        pinyinText.value = store.pySubs.join("\n");
+        origTranslation.value = store.ruSubs.join("\n");
+        setTimeout(() => (canPublish.value = true), 1000);
+      }
+    });
+
     useTask$(({ track }) => {
       track(() => publishVideoAction.value);
 
       if (publishVideoAction.value?._id) {
         setTimeout(() => {
           nav("/watch/unapproved-videos/" + publishVideoAction.value?._id);
+        }, 3000);
+      }
+    });
+
+    useTask$(({ track }) => {
+      track(() => editVideoAction.value);
+
+      if (editVideoAction.value?._id) {
+        setTimeout(() => {
+          nav(
+            `/watch/${store.isApproved ? "" : "unapproved-"}videos/${editVideoAction.value?._id}`
+          );
         }, 3000);
       }
     });
@@ -154,24 +173,39 @@ export const VideoPreprocessForm = component$(
         source,
         category,
         chineseArr,
+        isApproved,
         cnSubs,
         ruSubs,
         pySubs,
       } = store;
 
-      publishVideoAction.submit({
+      const cnSubsWithTime = getCnCaptions.value?.map((x, i) => ({ ...x, text: cnSubs[i] }));
+      const sprtr = "@@";
+      const splitChineseArr = chineseArr
+        .join(sprtr)
+        .split("\n")
+        .map((x) => x.split(sprtr).filter(Boolean));
+
+      const newVideoData: any = {
         lvl,
         desc,
         title,
         length,
         source,
-        cnSubs,
+        cnSubs: cnSubsWithTime,
         ruSubs,
         pySubs,
         category,
-        chineseArr,
+        chineseArr: splitChineseArr,
         tags: parseTags(tags),
-      });
+        isApproved,
+      };
+      if (isEdit) {
+        newVideoData.videoId = (store as EditVideoStore)._id;
+        editVideoAction.submit(newVideoData);
+      } else {
+        publishVideoAction.submit(newVideoData);
+      }
 
       alertsState.push({
         bg: AlertColorEnum.info,
@@ -179,7 +213,7 @@ export const VideoPreprocessForm = component$(
       });
     });
 
-    const handleKeyDown = $((e: QwikMouseEvent<HTMLTextAreaElement, MouseEvent>) => {
+    const handleKeyDown = $((e: MouseEvent) => {
       const trgt = e.target as HTMLTextAreaElement;
       trgt.style.height = trgt.scrollHeight + "px";
     });
@@ -197,7 +231,12 @@ export const VideoPreprocessForm = component$(
               </label>
               <select
                 class='select select-bordered w-full'
-                onChange$={(e) => getCnCaptions.submit({ id: store.source, lang: e.target.value })}
+                onChange$={(e) =>
+                  getCnCaptions.submit({
+                    id: store.source,
+                    lang: (e.target as HTMLInputElement).value,
+                  })
+                }
               >
                 <option key={0} value={""} selected>
                   Язык субтитров
@@ -217,7 +256,12 @@ export const VideoPreprocessForm = component$(
               </label>
               <select
                 class='select select-bordered w-full'
-                onChange$={(e) => getPyCaptions.submit({ id: store.source, lang: e.target.value })}
+                onChange$={(e) =>
+                  getPyCaptions.submit({
+                    id: store.source,
+                    lang: (e.target as HTMLInputElement).value,
+                  })
+                }
               >
                 <option key={0} value={""} selected>
                   Язык субтитров
@@ -237,7 +281,12 @@ export const VideoPreprocessForm = component$(
               </label>
               <select
                 class='select select-bordered w-full'
-                onChange$={(e) => getRuCaptions.submit({ id: store.source, lang: e.target.value })}
+                onChange$={(e) =>
+                  getRuCaptions.submit({
+                    id: store.source,
+                    lang: (e.target as HTMLInputElement).value,
+                  })
+                }
               >
                 <option key={0} value={""} selected>
                   Язык субтитров
@@ -380,6 +429,8 @@ export const VideoPreprocessForm = component$(
             {tooltipTxt.value.length > 0 &&
               tooltipTxt.value.map((parag, i) => (
                 <div class={blockClass} key={i}>
+                  <ParagNum num={i + 1} />
+
                   {parag.map((word, ind) => (
                     <WordTooltip
                       key={ind}
@@ -395,6 +446,7 @@ export const VideoPreprocessForm = component$(
             {store.pySubs.length > 0 &&
               store.pySubs.map((parag, i) => (
                 <div class={blockClass} key={i}>
+                  <ParagNum num={i + 1} />
                   {parag}
                 </div>
               ))}
@@ -403,6 +455,7 @@ export const VideoPreprocessForm = component$(
             {store.ruSubs.length > 0 &&
               store.ruSubs.map((parag, i) => (
                 <div class={blockClass} key={i}>
+                  <ParagNum num={i + 1} />
                   {parag}
                 </div>
               ))}

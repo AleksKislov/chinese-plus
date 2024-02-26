@@ -65,14 +65,14 @@ export const getWordsForTooltips = (wordsArr: string[][]) => {
   return ApiService.post("/api/dictionary/allWordsForVideo", wordsArr, undefined, []);
 };
 
-export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
-  return getContentComments(WHERE.video, params.id);
-});
-
 export const useGetVideo = routeLoader$(async ({ params }): Promise<VideoFromDB & TooltipSubs> => {
   const videoFromDb = await getVideoFromDB(params.id);
   const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
   return { ...videoFromDb, tooltipSubs };
+});
+
+export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
+  return getContentComments(WHERE.video, params.id);
 });
 
 type YTPlayer = {

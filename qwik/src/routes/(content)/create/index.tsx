@@ -22,12 +22,9 @@ export default component$(() => {
             <Link href='/create/text' class='btn btn-primary mr-3'>
               Текст
             </Link>
-            {/* <Link href='/create/video' class='btn btn-primary'>
+            <Link href='/create/video' class='btn btn-primary'>
               Видео
-            </Link> */}
-            <button class='btn btn-primary' disabled>
-              Видео
-            </button>
+            </Link>
           </div>
         </div>
       </FlexRow>

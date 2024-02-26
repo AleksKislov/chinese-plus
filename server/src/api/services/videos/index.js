@@ -15,12 +15,14 @@ const { getByUserId } = require("./get-by-user-id");
 const { getAllVideoLessons } = require("./get-all-video-lessons");
 const { getVideoLessonById } = require("./get-video-lesson-by-id");
 const { likeVideoLesson } = require("./like-phonetics-video");
+const { deleteVideo } = require("./delete-video");
 
 module.exports = {
   getVideosNum: apiDecorator(getVideosNum),
   updateVideo: apiDecorator(updateVideo),
   getVidsInChunks: apiDecorator(getVidsInChunks),
   markAsSeen: apiDecorator(markAsSeen),
+  deleteVideo: apiDecorator(deleteVideo),
   deleteComment: apiDecorator(deleteComment),
   likeVideo: apiDecorator(likeVideo),
   getNotApprovedVids: apiDecorator(getNotApprovedVids),

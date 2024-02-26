@@ -54,7 +54,7 @@ async function updateVideo(req, res) {
     Notify.socialMedia(updatedVid);
   }
 
-  return res.json({ status: "done" });
+  return res.json({ status: "done", _id: videoId });
 }
 
 module.exports = { updateVideo };

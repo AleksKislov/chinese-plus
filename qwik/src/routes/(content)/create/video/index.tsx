@@ -5,19 +5,12 @@ import {
   type RequestEventAction,
   type DocumentHead,
 } from "@builder.io/qwik-city";
-import {
-  $,
-  type QwikKeyboardEvent,
-  component$,
-  useContext,
-  useSignal,
-  useStore,
-} from "@builder.io/qwik";
+import { $, component$, useContext, useSignal, useStore } from "@builder.io/qwik";
 import { PageTitle } from "~/components/common/layout/title";
 import { getTokenFromCookie } from "~/misc/actions/auth";
 import { ApiService } from "~/misc/actions/request";
 import { Alerts } from "~/components/common/alerts/alerts";
-import { AlertColorEnum, alertsContext } from "~/root";
+import { AlertColorEnum, alertsContext, userContext } from "~/root";
 import { type VideoFromDB } from "~/routes/watch/videos/[id]";
 import CONSTANTS from "~/misc/consts/consts";
 import { OtherVideoFields } from "~/components/create-edit/other-video-fields";
@@ -38,9 +31,10 @@ export type NewVideoStore = {
   chineseArr: string[];
   source: string;
   category: string; // eng word
+  isApproved: 1 | 0;
 };
 
-type YTVideoInfo = {
+export type YTVideoInfo = {
   title: string;
   description: string;
   tags: string[];
@@ -90,6 +84,7 @@ export const useGetRuCaptions = routeAction$(getVideoCaptions);
 export const useGetPyCaptions = routeAction$(getVideoCaptions);
 
 export default component$(() => {
+  const { isAdmin } = useContext(userContext);
   const alertsState = useContext(alertsContext);
   const youtubeLink = useSignal("");
   const getVideoInfo = useGetVideoInfo();
@@ -106,6 +101,7 @@ export default component$(() => {
     ruSubs: [],
     chineseArr: [],
     category: Object.keys(CONSTANTS.videoCategories)[0],
+    isApproved: 0,
   });
 
   const getVideo = $(async () => {
@@ -145,7 +141,7 @@ export default component$(() => {
               placeholder='например, https://www.youtube.com/watch?v=dQw4w9WgXcQ'
               class='input input-bordered w-full join-item'
               bind:value={youtubeLink}
-              onKeyDown$={(e: QwikKeyboardEvent<HTMLInputElement>) => {
+              onKeyDown$={(e: KeyboardEvent) => {
                 if (e.key === "Enter") getVideo();
               }}
             />
@@ -165,7 +161,7 @@ export default component$(() => {
 
       {getVideoInfo.value && (
         <>
-          <OtherVideoFields store={store} />
+          <OtherVideoFields store={store} isAdmin={isAdmin} />
           <VideoPreprocessForm
             store={store}
             captionLangs={getVideoInfo.value?.captionLangs || []}

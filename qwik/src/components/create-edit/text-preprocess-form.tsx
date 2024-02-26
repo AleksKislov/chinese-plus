@@ -1,11 +1,4 @@
-import {
-  $,
-  component$,
-  useContext,
-  useSignal,
-  useTask$,
-  type QwikMouseEvent,
-} from "@builder.io/qwik";
+import { $, component$, useContext, useSignal, useTask$ } from "@builder.io/qwik";
 import {
   usePublishText,
   type NewTextStore,
@@ -159,7 +152,7 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
     });
   });
 
-  const handleKeyDown = $((e: QwikMouseEvent<HTMLTextAreaElement, MouseEvent>) => {
+  const handleKeyDown = $((e: MouseEvent) => {
     const trgt = e.target as HTMLTextAreaElement;
     trgt.style.height = trgt.scrollHeight + "px";
   });

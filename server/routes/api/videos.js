@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const auth = require("../../middleware/auth");
 const { check } = require("express-validator");
+const adminAuth = require("../../middleware/admin-auth");
 
 const {
   getById,
@@ -17,6 +18,7 @@ const {
   getByUserId,
   getAllVideoLessons,
   getVideoLessonById,
+  deleteVideo,
 } = require("../../src/api/services/videos");
 const VideoLesson = require("../../src/models/VideoLesson");
 
@@ -114,6 +116,8 @@ router.get("/:id", getById);
  *  @access   Private
  */
 router.put("/like/:id", auth, likeVideo);
+
+router.delete("/delete/:id", adminAuth, deleteVideo);
 
 /**
  * @route     DELETE api/videos/comment/:id/:comment_id
