@@ -30,7 +30,7 @@ services:
 
   chin_plus_fe:
     container_name: chin_plus_fe
-    image: chin_plus_fe:${VERSION}
+    image: bylh-chin_plus_fe:${VERSION}
     restart: unless-stopped
     environment:
       - VERSION=${VERSION}

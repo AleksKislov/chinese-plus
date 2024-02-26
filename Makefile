@@ -4,15 +4,15 @@ DOCKER_HUB_REPO = std016039/chin_plus_fe
 VERSION = latest
 GREEN = \033[0;32m
 
-# all: build-front tag push
+all: build-front tag push
 
-# tag:
-# 	@echo "$(GREEN) Tag $(FE_IMAGE_NAME) with $(VERSION) $(GREEN)"
-# 	docker tag bylh-$(FE_IMAGE_NAME) $(DOCKER_HUB_REPO):$(VERSION)
+tag:
+	@echo "$(GREEN) Tag $(FE_IMAGE_NAME) with $(VERSION) $(GREEN)"
+	docker tag bylh-$(FE_IMAGE_NAME) $(DOCKER_HUB_REPO):$(VERSION)
 
-# push:
-# 	@echo "$(GREEN)Push image $(FE_IMAGE_NAME):$(VERSION) $(GREEN)"
-# 	docker push $(DOCKER_HUB_REPO):$(VERSION)
+push:
+	@echo "$(GREEN)Push image $(FE_IMAGE_NAME):$(VERSION) $(GREEN)"
+	docker push $(DOCKER_HUB_REPO):$(VERSION)
 
 # commands for production
 build-up-back: build-back up-back
