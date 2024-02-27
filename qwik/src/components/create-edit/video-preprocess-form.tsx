@@ -18,6 +18,7 @@ import { WordTooltip } from "../common/tooltips/word-tooltip";
 import { Loader } from "../common/ui/loader";
 import { ParagNum } from "../read/parag-num";
 import { useEditVideo, type EditVideoStore } from "~/routes/(content)/edit/video/[id]";
+import { useSegmentAndGetTooltips } from "~/routes/(content)/create/text";
 
 type VideoPreprocessFormProps = {
   store: NewVideoStore | EditVideoStore;
@@ -28,6 +29,7 @@ type VideoPreprocessFormProps = {
 
 export const VideoPreprocessForm = component$(
   ({ store, captionLangs, isEdit, tooltipSubs }: VideoPreprocessFormProps) => {
+    const segmentAction = useSegmentAndGetTooltips();
     const getCnCaptions = useGetCnCaptions();
     const getPyCaptions = useGetPyCaptions();
     const getRuCaptions = useGetRuCaptions();
@@ -151,15 +153,19 @@ export const VideoPreprocessForm = component$(
       chineseText.value = chineseTextParagraphs.join("\n");
       pinyinText.value = pinyinParagraphs.join("\n");
 
-      const chineseArr = (await segmenter(trimmedChineseTxt)).filter((word) => word !== " ");
-      tooltipTxt.value = parseTextWords(chineseArr, await getWordsForTooltips(chineseArr));
-
       store.length = countZnChars(chineseText.value);
       store.cnSubs = chineseTextParagraphs;
       store.ruSubs = translationParagraphs;
       store.pySubs = pinyinParagraphs;
-      store.chineseArr = chineseArr;
 
+      segmentAction.submit({ txt: trimmedChineseTxt });
+    });
+
+    useTask$(({ track }) => {
+      const val = track(() => segmentAction.value);
+      if (!val) return;
+      store.chineseArr = val.allwords;
+      tooltipTxt.value = val.tooltipTxt;
       canPublish.value = true;
     });
 
