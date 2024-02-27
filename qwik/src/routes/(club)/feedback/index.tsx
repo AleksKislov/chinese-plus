@@ -5,7 +5,6 @@ import { PageTitle } from "~/components/common/layout/title";
 import { ApiService } from "~/misc/actions/request";
 import { PostForm } from "~/components/feedback/post-form";
 import { PostCard } from "~/components/feedback/post-card";
-// import { OurSocialMedia } from "~/components/common/media/our-social-media";
 import { MoreBtnAndLoader } from "~/components/common/ui/more-btn-and-loader";
 
 export type newPostData = {
@@ -88,43 +87,36 @@ export default component$(() => {
   return (
     <>
       <PageTitle txt={"Форум"} />
+
       <FlexRow>
-        <div class='w-full md:w-1/2 mb-3 mr-4 h-24'>
-          <div class='card w-full bg-base-200 h-full'>
+        <div class='w-full md:w-1/2 mb-3 mr-4'>
+          <div class='card w-full bg-base-200 mb-3 h-24'>
             <div class='card-body'>
-              <p>Место для общения, фидбэка и новостей этого проекта</p>
+              <p>Место для общения, фидбэка и новостей проекта</p>
             </div>
           </div>
+
+          <PostForm />
         </div>
 
         <div class='w-full md:w-1/2'>
           <div class='card w-full bg-base-200 mb-3'>
             <div class='card-body'>
-              <div class='btn-group'>
-                {DisplayBtns?.map((btnType, ind) => (
-                  <button
+              <p class={"mb-2"}>
+                {DisplayBtns.map((btnType, ind) => (
+                  <span
                     key={btnType}
-                    class={`btn btn-sm btn-info lowercase ${
-                      chosenMsgsType.value === btnType ? "" : "btn-outline"
+                    class={`badge badge-info mr-1 cursor-pointer ${
+                      chosenMsgsType.value === btnType ? "" : "badge-outline"
                     }`}
-                    type='button'
                     onClick$={() => (chosenMsgsType.value = btnType)}
                   >
-                    {ind === 0 ? "Все" : msgTypes[btnType as MsgType]}
-                  </button>
+                    {ind === 0 ? "все" : msgTypes[btnType as MsgType]}
+                  </span>
                 ))}
-              </div>
+              </p>
             </div>
           </div>
-        </div>
-      </FlexRow>
-
-      <FlexRow>
-        <div class='w-full md:w-1/2 mb-3 mr-4'>
-          <PostForm />
-        </div>
-
-        <div class='w-full md:w-1/2'>
           {posts.value?.map((post, ind) => (
             <PostCard post={post} isPostPage={false} key={ind} addressees={null} />
           ))}

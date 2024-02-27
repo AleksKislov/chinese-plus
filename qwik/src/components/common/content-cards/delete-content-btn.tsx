@@ -3,7 +3,6 @@ import { userContext } from "~/root";
 import { type WhereType } from "../comments/comment-form";
 import { globalAction$, z, zod$ } from "@builder.io/qwik-city";
 import { ApiService } from "~/misc/actions/request";
-import { useNavigate } from "@builder.io/qwik-city";
 
 type EditBtnProps = {
   contentType: WhereType;
@@ -20,7 +19,6 @@ export const DeleteContentBtn = component$(({ contentType, contentId }: EditBtnP
   const userState = useContext(userContext);
   const { isAdmin } = userState;
   const deleteContent = useDeleteContent();
-  const nav = useNavigate();
 
   return isAdmin ? (
     <div class='dropdown'>
@@ -34,7 +32,7 @@ export const DeleteContentBtn = component$(({ contentType, contentId }: EditBtnP
             type='button'
             onClick$={() => {
               deleteContent.submit({ contentType, contentId });
-              nav("/");
+              // nav("/");
             }}
           >
             DEL
