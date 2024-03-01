@@ -89,6 +89,7 @@ export const CommentForm = component$(
     const emoji = useSignal("");
     const { loggedIn } = userState;
     const newText = useSignal("");
+    const alreadySubmitted = useSignal(false);
 
     const unsetCommentToReply = $(() => {
       commentIdToReply.commentId = "";
@@ -97,6 +98,8 @@ export const CommentForm = component$(
     });
 
     const submitPost = $(async () => {
+      alreadySubmitted.value = true;
+
       let text = newText.value;
       const foundUsers = parseForAddressees(newText.value);
       if (foundUsers.length) {
@@ -121,6 +124,10 @@ export const CommentForm = component$(
       addressees.value = [];
       newText.value = "";
       emoji.value = "";
+
+      setTimeout(() => {
+        alreadySubmitted.value = false;
+      }, 1000);
     });
 
     return (
@@ -130,7 +137,11 @@ export const CommentForm = component$(
             <div class={"flex justify-between mb-2"}>
               <h2 class='card-title pt-1'>Ваш комментарий</h2>
               <div class='card-actions'>
-                <button class='btn btn-info btn-sm' disabled={!loggedIn} onClick$={submitPost}>
+                <button
+                  class='btn btn-info btn-sm'
+                  disabled={!loggedIn || alreadySubmitted.value}
+                  onClick$={submitPost}
+                >
                   Опубликовать
                 </button>
               </div>

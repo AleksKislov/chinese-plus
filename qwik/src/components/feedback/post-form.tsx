@@ -1,4 +1,4 @@
-import { component$, useContext, useStore, $ } from "@builder.io/qwik";
+import { component$, useContext, useStore, $, useSignal } from "@builder.io/qwik";
 import CONSTANTS from "~/misc/consts/consts";
 import { userContext } from "~/root";
 import { msgTypes, useAddPost, type MsgType } from "~/routes/(club)/feedback";
@@ -13,6 +13,7 @@ export const PostForm = component$(() => {
     title: "",
     text: "",
   });
+  const alreadySubmitted = useSignal(false);
 
   const chosenBtn = useStore<ChosenBtnStore>({
     wish: true,
@@ -24,6 +25,7 @@ export const PostForm = component$(() => {
 
   const submitPost = $(async () => {
     if (!newPostStore.text.length || !newPostStore.title.length) return;
+    alreadySubmitted.value = true;
 
     const text = newPostStore.text;
     const tag = Object.keys(chosenBtn).find((tag) => chosenBtn[tag as MsgType]);
@@ -133,7 +135,11 @@ export const PostForm = component$(() => {
           </div>
 
           <div class='card-actions justify-end'>
-            <button class='btn btn-info btn-sm' disabled={cantSubmit} onClick$={submitPost}>
+            <button
+              class='btn btn-info btn-sm'
+              disabled={cantSubmit || alreadySubmitted.value}
+              onClick$={submitPost}
+            >
               Опубликовать
             </button>
           </div>

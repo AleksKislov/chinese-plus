@@ -64,6 +64,7 @@ export const AlertColorEnum = {
 export const userContext = createContextId<User>("user-context");
 export const alertsContext = createContextId<Alert[]>("alerts-context");
 export const configContext = createContextId<Config[]>("config-context");
+export const isDarkThemeContext = createContextId<{ bool: boolean }>("theme-context");
 
 export default component$(() => {
   useStyles$(globalStyles);
@@ -86,10 +87,12 @@ export default component$(() => {
   });
   const alertsState = useStore<Alert[]>([]);
   const configState = useStore<Config[]>([]);
+  const isDarkThemeState = useStore({ bool: true });
 
   useContextProvider(userContext, userState);
   useContextProvider(alertsContext, alertsState);
   useContextProvider(configContext, configState);
+  useContextProvider(isDarkThemeContext, isDarkThemeState);
 
   return (
     <QwikCityProvider>
@@ -113,13 +116,12 @@ export default component$(() => {
           src='https://www.googletagmanager.com/gtag/js?id=G-PN0P7BPQCV'
         />
         <RouterHead />
-        <script
-          dangerouslySetInnerHTML={`
-            document.documentElement.setAttribute('data-theme', localStorage.theme || '${ThemeTypes.dark}');
-          `}
-        />
       </head>
-      <body lang='en' class='text-neutral-content'>
+      <body
+        lang='en'
+        data-theme={isDarkThemeState.bool ? ThemeTypes.dark : ThemeTypes.light}
+        class='text-neutral-content'
+      >
         <RouterOutlet />
         <ServiceWorkerRegister />
       </body>

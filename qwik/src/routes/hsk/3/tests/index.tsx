@@ -1,4 +1,4 @@
-import { component$, useStore, useTask$, $, type QwikChangeEvent } from "@builder.io/qwik";
+import { component$, useStore, useTask$, $ } from "@builder.io/qwik";
 import { FlexRow } from "~/components/common/layout/flex-row";
 import { Sidebar } from "~/components/common/layout/sidebar";
 import { MainContent } from "~/components/common/layout/main-content";
@@ -49,6 +49,12 @@ export default component$(() => {
 
   useTask$(({ track }) => {
     track(() => testWords.value);
+    for (const key in QuestKinds) {
+      if (Object.prototype.hasOwnProperty.call(QuestKinds, key)) {
+        questionStore[key as QuestionType] = null;
+        answerStore[key as QuestionType] = {};
+      }
+    }
     questionStore.chars = testWords.value.slice(0, QUEST_NUM);
     questionStore.pinyin = testWords.value.slice(QUEST_NUM, QUEST_NUM * 2);
     questionStore.audio = testWords.value.slice(QUEST_NUM * 2, QUEST_NUM * 3);
@@ -63,12 +69,10 @@ export default component$(() => {
     };
   });
 
-  const setAnswer = $(
-    (e: QwikChangeEvent<HTMLSelectElement>, answerId: number, qType: QuestionType) => {
-      const tgt = e.target;
-      answerStore[qType][answerId] = answerId === +tgt.value;
-    }
-  );
+  const setAnswer = $((e: Event, answerId: number, qType: QuestionType) => {
+    const tgt = e.target as HTMLInputElement;
+    answerStore[qType][answerId] = answerId === +tgt.value;
+  });
 
   const questions = [
     {
@@ -81,7 +85,7 @@ export default component$(() => {
     },
     {
       type: QuestKinds.audio,
-      title: "иероглифов",
+      title: "аудио",
     },
   ];
 
