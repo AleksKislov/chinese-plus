@@ -68,7 +68,7 @@ function getTxt(content, isVk) {
 
   obj.title = content.title;
 
-  return writeMsg(obj);
+  return writeMsg(obj, isVk);
 }
 
 function getMsgHeader(contentType, link, lvl, userName, isVk) {
@@ -101,13 +101,13 @@ function getMsgHeader(contentType, link, lvl, userName, isVk) {
   }
 }
 
-function writeMsg({ head, title, desc, link }) {
+function writeMsg({ head, title, desc, link }, isVk) {
   return `${head}
 
 💡 ${title}
 
 🔎 ${desc} ${
-    link
+    isVk
       ? `
 
 🔗 ${link}`
