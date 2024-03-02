@@ -5,7 +5,7 @@ const { isDevelopment } = require("../../../../server");
 const tgUrl = process.env.TELEGRAM_NOTICE_URL;
 const testChatId = process.env.TEST_CHAT_ID;
 const tgChannelId = isDevelopment ? testChatId : process.env.TGCHANNEL_ID;
-const vkChannelId = process.env.VKCHANNEL_ID;
+const vkChannelId = isDevelopment ? "" : process.env.VKCHANNEL_ID;
 const vkToken = process.env.VKCHANNEL_TOKEN;
 
 class Notify {
@@ -38,32 +38,32 @@ class Notify {
   }
 
   static socialMedia(content) {
-    const msg = getTxt(content);
-
-    this.telegramPublic(msg);
-    this.vkPublic(msg);
+    this.telegramPublic(getTxt(content));
+    this.vkPublic(getTxt(content, true));
   }
 }
 
-function getTxt(content) {
+function getTxt(content, isVk) {
   const obj = {};
   const id = content._id;
+  const userName = content.user.name;
   const base = "https://www.chineseplus.club/";
+
   if (content.cnSubs) {
-    obj.type = `🎬 Новое <a href='${`${base}watch/videos/${id}`}'>видео</a> от пользователя ${
-      content.user.name
-    }`;
+    const link = `${base}watch/videos/${id}`;
+    obj.head = getMsgHeader("video", link, content.lvl, userName, isVk);
     obj.desc = content.desc;
-    obj.lvl = content.lvl;
+    obj.link = link;
   } else if (content.origintext) {
-    obj.type = `📚 Новый <a href='${`${base}read/texts/${id}`}'>текст</a> от пользователя ${
-      content.user.name
-    }`;
+    const link = `${base}read/texts/${id}`;
+    obj.head = getMsgHeader("text", link, content.level, userName, isVk);
     obj.desc = content.description;
-    obj.lvl = content.level;
+    obj.link = link;
   } else {
-    obj.type = `🚀 <a href='${`${base}feedback/${id}`}'>Новости</a> от админа`;
+    const link = `${base}feedback/${id}`;
+    obj.head = getMsgHeader("post", link, null, null, isVk);
     obj.desc = content.text.replace(/\<br \/>/g, "\n");
+    obj.link = link;
   }
 
   obj.title = content.title;
@@ -71,12 +71,48 @@ function getTxt(content) {
   return writeMsg(obj);
 }
 
-function writeMsg({ type, title, desc, lvl }) {
-  return `${type}! ${lvl ? `Уровень: ${getStars(lvl)}` : ""}
+function getMsgHeader(contentType, link, lvl, userName, isVk) {
+  if (isVk) {
+    switch (contentType) {
+      case "video":
+        return `🎬 Новое видео от пользователя ${userName}! ${
+          lvl ? `Уровень: ${getStars(lvl)}` : ""
+        }`;
+      case "text":
+        return `📚 Новый текст от пользователя ${userName}! ${
+          lvl ? `Уровень: ${getStars(lvl)}` : ""
+        }`;
+      case "post":
+        return `🚀 Новости от админа!`;
+    }
+  }
+
+  switch (contentType) {
+    case "video":
+      return `🎬 Новое <a href='${link}'>видео</a> от пользователя ${userName}! ${
+        lvl ? `Уровень: ${getStars(lvl)}` : ""
+      }`;
+    case "text":
+      return `📚 Новый <a href='${link}'>текст</a> от пользователя ${userName}! ${
+        lvl ? `Уровень: ${getStars(lvl)}` : ""
+      }`;
+    case "post":
+      return `🚀 <a href='${link}'>Новости</a> от админа!`;
+  }
+}
+
+function writeMsg({ head, title, desc, link }) {
+  return `${head}
 
 💡 ${title}
 
-🔎 ${desc}`;
+🔎 ${desc} ${
+    link
+      ? `
+
+🔗 ${link}`
+      : ""
+  }`;
 }
 
 function getStars(lvl) {
