@@ -47,18 +47,23 @@ class Notify {
 
 function getTxt(content) {
   const obj = {};
+  const id = content._id;
+  const base = "https://www.chineseplus.club/";
   if (content.cnSubs) {
-    obj.type = `📺 Опубликовано новое видео от пользователя ${content.user.name}`;
-    obj.link = `https://www.chineseplus.club/watch/videos/${content._id}`;
+    obj.type = `🎬 Новое <a href='${`${base}watch/videos/${id}`}'>видео</a> от пользователя ${
+      content.user.name
+    }`;
     obj.desc = content.desc;
+    obj.lvl = content.lvl;
   } else if (content.origintext) {
-    obj.type = `📚 Опубликован новый текст от пользователя ${content.user.name}`;
-    obj.link = `https://www.chineseplus.club/read/texts/${content._id}`;
+    obj.type = `📚 Новый <a href='${`${base}read/texts/${id}`}'>текст</a> от пользователя ${
+      content.user.name
+    }`;
     obj.desc = content.description;
+    obj.lvl = content.level;
   } else {
-    obj.type = `🚀 Новости от админа`;
+    obj.type = `🚀 <a href='${`${base}feedback/${id}`}'>Новости</a> от админа`;
     obj.desc = content.text.replace(/\<br \/>/g, "\n");
-    obj.link = `https://www.chineseplus.club/feedback/${content._id}`;
   }
 
   obj.title = content.title;
@@ -66,14 +71,20 @@ function getTxt(content) {
   return writeMsg(obj);
 }
 
-function writeMsg({ type, link, title, desc }) {
-  return `${type}!
+function writeMsg({ type, title, desc, lvl }) {
+  return `${type}! ${lvl ? `Уровень: ${getStars(lvl)}` : ""}
 
-👀 ${title}
+💡 ${title}
 
-📝 ${desc}
+🔎 ${desc}`;
+}
 
-🔗 ${link}`;
+function getStars(lvl) {
+  let s = "";
+  for (let i = 0; i < lvl; i++) {
+    s += "⭐";
+  }
+  return s;
 }
 
 module.exports = { Notify };
