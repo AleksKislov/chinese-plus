@@ -32,7 +32,7 @@ export const useGetText = routeLoader$(
     if (textFromDb.pages && textFromDb.pages.length) {
       chineseArr = textFromDb.pages[curPage].chinese_arr;
     }
-    const dbWords = await getWordsForTooltips(chineseArr);
+    const dbWords = await getWordsForTooltips(chineseArr, true);
     const tooltipTxt = parseTextWords(chineseArr, dbWords);
     return { ...textFromDb, tooltipTxt, curPage };
   }

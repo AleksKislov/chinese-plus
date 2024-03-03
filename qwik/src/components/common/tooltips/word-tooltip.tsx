@@ -1,9 +1,11 @@
-import { component$, type Signal, useContext, useSignal } from "@builder.io/qwik";
+import { component$, type Signal, useContext, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { parseRussian } from "~/misc/helpers/translation";
 import { userContext } from "~/root";
 import { moreInfoSvg } from "../media/svg";
 import { EditWordBtn } from "./edit-word-btn";
 import { OwnWordBtn } from "./own-word-btn";
+import { globalAction$ } from "@builder.io/qwik-city";
+import { getWordsForTooltips } from "~/routes/read/texts/[id]";
 
 export const editWordModalId = "editWordModalId";
 export const moreInfoModalId = "moreInfoModalId";
@@ -14,12 +16,28 @@ type WordTooltipProps = {
   currentWord: Signal<DictWord | undefined>;
 };
 
+export const useGetWordFullTranslation = globalAction$((params): Promise<(string | DictWord)[]> => {
+  return getWordsForTooltips([params.chineseWord as string]);
+});
+
 export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordTooltipProps) => {
+  const getFullTranslation = useGetWordFullTranslation();
   const isRightSide = useSignal(false);
   const isScreenCenter = useSignal(false);
   const userState = useContext(userContext);
   const { loggedIn } = userState;
   const showTooltip = useSignal(false);
+
+  useVisibleTask$(({ track }) => {
+    const val = track(() => getFullTranslation.value);
+    const translation = (val?.[0] as DictWord).russian;
+    if (translation && currentWord.value) {
+      currentWord.value = undefined;
+      currentWord.value = word as DictWord;
+      currentWord.value.russian = translation;
+    }
+  });
+
   let isUserWord = false;
   if (typeof word !== "string") {
     isUserWord = loggedIn && userState.words.some((w) => w.chinese === word.chinese);
@@ -75,7 +93,13 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
             <div class={"flex flex-row justify-between"}>
               <div>
                 <div class='tooltip tooltip-info tooltip-bottom' data-tip={"Больше информации"}>
-                  <label for={moreInfoModalId} class={"btn btn-sm btn-info mr-1"}>
+                  <label
+                    for={moreInfoModalId}
+                    class={"btn btn-sm btn-info mr-1"}
+                    onClick$={() => {
+                      getFullTranslation.submit({ chineseWord: word.chinese });
+                    }}
+                  >
                     {moreInfoSvg}
                   </label>
                 </div>

@@ -14,11 +14,6 @@ type DictWord = {
   chinese: string; // e.g. "炫";
   pinyin: string; // e.g. ' xuàn',
   russian: string; // e.g. " [m1]1) я; мой[/m]"
-  previous: {
-    chinese: string;
-    pinyin: string;
-    russian: string;
-  }[];
 };
 
 type NewAvatar = {

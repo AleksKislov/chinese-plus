@@ -1,6 +1,8 @@
 import { component$, useContext, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { moonSvg, sunSvg } from "../../media/svg";
-import { isDarkThemeContext } from "~/root";
+import { IsLightThemeCookieName, isDarkThemeContext } from "~/root";
+import Cookies from "js-cookie";
+import { useCheckTheme } from "~/routes/layout";
 
 export const ThemeTypes = {
   dark: "night",
@@ -8,24 +10,19 @@ export const ThemeTypes = {
 };
 
 export const ThemeChanger = component$(() => {
+  const checkTheme = useCheckTheme();
   const isDarkTheme = useContext(isDarkThemeContext);
   const themeChangedToDark = useSignal(true);
 
   useVisibleTask$(() => {
-    const isDark = !localStorage.theme || localStorage.theme === ThemeTypes.dark;
-    isDarkTheme.bool = isDark;
-    themeChangedToDark.value = isDark;
+    isDarkTheme.bool = checkTheme.value;
+    themeChangedToDark.value = checkTheme.value;
   });
 
   useVisibleTask$(({ track }) => {
     const isDark = track(() => themeChangedToDark.value);
     isDarkTheme.bool = isDark;
-
-    if (!localStorage.theme || localStorage.theme === ThemeTypes.dark) {
-      localStorage.theme = ThemeTypes.light;
-    } else {
-      localStorage.theme = ThemeTypes.dark;
-    }
+    Cookies.set(IsLightThemeCookieName, isDark ? "0" : "1", { expires: 600 });
   });
 
   return (

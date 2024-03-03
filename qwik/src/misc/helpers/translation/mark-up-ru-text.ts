@@ -1,5 +1,3 @@
-// import { sanitizer } from "./sanitizer";
-
 export const markUpRuText = (text: string, showExamples: boolean = false): string => {
   if (!text) return " ";
   text = text

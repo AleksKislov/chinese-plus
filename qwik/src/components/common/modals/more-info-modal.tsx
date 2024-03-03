@@ -23,7 +23,7 @@ export const MoreInfoModal = component$(
             </div>
 
             <ShowHideBtn showExamples={showExamples} />
-            <DictWordTranslation ru={ru} showExamples={showExamples.value} />
+            <DictWordTranslation ru={ru} showExamples={showExamples.value} py={py} />
           </label>
         </label>
       </div>

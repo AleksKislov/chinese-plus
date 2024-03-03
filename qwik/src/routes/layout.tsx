@@ -4,7 +4,13 @@ import { routeLoader$ } from "@builder.io/qwik-city";
 import { ApiService } from "~/misc/actions/request";
 import { getTokenFromCookie, logout, type UserFromDB } from "~/misc/actions/auth";
 import { Footer } from "~/components/common/layout/footer";
-import { type UserWord, userContext, configContext, type Config } from "~/root";
+import {
+  type UserWord,
+  userContext,
+  configContext,
+  type Config,
+  IsLightThemeCookieName,
+} from "~/root";
 import { type CommentType } from "~/components/common/comments/comment-card";
 
 export const getNewMentions = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
@@ -63,6 +69,11 @@ export const useGetPulse = routeLoader$((): Promise<PulseData> => {
 
 export const useFeConfigs = routeLoader$((): Promise<Config[]> => {
   return ApiService.get("/api/project/configs", undefined, []);
+});
+
+export const useCheckTheme = routeLoader$(({ cookie }): boolean => {
+  const isLightTheme = Boolean(+(cookie.get(IsLightThemeCookieName)?.value || "0"));
+  return !isLightTheme;
 });
 
 export default component$(() => {

@@ -81,18 +81,35 @@ router.post("/", auth, async (req, res) => {
 });
 
 /**
- * @route     GET api/lexicon
+ * @route     GET api/dictionary/allwords
  * @desc      Get all the words in a text
  * @access    Public
  */
 router.post("/allwords", async (req, res) => {
+  const { isShortRu } = req.query;
   try {
-    res.json(await getAllWords(req.body));
+    const words = await getAllWords(req.body);
+    if (isShortRu) {
+      for (let i = 0; i < words.length; i++) {
+        words[i].russian = shortenTranslation(words[i].russian);
+      }
+    }
+    res.json(words);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
   }
 });
+
+function shortenTranslation(txt) {
+  if (!txt) return "";
+  txt = txt.replace(/\[\*\]\[ex\].*?\[\/ex\]\[\/\*\]/g, "").replaceAll("[m3][/m]", "");
+  if (txt.length > 600) {
+    const ind = txt.slice(300, txt.length).indexOf("[m2]");
+    txt = txt.slice(0, ind + 300);
+  }
+  return txt;
+}
 
 router.post("/wordsForParag", auth, async (req, res) => {
   const userId = req.user?.id;
@@ -109,7 +126,14 @@ router.post("/wordsForParag", auth, async (req, res) => {
 router.post("/allWordsForVideo", async (req, res) => {
   try {
     const promises = req.body.map((arr) => getAllWords(arr));
-    res.json(await Promise.all(promises));
+    const segmentedSubs = await Promise.all(promises);
+    for (let i = 0; i < segmentedSubs.length; i++) {
+      const words = segmentedSubs[i];
+      for (let k = 0; k < words.length; k++) {
+        words[k].russian = shortenTranslation(words[k].russian);
+      }
+    }
+    res.json(segmentedSubs);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");

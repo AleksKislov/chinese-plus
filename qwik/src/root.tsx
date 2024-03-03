@@ -12,6 +12,8 @@ import globalStyles from "./global.css?inline";
 import { QwikPartytown } from "./components/partytown/partytown";
 import { ThemeTypes } from "./components/common/layout/header/theme-changer";
 
+export const IsLightThemeCookieName = "isLightTheme";
+
 type ReadTodayMap = {
   [key: string]: number[];
 };

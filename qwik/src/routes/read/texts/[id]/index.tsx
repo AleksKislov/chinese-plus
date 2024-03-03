@@ -40,8 +40,12 @@ export const getTextFromDB = (id: ObjectId): Promise<TextFromDB> => {
   return ApiService.get(`/api/texts/${id}`, undefined, null);
 };
 
-export const getWordsForTooltips = (wordsArr: string[]): Promise<(string | DictWord)[]> => {
-  return ApiService.post("/api/dictionary/allWords", wordsArr, undefined, []);
+export const getWordsForTooltips = (
+  wordsArr: string[],
+  isShortRu?: boolean
+): Promise<(string | DictWord)[]> => {
+  const shortRu = isShortRu ? "?isShortRu=1" : "";
+  return ApiService.post(`/api/dictionary/allwords${shortRu}`, wordsArr, undefined, []);
 };
 
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
@@ -68,10 +72,8 @@ export const useGetText = routeLoader$(
 
     // first load only the 1st parag
     const firstParag = chineseArr.slice(0, chineseArr.indexOf("\n"));
-    const dbWords = await getWordsForTooltips(firstParag);
+    const dbWords = await getWordsForTooltips(firstParag, true);
     const tooltipTxt = parseTextWords(firstParag, dbWords);
-    // const dbWords = await getWordsForTooltips(chineseArr);
-    // const tooltipTxt = parseTextWords(chineseArr, dbWords);
     return { ...textFromDb, tooltipTxt, curPage };
   }
 );
@@ -79,7 +81,7 @@ export const useGetText = routeLoader$(
 export const useGetRestTooltipTxt = routeAction$(
   async (params): Promise<[(string | DictWord)[][], SimilarText[]]> => {
     const { chineseArr, lvl, tags, isApproved } = params;
-    const dbWords = await getWordsForTooltips(chineseArr);
+    const dbWords = await getWordsForTooltips(chineseArr, true);
     return Promise.all([
       parseTextWords(chineseArr, dbWords),
       isApproved

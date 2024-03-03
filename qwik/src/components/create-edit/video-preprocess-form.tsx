@@ -4,8 +4,6 @@ import CONSTANTS from "~/misc/consts/consts";
 import { AlertColorEnum, alertsContext } from "~/root";
 import { countZnChars, parseTags, parseTextWords } from "~/misc/helpers/content";
 import { FlexRow } from "../common/layout/flex-row";
-import { segmenter } from "~/routes/search";
-import { getWordsForTooltips } from "~/routes/read/texts/[id]";
 import {
   type NewVideoStore,
   usePublishVideo,
