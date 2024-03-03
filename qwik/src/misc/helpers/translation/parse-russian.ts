@@ -6,9 +6,9 @@ export const parseRussian = (translation: string, showExamples: boolean): string
   let russian = markUpRuText(translation, showExamples);
 
   // shorten words from dictionary/allwords
-  if (russian.length > 1000) {
-    const ind = russian.slice(500, russian.length).indexOf("<span class='tippyExample block'>");
-    russian = russian.slice(0, ind + 500);
+  if (russian.length > 2000) {
+    const ind = russian.slice(1000, russian.length).indexOf("<span class='tippyExample block'>");
+    russian = russian.slice(0, ind + 1000);
   }
 
   return russian;
