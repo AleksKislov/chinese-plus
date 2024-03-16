@@ -4,6 +4,7 @@ import {
   type JSONObject,
   type RequestEventAction,
   type DocumentHead,
+  globalAction$,
 } from "@builder.io/qwik-city";
 import { $, component$, useContext, useSignal, useStore } from "@builder.io/qwik";
 import { PageTitle } from "~/components/common/layout/title";
@@ -62,6 +63,12 @@ export const useGetVideoInfo = routeAction$(async (params, ev): Promise<YTVideoI
   const token = getTokenFromCookie(ev.cookie);
   if (!token) return null;
   return YoutubeService.getVideoInfo(params.id as string, token);
+});
+
+export const useGetTextPinyin = globalAction$(async (params, ev): Promise<string[][] | null> => {
+  const token = getTokenFromCookie(ev.cookie);
+  if (!token) return null;
+  return YoutubeService.getTextPinyin(params.chineseArr, token);
 });
 
 const getVideoCaptions = async (

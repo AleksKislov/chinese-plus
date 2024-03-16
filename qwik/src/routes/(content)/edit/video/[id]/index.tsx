@@ -6,13 +6,25 @@ import { ApiService } from "~/misc/actions/request";
 import { Alerts } from "~/components/common/alerts/alerts";
 import { userContext } from "~/root";
 import { OtherVideoFields } from "~/components/create-edit/other-video-fields";
-import { VideoPreprocessForm } from "~/components/create-edit/video-preprocess-form";
 import { YoutubeService } from "~/misc/actions/youtube-service";
 import { Loader } from "~/components/common/ui/loader";
-import type { TooltipSubs, VideoFromDB } from "~/routes/watch/videos/[id]";
-import type { YTVideoInfo, NewVideoStore } from "~/routes/(content)/create/video";
+import type { ChineseSub, VideoFromDB } from "~/routes/watch/videos/[id]";
+import type { YTVideoInfo } from "~/routes/(content)/create/video";
+import { VideoPreprocessFormForEdit } from "~/components/create-edit/video-preprocess-form-for-edit";
 
-export type EditVideoStore = NewVideoStore & {
+export type EditVideoStore = {
+  title: string;
+  desc: string;
+  lvl: number;
+  tags: string;
+  cnSubs: ChineseSub[];
+  pySubs: string[];
+  ruSubs: string[];
+  length: number;
+  chineseArr: string[];
+  source: string;
+  category: string; // eng word
+  isApproved: 1 | 0;
   _id: ObjectId;
 };
 
@@ -35,10 +47,8 @@ export const getWordsForTooltips = (wordsArr: string[][]) => {
   return ApiService.post("/api/dictionary/allWordsForVideo", wordsArr, undefined, []);
 };
 
-export const useGetVideo = routeLoader$(async ({ params }): Promise<VideoFromDB & TooltipSubs> => {
-  const videoFromDb = await getVideoFromDB(params.id);
-  const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
-  return { ...videoFromDb, tooltipSubs };
+export const useGetVideo = routeLoader$(async ({ params }): Promise<VideoFromDB> => {
+  return getVideoFromDB(params.id);
 });
 
 export const useGetVideoInfo = routeAction$(async (params, ev): Promise<YTVideoInfo | null> => {
@@ -64,7 +74,6 @@ export default component$(() => {
     ruSubs,
     source,
     chineseArr,
-    tooltipSubs,
     isApproved,
   } = useGetVideo().value;
 
@@ -86,7 +95,7 @@ export default component$(() => {
     source,
     category,
     tags: tags.join(),
-    cnSubs: cnSubs.map((x) => x.text),
+    cnSubs,
     chineseArr: shallowChineseArr,
     isApproved: isApproved || 0,
   });
@@ -109,11 +118,9 @@ export default component$(() => {
       )}
 
       {getVideoInfo.value && (
-        <VideoPreprocessForm
+        <VideoPreprocessFormForEdit
           store={store}
           captionLangs={getVideoInfo.value.captionLangs || []}
-          isEdit={true}
-          tooltipSubs={tooltipSubs}
         />
       )}
     </>

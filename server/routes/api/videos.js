@@ -20,7 +20,6 @@ const {
   getVideoLessonById,
   deleteVideo,
 } = require("../../src/api/services/videos");
-const VideoLesson = require("../../src/models/VideoLesson");
 
 /**
  * @method    POST

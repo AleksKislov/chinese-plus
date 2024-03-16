@@ -21,7 +21,7 @@ async function updateVideo(req, res) {
     chineseArr,
     pySubs,
     ruSubs,
-    // cnSubs,
+    cnSubs,
   } = req.body;
 
   let foundVid;
@@ -42,7 +42,7 @@ async function updateVideo(req, res) {
   if (chineseArr) newFields.chineseArr = chineseArr;
   if (pySubs) newFields.pySubs = pySubs;
   if (ruSubs) newFields.ruSubs = ruSubs;
-  // if (cnSubs) newFields.cnSubs = cnSubs;
+  if (cnSubs) newFields.cnSubs = cnSubs;
 
   const updatedVid = await Video.findByIdAndUpdate(
     videoId,

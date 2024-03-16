@@ -10,7 +10,6 @@ import { RouterHead } from "./components/router-head/router-head";
 
 import globalStyles from "./global.css?inline";
 import { QwikPartytown } from "./components/partytown/partytown";
-import { ThemeTypes } from "./components/common/layout/header/theme-changer";
 
 export const IsLightThemeCookieName = "isLightTheme";
 
@@ -66,7 +65,6 @@ export const AlertColorEnum = {
 export const userContext = createContextId<User>("user-context");
 export const alertsContext = createContextId<Alert[]>("alerts-context");
 export const configContext = createContextId<Config[]>("config-context");
-export const isDarkThemeContext = createContextId<{ bool: boolean }>("theme-context");
 
 export default component$(() => {
   useStyles$(globalStyles);
@@ -89,12 +87,10 @@ export default component$(() => {
   });
   const alertsState = useStore<Alert[]>([]);
   const configState = useStore<Config[]>([]);
-  const isDarkThemeState = useStore({ bool: true });
 
   useContextProvider(userContext, userState);
   useContextProvider(alertsContext, alertsState);
   useContextProvider(configContext, configState);
-  useContextProvider(isDarkThemeContext, isDarkThemeState);
 
   return (
     <QwikCityProvider>
@@ -119,11 +115,7 @@ export default component$(() => {
         />
         <RouterHead />
       </head>
-      <body
-        lang='en'
-        data-theme={isDarkThemeState.bool ? ThemeTypes.dark : ThemeTypes.light}
-        class='text-neutral-content'
-      >
+      <body lang='en' class='text-neutral-content'>
         <RouterOutlet />
         <ServiceWorkerRegister />
       </body>

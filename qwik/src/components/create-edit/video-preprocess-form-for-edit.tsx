@@ -2,10 +2,9 @@ import { $, component$, useContext, useSignal, useTask$, useVisibleTask$ } from 
 import { useNavigate } from "@builder.io/qwik-city";
 import CONSTANTS from "~/misc/consts/consts";
 import { AlertColorEnum, alertsContext } from "~/root";
-import { countZnChars, parseTags, parseTextWords } from "~/misc/helpers/content";
+import { countZnChars, parseTags } from "~/misc/helpers/content";
 import { FlexRow } from "../common/layout/flex-row";
 import {
-  type NewVideoStore,
   usePublishVideo,
   useGetRuCaptions,
   useGetCnCaptions,
@@ -20,13 +19,12 @@ import { useEditVideo, type EditVideoStore } from "~/routes/(content)/edit/video
 import { useSegmentAndGetTooltips } from "~/routes/(content)/create/text";
 
 type VideoPreprocessFormProps = {
-  store: NewVideoStore;
+  store: EditVideoStore;
   captionLangs: string[];
-  tooltipSubs?: (DictWord | string)[][];
 };
 
-export const VideoPreprocessForm = component$(
-  ({ store, captionLangs, tooltipSubs }: VideoPreprocessFormProps) => {
+export const VideoPreprocessFormForEdit = component$(
+  ({ store, captionLangs }: VideoPreprocessFormProps) => {
     const getTxtPinyin = useGetTextPinyin();
     const segmentAction = useSegmentAndGetTooltips();
     const getCnCaptions = useGetCnCaptions();
@@ -53,13 +51,9 @@ export const VideoPreprocessForm = component$(
     });
 
     useTask$(() => {
-      if (tooltipSubs) {
-        tooltipTxt.value = tooltipSubs;
-        chineseText.value = store.chineseArr.join("");
-        pinyinText.value = store.pySubs.join("\n");
-        origTranslation.value = store.ruSubs.join("\n");
-        setTimeout(() => (canPublish.value = true), 1000);
-      }
+      chineseText.value = store.cnSubs.map((x) => x.text).join("\n");
+      pinyinText.value = store.pySubs.join("\n");
+      origTranslation.value = store.ruSubs.join("\n");
     });
 
     useTask$(({ track }) => {
@@ -161,7 +155,10 @@ export const VideoPreprocessForm = component$(
       pinyinText.value = pinyinParagraphs.join("\n");
 
       store.length = countZnChars(chineseText.value);
-      store.cnSubs = chineseTextParagraphs;
+      // store.cnSubs = chineseTextParagraphs;
+      store.cnSubs.forEach((x, ind) => {
+        x.text = chineseTextParagraphs[ind];
+      });
       store.ruSubs = translationParagraphs;
       store.pySubs = pinyinParagraphs;
 
@@ -176,7 +173,7 @@ export const VideoPreprocessForm = component$(
       canPublish.value = true;
     });
 
-    const publishVideo = $(() => {
+    const editVideo = $(() => {
       const {
         lvl,
         desc,
@@ -192,7 +189,11 @@ export const VideoPreprocessForm = component$(
         pySubs,
       } = store;
 
-      const cnSubsWithTime = getCnCaptions.value?.map((x, i) => ({ ...x, text: cnSubs[i] }));
+      // const cnSubsWithTime = getCnCaptions.value?.map((x, i) => ({ ...x, text: cnSubs[i] }));
+      const chineseSubArr = chineseText.value.split("\n");
+      cnSubs.forEach((x, ind) => {
+        x.text = chineseSubArr[ind];
+      });
       const sprtr = "@@";
       const splitChineseArr = chineseArr
         .join(sprtr)
@@ -205,7 +206,7 @@ export const VideoPreprocessForm = component$(
         title,
         length,
         source,
-        cnSubs: cnSubsWithTime,
+        cnSubs,
         ruSubs,
         pySubs,
         category,
@@ -214,11 +215,12 @@ export const VideoPreprocessForm = component$(
         isApproved,
       };
 
-      publishVideoAction.submit(newVideoData);
+      newVideoData.videoId = (store as EditVideoStore)._id;
+      editVideoAction.submit(newVideoData);
 
       alertsState.push({
         bg: AlertColorEnum.info,
-        text: "Спасибо! Через 3 секунды вы попадете на страницу нового видео",
+        text: "Спасибо! Через 3 секунды вы попадете на страницу отредактированного видео",
       });
     });
 
@@ -467,11 +469,7 @@ export const VideoPreprocessForm = component$(
         {/* publish */}
         <FlexRow>
           <div class='mt-3 ml-7'>
-            <button
-              class='btn btn-primary w-48'
-              disabled={!canPublish.value}
-              onClick$={publishVideo}
-            >
+            <button class='btn btn-primary w-48' disabled={!canPublish.value} onClick$={editVideo}>
               Опубликовать
             </button>
           </div>

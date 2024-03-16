@@ -21,7 +21,7 @@ export class YoutubeService {
     return ApiService.post(`/api/videos/update`, body);
   }
 
-  static getTextPinyin(body: Object) {
-    return ApiService.post(`/api/dictionary/getTextPinyin`, body);
+  static getTextPinyin(body: Object, token: string): Promise<string[][]> {
+    return ApiService.post(`/api/dictionary/getTextPinyin`, body, token, []);
   }
 }

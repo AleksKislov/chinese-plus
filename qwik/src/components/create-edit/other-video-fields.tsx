@@ -2,9 +2,10 @@ import { component$ } from "@builder.io/qwik";
 import { FlexRow } from "../common/layout/flex-row";
 import CONSTANTS from "~/misc/consts/consts";
 import { type NewVideoStore } from "~/routes/(content)/create/video";
+import { type EditVideoStore } from "~/routes/(content)/edit/video/[id]";
 
 type OtherVideoFieldsProps = {
-  store: NewVideoStore;
+  store: NewVideoStore | EditVideoStore;
   isAdmin: boolean;
 };
 

@@ -12,6 +12,7 @@ import {
   IsLightThemeCookieName,
 } from "~/root";
 import { type CommentType } from "~/components/common/comments/comment-card";
+import { ThemeTypes } from "~/components/common/layout/header/theme-changer";
 
 export const getNewMentions = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
   const token = getTokenFromCookie(cookie);
@@ -77,6 +78,7 @@ export const useCheckTheme = routeLoader$(({ cookie }): boolean => {
 });
 
 export default component$(() => {
+  const isDarkTheme = useCheckTheme().value;
   const userState = useContext(userContext);
   const user = useGetUser();
   const hsk2WordsTotal = useGetUserHsk2WordsTotal();
@@ -136,7 +138,10 @@ export default component$(() => {
 
   return (
     <>
-      <main class={"flex flex-col min-h-screen text-base-content"}>
+      <main
+        class={"flex flex-col min-h-screen text-base-content"}
+        data-theme={isDarkTheme ? ThemeTypes.dark : ThemeTypes.light}
+      >
         <Header pulse={pulse.value} />
         <section class={"relative flex flex-col min-h-screen justify-between "}>
           <div class='relative container mx-auto px-4 lg:px-28'>

@@ -4,6 +4,7 @@ ARG VERSION
 ARG BE_PORT
 WORKDIR /app
 COPY . .
+RUN npm config set registry http://r.cnpmjs.org
 RUN npm install
 RUN echo "Building QWIK frontend v${VERSION} with backend on port ${BE_PORT}"
 RUN echo "PUBLIC_BASE_URL=http://chin_plus_be:${BE_PORT}" >> /app/.env

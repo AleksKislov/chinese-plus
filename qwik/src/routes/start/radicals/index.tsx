@@ -694,7 +694,7 @@ export default component$(() => {
             <tr class='text-warning'>
               <td>61</td>
               <td>心</td>
-              <td>忄</td>
+              <td>忄,⺗</td>
               <td> </td>
               <td>xin1</td>
               <td>сердце</td>
@@ -1161,7 +1161,7 @@ export default component$(() => {
             <tr class='text-info'>
               <td>109</td>
               <td>目</td>
-              <td> </td>
+              <td>罒</td>
               <td> </td>
               <td>mu4</td>
               <td>глаз</td>

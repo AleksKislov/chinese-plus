@@ -140,7 +140,7 @@ router.post("/allWordsForVideo", async (req, res) => {
   }
 });
 
-router.post("/getTextPinyin", async (req, res) => {
+router.post("/getTextPinyin", auth, async (req, res) => {
   try {
     const promises = req.body.map((word) => mdbg.get(word).catch((e) => word));
     const resArr = await Promise.all(promises); // some long words might stay as is
