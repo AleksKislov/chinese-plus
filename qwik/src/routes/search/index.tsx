@@ -84,6 +84,11 @@ export default component$(() => {
     words.value = loadTranslation.value;
   });
 
+  const clearCharDiv = $(() => {
+    const charDiv = document.getElementById(CHAR_SVG_DIV_ID);
+    if (charDiv) charDiv!.innerHTML = "";
+  });
+
   useVisibleTask$(({ track }) => {
     track(() => words.value);
 
@@ -94,6 +99,7 @@ export default component$(() => {
       })
       .flat();
 
+    clearCharDiv();
     setTimeout(() => {
       chars.forEach((char) => {
         const writer = HanziWriter.create(CHAR_SVG_DIV_ID, char, HanziWriterSettings);
@@ -103,8 +109,7 @@ export default component$(() => {
   });
 
   const getTranslation = $(() => {
-    const charDiv = document.getElementById(CHAR_SVG_DIV_ID);
-    if (charDiv) charDiv!.innerHTML = "";
+    clearCharDiv();
 
     const chineseStr = input.value.trim();
     if (!chineseStr) return (input.value = "");

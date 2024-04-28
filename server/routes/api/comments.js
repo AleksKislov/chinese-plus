@@ -168,7 +168,7 @@ router.put("/like/:id", auth, async (req, res) => {
 });
 
 /**
- * @route     GET api/comments/all
+ * @route     GET api/comments/last
  * @desc      Get last 10 comments
  * @access    Public
  */
