@@ -1,15 +1,18 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import { CommentCard, type CommentType } from "../common/comments/comment-card";
-import { getOldMentions, markMentionsAsOld } from "~/routes/me";
+import { getOldMentions, markMentionsAsOld, getLikedComments } from "~/routes/me";
 
 type PersonalMentionsType = {
   newMentions: CommentType[];
 };
 
 export const PersonalMentions = component$(({ newMentions }: PersonalMentionsType) => {
+  const showNewMentions = useSignal(newMentions.length > 0);
   const showOldMentions = useSignal(newMentions.length === 0);
+  const showLikedComments = useSignal(false);
   const oldMentions = getOldMentions();
   const markAsOld = markMentionsAsOld();
+  const likedComments = getLikedComments();
 
   // console.log(oldMentions.value);
   return (
@@ -21,9 +24,11 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
       <div class='flex'>
         <div class='tabs'>
           <a
-            class={`tab tab-bordered ${showOldMentions.value ? "" : "tab-active"}`}
+            class={`tab tab-bordered ${showNewMentions.value ? "tab-active" : ""}`}
             onClick$={() => {
+              showNewMentions.value = true;
               showOldMentions.value = false;
+              showLikedComments.value = false;
             }}
           >
             Новые
@@ -31,10 +36,22 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
           <a
             class={`tab tab-bordered ${showOldMentions.value ? "tab-active" : ""}`}
             onClick$={() => {
+              showNewMentions.value = false;
               showOldMentions.value = true;
+              showLikedComments.value = false;
             }}
           >
             Прочитанные
+          </a>
+          <a
+            class={`tab tab-bordered ${showLikedComments.value ? "tab-active" : ""}`}
+            onClick$={() => {
+              showNewMentions.value = false;
+              showOldMentions.value = false;
+              showLikedComments.value = true;
+            }}
+          >
+            Понравившиеся
           </a>
         </div>
         {newMentions.length > 0 && !showOldMentions.value ? (
@@ -52,7 +69,25 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
         ) : null}
       </div>
 
-      {showOldMentions.value ? (
+      {showNewMentions.value && (
+        <div class='join join-vertical border-secondary mt-2 w-full'>
+          {!newMentions.length ? (
+            <p>Нет новых комментариев</p>
+          ) : (
+            newMentions.map((comment, ind) => (
+              <CommentCard
+                key={ind}
+                comment={comment}
+                commentIdToReply={{ commentId: "", userId: "", name: "" }}
+                addressees={{ value: [] }}
+                notForReply={true}
+              />
+            ))
+          )}
+        </div>
+      )}
+
+      {showOldMentions.value && (
         <div class='join join-vertical border-secondary mt-2 w-full'>
           {!oldMentions.value?.length ? (
             <p>Нет комментариев</p>
@@ -68,12 +103,14 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
             ))
           )}
         </div>
-      ) : (
+      )}
+
+      {showLikedComments.value && (
         <div class='join join-vertical border-secondary mt-2 w-full'>
-          {!newMentions.length ? (
-            <p>Нет новых комментариев</p>
+          {!likedComments.value.length ? (
+            <p>Нет понравившихся комментариев</p>
           ) : (
-            newMentions.map((comment, ind) => (
+            likedComments.value?.map((comment, ind) => (
               <CommentCard
                 key={ind}
                 comment={comment}

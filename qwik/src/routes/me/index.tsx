@@ -34,6 +34,12 @@ export const getOldMentions = routeLoader$(async ({ cookie }): Promise<CommentTy
   return ApiService.get("/api/comments/to_me/true", token, []);
 });
 
+export const getLikedComments = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
+  const token = getTokenFromCookie(cookie);
+  if (!token) return [];
+  return ApiService.get("/api/comments/liked?limit=20", token, []);
+});
+
 export const markMentionsAsOld = routeAction$((_param, ev) => {
   const token = getTokenFromCookie(ev.cookie);
   return ApiService.post("/api/comments/mark_mentions_as_seen", {}, token);

@@ -12,6 +12,8 @@ const Chapterpage = require("../../src/models/Chapterpage");
 const { Notify } = require("../../src/api/services/_misc");
 const { shortUserInfoFields } = require("../../src/api/consts");
 const VideoLesson = require("../../src/models/VideoLesson");
+const mongoose = require("mongoose");
+const adminAuth = require("../../middleware/admin-auth");
 
 // @route   POST api/comments?where=...&id=
 // @desc    Create a comment
@@ -195,6 +197,41 @@ router.post("/mark_mentions_as_seen", auth, async (req, res) => {
       { new: true }
     );
     res.send("ok");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+/**
+ * @route     GET api/comments/liked
+ * @desc      Get last 20 comments user liked
+ * @access    Private
+ */
+router.get("/liked", adminAuth, async (req, res) => {
+  const limit = +req.query.limit || 20;
+  const userId = mongoose.Types.ObjectId(req.user.id);
+  try {
+    const ids = await Comment.aggregate([
+      { $match: { "likes.user": userId } },
+      { $unwind: "$likes" },
+      { $match: { "likes.user": userId } },
+      { $sort: { "likes._id": -1 } },
+      { $limit: limit },
+      { $project: { _id: 1 } },
+    ]);
+
+    const commentIds = ids.map((x) => x._id);
+    const comments = await Comment.find({ _id: { $in: commentIds } })
+      .populate("user", shortUserInfoFields)
+      .select("-avatar -name")
+      .lean();
+
+    const reorderedComments = commentIds.map((commentId) =>
+      comments.find((comment) => comment._id.equals(commentId))
+    );
+
+    res.json(reorderedComments);
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error");
