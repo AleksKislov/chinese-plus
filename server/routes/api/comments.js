@@ -13,7 +13,7 @@ const { Notify } = require("../../src/api/services/_misc");
 const { shortUserInfoFields } = require("../../src/api/consts");
 const VideoLesson = require("../../src/models/VideoLesson");
 const mongoose = require("mongoose");
-const adminAuth = require("../../middleware/admin-auth");
+// const adminAuth = require("../../middleware/admin-auth");
 
 // @route   POST api/comments?where=...&id=
 // @desc    Create a comment
@@ -208,7 +208,7 @@ router.post("/mark_mentions_as_seen", auth, async (req, res) => {
  * @desc      Get last 20 comments user liked
  * @access    Private
  */
-router.get("/liked", adminAuth, async (req, res) => {
+router.get("/liked", auth, async (req, res) => {
   const limit = +req.query.limit || 20;
   const userId = mongoose.Types.ObjectId(req.user.id);
   try {
