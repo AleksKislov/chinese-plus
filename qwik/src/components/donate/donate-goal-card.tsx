@@ -24,6 +24,11 @@ export const DonateGoalCard = component$(({ goal, isCompact }: DonateCardProps) 
 
   const currencyVal = notFinancial ? "подписчиков" : currency;
   const collectedPercent = (amountCollected / amountNeeded) * 100;
+  const labelText = notFinancial
+    ? `Сейчас: ${amountCollected || 0} ${currencyVal}`
+    : `Собрано: ${(amountCollected || 0).toFixed(2)} ${currencyVal} [${(
+        (amountCollected / amountNeeded) * 100 || 0
+      ).toFixed(1)}%]`;
 
   return (
     <div class={`card w-full bg-base-200 mb-3 ${isCompact ? "card-compact" : ""}`}>
@@ -43,16 +48,7 @@ export const DonateGoalCard = component$(({ goal, isCompact }: DonateCardProps) 
         <p dangerouslySetInnerHTML={desc}></p>
         <div>
           <div class='label'>
-            {notFinancial ? (
-              <span class='label-text'>
-                Сейчас: {amountCollected || 0} {currencyVal}
-              </span>
-            ) : (
-              <span class='label-text'>
-                Собрано: {(amountCollected || 0).toFixed(2)} {currencyVal} [
-                {((amountCollected / amountNeeded) * 100 || 0).toFixed(1)}%]
-              </span>
-            )}
+            <span class='label-text'>{labelText}</span>
           </div>
           <progress
             class={`progress w-full ${isFinished ? "progress-success" : "progress-warning"}`}

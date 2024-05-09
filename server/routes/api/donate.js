@@ -47,9 +47,13 @@ router.post("/history", async (req, res) => {
       await DonateGoal.updateOne(...args);
     }
 
-    const [allDonates, goals] = await Promise.all([getMongoDonates(true), getGoals()]);
+    const [allDonates, goals, notFinancialGoal] = await Promise.all([
+      getMongoDonates(true),
+      getGoals(),
+      getNotFinancialGoal(),
+    ]);
 
-    res.json({ donates: allDonates, goals });
+    res.json({ donates: allDonates, goals: [notFinancialGoal, ...goals] });
   } catch (err) {
     res.status(500).json({ err });
   }

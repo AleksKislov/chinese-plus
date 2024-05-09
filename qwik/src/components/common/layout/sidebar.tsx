@@ -35,7 +35,7 @@ export const Sidebar = component$(({ noAds }: SidebarType) => {
           </figure>
         </Link>
       )}
-      {randomGoal && <DonateGoalCard goal={randomGoal} isCompact={true} />}
+      {!noAds && randomGoal && <DonateGoalCard goal={randomGoal} isCompact={true} />}
       <Slot />
     </div>
   );
