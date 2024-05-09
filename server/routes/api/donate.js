@@ -53,7 +53,8 @@ router.post("/history", async (req, res) => {
       getNotFinancialGoal(),
     ]);
 
-    res.json({ donates: allDonates, goals: [notFinancialGoal, ...goals] });
+    const financialGoals = goals.filter((x) => !x.notFinancial);
+    res.json({ donates: allDonates, goals: [notFinancialGoal, ...financialGoals] });
   } catch (err) {
     res.status(500).json({ err });
   }

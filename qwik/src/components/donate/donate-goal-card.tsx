@@ -6,7 +6,7 @@ import { dateToStr } from "~/misc/helpers/tools";
 
 type DonateCardProps = {
   goal: DonateGoal;
-  isCompact?: boolean;
+  isCompact?: boolean; // for sidebar
 };
 
 export const DonateGoalCard = component$(({ goal, isCompact }: DonateCardProps) => {
@@ -31,7 +31,7 @@ export const DonateGoalCard = component$(({ goal, isCompact }: DonateCardProps) 
       ).toFixed(1)}%]`;
 
   return (
-    <div class={`card w-full bg-base-200 mb-3 ${isCompact ? "card-compact" : ""}`}>
+    <div class={`card w-full bg-base-200 ${isCompact ? "card-compact mt-3" : "mb-3"}`}>
       <div class='card-body'>
         <div class='flex justify-between'>
           <h3 class='card-title' dangerouslySetInnerHTML={title}></h3>
