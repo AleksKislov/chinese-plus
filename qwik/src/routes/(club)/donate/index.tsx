@@ -21,11 +21,12 @@ export type DonateGoal = {
   desc: string;
   amountCollected: number;
   amountNeeded: number;
-  priority: 1 | 2 | 3;
   title: string;
   isFinished: boolean;
-  currency: string; // RUB only
   createdAt: ISODate;
+  priority: 1 | 2 | 3;
+  currency: string; // RUB only
+  notFinancial?: boolean;
 };
 
 export const useGetDonatesAndGoals = routeAction$(

@@ -15,6 +15,7 @@ const DonateGoalSchema = new mongoose.Schema({
   desc: { type: String, required: true },
   isFinished: { type: Boolean, default: false }, // when amountNeeded == amountCollected
   isActive: { type: Boolean, default: true },
+  notFinancial: { type: Boolean, default: false },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -8,17 +8,6 @@ const { shortUserInfoFields } = require("../../src/api/consts");
 const DONATE_LABEL_START = "supportChinesePlus";
 const LABEL_SEPARATOR = "#";
 
-// router.post("/create_goal", async (req, res) => {
-//   const { donateIds, amountNeeded, desc, title, priority } = req.body;
-
-//   try {
-//     const newGoal = await new DonateGoal({ donateIds, amountNeeded, desc, title, priority }).save();
-//     res.json(newGoal);
-//   } catch (err) {
-//     res.status(500).json({ err });
-//   }
-// });
-
 router.post("/history", async (req, res) => {
   const records = +req.query.records || 30;
   try {
@@ -66,10 +55,37 @@ router.post("/history", async (req, res) => {
   }
 });
 
-async function getGoals() {
-  return DonateGoal.find({ isActive: true })
+router.get("/goals", async (_req, res) => {
+  try {
+    const [[financialGoal], notFinancialGoal] = await Promise.all([
+      getGoals(1, true),
+      getNotFinancialGoal(),
+    ]);
+
+    res.json([financialGoal, notFinancialGoal]);
+  } catch (err) {
+    res.status(500).json({ err });
+  }
+});
+
+async function getGoals(lim = 0, onlyNotFinished = false) {
+  const limit = {};
+  if (lim) limit.limit = lim;
+  const filters = { isActive: true };
+  if (onlyNotFinished) filters.isFinished = false;
+  return DonateGoal.find(filters, undefined, limit)
     .select("-donateIds -isActive")
     .sort({ isFinished: 1, priority: -1 });
+}
+
+async function getNotFinancialGoal() {
+  const [notFinancialGoals, tgData] = await Promise.all([
+    DonateGoal.find({ isActive: true, notFinancial: true }, undefined, { limit: 1 }),
+    axios.get(process.env.TELEGRAM_MEMBERS_NUM_URL),
+  ]);
+
+  notFinancialGoals[0].amountCollected = tgData.data.result;
+  return notFinancialGoals[0];
 }
 
 function getNewDonates(yooMoneyDonates, mongoDonates) {

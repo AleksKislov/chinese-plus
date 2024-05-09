@@ -10,9 +10,11 @@ import {
   configContext,
   type Config,
   IsLightThemeCookieName,
+  goalsContext,
 } from "~/root";
 import { type CommentType } from "~/components/common/comments/comment-card";
 import { ThemeTypes } from "~/components/common/layout/header/theme-changer";
+import { type DonateGoal } from "./(club)/donate";
 
 export const getNewMentions = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
   const token = getTokenFromCookie(cookie);
@@ -72,6 +74,10 @@ export const useFeConfigs = routeLoader$((): Promise<Config[]> => {
   return ApiService.get("/api/project/configs", undefined, []);
 });
 
+export const useGetOurGoals = routeLoader$((): Promise<DonateGoal[]> => {
+  return ApiService.get("/api/donate/goals", undefined, []);
+});
+
 export const useCheckTheme = routeLoader$(({ cookie }): boolean => {
   const isLightTheme = Boolean(+(cookie.get(IsLightThemeCookieName)?.value || "0"));
   return !isLightTheme;
@@ -86,7 +92,9 @@ export default component$(() => {
   const beVersion = useGetBackendVersion();
   const pulse = useGetPulse();
   const feConfigs = useFeConfigs();
+  const getOurGoals = useGetOurGoals();
   const configState = useContext(configContext);
+  const goalsState = useContext(goalsContext);
 
   useTask$(({ track }) => {
     track(() => user.value);
@@ -134,6 +142,16 @@ export default component$(() => {
   useTask$(({ track }) => {
     const res = track(() => feConfigs.value);
     configState.push(...res.filter((x) => x.isActive));
+  });
+
+  useTask$(({ track }) => {
+    const res = track(() => feConfigs.value);
+    configState.push(...res.filter((x) => x.isActive));
+  });
+
+  useTask$(({ track }) => {
+    const res = track(() => getOurGoals.value);
+    goalsState.push(...res);
   });
 
   return (

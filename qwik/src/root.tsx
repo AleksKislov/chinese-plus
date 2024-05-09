@@ -10,6 +10,7 @@ import { RouterHead } from "./components/router-head/router-head";
 
 import globalStyles from "./global.css?inline";
 import { QwikPartytown } from "./components/partytown/partytown";
+import type { DonateGoal } from "./routes/(club)/donate";
 
 export const IsLightThemeCookieName = "isLightTheme";
 
@@ -65,6 +66,7 @@ export const AlertColorEnum = {
 export const userContext = createContextId<User>("user-context");
 export const alertsContext = createContextId<Alert[]>("alerts-context");
 export const configContext = createContextId<Config[]>("config-context");
+export const goalsContext = createContextId<DonateGoal[]>("goals-context");
 
 export default component$(() => {
   useStyles$(globalStyles);
@@ -87,10 +89,12 @@ export default component$(() => {
   });
   const alertsState = useStore<Alert[]>([]);
   const configState = useStore<Config[]>([]);
+  const goalsState = useStore<DonateGoal[]>([]);
 
   useContextProvider(userContext, userState);
   useContextProvider(alertsContext, alertsState);
   useContextProvider(configContext, configState);
+  useContextProvider(goalsContext, goalsState);
 
   return (
     <QwikCityProvider>

@@ -10,8 +10,8 @@ export const DonateGoalsCard = component$(() => {
         <p>
           Типы целей проекта в порядке убывания приоритета:
           <br />
-          <span class='badge badge-info badge-xs'></span> продвижение (привлечение новых
-          пользователей)
+          <span class='badge badge-info badge-xs'></span> продвижение (новые пользователи,
+          маркетинг)
           <br />
           <span class='badge badge-info badge-xs'></span> инфраструтура (сервер, хостинг, домен...)
           <br />
