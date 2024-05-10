@@ -47,14 +47,15 @@ router.post("/history", async (req, res) => {
       await DonateGoal.updateOne(...args);
     }
 
-    const [allDonates, goals, notFinancialGoal] = await Promise.all([
+    const [allDonates, finGoals, notFinancialGoal] = await Promise.all([
       getMongoDonates(true),
       getGoals(),
       getNotFinancialGoal(),
     ]);
 
-    const financialGoals = goals.filter((x) => !x.notFinancial);
-    res.json({ donates: allDonates, goals: [notFinancialGoal, ...financialGoals] });
+    const financialGoals = finGoals.filter((x) => !x.notFinancial);
+    const goals = notFinancialGoal ? [notFinancialGoal, ...financialGoals] : financialGoals;
+    res.json({ donates: allDonates, goals });
   } catch (err) {
     res.status(500).json({ err });
   }
@@ -62,12 +63,14 @@ router.post("/history", async (req, res) => {
 
 router.get("/goals", async (_req, res) => {
   try {
-    const [[financialGoal], notFinancialGoal] = await Promise.all([
+    const [financialGoals, notFinancialGoal] = await Promise.all([
       getGoals(1, true),
       getNotFinancialGoal(),
     ]);
 
-    res.json([financialGoal, notFinancialGoal]);
+    const result = financialGoals;
+    if (notFinancialGoal) result.push(notFinancialGoal);
+    res.json(result);
   } catch (err) {
     res.status(500).json({ err });
   }
@@ -84,13 +87,20 @@ async function getGoals(lim = 0, onlyNotFinished = false) {
 }
 
 async function getNotFinancialGoal() {
-  const [notFinancialGoals, tgData] = await Promise.all([
-    DonateGoal.find({ isActive: true, notFinancial: true }, undefined, { limit: 1 }),
-    axios.get(process.env.TELEGRAM_MEMBERS_NUM_URL),
-  ]);
+  try {
+    const [notFinancialGoals, tgData] = await Promise.all([
+      DonateGoal.find({ isActive: true, notFinancial: true }, undefined, { limit: 1 }),
+      axios.get(process.env.TELEGRAM_MEMBERS_NUM_URL),
+    ]);
 
-  notFinancialGoals[0].amountCollected = tgData.data.result;
-  return notFinancialGoals[0];
+    if (notFinancialGoals[0]) {
+      notFinancialGoals[0].amountCollected = tgData.data.result;
+      return notFinancialGoals[0];
+    }
+  } catch (err) {
+    console.log("[TG ERR]", err.message);
+    return null;
+  }
 }
 
 function getNewDonates(yooMoneyDonates, mongoDonates) {

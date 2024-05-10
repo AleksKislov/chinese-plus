@@ -1,4 +1,4 @@
-import { component$, type Signal, useContext } from "@builder.io/qwik";
+import { component$, type Signal, useContext, $ } from "@builder.io/qwik";
 import { arrorUturnDown, editSvg, thumbUpSvg } from "../media/svg";
 import { UserDateDiv } from "./user-with-date";
 import { userContext } from "~/root";
@@ -53,6 +53,7 @@ export const CommentCard = component$(
       user: { _id: userId, name: userName, newAvatar },
       destination: contentType,
       post_id: contentId,
+      commentIdToReply: replyInfo,
     } = comment;
     const ownsComment = userState._id === userId;
     const canEdit = ownsComment || isAdmin;
@@ -60,10 +61,36 @@ export const CommentCard = component$(
 
     const modalId = `edit-modal-${_id}`;
     const href = getContentPath(contentType, contentId, false);
-    const anchor = `${_id.slice(-3)}`;
+    const getAnchor = (id: string): string => `${id.slice(-3)}`;
+    const anchor = getAnchor(_id);
+
+    const writeToUser = $(() => {
+      if (ownsComment || addressees.value.some((x) => x.id === userId)) return;
+      addressees.value = [
+        ...addressees.value,
+        {
+          id: userId,
+          name: userName,
+        },
+      ];
+    });
     return (
       <>
         <div class='card w-full bg-base-200 mb-3' id={anchor}>
+          {replyInfo && (
+            <div class='text-neutral-500 absolute left-0 top-0'>
+              <span class='ml-2 mt-1 text-xs'>
+                ответ <span class='badge badge-xs hover:badge-info'>{replyInfo.name}</span> на
+              </span>
+              <Link
+                href={`${href}#${getAnchor(replyInfo.commentId)}`}
+                scroll={true}
+                class='ml-1 mt-1 badge badge-xs hover:badge-info'
+              >
+                {`#${getAnchor(replyInfo.commentId)}`}
+              </Link>
+            </div>
+          )}
           <div class='text-neutral-500 absolute right-0 top-0'>
             <Link
               href={`${href}#${anchor}`}
@@ -79,19 +106,7 @@ export const CommentCard = component$(
                 class='tooltip tooltip-info mr-4'
                 data-tip={ownsComment ? "Это вы" : "Обратиться к пользователю"}
               >
-                <div
-                  class='avatar cursor-pointer'
-                  onClick$={() => {
-                    if (ownsComment || addressees.value.some((x) => x.id === userId)) return;
-                    addressees.value = [
-                      ...addressees.value,
-                      {
-                        id: userId,
-                        name: userName,
-                      },
-                    ];
-                  }}
-                >
+                <div class='avatar cursor-pointer' onClick$={writeToUser}>
                   <SmallAvatar newAvatar={newAvatar} userName={userName} />
                 </div>
               </div>

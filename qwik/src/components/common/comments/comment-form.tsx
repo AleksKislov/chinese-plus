@@ -233,8 +233,9 @@ export const CommentTextArea = component$(
           <label class={"label"}>
             <span class={"label-text-alt"}>
               Вы обращаетесь к{" "}
-              {addressees.value.map((x) => (
+              {addressees.value.map((x, ind) => (
                 <div
+                  key={ind}
                   class='badge badge-primary cursor-pointer pl-3 mr-1'
                   onClick$={() => unsetAddressee(x)}
                 >
