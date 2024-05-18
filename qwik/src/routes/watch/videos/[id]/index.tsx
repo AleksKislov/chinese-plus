@@ -77,10 +77,9 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
 
 type YTPlayer = {
   player: {
-    playerInfo?: {
-      currentTime: number;
-      playerState: number;
-    };
+    getCurrentTime: NoSerialize<() => number>;
+    getPlayerState: NoSerialize<() => number>;
+
     pauseVideo: NoSerialize<() => void>;
     playVideo: NoSerialize<() => void>;
   };
@@ -93,9 +92,7 @@ export default component$(() => {
   const hideBtnsSig = useSignal<string[]>([]);
   const ytSig = useStore<YTPlayer>({
     // @ts-ignore
-    player: {
-      playerInfo: undefined,
-    },
+    player: null,
   });
   const subCurrentInd = useSignal(0);
   const curWordInd = useSignal(-1);
@@ -134,28 +131,30 @@ export default component$(() => {
 
   useVisibleTask$(({ track }) => {
     track(() => isPaused.value);
-    if (!ytSig.player.pauseVideo) return;
+    if (!ytSig.player?.pauseVideo) return;
 
     if (isPaused.value && playerState.value === PlayerState.playing) {
-      ytSig.player.pauseVideo();
+      ytSig.player?.pauseVideo?.();
     }
 
     if (!isPaused.value && playerState.value === PlayerState.paused && ytSig.player.playVideo) {
-      ytSig.player.playVideo();
+      ytSig.player?.playVideo?.();
     }
   });
 
   useVisibleTask$(() => {
-    if (!ytSig.player.playerInfo) {
+    if (!ytSig.player) {
       YTframeLoader.load((YT) => {
         const ytPlayer = new YT.Player(YtPlayerId, { videoId: source });
-        ytSig.player = noSerialize(ytPlayer);
+
+        ytSig.player = noSerialize(ytPlayer) || {};
       });
     }
 
     setInterval(() => {
-      playerState.value = ytSig.player.playerInfo?.playerState || PlayerState.ended;
-      const curTime = ytSig.player.playerInfo?.currentTime || 0;
+      playerState.value = ytSig.player?.getPlayerState?.() || PlayerState.ended;
+      const curTime = ytSig.player?.getCurrentTime?.() || 0;
+
       const ind = cnSubs.findIndex(({ start, dur }) => {
         return +start < curTime && +start + +dur > curTime;
       });

@@ -42,7 +42,7 @@ export const HanziWriterSettings = {
   delayBetweenLoops: 3000,
 };
 
-export const delay = (time: number) => new Promise((res) => setTimeout(res, time));
+// export const delay = (time: number) => new Promise((res) => setTimeout(res, time));
 
 export const segmenter = async (text: string): Promise<string[]> => {
   return ApiService.post("/api/dictionary/segmenter", { text }, undefined, []);
@@ -135,7 +135,7 @@ export default component$(() => {
 
       <FlexRow>
         <Sidebar>
-          <div class='card bg-base-200 mt-3'>
+          <div class='card card-compact bg-base-200 mt-3'>
             <div class='card-body'>
               <span>
                 База слов взята с{" "}
