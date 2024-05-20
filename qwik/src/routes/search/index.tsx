@@ -42,8 +42,6 @@ export const HanziWriterSettings = {
   delayBetweenLoops: 3000,
 };
 
-// export const delay = (time: number) => new Promise((res) => setTimeout(res, time));
-
 export const segmenter = async (text: string): Promise<string[]> => {
   return ApiService.post("/api/dictionary/segmenter", { text }, undefined, []);
 };

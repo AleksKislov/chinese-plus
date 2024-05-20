@@ -58,7 +58,7 @@ export const DonateGoalCard = component$(({ goal, isCompact }: DonateCardProps) 
           <div class='label'>
             {!notFinancial && <span class='label-text'>{dateToStr(createdAt, true)}</span>}
             <span class='label-text-alt'>
-              Цель: {amountNeeded} {currencyVal}
+              Цель: {amountNeeded?.toString()} {currencyVal}
             </span>
           </div>
         </div>

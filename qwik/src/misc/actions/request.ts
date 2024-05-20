@@ -1,6 +1,8 @@
 export const BASE_URL = import.meta.env.PUBLIC_BASE_URL;
+export const GO_BASE_URL = import.meta.env.PUBLIC_GO_BASE_URL;
 
 console.log(import.meta.env.PUBLIC_ENV, import.meta.env.PUBLIC_VERSION);
+
 type ReqHeaders = {
   "Content-Type": string;
   "x-auth-token"?: string;
@@ -16,51 +18,64 @@ const headers: ReqHeaders = {
   "Content-Type": "application/json",
 };
 
-function getReqOptions(method: string, body: string | null, token?: string): ReqOptions {
-  const options: ReqOptions = {
-    headers,
-    method,
-  };
-  if (token) {
-    options.headers = { ...headers, "x-auth-token": token };
-  }
-  if (body) {
-    options.body = body;
-  }
-  return options;
-}
+class ApiServiceFactory {
+  private _baseUrl: string;
 
-async function myFetch(path: string, opts: ReqOptions, defaultVal?: any): Promise<any> {
-  try {
-    const res = await fetch(BASE_URL + path, opts);
-    if (!res.ok) {
-      throw new Error(`REQUEST ERR for ${path}! Status: ${res.status}, ${await res?.text()}`);
+  constructor(baseUrl: string) {
+    this._baseUrl = baseUrl;
+  }
+
+  _getReqOptions(method: string, body: string | null, token?: string): ReqOptions {
+    const options: ReqOptions = {
+      headers,
+      method,
+    };
+    if (token) {
+      options.headers = { ...headers, "x-auth-token": token };
     }
-    return await res.json();
-  } catch (err) {
-    console.log(err);
-    return defaultVal;
-  }
-}
-
-export class ApiService {
-  static get(path: string, token?: string, defaultVal?: any): Promise<any> {
-    return myFetch(path, getReqOptions("GET", null, token), defaultVal);
+    if (body) {
+      options.body = body;
+    }
+    return options;
   }
 
-  static post(path: string, body: Object, token?: string, defaultVal?: any): Promise<any> {
-    return myFetch(path, getReqOptions("POST", JSON.stringify(body), token), defaultVal);
+  async _myFetch(path: string, opts: ReqOptions, defaultVal?: any): Promise<any> {
+    try {
+      const res = await fetch(this._baseUrl + path, opts);
+      if (!res.ok) {
+        throw new Error(`REQUEST ERR for ${path}! Status: ${res.status}, ${await res?.text()}`);
+      }
+      return await res.json();
+    } catch (err) {
+      console.log(err);
+      return defaultVal;
+    }
   }
 
-  static put(path: string, body: Object | null, token?: string, defaultVal?: any): Promise<any> {
-    return myFetch(
+  get(path: string, token?: string, defaultVal?: any): Promise<any> {
+    return this._myFetch(path, this._getReqOptions("GET", null, token), defaultVal);
+  }
+
+  post(path: string, body: Object, token?: string, defaultVal?: any): Promise<any> {
+    return this._myFetch(
       path,
-      getReqOptions("PUT", body ? JSON.stringify(body) : null, token),
+      this._getReqOptions("POST", JSON.stringify(body), token),
       defaultVal
     );
   }
 
-  static delete(path: string, token?: string, defaultVal?: any): Promise<any> {
-    return myFetch(path, getReqOptions("DELETE", null, token), defaultVal);
+  put(path: string, body: Object | null, token?: string, defaultVal?: any): Promise<any> {
+    return this._myFetch(
+      path,
+      this._getReqOptions("PUT", body ? JSON.stringify(body) : null, token),
+      defaultVal
+    );
+  }
+
+  delete(path: string, token?: string, defaultVal?: any): Promise<any> {
+    return this._myFetch(path, this._getReqOptions("DELETE", null, token), defaultVal);
   }
 }
+
+export const ApiService = new ApiServiceFactory(BASE_URL);
+export const GoApiService = new ApiServiceFactory(GO_BASE_URL);
