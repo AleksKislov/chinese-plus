@@ -23,6 +23,21 @@ services:
     networks:
       bylh_net:
 
+  chin_plus_go_be:
+    container_name: chin_plus_go_be
+    restart: unless-stopped
+    environment:
+      - VERSION=${VERSION}
+    build:
+      context: ./books
+      dockerfile: Dockerfile
+      args:
+        VERSION: ${VERSION}
+    ports:
+      - 12000:12000
+    networks:
+      bylh_net:
+
   chin_plus_fe:
     container_name: chin_plus_fe
     environment:
@@ -34,6 +49,7 @@ services:
       args:
         VERSION: ${VERSION}
         BE_PORT: 10000
+        GO_BE_PORT: 12000
     ports:
       - 4000:3000
     networks:

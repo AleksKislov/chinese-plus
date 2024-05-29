@@ -65,7 +65,7 @@ export const head: DocumentHead = {
   meta: [
     {
       name: "description",
-      content: "Все слова нового HSK версии 3.0 разбитые по уровням.",
+      content: "Все слова нового HSK версии 3.0 с переводом и озвучкой разбитые по уровням.",
     },
   ],
 };

@@ -26,12 +26,22 @@ import { OwnWordBtn } from "~/components/common/tooltips/own-word-btn";
 import { editWordModalId } from "~/components/common/tooltips/word-tooltip";
 import { DictWordTranslation } from "~/components/common/translation/dict-word-translation";
 import { SearchResutlTable } from "~/components/search/search-result-table";
-import { ApiService } from "~/misc/actions/request";
+import { ApiService, GoApiService } from "~/misc/actions/request";
 import { alertsContext } from "~/root";
 import { getWordsForTooltips } from "~/routes/read/texts/[id]";
 import HanziWriter from "hanzi-writer";
 import { markUpRuText } from "~/misc/helpers/translation";
 import { Sidebar } from "~/components/common/layout/sidebar";
+import { SearchRuResult } from "~/components/search/search-ru-result";
+
+export type RuWord = {
+  word: {
+    _id: ObjectId;
+    ru: string;
+    cn: string;
+  } | null;
+  other: { value: string; canBeFound: boolean }[];
+};
 
 export const HanziWriterSettings = {
   width: 60,
@@ -51,28 +61,48 @@ export const getChineseWordsArr = async (input: string): Promise<string[]> => {
   return arr.filter((word) => /\p{Script=Han}/u.test(word));
 };
 
-export const useLoadTranslation = routeLoader$(async (ev): Promise<(string | DictWord)[]> => {
-  const q = ev.query.get("q") || "";
-  const segmentedWords = await getChineseWordsArr(q);
-  const wordsWithInfo = await getWordsForTooltips(segmentedWords);
-
-  return segmentedWords.map((word) => {
-    for (let i = 0; i < wordsWithInfo.length; i++) {
-      if ((wordsWithInfo[i] as DictWord).chinese === word) {
-        return wordsWithInfo[i];
-      }
-    }
-    return word;
-  });
+export const useGetRuWord = routeLoader$(async (ev): Promise<RuWord | null> => {
+  const q = ev.query.get("ru") || "";
+  if (!isRussian(q)) return null;
+  return GoApiService.get("/api/ru_word/" + q);
 });
+
+export const useLoadTranslation = routeLoader$(
+  async (ev): Promise<(string | DictWord)[] | null> => {
+    const q = ev.query.get("q") || "";
+    if (!isChinese(q)) return null;
+    const segmentedWords = await getChineseWordsArr(q);
+    const wordsWithInfo = await getWordsForTooltips(segmentedWords);
+
+    return segmentedWords.map((word) => {
+      for (let i = 0; i < wordsWithInfo.length; i++) {
+        if ((wordsWithInfo[i] as DictWord).chinese === word) {
+          return wordsWithInfo[i];
+        }
+      }
+      return word;
+    });
+  }
+);
+
+export const isRussian = (str: string): boolean => {
+  return /[\u0400-\u04FF]/.test(str);
+};
+
+export const isChinese = (str: string): boolean => {
+  return /\p{Script=Han}/u.test(str);
+};
 
 export default component$(() => {
   const CHAR_SVG_DIV_ID = "showCharDiv";
   const loc = useLocation();
   const nav = useNavigate();
   const loadTranslation = useLoadTranslation();
+  const ruWord = useGetRuWord();
   const words = useSignal<(string | DictWord)[] | null>(null);
   const input = useSignal(loc.url.searchParams.get("q") || "");
+  const ruInput = useSignal(loc.url.searchParams.get("ru") || "");
+
   const alertsState = useContext(alertsContext);
   const showExamples = useSignal(true);
 
@@ -80,6 +110,11 @@ export default component$(() => {
     track(() => loc.url.searchParams.get("q"));
     input.value = loc.url.searchParams.get("q") || "";
     words.value = loadTranslation.value;
+  });
+
+  useTask$(({ track }) => {
+    track(() => loc.url.searchParams.get("ru"));
+    ruInput.value = loc.url.searchParams.get("ru") || "";
   });
 
   const clearCharDiv = $(() => {
@@ -109,15 +144,19 @@ export default component$(() => {
   const getTranslation = $(() => {
     clearCharDiv();
 
-    const chineseStr = input.value.trim();
-    if (!chineseStr) return (input.value = "");
+    const inputStr = input.value.trim();
+    if (!inputStr) return (input.value = "");
 
-    const isChinese = /\p{Script=Han}/u.test(chineseStr);
-    if (!isChinese) {
-      return alertsState.push({ bg: "alert-error", text: "Введенный текст не является китайским" });
+    if (isChinese(inputStr)) {
+      nav("/search?q=" + inputStr);
+    } else if (isRussian(inputStr)) {
+      nav("/search?ru=" + inputStr);
+    } else {
+      alertsState.push({
+        bg: "alert-error",
+        text: "Поиск только по китайским или русским словам",
+      });
     }
-
-    nav("/search?q=" + chineseStr);
   });
 
   useOnDocument(
@@ -133,7 +172,7 @@ export default component$(() => {
 
       <FlexRow>
         <Sidebar>
-          <div class='card card-compact bg-base-200 mt-3'>
+          <div class='card card-compact bg-base-200'>
             <div class='card-body'>
               <span>
                 База слов взята с{" "}
@@ -196,6 +235,21 @@ export default component$(() => {
               {words.value && words.value.length > 1 && (
                 <SearchResutlTable words={words.value || []} />
               )}
+
+              {ruWord.value && (
+                <>
+                  {ruWord.value.word?.ru && (
+                    <div class={"mt-3 flex justify-between"}>
+                      <div class={"flex"}>
+                        <div class='font-bold text-xl text-success'>{ruWord.value.word?.ru}</div>
+                      </div>
+                      <ShowHideBtn showExamples={showExamples} />
+                    </div>
+                  )}
+
+                  <SearchRuResult ruWord={ruWord.value} showExamples={showExamples.value} />
+                </>
+              )}
             </div>
           </div>
         </MainContent>
@@ -205,10 +259,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = ({ resolveValue }) => {
-  const translation = resolveValue(useLoadTranslation);
+  const cnTranslation = resolveValue(useLoadTranslation);
+  const ruWord = resolveValue(useGetRuWord);
 
-  if (translation.length === 1 && typeof translation[0] !== "string") {
-    const wordObj = translation[0];
+  if (cnTranslation && cnTranslation.length === 1 && typeof cnTranslation[0] !== "string") {
+    const wordObj = cnTranslation[0];
 
     return {
       title: `Chinese+ ${wordObj.chinese} перевод c китайского на русский`,
@@ -216,6 +271,18 @@ export const head: DocumentHead = ({ resolveValue }) => {
         {
           name: "description",
           content: `Значение китайского слова ${markUpRuText(wordObj.russian, false)}`,
+        },
+      ],
+    };
+  }
+
+  if (ruWord?.word) {
+    return {
+      title: `Chinese+ ${ruWord.word.ru} перевод c русского на китайский`,
+      meta: [
+        {
+          name: "description",
+          content: `Как будет ${ruWord.word.ru} по-китайски`,
         },
       ],
     };

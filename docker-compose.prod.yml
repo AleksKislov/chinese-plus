@@ -34,14 +34,22 @@ services:
     restart: unless-stopped
     environment:
       - VERSION=${VERSION}
-    # build:
-    #   context: ./qwik
-    #   dockerfile: Dockerfile
-    #   args:
-    #     VERSION: ${VERSION}
-    #     BE_PORT: 10000
     ports:
       - 4000:3000
+    networks:
+      new_bylh_bylh_net:
+
+  chin_plus_go_fe:
+    container_name: chin_plus_go_be
+    image: std016039/chin_plus_go_be:${VERSION}
+    restart: unless-stopped
+    environment:
+      - VERSION=${VERSION}
+      - MONGO_URI=${MONGO_URI}
+      - DB_NAME=${DB_NAME}
+      - CHECK_WORD_API=${CHECK_WORD_API}
+    ports:
+      - 12000:12000
     networks:
       new_bylh_bylh_net:
 
