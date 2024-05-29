@@ -39,7 +39,7 @@ services:
     networks:
       new_bylh_bylh_net:
 
-  chin_plus_go_fe:
+  chin_plus_go_be:
     container_name: chin_plus_go_be
     image: std016039/chin_plus_go_be:${VERSION}
     restart: unless-stopped
