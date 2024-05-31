@@ -62,7 +62,7 @@ export const getChineseWordsArr = async (input: string): Promise<string[]> => {
 };
 
 export const useGetRuWord = routeLoader$(async (ev): Promise<RuWord | null> => {
-  const q = ev.query.get("ru") || "";
+  const q = ev.query.get("q") || "";
   if (!isRussian(q)) return null;
   return GoApiService.get("/api/ru_word/" + q);
 });
@@ -101,20 +101,14 @@ export default component$(() => {
   const ruWord = useGetRuWord();
   const words = useSignal<(string | DictWord)[] | null>(null);
   const input = useSignal(loc.url.searchParams.get("q") || "");
-  const ruInput = useSignal(loc.url.searchParams.get("ru") || "");
 
   const alertsState = useContext(alertsContext);
   const showExamples = useSignal(true);
 
   useTask$(({ track }) => {
-    track(() => loc.url.searchParams.get("q"));
-    input.value = loc.url.searchParams.get("q") || "";
+    const query = track(() => loc.url.searchParams.get("q"));
+    input.value = query || "";
     words.value = loadTranslation.value;
-  });
-
-  useTask$(({ track }) => {
-    track(() => loc.url.searchParams.get("ru"));
-    ruInput.value = loc.url.searchParams.get("ru") || "";
   });
 
   const clearCharDiv = $(() => {
@@ -147,10 +141,8 @@ export default component$(() => {
     const inputStr = input.value.trim();
     if (!inputStr) return (input.value = "");
 
-    if (isChinese(inputStr)) {
+    if (isChinese(inputStr) || isRussian(inputStr)) {
       nav("/search?q=" + inputStr);
-    } else if (isRussian(inputStr)) {
-      nav("/search?ru=" + inputStr);
     } else {
       alertsState.push({
         bg: "alert-error",
@@ -207,7 +199,7 @@ export default component$(() => {
 
             <div id={CHAR_SVG_DIV_ID} class='flex mt-3'></div>
             <div>
-              {words.value && words.value.length === 1 && (
+              {words.value && !ruWord.value && words.value.length === 1 && (
                 <>
                   <div class={"mt-3 flex justify-between"}>
                     <div class={"flex"}>

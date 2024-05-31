@@ -12,7 +12,7 @@ export const useEditWord = globalAction$((body, ev) => {
 export const EditWordModal = component$(
   ({ word, modalId }: { word: DictWord; modalId: string }) => {
     const editWord = useEditWord();
-    const { chinese, pinyin, russian } = word;
+    const { chinese, pinyin, russian } = word || {};
     const newPinyin = useSignal(pinyin || "");
     const alertsState = useContext(alertsContext);
 
