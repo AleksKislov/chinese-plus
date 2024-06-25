@@ -44,6 +44,7 @@ export default component$(({ pulse }: { pulse: PulseData }) => {
                     <ul class='w-52 bg-base-200'>
                       <MenuItemNew name={"Тексты"} links={read.links} />
                       <MenuLink href={"/read/unapproved-texts"} text={"На проверке"} />
+                      <MenuLink href={"/segment"} text={"Сегментатор"} />
                     </ul>
                   </details>
                 </li>
@@ -82,7 +83,6 @@ export default component$(({ pulse }: { pulse: PulseData }) => {
                 <Brand />
               </Link>
               <ul class='menu menu-horizontal mt-1'>
-                {/* <MenuItem name={read.name} links={read.links} /> */}
                 <li tabIndex={0} class='dropdown dropdown-hover hover:text-success'>
                   <label class='my-1 hover:text-secondary'>
                     {read.name}
@@ -91,6 +91,7 @@ export default component$(({ pulse }: { pulse: PulseData }) => {
                   <ul class='dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content'>
                     <MenuItemNew name={"Тексты"} links={read.links} />
                     <MenuLink href={"/read/unapproved-texts"} text={"На проверке"} />
+                    <MenuLink href={"/segment"} text={"Сегментатор"} />
                   </ul>
                 </li>
 
