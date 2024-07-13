@@ -1,4 +1,11 @@
-import { component$, type Signal, useContext, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import {
+  component$,
+  type Signal,
+  useContext,
+  useSignal,
+  useVisibleTask$,
+  $,
+} from "@builder.io/qwik";
 import { parseRussian } from "~/misc/helpers/translation";
 import { userContext } from "~/root";
 import { moreInfoSvg } from "../media/svg";
@@ -13,7 +20,7 @@ export const moreInfoModalId = "moreInfoModalId";
 type WordTooltipProps = {
   word: string | DictWord;
   hasReddened?: boolean; // only for video subs
-  currentWord: Signal<DictWord | undefined>;
+  currentWord: Signal<DictWord | null>;
 };
 
 export const useGetWordFullTranslation = globalAction$((params): Promise<(string | DictWord)[]> => {
@@ -31,11 +38,18 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
   useVisibleTask$(({ track }) => {
     const val = track(() => getFullTranslation.value);
     const translation = (val?.[0] as DictWord).russian;
-    if (translation && currentWord.value) {
-      currentWord.value = undefined;
-      currentWord.value = word as DictWord;
-      currentWord.value.russian = translation;
+    console.log("here", val);
+    if (translation && currentWord) {
+      setCurrentWord(word as DictWord, translation);
     }
+  });
+
+  const setCurrentWord = $((word: DictWord, translation?: string) => {
+    currentWord.value = null;
+    setTimeout(() => {
+      currentWord.value = word;
+      if (translation) currentWord.value.russian = translation;
+    });
   });
 
   let isUserWord = false;
@@ -56,7 +70,8 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
         }}
         tabIndex={0}
         onClick$={() => {
-          currentWord.value = word as DictWord;
+          // currentWord.value = word as DictWord;
+          setCurrentWord(word as DictWord);
           showTooltip.value = true;
         }}
         class={`rounded cursor-pointer hover:bg-info hover:text-info-content ${

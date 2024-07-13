@@ -50,7 +50,7 @@ export const TextMainContent = component$(
     } = text;
 
     const isLongTxt = Boolean(pages && pages.length);
-    const currentWord = useSignal<DictWord | undefined>(undefined);
+    const currentWord = useSignal<DictWord | null>(null);
     const showTranslation = useSignal(true);
 
     const editChineseArrModalId = "editChineseArrModalId";

@@ -4,7 +4,6 @@ import {
   useContext,
   useOnDocument,
   useSignal,
-  useTask$,
   useVisibleTask$,
 } from "@builder.io/qwik";
 import {
@@ -105,10 +104,11 @@ export default component$(() => {
   const alertsState = useContext(alertsContext);
   const showExamples = useSignal(true);
 
-  useTask$(({ track }) => {
+  useVisibleTask$(({ track }) => {
     const query = track(() => loc.url.searchParams.get("q"));
     input.value = query || "";
-    words.value = loadTranslation.value;
+    words.value = null;
+    setTimeout(() => (words.value = loadTranslation.value));
   });
 
   const clearCharDiv = $(() => {

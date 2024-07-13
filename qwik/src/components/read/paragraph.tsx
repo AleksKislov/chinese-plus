@@ -9,7 +9,7 @@ type ParagraphProps = {
   ind: number;
   tooltipedParag: (string | DictWord)[];
   fontSize: FontSizeBtnsUnion;
-  currentWord: Signal<DictWord | undefined>;
+  currentWord: Signal<DictWord | null>;
   strLen: number;
   showTranslation: boolean;
   forEditing?: boolean;

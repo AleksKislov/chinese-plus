@@ -18,7 +18,7 @@ type SubsProps = {
 };
 export const Subs = component$(
   ({ hideBtnsSig, ru, py, main, curWordInd, playerState, isPaused }: SubsProps) => {
-    const currentWord = useSignal<DictWord | undefined>(undefined);
+    const currentWord = useSignal<DictWord | null>(null);
     const fontSizeSig = useSignal(FontSizeBtns.md);
 
     return (
