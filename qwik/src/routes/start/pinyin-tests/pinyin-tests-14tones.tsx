@@ -22,7 +22,10 @@ function getRandAnswers(): string[] {
   const sounds: string[] = [];
   while (sounds.length < answersNum) {
     const randSound = getRandElem(allPinyinSounds);
-    if (!sounds.includes(randSound as string)) {
+    if (
+      !sounds.includes(randSound as string) &&
+      (randSound?.includes("1") || randSound?.includes("4"))
+    ) {
       sounds.push(randSound as string);
     }
   }
@@ -44,7 +47,7 @@ export function init(store: StoreAns) {
       const userInput = document.getElementById(getInputId(randSounds[i])) as HTMLInputElement;
       if (userInput) userInput.value = "";
     }
-  }, 300);
+  }, 100);
 }
 
 export function getInputId(sound: string): string {
@@ -59,7 +62,7 @@ export function setEmptyAnswers(answers: string[]): AnswersObj {
   return ansObj;
 }
 
-export const PinyinTests = component$(() => {
+export const PinyinTests14Tones = component$(() => {
   const store = useStore<StoreAns>({ sounds: [""], inputs: {} });
 
   useVisibleTask$(() => {
@@ -109,7 +112,7 @@ export const PinyinTests = component$(() => {
   return (
     <>
       <div class='prose mb-1 mt-3'>
-        <h4>Все тоны</h4>
+        <h4>Только 1 и 4 тоны</h4>
       </div>
       <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
         {columns.map((col, k) => (
@@ -138,6 +141,7 @@ export const PinyinTests = component$(() => {
           </div>
         ))}
       </div>
+
       <div class='flex'>
         {buttons.map(({ func, txt }, ind) => (
           <button type='button' class='btn btn-primary btn-sm mr-1' key={ind} onClick$={func}>
