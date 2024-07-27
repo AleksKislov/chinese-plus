@@ -18,16 +18,16 @@ export const columns = [1, 2, 3];
 export const answers = [1, 2, 3, 4]; // 4 per column
 const answersNum = columns.length * answers.length;
 
-function getRandAnswers(): string[] {
+function getRandAnswers(tones?: string[]): string[] {
   const sounds: string[] = [];
   while (sounds.length < answersNum) {
     const randSound = getRandElem(allPinyinSounds);
-    if (
-      !sounds.includes(randSound as string) &&
-      (randSound?.includes("2") || randSound?.includes("3"))
-    ) {
-      sounds.push(randSound as string);
+    if (typeof randSound !== "string" || sounds.includes(randSound)) continue;
+    if (Array.isArray(tones) && !tones.includes(randSound?.charAt(randSound?.length - 1))) {
+      continue;
     }
+
+    sounds.push(randSound);
   }
   return sounds;
 }
@@ -36,8 +36,8 @@ export const playAudio = (target: string) => {
   new Audio(`${CONST_URLS.myAudioURL}pinyin/${target}.mp3`).play();
 };
 
-export function init(store: StoreAns) {
-  const randSounds = getRandAnswers();
+export function init(store: StoreAns, tones?: string[]) {
+  const randSounds = getRandAnswers(tones);
   store.sounds = randSounds;
   store.inputs = setEmptyAnswers(randSounds);
   setTimeout(() => {
@@ -47,7 +47,7 @@ export function init(store: StoreAns) {
       const userInput = document.getElementById(getInputId(randSounds[i])) as HTMLInputElement;
       if (userInput) userInput.value = "";
     }
-  }, 100);
+  }, 300);
 }
 
 export function getInputId(sound: string): string {
@@ -62,11 +62,11 @@ export function setEmptyAnswers(answers: string[]): AnswersObj {
   return ansObj;
 }
 
-export const PinyinTests23Tones = component$(() => {
+export const PinyinTests = component$(({ tones }: { tones?: string[] }) => {
   const store = useStore<StoreAns>({ sounds: [""], inputs: {} });
 
   useVisibleTask$(() => {
-    init(store);
+    init(store, tones);
   });
 
   const checkAnswers = $(() => {
@@ -104,7 +104,7 @@ export const PinyinTests23Tones = component$(() => {
       txt: "Показать Ответы",
     },
     {
-      func: $(() => init(store)),
+      func: $(() => init(store, tones)),
       txt: rewindSvg,
     },
   ];
@@ -112,7 +112,7 @@ export const PinyinTests23Tones = component$(() => {
   return (
     <>
       <div class='prose mb-1 mt-3'>
-        <h4>Только 2 и 3 тоны</h4>
+        <h4>{tones ? `Только ${tones.join(" и ")}` : "Все"} тоны</h4>
       </div>
       <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
         {columns.map((col, k) => (
@@ -141,7 +141,6 @@ export const PinyinTests23Tones = component$(() => {
           </div>
         ))}
       </div>
-
       <div class='flex'>
         {buttons.map(({ func, txt }, ind) => (
           <button type='button' class='btn btn-primary btn-sm mr-1' key={ind} onClick$={func}>

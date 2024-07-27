@@ -5,10 +5,8 @@ import { MainContent } from "~/components/common/layout/main-content";
 import { Sidebar } from "~/components/common/layout/sidebar";
 import { PageTitle } from "~/components/common/layout/title";
 import CONST_URLS from "~/misc/consts/urls";
-import { PinyinTests } from "./pinyin-tests";
+import { PinyinTests } from "../../../components/start/pinyin-tests/pinyin-tests";
 import { PhoneticsLinkCard } from "~/components/common/content-cards/phonetics-link-card";
-import { PinyinTests14Tones } from "./pinyin-tests-14tones";
-import { PinyinTests23Tones } from "./pinyin-tests-23tones";
 
 export const playAudioFromBtn = (sound: string) => {
   if (!sound) return;
@@ -38,8 +36,8 @@ export default component$(() => {
             <span class='text-secondary'>huang2</span> или <span class='text-secondary'>lv4</span>
           </small>
           <PinyinTests />
-          <PinyinTests14Tones />
-          <PinyinTests23Tones />
+          <PinyinTests tones={["1", "4"]} />
+          <PinyinTests tones={["2", "3"]} />
         </MainContent>
       </FlexRow>
     </>
