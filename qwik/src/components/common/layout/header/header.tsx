@@ -202,6 +202,10 @@ export const startPhonetics: MenuItemProps = {
       href: "/watch/phonetics-lessons",
       text: "Уроки фонетики",
     },
+    {
+      href: "/start/tones-practice",
+      text: "Практика тонов",
+    },
   ],
 };
 
