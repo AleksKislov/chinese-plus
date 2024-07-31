@@ -86,19 +86,23 @@ export const featuresArr = [
     pic: academicCapExtraBigSvg,
     desc: (
       <p>
-        Узнайте{" "}
+        Рекомендации{" "}
         <Link href='/start/how-to-start' class='link link-secondary'>
           с чего начать
         </Link>
-        , слушайте озвучку{" "}
+        , озвучка{" "}
         <Link href='/hsk/2/table' class='link link-secondary'>
           HSK
         </Link>
         -лексики и{" "}
         <Link href='/start/pinyin-chart' class='link link-secondary'>
           пиньиня
+        </Link>{" "}
+        (плюс{" "}
+        <Link href='/start/pinyin-tests' class='link link-secondary'>
+          тесты
         </Link>
-        , смотрите уроки по{" "}
+        ), уроки по{" "}
         <Link href='/watch/phonetics-lessons' class='link link-secondary'>
           фонетике
         </Link>{" "}
