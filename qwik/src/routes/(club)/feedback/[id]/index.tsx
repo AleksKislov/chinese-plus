@@ -1,20 +1,20 @@
-import { component$, useSignal, useStore } from "@builder.io/qwik";
-import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city";
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { PostCard } from "~/components/feedback/post-card";
-import { ApiService } from "~/misc/actions/request";
-import { type Post } from "..";
-import { type CommentType } from "~/components/common/comments/comment-card";
+import { component$, useSignal, useStore } from '@builder.io/qwik';
+import { type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { PostCard } from '~/components/feedback/post-card';
+import { ApiService } from '~/misc/actions/request';
+import { type Post } from '..';
+import { type CommentType } from '~/components/common/comments/comment-card';
 import {
   CommentForm,
   WHERE,
   type CommentIdToReply,
   type Addressee,
-} from "~/components/common/comments/comment-form";
-import { getContentComments } from "~/misc/actions/get-content-comments";
-import { CommentsBlock } from "~/components/common/comments/comments-block";
-import { CommentsBlockTitle } from "~/components/common/comments/comments-block-title";
-import { BackBtn } from "~/components/common/ui/back-btn";
+} from '~/components/common/comments/comment-form';
+import { getContentComments } from '~/misc/actions/get-content-comments';
+import { CommentsBlock } from '~/components/common/comments/comments-block';
+import { CommentsBlockTitle } from '~/components/common/comments/comments-block-title';
+import { BackBtn } from '~/components/common/ui/back-btn';
 
 export const getPost = routeLoader$(({ params }): Promise<Post> => {
   return ApiService.get(`/api/posts/${params.id}`, undefined, {});
@@ -29,9 +29,9 @@ export default component$(() => {
   const comments = getComments();
 
   const commentIdToReplyStore = useStore<CommentIdToReply>({
-    commentId: "",
-    name: "",
-    userId: "",
+    commentId: '',
+    name: '',
+    userId: '',
   });
 
   const addressees = useSignal<Addressee[]>([]);
@@ -39,8 +39,8 @@ export default component$(() => {
   return (
     <>
       <FlexRow>
-        <div class='w-full md:w-1/2 mr-4 mb-3'>
-          <BackBtn path={"/feedback"} />
+        <div class="w-full md:w-1/2 mr-4 mb-3">
+          <BackBtn path={'/feedback'} />
           <PostCard post={post.value} isPostPage={true} addressees={addressees} />
           <CommentForm
             contentId={post.value._id}
@@ -51,7 +51,7 @@ export default component$(() => {
           />
         </div>
 
-        <div class='w-full md:w-1/2'>
+        <div class="w-full md:w-1/2">
           <CommentsBlockTitle />
 
           <CommentsBlock
@@ -66,11 +66,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Форум",
+  title: 'Chinese+ Форум',
   meta: [
     {
-      name: "description",
-      content: "Поделитесь своими мыслями касательно Chinese+",
+      name: 'description',
+      content: 'Поделитесь своими мыслями касательно Chinese+',
     },
   ],
 };

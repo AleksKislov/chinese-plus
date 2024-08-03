@@ -1,5 +1,5 @@
-import { type Signal, component$ } from "@builder.io/qwik";
-import { Loader } from "./loader";
+import { type Signal, component$ } from '@builder.io/qwik';
+import { Loader } from './loader';
 
 type MoreBtnProps = {
   isLoading: boolean;
@@ -8,11 +8,11 @@ type MoreBtnProps = {
 
 export const MoreBtnAndLoader = component$(({ isLoading, skipSignal }: MoreBtnProps) => {
   return (
-    <div class={"flex flex-col items-center mt-1"}>
-      <span class='mb-3'>{isLoading && <Loader />}</span>
+    <div class={'flex flex-col items-center mt-1'}>
+      <span class="mb-3">{isLoading && <Loader />}</span>
 
       <button
-        type='button'
+        type="button"
         class={`btn btn-sm btn-info btn-outline`}
         onClick$={() => (skipSignal.value += 10)}
       >

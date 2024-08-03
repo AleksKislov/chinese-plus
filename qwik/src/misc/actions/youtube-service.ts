@@ -1,4 +1,4 @@
-import { ApiService } from "./request";
+import { ApiService } from './request';
 
 export class YoutubeService {
   static getSrcLink(videoId: string) {

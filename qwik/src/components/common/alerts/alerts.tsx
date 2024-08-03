@@ -1,6 +1,6 @@
-import { component$, useContext, useTask$ } from "@builder.io/qwik";
-import { alertsContext } from "~/root";
-import { SingleAlert } from "./alert";
+import { component$, useContext, useTask$ } from '@builder.io/qwik';
+import { alertsContext } from '~/root';
+import { SingleAlert } from './alert';
 
 export const Alerts = component$(() => {
   const alertsState = useContext(alertsContext);
@@ -19,7 +19,7 @@ export const Alerts = component$(() => {
   });
 
   return (
-    <div class='toast toast-bottom fixed z-10 bottom-14'>
+    <div class="toast toast-bottom fixed z-10 bottom-14">
       {alertsState.map((alert, ind) => (
         <SingleAlert alert={alert} key={ind} />
       ))}

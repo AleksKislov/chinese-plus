@@ -1,5 +1,5 @@
-import type { RequestEvent } from "@builder.io/qwik-city";
+import type { RequestEvent } from '@builder.io/qwik-city';
 
 export const onGet = async ({ redirect }: RequestEvent) => {
-  throw redirect(301, "/hsk/3/table");
+  throw redirect(301, '/hsk/3/table');
 };

@@ -1,5 +1,5 @@
-import { type Signal, component$, $ } from "@builder.io/qwik";
-import { WHERE } from "~/components/common/comments/comment-form";
+import { type Signal, component$, $ } from '@builder.io/qwik';
+import { WHERE } from '~/components/common/comments/comment-form';
 import {
   bookMarkSvg,
   chevronDown,
@@ -8,10 +8,10 @@ import {
   commentSvg,
   eyeSvg,
   heartSvg,
-} from "~/components/common/media/svg";
-import CONSTANTS from "~/misc/consts/consts";
-import { AllContentTableRow } from "./all-content-table-row";
-import type { SortByType, TextTableRowInfo } from "~/routes/read/texts/all";
+} from '~/components/common/media/svg';
+import CONSTANTS from '~/misc/consts/consts';
+import { AllContentTableRow } from './all-content-table-row';
+import type { SortByType, TextTableRowInfo } from '~/routes/read/texts/all';
 
 type AllContentTableProps = {
   content: TextTableRowInfo[];
@@ -38,50 +38,50 @@ export const AllContentTable = component$(
     });
 
     return (
-      <div class='overflow-x-auto'>
-        <table class='table text-base-content'>
+      <div class="overflow-x-auto">
+        <table class="table text-base-content">
           <thead>
             <tr>
               <th>
                 <div
-                  class='flex cursor-pointer hover:text-secondary'
-                  onClick$={() => changeSort("date")}
+                  class="flex cursor-pointer hover:text-secondary"
+                  onClick$={() => changeSort('date')}
                 >
                   <span>Дата</span>
-                  {getSvg("date")}
+                  {getSvg('date')}
                 </div>
               </th>
               {/* <th>Автор</th> */}
               <th>Название</th>
               <th>
                 <div
-                  class='flex cursor-pointer hover:text-secondary'
-                  onClick$={() => changeSort("likes")}
+                  class="flex cursor-pointer hover:text-secondary"
+                  onClick$={() => changeSort('likes')}
                 >
                   {heartSvg}
-                  {getSvg("likes")}
+                  {getSvg('likes')}
                 </div>
               </th>
               <th>
                 <div
-                  class='flex cursor-pointer hover:text-secondary'
-                  onClick$={() => changeSort("comments")}
+                  class="flex cursor-pointer hover:text-secondary"
+                  onClick$={() => changeSort('comments')}
                 >
                   {commentSvg}
-                  {getSvg("comments")}
+                  {getSvg('comments')}
                 </div>
               </th>
               <th>
                 <div
-                  class='flex cursor-pointer hover:text-secondary'
-                  onClick$={() => changeSort("hits")}
+                  class="flex cursor-pointer hover:text-secondary"
+                  onClick$={() => changeSort('hits')}
                 >
                   {eyeSvg}
-                  {getSvg("hits")}
+                  {getSvg('hits')}
                 </div>
               </th>
               <th>
-                <div class='pl-4'>{bookMarkSvg}</div>
+                <div class="pl-4">{bookMarkSvg}</div>
               </th>
             </tr>
           </thead>
@@ -104,5 +104,5 @@ export const AllContentTable = component$(
         </table>
       </div>
     );
-  }
+  },
 );

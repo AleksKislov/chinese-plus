@@ -1,33 +1,33 @@
-import { component$ } from "@builder.io/qwik";
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { type DocumentHead } from "@builder.io/qwik-city";
-import { MainContent } from "~/components/common/layout/main-content";
-import { Sidebar } from "~/components/common/layout/sidebar";
-import { PageTitle } from "~/components/common/layout/title";
-import { CharactersLinkCard } from "~/components/common/content-cards/characters-link-card";
+import { component$ } from '@builder.io/qwik';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { type DocumentHead } from '@builder.io/qwik-city';
+import { MainContent } from '~/components/common/layout/main-content';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { PageTitle } from '~/components/common/layout/title';
+import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
 
 export default component$(() => {
   return (
     <>
-      <PageTitle txt={"Ключи китайских иероглифов"} />
+      <PageTitle txt={'Ключи китайских иероглифов'} />
 
       <FlexRow>
         <Sidebar>
-          <div class='card bg-primary text-primary-content'>
-            <div class='card-body'>
-              <h2 class='card-title'>Ключи</h2>
+          <div class="card bg-primary text-primary-content">
+            <div class="card-body">
+              <h2 class="card-title">Ключи</h2>
               <p>
-                Ключи или radicals (радикалы на английском) по-китайски называют <span>部首</span>{" "}
+                Ключи или radicals (радикалы на английском) по-китайски называют <span>部首</span>{' '}
                 <strong>bùshǒu</strong>, то есть голова раздела, имеется в виду главный иероглиф
                 раздела словаря.
-              </p>{" "}
+              </p>{' '}
             </div>
           </div>
           <CharactersLinkCard />
         </Sidebar>
 
         <MainContent>
-          <div class='prose'>
+          <div class="prose">
             <p>
               <strong>
                 Всего в китайской письменности 214 ключей (в словаре Канси от XVIII в.
@@ -41,15 +41,15 @@ export default component$(() => {
 
             <p>
               <strong>Одни из ключей встречаются чаще, другие очень редко.</strong> Строки с самыми
-              часто встречаемыми (в словаре) ключами обозначены{" "}
-              <strong class='text-warning'>оранжевым цветом</strong>, иероглифы с этими ключами вам
+              часто встречаемыми (в словаре) ключами обозначены{' '}
+              <strong class="text-warning">оранжевым цветом</strong>, иероглифы с этими ключами вам
               будут встречаться чаще всего. Речь про эти ключи: 艹 трава (№140), 水 вода (№85), 木
               дерево (№75), 扌рука (№64), 口 рот (№30), 心 сердце (№61), 虫 насекомое (№142), 竹
               бамбук (№118), 言 речь (№149) и 纟 нить (№120).
             </p>
 
             <p>
-              <strong class='text-info'>Синие ключи</strong> тоже будут вам довольно часто
+              <strong class="text-info">Синие ключи</strong> тоже будут вам довольно часто
               встречаться в иероглифах. В целом, когда уже и зеленые, и оранжевые хорошо усвоены,
               стоит запомнить и остальные.
             </p>
@@ -66,7 +66,7 @@ export default component$(() => {
             </p>
 
             <p>
-              Не путайте понятия ключ и компонент иероглифа, который по-китайски <span>偏旁</span>{" "}
+              Не путайте понятия ключ и компонент иероглифа, который по-китайски <span>偏旁</span>{' '}
               <strong>piānpáng. </strong>Компонент <span>偏旁</span> - просто составляющая
               иероглифа, то есть это не только ключ, но и другие составные части иероглифа,
               например, фонетик и др..
@@ -75,8 +75,8 @@ export default component$(() => {
         </MainContent>
       </FlexRow>
 
-      <div class='overflow-x-auto'>
-        <table class='table table-compact table-zebra w-full text-base-content'>
+      <div class="overflow-x-auto">
+        <table class="table table-compact table-zebra w-full text-base-content">
           <thead>
             <tr>
               <th>#</th>
@@ -187,7 +187,7 @@ export default component$(() => {
               <td>2</td>
               <td>点横部</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>9</td>
               <td>人</td>
               <td>亻</td>
@@ -249,7 +249,7 @@ export default component$(() => {
               <td>2</td>
               <td>秃宝盖</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>15</td>
               <td>冫</td>
               <td> </td>
@@ -277,7 +277,7 @@ export default component$(() => {
               <td>раскрытый рот</td>
               <td>2</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>18</td>
               <td>刀</td>
               <td>刂</td>
@@ -287,7 +287,7 @@ export default component$(() => {
               <td>2</td>
               <td>刂, 立刀旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>19</td>
               <td>力</td>
               <td> </td>
@@ -364,7 +364,7 @@ export default component$(() => {
               <td>2</td>
               <td>单耳刀</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>27</td>
               <td>厂</td>
               <td> </td>
@@ -384,7 +384,7 @@ export default component$(() => {
               <td>2</td>
               <td>私字</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>29</td>
               <td>又</td>
               <td> </td>
@@ -394,7 +394,7 @@ export default component$(() => {
               <td>2</td>
               <td>又字旁</td>
             </tr>
-            <tr class='text-warning'>
+            <tr class="text-warning">
               <td>30</td>
               <td>口</td>
               <td> </td>
@@ -404,7 +404,7 @@ export default component$(() => {
               <td>3</td>
               <td>口字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>31</td>
               <td>囗</td>
               <td> </td>
@@ -414,7 +414,7 @@ export default component$(() => {
               <td>3</td>
               <td>方框</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>32</td>
               <td>土</td>
               <td> </td>
@@ -461,7 +461,7 @@ export default component$(() => {
               <td>3</td>
               <td>夕字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>37</td>
               <td>大</td>
               <td> </td>
@@ -471,7 +471,7 @@ export default component$(() => {
               <td>3</td>
               <td>大字头</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>38</td>
               <td>女</td>
               <td> </td>
@@ -491,7 +491,7 @@ export default component$(() => {
               <td>3</td>
               <td>子字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>40</td>
               <td>宀</td>
               <td> </td>
@@ -530,7 +530,7 @@ export default component$(() => {
               <td>хилый</td>
               <td>3</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>44</td>
               <td>尸</td>
               <td> </td>
@@ -549,7 +549,7 @@ export default component$(() => {
               <td>росток</td>
               <td>3</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>46</td>
               <td>山</td>
               <td> </td>
@@ -586,7 +586,7 @@ export default component$(() => {
               <td>сам</td>
               <td>3</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>50</td>
               <td>巾</td>
               <td> </td>
@@ -652,7 +652,7 @@ export default component$(() => {
               <td>стрелять из лука</td>
               <td>3</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>57</td>
               <td>弓</td>
               <td> </td>
@@ -681,7 +681,7 @@ export default component$(() => {
               <td>3</td>
               <td>三撇儿</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>60</td>
               <td>彳</td>
               <td> </td>
@@ -691,7 +691,7 @@ export default component$(() => {
               <td>3</td>
               <td>双人旁</td>
             </tr>
-            <tr class='text-warning'>
+            <tr class="text-warning">
               <td>61</td>
               <td>心</td>
               <td>忄,⺗</td>
@@ -724,7 +724,7 @@ export default component$(() => {
               <td>4</td>
               <td>户字旁</td>
             </tr>
-            <tr class='text-warning'>
+            <tr class="text-warning">
               <td>64</td>
               <td>手</td>
               <td>扌</td>
@@ -747,7 +747,7 @@ export default component$(() => {
               <td>ветка</td>
               <td>4</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>66</td>
               <td>攴</td>
               <td>攵</td>
@@ -804,7 +804,7 @@ export default component$(() => {
               <td>не</td>
               <td>4</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>72</td>
               <td>日</td>
               <td> </td>
@@ -834,7 +834,7 @@ export default component$(() => {
               <td>4</td>
               <td>月字旁</td>
             </tr>
-            <tr class='text-warning'>
+            <tr class="text-warning">
               <td>75</td>
               <td>木</td>
               <td> </td>
@@ -844,7 +844,7 @@ export default component$(() => {
               <td>4</td>
               <td>木字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>76</td>
               <td>欠</td>
               <td> </td>
@@ -854,7 +854,7 @@ export default component$(() => {
               <td>4</td>
               <td>欠字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>77</td>
               <td>止</td>
               <td> </td>
@@ -864,7 +864,7 @@ export default component$(() => {
               <td>4</td>
               <td>止字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>78</td>
               <td>歹</td>
               <td> </td>
@@ -900,7 +900,7 @@ export default component$(() => {
               <td>сравнивать</td>
               <td>4</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>82</td>
               <td>毛</td>
               <td> </td>
@@ -927,7 +927,7 @@ export default component$(() => {
               <td>пар</td>
               <td>4</td>
             </tr>
-            <tr class='text-warning'>
+            <tr class="text-warning">
               <td>85</td>
               <td>水</td>
               <td>氵</td>
@@ -937,7 +937,7 @@ export default component$(() => {
               <td>4</td>
               <td>氵, 三点水</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>86</td>
               <td>火</td>
               <td>灬</td>
@@ -1007,7 +1007,7 @@ export default component$(() => {
               <td>зуб, клык</td>
               <td>4</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>93</td>
               <td>牛</td>
               <td>牜</td>
@@ -1017,7 +1017,7 @@ export default component$(() => {
               <td>4</td>
               <td>牛字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>94</td>
               <td>犬</td>
               <td>犭</td>
@@ -1036,7 +1036,7 @@ export default component$(() => {
               <td>черный</td>
               <td>5</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>96</td>
               <td>玉</td>
               <td>王</td>
@@ -1055,7 +1055,7 @@ export default component$(() => {
               <td>дыня</td>
               <td>5</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>98</td>
               <td>瓦</td>
               <td> </td>
@@ -1091,7 +1091,7 @@ export default component$(() => {
               <td>использовать</td>
               <td>5</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>102</td>
               <td>田</td>
               <td> </td>
@@ -1110,7 +1110,7 @@ export default component$(() => {
               <td>кусок ткани</td>
               <td>5</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>104</td>
               <td>疒</td>
               <td> </td>
@@ -1129,7 +1129,7 @@ export default component$(() => {
               <td>ноги врозь</td>
               <td>5</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>106</td>
               <td>白</td>
               <td> </td>
@@ -1139,7 +1139,7 @@ export default component$(() => {
               <td>5</td>
               <td>白字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>107</td>
               <td>皮</td>
               <td> </td>
@@ -1148,7 +1148,7 @@ export default component$(() => {
               <td>кожица, кожа</td>
               <td>5</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>108</td>
               <td>皿</td>
               <td> </td>
@@ -1158,7 +1158,7 @@ export default component$(() => {
               <td>5</td>
               <td>皿字底</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>109</td>
               <td>目</td>
               <td>罒</td>
@@ -1187,7 +1187,7 @@ export default component$(() => {
               <td>5</td>
               <td>矢字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>112</td>
               <td>石</td>
               <td> </td>
@@ -1197,7 +1197,7 @@ export default component$(() => {
               <td>5</td>
               <td>石字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>113</td>
               <td>示</td>
               <td>礻</td>
@@ -1216,7 +1216,7 @@ export default component$(() => {
               <td>след зверя</td>
               <td>5</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>115</td>
               <td>禾</td>
               <td> </td>
@@ -1226,7 +1226,7 @@ export default component$(() => {
               <td>5</td>
               <td>禾木旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>116</td>
               <td>穴</td>
               <td> </td>
@@ -1236,7 +1236,7 @@ export default component$(() => {
               <td>5</td>
               <td>穴宝盖</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>117</td>
               <td>立</td>
               <td> </td>
@@ -1246,7 +1246,7 @@ export default component$(() => {
               <td>5</td>
               <td>立字旁</td>
             </tr>
-            <tr class='text-warning'>
+            <tr class="text-warning">
               <td>118</td>
               <td>竹</td>
               <td>⺮</td>
@@ -1256,7 +1256,7 @@ export default component$(() => {
               <td>6</td>
               <td>竹字头</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>119</td>
               <td>米</td>
               <td> </td>
@@ -1266,7 +1266,7 @@ export default component$(() => {
               <td>6</td>
               <td>米字旁</td>
             </tr>
-            <tr class='text-warning'>
+            <tr class="text-warning">
               <td>120</td>
               <td>纟</td>
               <td> </td>
@@ -1286,7 +1286,7 @@ export default component$(() => {
               <td>6</td>
               <td>缶字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>122</td>
               <td>网</td>
               <td>罒</td>
@@ -1300,7 +1300,7 @@ export default component$(() => {
                 四子头
               </td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>123</td>
               <td>羊</td>
               <td> </td>
@@ -1309,7 +1309,7 @@ export default component$(() => {
               <td>баран</td>
               <td>6</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>124</td>
               <td>羽</td>
               <td> </td>
@@ -1318,7 +1318,7 @@ export default component$(() => {
               <td>перо</td>
               <td>6</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>125</td>
               <td>老</td>
               <td> </td>
@@ -1345,7 +1345,7 @@ export default component$(() => {
               <td>плуг</td>
               <td>6</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>128</td>
               <td>耳</td>
               <td> </td>
@@ -1364,7 +1364,7 @@ export default component$(() => {
               <td>кисть</td>
               <td>6</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>130</td>
               <td>肉</td>
               <td> </td>
@@ -1428,7 +1428,7 @@ export default component$(() => {
               <td>ошибка</td>
               <td>6</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>137</td>
               <td>舟</td>
               <td> </td>
@@ -1456,7 +1456,7 @@ export default component$(() => {
               <td>цвет</td>
               <td>6</td>
             </tr>
-            <tr class='text-warning'>
+            <tr class="text-warning">
               <td>140</td>
               <td>艸</td>
               <td>艹</td>
@@ -1466,7 +1466,7 @@ export default component$(() => {
               <td>6</td>
               <td>艹, 草字头</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>141</td>
               <td>虍</td>
               <td> </td>
@@ -1476,7 +1476,7 @@ export default component$(() => {
               <td>6</td>
               <td>虎字头</td>
             </tr>
-            <tr class='text-warning'>
+            <tr class="text-warning">
               <td>142</td>
               <td>虫</td>
               <td> </td>
@@ -1504,7 +1504,7 @@ export default component$(() => {
               <td>ходить</td>
               <td>6</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>145</td>
               <td>衣</td>
               <td>衤</td>
@@ -1524,7 +1524,7 @@ export default component$(() => {
               <td>6</td>
               <td>覀, 西字头</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>147</td>
               <td>见</td>
               <td> </td>
@@ -1533,7 +1533,7 @@ export default component$(() => {
               <td>видеть</td>
               <td>4 (7)</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>148</td>
               <td>角</td>
               <td> </td>
@@ -1543,7 +1543,7 @@ export default component$(() => {
               <td>7</td>
               <td>角字旁</td>
             </tr>
-            <tr class='text-warning'>
+            <tr class="text-warning">
               <td>149</td>
               <td>讠</td>
               <td> </td>
@@ -1571,7 +1571,7 @@ export default component$(() => {
               <td>боб</td>
               <td>7</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>152</td>
               <td>豕</td>
               <td> </td>
@@ -1580,7 +1580,7 @@ export default component$(() => {
               <td>свинья</td>
               <td>7</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>153</td>
               <td>豸</td>
               <td> </td>
@@ -1589,7 +1589,7 @@ export default component$(() => {
               <td>пресмыкающееся</td>
               <td>7</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>154</td>
               <td>贝</td>
               <td> </td>
@@ -1607,7 +1607,7 @@ export default component$(() => {
               <td>красный</td>
               <td>7</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>156</td>
               <td>走</td>
               <td> </td>
@@ -1617,7 +1617,7 @@ export default component$(() => {
               <td>7</td>
               <td>走字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>157</td>
               <td>足</td>
               <td>⻊</td>
@@ -1627,7 +1627,7 @@ export default component$(() => {
               <td>7</td>
               <td>足字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>158</td>
               <td>身</td>
               <td> </td>
@@ -1637,7 +1637,7 @@ export default component$(() => {
               <td>7</td>
               <td>身字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>159</td>
               <td>车</td>
               <td> </td>
@@ -1665,7 +1665,7 @@ export default component$(() => {
               <td>утро</td>
               <td>7</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>162</td>
               <td>辵</td>
               <td>辶</td>
@@ -1675,7 +1675,7 @@ export default component$(() => {
               <td>7</td>
               <td>走之旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>163</td>
               <td>邑</td>
               <td>阝 (справа)</td>
@@ -1685,7 +1685,7 @@ export default component$(() => {
               <td>7</td>
               <td>双耳刀</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>164</td>
               <td>酉</td>
               <td> </td>
@@ -1712,7 +1712,7 @@ export default component$(() => {
               <td>ли, деревня</td>
               <td>7</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>167</td>
               <td>金</td>
               <td>钅</td>
@@ -1731,7 +1731,7 @@ export default component$(() => {
               <td>длинный</td>
               <td>4 (8)</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>169</td>
               <td>门</td>
               <td> </td>
@@ -1741,7 +1741,7 @@ export default component$(() => {
               <td>3 (8)</td>
               <td>门字框</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>170</td>
               <td>阜</td>
               <td>阝(слева)</td>
@@ -1759,7 +1759,7 @@ export default component$(() => {
               <td>слуга</td>
               <td>8</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>172</td>
               <td>隹</td>
               <td> </td>
@@ -1769,7 +1769,7 @@ export default component$(() => {
               <td>8</td>
               <td>隹字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>173</td>
               <td>雨</td>
               <td> </td>
@@ -1806,7 +1806,7 @@ export default component$(() => {
               <td>лицо</td>
               <td>9</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>177</td>
               <td>革</td>
               <td> </td>
@@ -1816,7 +1816,7 @@ export default component$(() => {
               <td>9</td>
               <td>革字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>178</td>
               <td>韦</td>
               <td> </td>
@@ -1844,7 +1844,7 @@ export default component$(() => {
               <td>9</td>
               <td>音字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>181</td>
               <td>页</td>
               <td> </td>
@@ -1854,7 +1854,7 @@ export default component$(() => {
               <td>6 (9)</td>
               <td>页字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>182</td>
               <td>风</td>
               <td> </td>
@@ -1863,7 +1863,7 @@ export default component$(() => {
               <td>ветер</td>
               <td>4 (9)</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>183</td>
               <td>飞</td>
               <td> </td>
@@ -1872,7 +1872,7 @@ export default component$(() => {
               <td>летать</td>
               <td>3 (9)</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>184</td>
               <td>食</td>
               <td>饣</td>
@@ -1900,7 +1900,7 @@ export default component$(() => {
               <td>благоухающий</td>
               <td>9</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>187</td>
               <td>马</td>
               <td> </td>
@@ -1910,7 +1910,7 @@ export default component$(() => {
               <td>3 (10)</td>
               <td>马字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>188</td>
               <td>骨</td>
               <td> </td>
@@ -1929,7 +1929,7 @@ export default component$(() => {
               <td>высокий</td>
               <td>10</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>190</td>
               <td>髟</td>
               <td> </td>
@@ -1965,7 +1965,7 @@ export default component$(() => {
               <td>треножник</td>
               <td>10</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>194</td>
               <td>鬼</td>
               <td> </td>
@@ -1974,7 +1974,7 @@ export default component$(() => {
               <td>дух</td>
               <td>10</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>195</td>
               <td>鱼</td>
               <td> </td>
@@ -1984,7 +1984,7 @@ export default component$(() => {
               <td>8 (11)</td>
               <td>鱼字旁</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>196</td>
               <td>鸟</td>
               <td> </td>
@@ -2003,7 +2003,7 @@ export default component$(() => {
               <td>соль</td>
               <td>7 (11)</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>198</td>
               <td>鹿</td>
               <td> </td>
@@ -2012,7 +2012,7 @@ export default component$(() => {
               <td>олень</td>
               <td>11</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>199</td>
               <td>麦</td>
               <td> </td>
@@ -2048,7 +2048,7 @@ export default component$(() => {
               <td>просо</td>
               <td>12</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>203</td>
               <td>黑</td>
               <td> </td>
@@ -2120,7 +2120,7 @@ export default component$(() => {
               <td>ровный, равный</td>
               <td>6 (14)</td>
             </tr>
-            <tr class='text-info'>
+            <tr class="text-info">
               <td>211</td>
               <td>齿</td>
               <td> </td>
@@ -2165,12 +2165,12 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Ключи китайских иероглифов",
+  title: 'Chinese+ Ключи китайских иероглифов',
   meta: [
     {
-      name: "description",
+      name: 'description',
       content:
-        "Таблица ключей (radicals) иероглифов китайского языка. С указанием самых распространенных.",
+        'Таблица ключей (radicals) иероглифов китайского языка. С указанием самых распространенных.',
     },
   ],
 };

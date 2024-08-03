@@ -1,16 +1,16 @@
-import { $, component$, useContext, useSignal, useTask$ } from "@builder.io/qwik";
+import { $, component$, useContext, useSignal, useTask$ } from '@builder.io/qwik';
 import {
   usePublishText,
   type NewTextStore,
   useSegmentAndGetTooltips,
-} from "~/routes/(content)/create/text";
-import CONSTANTS from "~/misc/consts/consts";
-import { AlertColorEnum, alertsContext } from "~/root";
-import { countZnChars, parseTags } from "~/misc/helpers/content";
-import { FlexRow } from "../common/layout/flex-row";
-import { Paragraph } from "../read/paragraph";
-import { FontSizeBtns } from "../common/content-cards/content-page-card";
-import { useNavigate } from "@builder.io/qwik-city";
+} from '~/routes/(content)/create/text';
+import CONSTANTS from '~/misc/consts/consts';
+import { AlertColorEnum, alertsContext } from '~/root';
+import { countZnChars, parseTags } from '~/misc/helpers/content';
+import { FlexRow } from '../common/layout/flex-row';
+import { Paragraph } from '../read/paragraph';
+import { FontSizeBtns } from '../common/content-cards/content-page-card';
+import { useNavigate } from '@builder.io/qwik-city';
 
 type TextPreprocessFormProps = {
   store: NewTextStore;
@@ -23,9 +23,9 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
   const nav = useNavigate();
 
   const alertsState = useContext(alertsContext);
-  const chineseText = useSignal("");
-  const textLengthSignal = useSignal("text-primary");
-  const origTranslation = useSignal("");
+  const chineseText = useSignal('');
+  const textLengthSignal = useSignal('text-primary');
+  const origTranslation = useSignal('');
   const tooltipTxt = useSignal<(string | DictWord)[][] | string[]>([]);
   const currentWord = useSignal<DictWord | undefined>(undefined);
 
@@ -39,7 +39,7 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
         bg: AlertColorEnum.error,
         text: `Текст превышает лимит в ${CONSTANTS.bgTextLen}字. Опубликуйте его частями`,
       });
-      textLengthSignal.value = "text-error";
+      textLengthSignal.value = 'text-error';
     }
     if (chineseText.value.length > CONSTANTS.smTextLen) {
       store.isLongText = true;
@@ -47,10 +47,10 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
         bg: AlertColorEnum.warning,
         text: `Большие тексты можно будет отредактировать позже на конкретных страницах`,
       });
-      textLengthSignal.value = "text-warning";
+      textLengthSignal.value = 'text-warning';
     } else {
       store.isLongText = false;
-      textLengthSignal.value = "text-primary";
+      textLengthSignal.value = 'text-primary';
     }
   });
 
@@ -64,7 +64,7 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
 
     if (publishTextAction.value?._id) {
       // setTimeout(() => {
-      nav("/read/unapproved-texts/" + publishTextAction.value._id);
+      nav('/read/unapproved-texts/' + publishTextAction.value._id);
       // }, 3000);
     }
   });
@@ -80,13 +80,13 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
   const preprocessForm = $(() => {
     const translationParagraphs = origTranslation.value
       .trim()
-      .split("\n")
+      .split('\n')
       .map((parag) => parag.trim())
       .filter((parag) => Boolean(parag));
 
-    const trimmedChineseTxt = chineseText.value.trim().replace(/\n\s*\n/g, "\n");
+    const trimmedChineseTxt = chineseText.value.trim().replace(/\n\s*\n/g, '\n');
     const chineseTextParagraphs = trimmedChineseTxt
-      .split("\n")
+      .split('\n')
       .map((parag) => parag.trim())
       .filter((parag) => Boolean(parag));
 
@@ -98,8 +98,8 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
       return;
     }
 
-    origTranslation.value = translationParagraphs.join("\n\n");
-    chineseText.value = chineseTextParagraphs.join("\n\n");
+    origTranslation.value = translationParagraphs.join('\n\n');
+    chineseText.value = chineseTextParagraphs.join('\n\n');
 
     if (store.isLongText) {
       tooltipTxt.value = chineseTextParagraphs; // as is, segementation is done while u edit pages
@@ -136,7 +136,7 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
       description,
       categoryInd,
       level: lvl,
-      title: title || "Default_title",
+      title: title || 'Default_title',
       audioSrc: 0, // only for admin to change
       isApproved: 0,
       pic_url: picUrl,
@@ -148,58 +148,58 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
 
     alertsState.push({
       bg: AlertColorEnum.info,
-      text: "Спасибо! Пару секунд, и вы попадете на страницу нового текста",
+      text: 'Спасибо! Пару секунд, и вы попадете на страницу нового текста',
     });
   });
 
   const handleKeyDown = $((e: MouseEvent) => {
     const trgt = e.target as HTMLTextAreaElement;
-    trgt.style.height = trgt.scrollHeight + "px";
+    trgt.style.height = trgt.scrollHeight + 'px';
   });
 
-  const blockClass = "my-1 border border-info rounded-md p-2 relative";
+  const blockClass = 'my-1 border border-info rounded-md p-2 relative';
 
   return (
-    <div class='text-base-content'>
+    <div class="text-base-content">
       <FlexRow>
-        <div class='w-full basis-1/2 mt-3 ml-7 mr-3'>
-          <div class='form-control w-full'>
-            <label class='label'>
-              <span class='label-text'>Китайский текст</span>
+        <div class="w-full basis-1/2 mt-3 ml-7 mr-3">
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">Китайский текст</span>
             </label>
             <textarea
               onClick$={handleKeyDown}
-              class='textarea textarea-bordered h-24'
-              placeholder='汉字...'
+              class="textarea textarea-bordered h-24"
+              placeholder="汉字..."
               bind:value={chineseText}
             ></textarea>
-            <label class='label'>
+            <label class="label">
               {chineseText.value.length <= CONSTANTS.smTextLen && (
                 <span
-                  data-tip={"Длина обычного текста"}
+                  data-tip={'Длина обычного текста'}
                   class={`label-text-alt tooltip tooltip-info text-primary`}
                 >{`${chineseText.value.length} / ${CONSTANTS.smTextLen}`}</span>
               )}
               <span
-                data-tip={"Длина большого текста, не превышайте лимит"}
+                data-tip={'Длина большого текста, не превышайте лимит'}
                 class={`label-text-alt tooltip tooltip-info ${textLengthSignal.value}`}
               >{`${chineseText.value.length} / ${CONSTANTS.bgTextLen}`}</span>
             </label>
           </div>
         </div>
-        <div class='w-full basis-1/2 mt-3 mr-7 ml-3'>
-          <div class='form-control w-full'>
-            <label class='label'>
-              <span class='label-text'>Русский перевод</span>
+        <div class="w-full basis-1/2 mt-3 mr-7 ml-3">
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">Русский перевод</span>
             </label>
             <textarea
               onClick$={handleKeyDown}
-              class='textarea textarea-bordered h-24'
-              placeholder='Ваш перевод...'
+              class="textarea textarea-bordered h-24"
+              placeholder="Ваш перевод..."
               bind:value={origTranslation}
             ></textarea>
-            <label class='label'>
-              <span class='label-text-alt text-primary'>
+            <label class="label">
+              <span class="label-text-alt text-primary">
                 Кол-во параграфов должно совпадать с оригиналом
               </span>
             </label>
@@ -208,9 +208,9 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
       </FlexRow>
 
       <FlexRow>
-        <div class='mt-3 ml-7'>
+        <div class="mt-3 ml-7">
           <button
-            class='btn btn-primary w-48'
+            class="btn btn-primary w-48"
             disabled={Boolean(!(chineseText.value.length && origTranslation.value.length))}
             onClick$={preprocessForm}
           >
@@ -219,7 +219,7 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
         </div>
       </FlexRow>
 
-      <div class='mr-7 ml-7'>
+      <div class="mr-7 ml-7">
         {tooltipTxt.value.length > 0 &&
           !store.isLongText &&
           tooltipTxt.value.map((parag, i) => (
@@ -246,9 +246,9 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
       </div>
 
       <FlexRow>
-        <div class='mt-3 ml-7'>
+        <div class="mt-3 ml-7">
           <button
-            class='btn btn-primary w-48'
+            class="btn btn-primary w-48"
             disabled={!canPublish.value || publishTextAction.isRunning}
             onClick$={publishText}
           >

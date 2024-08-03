@@ -1,8 +1,8 @@
-import { markUpRuText } from "./mark-up-ru-text";
+import { markUpRuText } from './mark-up-ru-text';
 // import { sanitizer } from "./sanitizer";
 
 export const parseRussian = (translation: string, showExamples: boolean): string => {
-  if (!translation) return " ";
+  if (!translation) return ' ';
   let russian = markUpRuText(translation, showExamples);
 
   // shorten words from dictionary/allwords

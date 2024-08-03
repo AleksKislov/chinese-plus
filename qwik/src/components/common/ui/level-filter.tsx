@@ -1,17 +1,17 @@
-import { component$, type Signal } from "@builder.io/qwik";
+import { component$, type Signal } from '@builder.io/qwik';
 
 type LvlFilterProps = {
   levelSignal: Signal<string>;
 };
 export const LevelFilter = component$(({ levelSignal }: LvlFilterProps) => {
   return (
-    <div class='form-control text-base-content'>
+    <div class="form-control text-base-content">
       <select
-        class='select select-bordered'
+        class="select select-bordered"
         value={levelSignal.value}
         onChange$={(e) => (levelSignal.value = e.target.value)}
       >
-        <option selected value={"0"}>
+        <option selected value={'0'}>
           Все уровни
         </option>
         <option value={1}>1 Простой ⭐</option>

@@ -4,8 +4,8 @@ export const GO_BASE_URL = import.meta.env.PUBLIC_GO_BASE_URL;
 console.log(import.meta.env.PUBLIC_ENV, import.meta.env.PUBLIC_VERSION);
 
 type ReqHeaders = {
-  "Content-Type": string;
-  "x-auth-token"?: string;
+  'Content-Type': string;
+  'x-auth-token'?: string;
 };
 
 type ReqOptions = {
@@ -15,7 +15,7 @@ type ReqOptions = {
 };
 
 const headers: ReqHeaders = {
-  "Content-Type": "application/json",
+  'Content-Type': 'application/json',
 };
 
 class ApiServiceFactory {
@@ -31,7 +31,7 @@ class ApiServiceFactory {
       method,
     };
     if (token) {
-      options.headers = { ...headers, "x-auth-token": token };
+      options.headers = { ...headers, 'x-auth-token': token };
     }
     if (body) {
       options.body = body;
@@ -53,27 +53,27 @@ class ApiServiceFactory {
   }
 
   get(path: string, token?: string, defaultVal?: any): Promise<any> {
-    return this._myFetch(path, this._getReqOptions("GET", null, token), defaultVal);
+    return this._myFetch(path, this._getReqOptions('GET', null, token), defaultVal);
   }
 
   post(path: string, body: Object, token?: string, defaultVal?: any): Promise<any> {
     return this._myFetch(
       path,
-      this._getReqOptions("POST", JSON.stringify(body), token),
-      defaultVal
+      this._getReqOptions('POST', JSON.stringify(body), token),
+      defaultVal,
     );
   }
 
   put(path: string, body: Object | null, token?: string, defaultVal?: any): Promise<any> {
     return this._myFetch(
       path,
-      this._getReqOptions("PUT", body ? JSON.stringify(body) : null, token),
-      defaultVal
+      this._getReqOptions('PUT', body ? JSON.stringify(body) : null, token),
+      defaultVal,
     );
   }
 
   delete(path: string, token?: string, defaultVal?: any): Promise<any> {
-    return this._myFetch(path, this._getReqOptions("DELETE", null, token), defaultVal);
+    return this._myFetch(path, this._getReqOptions('DELETE', null, token), defaultVal);
   }
 }
 

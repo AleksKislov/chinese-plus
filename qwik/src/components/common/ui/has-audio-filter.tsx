@@ -1,11 +1,11 @@
-import { component$, type Signal } from "@builder.io/qwik";
+import { component$, type Signal } from '@builder.io/qwik';
 
 export enum AudioFilter {
-  All = "0",
-  HasAudio = "1",
+  All = '0',
+  HasAudio = '1',
 }
 
-export type AudioFilterUnion = "0" | "1";
+export type AudioFilterUnion = '0' | '1';
 
 type AudioFilterProps = {
   audioSignal: Signal<AudioFilterUnion>;
@@ -15,9 +15,9 @@ type AudioFilterProps = {
 export const HasAudioFilter = component$(({ audioSignal, num }: AudioFilterProps) => {
   const text = `С аудио ${num}`;
   return (
-    <div class='form-control text-base-content'>
+    <div class="form-control text-base-content">
       <select
-        class='select select-bordered'
+        class="select select-bordered"
         value={audioSignal.value}
         onChange$={(e) => {
           audioSignal.value = e.target.value as AudioFilterUnion;

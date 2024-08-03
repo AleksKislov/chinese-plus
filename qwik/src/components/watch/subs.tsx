@@ -1,11 +1,11 @@
-import { component$, useSignal, type Signal } from "@builder.io/qwik";
-import { FontSizeMap, FontSizeBtns } from "../common/content-cards/content-page-card";
-import { FontSizeBtnGroup } from "../common/content-cards/font-size-btns";
-import { EditWordModal } from "../common/modals/edit-word-modal";
-import { MoreInfoModal } from "../common/modals/more-info-modal";
-import { editWordModalId, moreInfoModalId, WordTooltip } from "../common/tooltips/word-tooltip";
-import { HideBtnsEnum, HideButtons } from "../hsk/hide-buttons";
-import { PlayerState } from "~/routes/watch/videos/[id]";
+import { component$, useSignal, type Signal } from '@builder.io/qwik';
+import { FontSizeMap, FontSizeBtns } from '../common/content-cards/content-page-card';
+import { FontSizeBtnGroup } from '../common/content-cards/font-size-btns';
+import { EditWordModal } from '../common/modals/edit-word-modal';
+import { MoreInfoModal } from '../common/modals/more-info-modal';
+import { editWordModalId, moreInfoModalId, WordTooltip } from '../common/tooltips/word-tooltip';
+import { HideBtnsEnum, HideButtons } from '../hsk/hide-buttons';
+import { PlayerState } from '~/routes/watch/videos/[id]';
 
 type SubsProps = {
   hideBtnsSig: Signal<string[]>;
@@ -23,8 +23,8 @@ export const Subs = component$(
 
     return (
       <div>
-        <div class='card card-compact w-full bg-base-200 mb-3'>
-          <div class='card-body items-center text-center'>
+        <div class="card card-compact w-full bg-base-200 mb-3">
+          <div class="card-body items-center text-center">
             {!hideBtnsSig.value.includes(HideBtnsEnum.cn) && (
               <div
                 class={`flex ${FontSizeMap[fontSizeSig.value]}`}
@@ -51,14 +51,14 @@ export const Subs = component$(
               </div>
             )}
             {!hideBtnsSig.value.includes(HideBtnsEnum.py) && (
-              <p class={"text-lg text-info"}>{py}</p>
+              <p class={'text-lg text-info'}>{py}</p>
             )}
             {!hideBtnsSig.value.includes(HideBtnsEnum.ru) && <p>{ru}</p>}
           </div>
         </div>
-        <div class={"grid lg:grid-cols-2 grid-cols-1 gap-2"}>
+        <div class={'grid lg:grid-cols-2 grid-cols-1 gap-2'}>
           <HideButtons hideBtnsSig={hideBtnsSig} />
-          <div class={"sm:justify-self-end"}>
+          <div class={'sm:justify-self-end'}>
             <FontSizeBtnGroup fontSizeSig={fontSizeSig} />
           </div>
         </div>
@@ -71,7 +71,7 @@ export const Subs = component$(
                 cn: currentWord.value.chinese,
                 py: currentWord.value.pinyin,
                 ru: currentWord.value.russian,
-                lvl: "unknown",
+                lvl: 'unknown',
                 id: 0,
               }}
               modalId={moreInfoModalId}
@@ -80,5 +80,5 @@ export const Subs = component$(
         )}
       </div>
     );
-  }
+  },
 );

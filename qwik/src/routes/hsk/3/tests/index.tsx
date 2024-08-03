@@ -1,15 +1,15 @@
-import { component$, useStore, useTask$, $ } from "@builder.io/qwik";
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { Sidebar } from "~/components/common/layout/sidebar";
-import { MainContent } from "~/components/common/layout/main-content";
-import { PageTitle } from "~/components/common/layout/title";
-import { TableCard } from "~/components/hsk/table-card";
-import { type DocumentHead, routeLoader$, useLocation } from "@builder.io/qwik-city";
-import { type NewHskWordType } from "../table";
-import { ApiService } from "~/misc/actions/request";
-import { playSvg } from "~/components/common/media/svg";
-import CONST_URLS from "~/misc/consts/urls";
-import { TypingGame } from "~/components/games/typing-game";
+import { component$, useStore, useTask$, $ } from '@builder.io/qwik';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { MainContent } from '~/components/common/layout/main-content';
+import { PageTitle } from '~/components/common/layout/title';
+import { TableCard } from '~/components/hsk/table-card';
+import { type DocumentHead, routeLoader$, useLocation } from '@builder.io/qwik-city';
+import { type NewHskWordType } from '../table';
+import { ApiService } from '~/misc/actions/request';
+import { playSvg } from '~/components/common/media/svg';
+import CONST_URLS from '~/misc/consts/urls';
+import { TypingGame } from '~/components/games/typing-game';
 
 import {
   type TestWord,
@@ -19,14 +19,14 @@ import {
   collectOptions,
   checkAnswers,
   QuestKinds,
-} from "../../2/tests";
+} from '../../2/tests';
 
-import { parseRussian } from "~/misc/helpers/translation";
-import { CalligraphyGame } from "~/components/games/calligraphy-game";
+import { parseRussian } from '~/misc/helpers/translation';
+import { CalligraphyGame } from '~/components/games/calligraphy-game';
 
 // get 150 words
 export const getTestWords = routeLoader$(async (ev): Promise<TestWord[]> => {
-  const lvl = ev.query.get("lvl") || "1";
+  const lvl = ev.query.get('lvl') || '1';
   const res = await ApiService.get(`/api/newhskwords/all?hsk_level=${lvl}`, undefined, []);
   return res.map(({ cn: chinese, lvl: level, py: pinyin, id, ru }: NewHskWordType) => ({
     id,
@@ -77,52 +77,52 @@ export default component$(() => {
   const questions = [
     {
       type: QuestKinds.chars,
-      title: "иероглифов",
+      title: 'иероглифов',
     },
     {
       type: QuestKinds.pinyin,
-      title: "пиньиня",
+      title: 'пиньиня',
     },
     {
       type: QuestKinds.audio,
-      title: "аудио",
+      title: 'аудио',
     },
   ];
 
   const getQuestionBtn = (word: TestWord, type: QuestionType) => {
     if (type === QuestKinds.audio) return playSvg;
-    if (type === QuestKinds.pinyin) return <div class={"lowercase"}>{word.pinyin}</div>;
+    if (type === QuestKinds.pinyin) return <div class={'lowercase'}>{word.pinyin}</div>;
     return word.chinese;
   };
 
   return (
     <>
-      <PageTitle txt={"Тесты на знание HSK 3.0"} />
+      <PageTitle txt={'Тесты на знание HSK 3.0'} />
       <FlexRow>
         <Sidebar>
           <TableCard
-            level={loc.url.searchParams.get("lvl") || "1"}
+            level={loc.url.searchParams.get('lvl') || '1'}
             isOldHsk={false}
             isForTests={true}
           />
         </Sidebar>
 
         <MainContent>
-          <CalligraphyGame words={testWords.value} level={loc.url.searchParams.get("lvl") || "1"} />
-          <TypingGame words={testWords.value} level={loc.url.searchParams.get("lvl") || "1"} />
+          <CalligraphyGame words={testWords.value} level={loc.url.searchParams.get('lvl') || '1'} />
+          <TypingGame words={testWords.value} level={loc.url.searchParams.get('lvl') || '1'} />
 
           {questions.map(({ type, title }) => (
             <>
-              <div class='prose mb-2'>
+              <div class="prose mb-2">
                 <h4>Выберите верный перевод для {title}</h4>
               </div>
 
-              <div class='form-control mb-2'>
+              <div class="form-control mb-2">
                 {questionStore[type as QuestionType] &&
                   questionStore[type as QuestionType]!.map((word) => (
-                    <div class='input-group mb-1 w-full' key={word.id}>
+                    <div class="input-group mb-1 w-full" key={word.id}>
                       <button
-                        class='btn sm:w-1/12 w-1/4 hover:text-neutral-content'
+                        class="btn sm:w-1/12 w-1/4 hover:text-neutral-content"
                         id={`${type}_${word.id}`}
                         onClick$={() => {
                           if (type !== QuestKinds.audio) return;
@@ -133,7 +133,7 @@ export default component$(() => {
                       </button>
 
                       <select
-                        class='select select-bordered sm:w-11/12 w-3/4'
+                        class="select select-bordered sm:w-11/12 w-3/4"
                         onChange$={(e) => setAnswer(e, word.id, type as QuestionType)}
                       >
                         <option disabled selected>
@@ -152,15 +152,15 @@ export default component$(() => {
               </div>
 
               <button
-                type='button'
-                class='btn btn-info btn-sm'
+                type="button"
+                class="btn btn-info btn-sm"
                 onClick$={() =>
                   checkAnswers(answerStore[type as QuestionType], type as QuestionType)
                 }
               >
                 Проверить
               </button>
-              {type !== QuestKinds.audio && <hr class='h-px my-8' />}
+              {type !== QuestKinds.audio && <hr class="h-px my-8" />}
             </>
           ))}
         </MainContent>
@@ -174,12 +174,12 @@ export const playAudio = (id: number, lvl: string) => {
 };
 
 export const head: DocumentHead = {
-  title: "Chinese+ Тесты HSK 3.0",
+  title: 'Chinese+ Тесты HSK 3.0',
   meta: [
     {
-      name: "description",
+      name: 'description',
       content:
-        "Короткие тесты на звание лексики нового HSK 3.0. Проверьте чтение, знание пиньиня, напечатайте иероглифы на скорость.",
+        'Короткие тесты на звание лексики нового HSK 3.0. Проверьте чтение, знание пиньиня, напечатайте иероглифы на скорость.',
     },
   ],
 };

@@ -1,7 +1,7 @@
-import { component$, type Signal } from "@builder.io/qwik";
-import { infoAlertSvg } from "../media/svg";
-import { CommentCard, type CommentType } from "./comment-card";
-import { type Addressee, type CommentIdToReply } from "./comment-form";
+import { component$, type Signal } from '@builder.io/qwik';
+import { infoAlertSvg } from '../media/svg';
+import { CommentCard, type CommentType } from './comment-card';
+import { type Addressee, type CommentIdToReply } from './comment-form';
 
 type CommentsBlockProps = {
   comments: CommentType[];
@@ -23,12 +23,12 @@ export const CommentsBlock = component$(
             />
           ))
         ) : (
-          <div class='alert alert-info flex mb-3'>
+          <div class="alert alert-info flex mb-3">
             {infoAlertSvg}
             <span>Еще никто не комментировал</span>
           </div>
         )}
       </div>
     );
-  }
+  },
 );

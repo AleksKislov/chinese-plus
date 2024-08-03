@@ -5,31 +5,31 @@ import {
   useStore,
   useVisibleTask$,
   type NoSerialize,
-} from "@builder.io/qwik";
-import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city";
-import { ApiService } from "~/misc/actions/request";
+} from '@builder.io/qwik';
+import { type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
+import { ApiService } from '~/misc/actions/request';
 
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { Sidebar } from "~/components/common/layout/sidebar";
-import { MainContent } from "~/components/common/layout/main-content";
-import { type VideoCardInfo } from "..";
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { MainContent } from '~/components/common/layout/main-content';
+import { type VideoCardInfo } from '..';
 
-import YTframeLoader from "youtube-iframe";
-import { YoutubeService } from "~/misc/actions/youtube-service";
-import CONSTANTS from "~/misc/consts/consts";
-import { ContentPageCard } from "~/components/common/content-cards/content-page-card";
+import YTframeLoader from 'youtube-iframe';
+import { YoutubeService } from '~/misc/actions/youtube-service';
+import CONSTANTS from '~/misc/consts/consts';
+import { ContentPageCard } from '~/components/common/content-cards/content-page-card';
 import {
   type Addressee,
   type CommentIdToReply,
   WHERE,
-} from "~/components/common/comments/comment-form";
-import { Subs } from "~/components/watch/subs";
-import { parseVideoWords } from "~/misc/helpers/content";
-import { Alerts } from "~/components/common/alerts/alerts";
-import { type CommentType } from "~/components/common/comments/comment-card";
-import { getContentComments } from "~/misc/actions/get-content-comments";
-import { ContentPageHead } from "~/components/common/ui/content-page-head";
-import { CommentsFullBlock } from "~/components/common/comments/comments-full-block";
+} from '~/components/common/comments/comment-form';
+import { Subs } from '~/components/watch/subs';
+import { parseVideoWords } from '~/misc/helpers/content';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { type CommentType } from '~/components/common/comments/comment-card';
+import { getContentComments } from '~/misc/actions/get-content-comments';
+import { ContentPageHead } from '~/components/common/ui/content-page-head';
+import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
 
 export type VideoFromDB = VideoCardInfo & {
   pySubs: string[];
@@ -62,7 +62,7 @@ export const getVideoFromDB = (id: ObjectId): Promise<VideoFromDB> => {
 };
 
 export const getWordsForTooltips = (wordsArr: string[][]) => {
-  return ApiService.post("/api/dictionary/allWordsForVideo", wordsArr, undefined, []);
+  return ApiService.post('/api/dictionary/allWordsForVideo', wordsArr, undefined, []);
 };
 
 export const useGetVideo = routeLoader$(async ({ params }): Promise<VideoFromDB & TooltipSubs> => {
@@ -88,7 +88,7 @@ type YTPlayer = {
 export default component$(() => {
   const video = useGetVideo();
   const comments = getComments();
-  const YtPlayerId = "ytPlayerId";
+  const YtPlayerId = 'ytPlayerId';
   const hideBtnsSig = useSignal<string[]>([]);
   const ytSig = useStore<YTPlayer>({
     // @ts-ignore
@@ -100,9 +100,9 @@ export default component$(() => {
   const isPaused = useSignal(false);
 
   const commentIdToReplyStore = useStore<CommentIdToReply>({
-    commentId: "",
-    name: "",
-    userId: "",
+    commentId: '',
+    name: '',
+    userId: '',
   });
 
   const addressees = useSignal<Addressee[]>([]);
@@ -170,7 +170,7 @@ export default component$(() => {
 
   return (
     <>
-      <ContentPageHead title={title} hits={hits} path='/watch/videos' />
+      <ContentPageHead title={title} hits={hits} path="/watch/videos" />
 
       <FlexRow>
         <Sidebar>
@@ -194,8 +194,8 @@ export default component$(() => {
         <MainContent>
           <Alerts />
 
-          <div class='aspect-w-16 aspect-h-9 mb-3'>
-            <div class='rounded-lg' id={YtPlayerId}></div>
+          <div class="aspect-w-16 aspect-h-9 mb-3">
+            <div class="rounded-lg" id={YtPlayerId}></div>
           </div>
 
           <Subs
@@ -229,15 +229,15 @@ export const head: DocumentHead = ({ resolveValue }) => {
     title: `Chinese+ Китайское видео с переводом: ${videoInfo.title}`,
     meta: [
       {
-        name: "description",
+        name: 'description',
         content: `Видео на китайском языке с переводом и субтитрами: ${videoInfo.desc}`,
       },
       {
-        name: "twitter:card",
-        content: "video_image_" + videoInfo._id,
+        name: 'twitter:card',
+        content: 'video_image_' + videoInfo._id,
       },
       {
-        name: "twitter:image",
+        name: 'twitter:image',
         content: YoutubeService.getVideoPicUrl(videoInfo.source),
       },
     ],

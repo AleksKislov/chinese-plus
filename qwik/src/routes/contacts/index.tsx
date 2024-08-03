@@ -1,17 +1,17 @@
-import { component$ } from "@builder.io/qwik";
-import { type DocumentHead } from "@builder.io/qwik-city";
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { MainContent } from "~/components/common/layout/main-content";
-import { PageTitle } from "~/components/common/layout/title";
+import { component$ } from '@builder.io/qwik';
+import { type DocumentHead } from '@builder.io/qwik-city';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { MainContent } from '~/components/common/layout/main-content';
+import { PageTitle } from '~/components/common/layout/title';
 
 export default component$(() => {
   return (
     <>
-      <PageTitle txt={"Пойти на контакт"} />
+      <PageTitle txt={'Пойти на контакт'} />
 
       <FlexRow>
         <MainContent>
-          <div class='prose'>
+          <div class="prose">
             <p>
               Телеграм админа: <code>@sinokislov</code>
               <br />
@@ -29,11 +29,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Контакты",
+  title: 'Chinese+ Контакты',
   meta: [
     {
-      name: "description",
-      content: "Кто мы и как с нами связаться",
+      name: 'description',
+      content: 'Кто мы и как с нами связаться',
     },
   ],
 };

@@ -5,40 +5,40 @@ import {
   useSignal,
   useContext,
   useVisibleTask$,
-} from "@builder.io/qwik";
+} from '@builder.io/qwik';
 import {
   routeAction$,
   type RequestEvent,
   Link,
   type DocumentHead,
   useNavigate,
-} from "@builder.io/qwik-city";
-import Cookies from "js-cookie";
-import { GoogleButton } from "~/components/auth/google-btn";
-import { Alerts } from "~/components/common/alerts/alerts";
-import { getTokenFromCookie } from "~/misc/actions/auth";
-import { ApiService } from "~/misc/actions/request";
-import { AlertColorEnum, alertsContext } from "~/root";
+} from '@builder.io/qwik-city';
+import Cookies from 'js-cookie';
+import { GoogleButton } from '~/components/auth/google-btn';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { getTokenFromCookie } from '~/misc/actions/auth';
+import { ApiService } from '~/misc/actions/request';
+import { AlertColorEnum, alertsContext } from '~/root';
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
-  if (token) throw redirect(302, "/me");
+  if (token) throw redirect(302, '/me');
 };
 
 export const useLogin = routeAction$(async (params): Promise<{ token: string } | null> => {
-  return ApiService.post("/api/auth", params, undefined, null);
+  return ApiService.post('/api/auth', params, undefined, null);
 });
 
 export const useSendResetPasswordEmail = routeAction$(
   async (params): Promise<{ token: string } | null> => {
-    return ApiService.post("/api/auth/send_reset_pass_email", params, undefined, null);
-  }
+    return ApiService.post('/api/auth/send_reset_pass_email', params, undefined, null);
+  },
 );
 
 export default component$(() => {
   const nav = useNavigate();
-  const email = useSignal("");
-  const password = useSignal("");
+  const email = useSignal('');
+  const password = useSignal('');
   const login = useLogin();
   const sendEmail = useSendResetPasswordEmail();
   const alertsState = useContext(alertsContext);
@@ -55,8 +55,8 @@ export default component$(() => {
       return;
     }
 
-    Cookies.set("token", res.token, { expires: 27 });
-    setTimeout(() => nav("/me"), 200);
+    Cookies.set('token', res.token, { expires: 27 });
+    setTimeout(() => nav('/me'), 200);
   });
 
   useVisibleTask$(({ track }) => {
@@ -78,73 +78,73 @@ export default component$(() => {
   });
 
   useOnDocument(
-    "keydown",
+    'keydown',
     $(
       (e) =>
-        (e as KeyboardEvent).key === "Enter" &&
-        login.submit({ email: email.value, password: password.value })
-    )
+        (e as KeyboardEvent).key === 'Enter' &&
+        login.submit({ email: email.value, password: password.value }),
+    ),
   );
 
-  const ModalId = "reset-pass-modal";
+  const ModalId = 'reset-pass-modal';
 
   const validateEmail = (email: string) => {
     return email
       .toLowerCase()
       .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       );
   };
 
   return (
-    <div class='text-center'>
-      <article class={"prose max-w-none"}>
+    <div class="text-center">
+      <article class={'prose max-w-none'}>
         <h1>Войти</h1>
         <Alerts />
-        <div class='mb-3'>
-          Нет аккаунта?{" "}
-          <Link href='/register' class='link link-primary'>
+        <div class="mb-3">
+          Нет аккаунта?{' '}
+          <Link href="/register" class="link link-primary">
             Зарегистрируйтесь
           </Link>
         </div>
-        <div class='flex items-stretch'>
-          <div class='form-control mx-auto w-96'>
-            <label class='input-group input-group-vertical mb-4'>
+        <div class="flex items-stretch">
+          <div class="form-control mx-auto w-96">
+            <label class="input-group input-group-vertical mb-4">
               <span>Email</span>
               <input
-                type={"email"}
-                placeholder='example@site.com'
-                class='input input-bordered'
+                type={'email'}
+                placeholder="example@site.com"
+                class="input input-bordered"
                 bind:value={email}
               />
             </label>
 
-            <label class='input-group input-group-vertical mb-4'>
+            <label class="input-group input-group-vertical mb-4">
               <span>Пароль</span>
               <input
                 minLength={6}
-                type='password'
-                placeholder='ваш pAs$w0rd'
-                class='input input-bordered'
+                type="password"
+                placeholder="ваш pAs$w0rd"
+                class="input input-bordered"
                 bind:value={password}
               />
             </label>
 
-            <div class='flex flex-col w-full border-opacity-50'>
+            <div class="flex flex-col w-full border-opacity-50">
               <button
-                class='btn btn-info btn-sm mt-2'
+                class="btn btn-info btn-sm mt-2"
                 onClick$={() => {
                   login.submit({ email: email.value, password: password.value });
                 }}
               >
                 войти
               </button>
-              <div class='divider'>или</div>
+              <div class="divider">или</div>
               <GoogleButton />
-              <div class='divider'>или</div>
+              <div class="divider">или</div>
               <label
                 for={ModalId}
-                class={`btn btn-warning btn-sm ${validateEmail(email.value) ? "" : "btn-disabled"}`}
+                class={`btn btn-warning btn-sm ${validateEmail(email.value) ? '' : 'btn-disabled'}`}
               >
                 Забыли пароль?
               </label>
@@ -152,18 +152,18 @@ export default component$(() => {
           </div>
         </div>
 
-        <input type='checkbox' id={ModalId} class='modal-toggle' />
-        <div class='modal'>
-          <div class='modal-box'>
-            <h3 class='text-lg font-bold'>Забыли пароль?</h3>
-            <p class='py-4'>
-              Кнопка ниже отправит вам письмо на <kbd class='kbd kbd-xs'>{email.value}</kbd> со
+        <input type="checkbox" id={ModalId} class="modal-toggle" />
+        <div class="modal">
+          <div class="modal-box">
+            <h3 class="text-lg font-bold">Забыли пароль?</h3>
+            <p class="py-4">
+              Кнопка ниже отправит вам письмо на <kbd class="kbd kbd-xs">{email.value}</kbd> со
               ссылкой для смены пароля.
             </p>
-            <div class='modal-action'>
+            <div class="modal-action">
               <label
                 for={ModalId}
-                class='btn btn-info btn-sm'
+                class="btn btn-info btn-sm"
                 onClick$={() => {
                   if (email.value) {
                     sendEmail.submit({ email: email.value });
@@ -174,7 +174,7 @@ export default component$(() => {
               </label>
             </div>
           </div>
-          <label class='modal-backdrop' for={ModalId}>
+          <label class="modal-backdrop" for={ModalId}>
             Close
           </label>
         </div>
@@ -184,11 +184,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Вход",
+  title: 'Chinese+ Вход',
   meta: [
     {
-      name: "description",
-      content: "Залогиниться на сайте Chinese+",
+      name: 'description',
+      content: 'Залогиниться на сайте Chinese+',
     },
   ],
 };

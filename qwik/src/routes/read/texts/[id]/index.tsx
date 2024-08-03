@@ -1,4 +1,4 @@
-import { component$, useVisibleTask$ } from "@builder.io/qwik";
+import { component$, useVisibleTask$ } from '@builder.io/qwik';
 import {
   type DocumentHead,
   routeLoader$,
@@ -6,20 +6,20 @@ import {
   useLocation,
   z,
   zod$,
-} from "@builder.io/qwik-city";
-import { ApiService } from "~/misc/actions/request";
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { Sidebar } from "~/components/common/layout/sidebar";
-import CONSTANTS from "~/misc/consts/consts";
-import { ContentPageCard } from "~/components/common/content-cards/content-page-card";
-import { WHERE } from "~/components/common/comments/comment-form";
-import { type CommentType } from "~/components/common/comments/comment-card";
-import { getContentComments } from "~/misc/actions/get-content-comments";
-import { type TextCardInfo } from "..";
-import { parseTextWords } from "~/misc/helpers/content";
-import { ContentPageHead } from "~/components/common/ui/content-page-head";
-import { ReadResultCard } from "~/components/me/read-result-card";
-import { TextMainContent } from "~/components/read/text-main-content";
+} from '@builder.io/qwik-city';
+import { ApiService } from '~/misc/actions/request';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import CONSTANTS from '~/misc/consts/consts';
+import { ContentPageCard } from '~/components/common/content-cards/content-page-card';
+import { WHERE } from '~/components/common/comments/comment-form';
+import { type CommentType } from '~/components/common/comments/comment-card';
+import { getContentComments } from '~/misc/actions/get-content-comments';
+import { type TextCardInfo } from '..';
+import { parseTextWords } from '~/misc/helpers/content';
+import { ContentPageHead } from '~/components/common/ui/content-page-head';
+import { ReadResultCard } from '~/components/me/read-result-card';
+import { TextMainContent } from '~/components/read/text-main-content';
 
 export type TextContent = {
   origintext: string[];
@@ -42,9 +42,9 @@ export const getTextFromDB = (id: ObjectId): Promise<TextFromDB> => {
 
 export const getWordsForTooltips = (
   wordsArr: string[],
-  isShortRu?: boolean
+  isShortRu?: boolean,
 ): Promise<(string | DictWord)[]> => {
-  const shortRu = isShortRu ? "?isShortRu=1" : "";
+  const shortRu = isShortRu ? '?isShortRu=1' : '';
   return ApiService.post(`/api/dictionary/allwords${shortRu}`, wordsArr, undefined, []);
 };
 
@@ -66,16 +66,16 @@ export type SimilarText = {
 
 export const useGetText = routeLoader$(
   async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
-    const curPage = getCurrentPageNum(query.get("pg"));
+    const curPage = getCurrentPageNum(query.get('pg'));
     const textFromDb = await getTextFromDB(params.id);
     const chineseArr = getChineseArr(textFromDb, curPage);
 
     // first load only the 1st parag
-    const firstParag = chineseArr.slice(0, chineseArr.indexOf("\n"));
+    const firstParag = chineseArr.slice(0, chineseArr.indexOf('\n'));
     const dbWords = await getWordsForTooltips(firstParag, true);
     const tooltipTxt = parseTextWords(firstParag, dbWords);
     return { ...textFromDb, tooltipTxt, curPage };
-  }
+  },
 );
 
 export const useGetRestTooltipTxt = routeAction$(
@@ -94,10 +94,10 @@ export const useGetRestTooltipTxt = routeAction$(
     lvl: z.number().int(),
     tags: z.array(z.string()),
     isApproved: z.boolean(),
-  })
+  }),
 );
 
-export function getCurrentPageNum(pg: string | null = "1"): number {
+export function getCurrentPageNum(pg: string | null = '1'): number {
   if (!pg) return 0;
   if (+pg && +pg > 0) return +pg - 1;
   return 0;
@@ -136,7 +136,7 @@ export default component$(() => {
   } = text.value;
 
   useVisibleTask$(async () => {
-    const pg = loc.url.searchParams.get("pg");
+    const pg = loc.url.searchParams.get('pg');
     const currentPage = getCurrentPageNum(pg);
     await getRestParags.submit({
       chineseArr: getChineseArr(text.value, currentPage),
@@ -148,7 +148,7 @@ export default component$(() => {
 
   return (
     <>
-      <ContentPageHead title={title} hits={hits} path='/read/texts' />
+      <ContentPageHead title={title} hits={hits} path="/read/texts" />
 
       <FlexRow>
         <Sidebar>
@@ -189,15 +189,15 @@ export const head: DocumentHead = ({ resolveValue }) => {
     title: `Chinese+ Китайский c переводом: ${textInfo.title}`,
     meta: [
       {
-        name: "description",
+        name: 'description',
         content: `Текст на китайском языке с переводом: ${textInfo.description}`,
       },
       {
-        name: "twitter:card",
-        content: "text_image_" + textInfo._id,
+        name: 'twitter:card',
+        content: 'text_image_' + textInfo._id,
       },
       {
-        name: "twitter:image",
+        name: 'twitter:image',
         content: textInfo.pic_url,
       },
     ],

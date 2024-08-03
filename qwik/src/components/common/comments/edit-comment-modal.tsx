@@ -1,7 +1,7 @@
-import { $, component$, useSignal } from "@builder.io/qwik";
-import { globalAction$, z, zod$ } from "@builder.io/qwik-city";
-import { ApiService } from "~/misc/actions/request";
-import { type CommentType } from "./comment-card";
+import { $, component$, useSignal } from '@builder.io/qwik';
+import { globalAction$, z, zod$ } from '@builder.io/qwik-city';
+import { ApiService } from '~/misc/actions/request';
+import { type CommentType } from './comment-card';
 import {
   type Addressee,
   CommentTextArea,
@@ -10,7 +10,7 @@ import {
   parseForAddressees,
   getAddresseeStr,
   AddresseeTag,
-} from "./comment-form";
+} from './comment-form';
 
 type EditCommentProps = {
   modalId: string;
@@ -25,13 +25,13 @@ export const pathWhereMap: { [key: string]: WhereType } = {
 };
 
 export const useDelComment = globalAction$((params, ev) => {
-  const token = ev.cookie.get("token")?.value;
+  const token = ev.cookie.get('token')?.value;
   const { commentId, contentId, destination } = params;
   return ApiService.delete(`/api/${destination}s/comment/${contentId}/${commentId}`, token, {});
 }, zod$({ commentId: z.string(), contentId: z.string(), destination: z.string() }));
 
 export const useEditComment = globalAction$((body, ev) => {
-  const token = ev.cookie.get("token")?.value;
+  const token = ev.cookie.get('token')?.value;
   return ApiService.post(`/api/comments/edit`, body, token, {});
 }, zod$({ id: z.string(), text: z.string() }));
 
@@ -39,7 +39,7 @@ export const EditCommentModal = component$(({ modalId, comment }: EditCommentPro
   const delComment = useDelComment();
   const editComment = useEditComment();
   const { _id: commentId, post_id: contentId, text, destination } = comment;
-  const emoji = useSignal("");
+  const emoji = useSignal('');
   const newText = useSignal(text);
   const addressees = useSignal<Addressee[]>([]);
 
@@ -50,7 +50,7 @@ export const EditCommentModal = component$(({ modalId, comment }: EditCommentPro
       foundUsers.forEach((user) => {
         text = text.replace(
           getAddresseeStr(user),
-          `${AddresseeTag.start}${user.name}${AddresseeTag.end}`
+          `${AddresseeTag.start}${user.name}${AddresseeTag.end}`,
         );
       });
     }
@@ -58,20 +58,20 @@ export const EditCommentModal = component$(({ modalId, comment }: EditCommentPro
     await editComment.submit({ id: commentId, text });
 
     addressees.value = [];
-    newText.value = "";
-    emoji.value = "";
+    newText.value = '';
+    emoji.value = '';
   });
 
   return (
     <>
-      <input type='checkbox' id={modalId} class='modal-toggle' />
-      <div class='modal'>
-        <div class='modal-box relative'>
-          <label for={modalId} class='btn btn-sm btn-circle absolute right-2 top-2'>
+      <input type="checkbox" id={modalId} class="modal-toggle" />
+      <div class="modal">
+        <div class="modal-box relative">
+          <label for={modalId} class="btn btn-sm btn-circle absolute right-2 top-2">
             ✕
           </label>
 
-          <h2 class='text-lg font-bold mb-2'>Редактировать / удалить</h2>
+          <h2 class="text-lg font-bold mb-2">Редактировать / удалить</h2>
 
           <CommentTextArea
             loggedIn={true}
@@ -81,15 +81,15 @@ export const EditCommentModal = component$(({ modalId, comment }: EditCommentPro
             commentIdToReply={null}
           />
 
-          <div class='modal-action'>
+          <div class="modal-action">
             <label
               for={modalId}
-              class='btn btn-error btn-outline btn-sm'
+              class="btn btn-error btn-outline btn-sm"
               onClick$={() => delComment.submit({ commentId, contentId, destination })}
             >
               Удалить
             </label>
-            <label for={modalId} class='btn btn-info btn-outline btn-sm' onClick$={submitPost}>
+            <label for={modalId} class="btn btn-info btn-outline btn-sm" onClick$={submitPost}>
               Отредактировать
             </label>
           </div>

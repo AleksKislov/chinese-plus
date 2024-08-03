@@ -1,9 +1,9 @@
-import { component$ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
-import { WHERE } from "~/components/common/comments/comment-form";
-import { BookmarkBtn } from "~/components/common/content-cards/bookmark-btn";
-import { CategoryBadge } from "../common/content-cards/category-badge";
-import { LevelStars } from "../common/content-cards/level-stars";
+import { component$ } from '@builder.io/qwik';
+import { Link } from '@builder.io/qwik-city';
+import { WHERE } from '~/components/common/comments/comment-form';
+import { BookmarkBtn } from '~/components/common/content-cards/bookmark-btn';
+import { CategoryBadge } from '../common/content-cards/category-badge';
+import { LevelStars } from '../common/content-cards/level-stars';
 // import { AvatarImg } from "~/components/common/media/avatar-img";
 
 type AllContentTableRowProps = {
@@ -32,11 +32,11 @@ export const AllContentTableRow = component$(
     isVideo,
     lvl,
   }: AllContentTableRowProps) => {
-    const contentHref = (isVideo ? "/watch/videos/" : "/read/texts/") + contentId;
+    const contentHref = (isVideo ? '/watch/videos/' : '/read/texts/') + contentId;
 
     return (
       <tr>
-        <td class='text-xs'>{date}</td>
+        <td class="text-xs">{date}</td>
         {/* <td>
           <div
             class='tooltip tooltip-info before:z-50 before:content-[attr(data-tip)]'
@@ -52,14 +52,14 @@ export const AllContentTableRow = component$(
           </div>
         </td> */}
         <td>
-          <Link href={contentHref} class='text-lg link link-hover'>
+          <Link href={contentHref} class="text-lg link link-hover">
             {title}
           </Link>
           <br />
-          <div class='flex'>
+          <div class="flex">
             <LevelStars lvl={lvl} />
-            <div class='ml-1'>
-              <CategoryBadge txt={category} size='badge-xs' />
+            <div class="ml-1">
+              <CategoryBadge txt={category} size="badge-xs" />
             </div>
           </div>
         </td>
@@ -71,5 +71,5 @@ export const AllContentTableRow = component$(
         </td>
       </tr>
     );
-  }
+  },
 );

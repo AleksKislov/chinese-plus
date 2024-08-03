@@ -3,18 +3,18 @@ import {
   type RequestEvent,
   globalAction$,
   type DocumentHead,
-} from "@builder.io/qwik-city";
-import { component$, useStore } from "@builder.io/qwik";
-import { PageTitle } from "~/components/common/layout/title";
-import { getTokenFromCookie } from "~/misc/actions/auth";
-import { ApiService } from "~/misc/actions/request";
-import CONST_URLS from "~/misc/consts/urls";
-import { OtherTextFields } from "~/components/create-edit/other-text-fields";
-import { TextPreprocessForm } from "~/components/create-edit/text-preprocess-form";
-import { Alerts } from "~/components/common/alerts/alerts";
-import { getWordsForTooltips, type TextFromDB } from "~/routes/read/texts/[id]";
-import { segmenter } from "~/routes/search";
-import { parseTextWords } from "~/misc/helpers/content";
+} from '@builder.io/qwik-city';
+import { component$, useStore } from '@builder.io/qwik';
+import { PageTitle } from '~/components/common/layout/title';
+import { getTokenFromCookie } from '~/misc/actions/auth';
+import { ApiService } from '~/misc/actions/request';
+import CONST_URLS from '~/misc/consts/urls';
+import { OtherTextFields } from '~/components/create-edit/other-text-fields';
+import { TextPreprocessForm } from '~/components/create-edit/text-preprocess-form';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { getWordsForTooltips, type TextFromDB } from '~/routes/read/texts/[id]';
+import { segmenter } from '~/routes/search';
+import { parseTextWords } from '~/misc/helpers/content';
 
 export type ThemePicType = {
   full: string;
@@ -42,37 +42,37 @@ export type NewTextStore = {
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
-  if (!token) throw redirect(302, "/login");
+  if (!token) throw redirect(302, '/login');
 };
 
 export const useGetPics = globalAction$(async (param, ev): Promise<ThemePicType[]> => {
   const token = getTokenFromCookie(ev.cookie);
   if (!token) return [];
-  return ApiService.get("/api/translation/unsplash/" + param.picTheme, token, []);
+  return ApiService.get('/api/translation/unsplash/' + param.picTheme, token, []);
 });
 
 export const usePublishText = routeAction$(async (params, ev): Promise<TextFromDB | null> => {
   const token = getTokenFromCookie(ev.cookie);
   if (!token) return null;
-  return ApiService.post("/api/texts/create", params, token, null);
+  return ApiService.post('/api/texts/create', params, token, null);
 });
 
 export const useSegmentAndGetTooltips = globalAction$(
   async (params): Promise<{ allwords: string[]; tooltipTxt: (string | DictWord)[][] }> => {
-    const allwords = (await segmenter(params.txt as string)).filter((word) => word !== " ");
+    const allwords = (await segmenter(params.txt as string)).filter((word) => word !== ' ');
     const tooltipTxt = parseTextWords(allwords, await getWordsForTooltips(allwords, true));
     return { allwords, tooltipTxt };
-  }
+  },
 );
 
 export default component$(() => {
   const store: NewTextStore = useStore({
     lvl: 1,
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     length: 0,
-    tags: "",
-    source: "",
+    tags: '',
+    source: '',
     categoryInd: 0,
     picUrl: CONST_URLS.defaultTextPic,
     chineseTextParagraphs: [],
@@ -83,7 +83,7 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={"Поделиться новым текстом"} />
+      <PageTitle txt={'Поделиться новым текстом'} />
       <Alerts />
 
       <OtherTextFields store={store} />
@@ -94,11 +94,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Поделиться контентом",
+  title: 'Chinese+ Поделиться контентом',
   meta: [
     {
-      name: "description",
-      content: "Поделитесь обучающим контентом с остальными посетителями Chinese+",
+      name: 'description',
+      content: 'Поделитесь обучающим контентом с остальными посетителями Chinese+',
     },
   ],
 };

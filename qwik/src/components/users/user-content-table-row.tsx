@@ -1,5 +1,5 @@
-import { component$ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { component$ } from '@builder.io/qwik';
+import { Link } from '@builder.io/qwik-city';
 
 type MarkedTableRowProps = {
   contentId: ObjectId;
@@ -21,19 +21,19 @@ export const UserTableTableRow = component$(
     hitsTotal,
     isVideo,
   }: MarkedTableRowProps) => {
-    const contentHref = (isVideo ? "/watch/videos/" : "/read/texts/") + contentId;
+    const contentHref = (isVideo ? '/watch/videos/' : '/read/texts/') + contentId;
 
     return (
       <tr>
         <td>
           <Link href={contentHref}>{title}</Link>
           <br />
-          <span class='badge badge-ghost badge-sm'>{category}</span>
+          <span class="badge badge-ghost badge-sm">{category}</span>
         </td>
         <td>{likesTotal}</td>
         <td>{commentsTotal}</td>
         <td>{hitsTotal}</td>
       </tr>
     );
-  }
+  },
 );

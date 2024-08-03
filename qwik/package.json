@@ -40,11 +40,12 @@
     "compression": "^1.7.4",
     "daisyui": "^3.8.2",
     "eslint": "8.31.0",
+    "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-qwik": "0.16.2",
     "express": "4.18.2",
     "node-fetch": "3.3.0",
     "postcss": "^8.4.16",
-    "prettier": "2.8.1",
+    "prettier": "^2.8.1",
     "tailwindcss": "^3.1.8",
     "typescript": "4.9.4",
     "undici": "^5.20.0",
@@ -58,7 +59,7 @@
     "google-charts": "^2.0.0",
     "hanzi-writer": "^3.5.0",
     "js-cookie": "^3.0.1",
-    "youtube-iframe": "^1.0.3",
-    "sharp": "0.32.6"
+    "sharp": "0.32.6",
+    "youtube-iframe": "^1.0.3"
   }
 }

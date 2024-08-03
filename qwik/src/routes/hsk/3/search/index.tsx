@@ -1,25 +1,25 @@
-import { component$, useSignal } from "@builder.io/qwik";
-import { HskSearchForm } from "~/components/hsk/search-form";
-import { type NewHskWordType } from "../table";
+import { component$, useSignal } from '@builder.io/qwik';
+import { HskSearchForm } from '~/components/hsk/search-form';
+import { type NewHskWordType } from '../table';
 
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { Sidebar } from "~/components/common/layout/sidebar";
-import { MainContent } from "~/components/common/layout/main-content";
-import { PageTitle } from "~/components/common/layout/title";
-import { NewHskTable } from "~/components/hsk/new-hsk-table";
-import { type DocumentHead } from "@builder.io/qwik-city";
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { MainContent } from '~/components/common/layout/main-content';
+import { PageTitle } from '~/components/common/layout/title';
+import { NewHskTable } from '~/components/hsk/new-hsk-table';
+import { type DocumentHead } from '@builder.io/qwik-city';
 
 export default component$(() => {
   const hskWords = useSignal<NewHskWordType[]>([]);
 
   return (
     <>
-      <PageTitle txt={"Поиск слов HSK 3.0"} />
+      <PageTitle txt={'Поиск слов HSK 3.0'} />
       <FlexRow>
         <Sidebar>
-          <div class='card bg-primary text-primary-content'>
-            <div class='card-body'>
-              <h2 class='card-title'>Найти слово HSK 3.0</h2>
+          <div class="card bg-primary text-primary-content">
+            <div class="card-body">
+              <h2 class="card-title">Найти слово HSK 3.0</h2>
               <p>
                 Найдите нужные вам слова нового HSK 3.0
                 <br />1 band - 500 слов
@@ -45,5 +45,5 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Поиск по словам HSK 3.0",
+  title: 'Chinese+ Поиск по словам HSK 3.0',
 };

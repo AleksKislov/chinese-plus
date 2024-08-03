@@ -1,9 +1,9 @@
-import { $, component$, useContext, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
-import { useNavigate } from "@builder.io/qwik-city";
-import CONSTANTS from "~/misc/consts/consts";
-import { AlertColorEnum, alertsContext } from "~/root";
-import { countZnChars, parseTags } from "~/misc/helpers/content";
-import { FlexRow } from "../common/layout/flex-row";
+import { $, component$, useContext, useSignal, useTask$, useVisibleTask$ } from '@builder.io/qwik';
+import { useNavigate } from '@builder.io/qwik-city';
+import CONSTANTS from '~/misc/consts/consts';
+import { AlertColorEnum, alertsContext } from '~/root';
+import { countZnChars, parseTags } from '~/misc/helpers/content';
+import { FlexRow } from '../common/layout/flex-row';
 import {
   usePublishVideo,
   useGetRuCaptions,
@@ -11,12 +11,12 @@ import {
   useGetPyCaptions,
   type VideoSub,
   useGetTextPinyin,
-} from "~/routes/(content)/create/video";
-import { WordTooltip } from "../common/tooltips/word-tooltip";
-import { Loader } from "../common/ui/loader";
-import { ParagNum } from "../read/parag-num";
-import { useEditVideo, type EditVideoStore } from "~/routes/(content)/edit/video/[id]";
-import { useSegmentAndGetTooltips } from "~/routes/(content)/create/text";
+} from '~/routes/(content)/create/video';
+import { WordTooltip } from '../common/tooltips/word-tooltip';
+import { Loader } from '../common/ui/loader';
+import { ParagNum } from '../read/parag-num';
+import { useEditVideo, type EditVideoStore } from '~/routes/(content)/edit/video/[id]';
+import { useSegmentAndGetTooltips } from '~/routes/(content)/create/text';
 
 type VideoPreprocessFormProps = {
   store: EditVideoStore;
@@ -36,9 +36,9 @@ export const VideoPreprocessFormForEdit = component$(
     const nav = useNavigate();
 
     const alertsState = useContext(alertsContext);
-    const chineseText = useSignal("");
-    const pinyinText = useSignal("");
-    const origTranslation = useSignal("");
+    const chineseText = useSignal('');
+    const pinyinText = useSignal('');
+    const origTranslation = useSignal('');
     const currentWord = useSignal(undefined);
     const tooltipTxt = useSignal<(DictWord | string)[][]>([]);
 
@@ -51,9 +51,9 @@ export const VideoPreprocessFormForEdit = component$(
     });
 
     useTask$(() => {
-      chineseText.value = store.cnSubs.map((x) => x.text).join("\n");
-      pinyinText.value = store.pySubs.join("\n");
-      origTranslation.value = store.ruSubs.join("\n");
+      chineseText.value = store.cnSubs.map((x) => x.text).join('\n');
+      pinyinText.value = store.pySubs.join('\n');
+      origTranslation.value = store.ruSubs.join('\n');
     });
 
     useTask$(({ track }) => {
@@ -61,7 +61,7 @@ export const VideoPreprocessFormForEdit = component$(
 
       if (publishVideoAction.value?._id) {
         setTimeout(() => {
-          nav("/watch/unapproved-videos/" + publishVideoAction.value?._id);
+          nav('/watch/unapproved-videos/' + publishVideoAction.value?._id);
         }, 3000);
       }
     });
@@ -72,7 +72,7 @@ export const VideoPreprocessFormForEdit = component$(
       if (editVideoAction.value?._id) {
         setTimeout(() => {
           nav(
-            `/watch/${store.isApproved ? "" : "unapproved-"}videos/${editVideoAction.value?._id}`
+            `/watch/${store.isApproved ? '' : 'unapproved-'}videos/${editVideoAction.value?._id}`,
           );
         }, 3000);
       }
@@ -82,7 +82,7 @@ export const VideoPreprocessFormForEdit = component$(
       track(() => getCnCaptions.value);
       if (getCnCaptions.value?.length) {
         const subs = getCnCaptions.value?.map?.((sub) => sub.text) || [];
-        chineseText.value = subs.join("\n") || "";
+        chineseText.value = subs.join('\n') || '';
       }
     });
 
@@ -91,7 +91,7 @@ export const VideoPreprocessFormForEdit = component$(
 
       if (getPyCaptions.value?.length) {
         const subs = getPyCaptions.value?.map?.((sub) => sub.text) || [];
-        pinyinText.value = subs.join("\n") || "";
+        pinyinText.value = subs.join('\n') || '';
       }
     });
 
@@ -100,7 +100,7 @@ export const VideoPreprocessFormForEdit = component$(
 
       if (getRuCaptions.value?.length) {
         const subs = getRuCaptions.value?.map?.((sub) => sub.text) || [];
-        origTranslation.value = subs.join("\n") || "";
+        origTranslation.value = subs.join('\n') || '';
       }
     });
 
@@ -108,15 +108,15 @@ export const VideoPreprocessFormForEdit = component$(
       const serverPinyin = track(() => getTxtPinyin.value);
 
       if (serverPinyin?.length) {
-        const subs = serverPinyin.map((strArr) => strArr.join(" "));
-        pinyinText.value = subs.join("\n");
+        const subs = serverPinyin.map((strArr) => strArr.join(' '));
+        pinyinText.value = subs.join('\n');
       }
     });
 
     const preprocessForm = $(async () => {
-      const trimmedChineseTxt = chineseText.value.trim().replace(/\n\s*\n/g, "\n");
+      const trimmedChineseTxt = chineseText.value.trim().replace(/\n\s*\n/g, '\n');
       const chineseTextParagraphs = trimmedChineseTxt
-        .split("\n")
+        .split('\n')
         .map((parag) => parag.trim())
         .filter((parag) => Boolean(parag));
 
@@ -129,13 +129,13 @@ export const VideoPreprocessFormForEdit = component$(
       }
       const translationParagraphs = origTranslation.value
         .trim()
-        .split("\n")
+        .split('\n')
         .map((parag) => parag.trim())
         .filter((parag) => Boolean(parag));
 
       const pinyinParagraphs = pinyinText.value
         .trim()
-        .split("\n")
+        .split('\n')
         .map((parag) => parag.trim())
         .filter((parag) => Boolean(parag));
 
@@ -150,9 +150,9 @@ export const VideoPreprocessFormForEdit = component$(
         return;
       }
 
-      origTranslation.value = translationParagraphs.join("\n");
-      chineseText.value = chineseTextParagraphs.join("\n");
-      pinyinText.value = pinyinParagraphs.join("\n");
+      origTranslation.value = translationParagraphs.join('\n');
+      chineseText.value = chineseTextParagraphs.join('\n');
+      pinyinText.value = pinyinParagraphs.join('\n');
 
       store.length = countZnChars(chineseText.value);
       // store.cnSubs = chineseTextParagraphs;
@@ -190,14 +190,14 @@ export const VideoPreprocessFormForEdit = component$(
       } = store;
 
       // const cnSubsWithTime = getCnCaptions.value?.map((x, i) => ({ ...x, text: cnSubs[i] }));
-      const chineseSubArr = chineseText.value.split("\n");
+      const chineseSubArr = chineseText.value.split('\n');
       cnSubs.forEach((x, ind) => {
         x.text = chineseSubArr[ind];
       });
-      const sprtr = "@@";
+      const sprtr = '@@';
       const splitChineseArr = chineseArr
         .join(sprtr)
-        .split("\n")
+        .split('\n')
         .map((x) => x.split(sprtr).filter(Boolean));
 
       const newVideoData: any = {
@@ -220,28 +220,28 @@ export const VideoPreprocessFormForEdit = component$(
 
       alertsState.push({
         bg: AlertColorEnum.info,
-        text: "Спасибо! Через 3 секунды вы попадете на страницу отредактированного видео",
+        text: 'Спасибо! Через 3 секунды вы попадете на страницу отредактированного видео',
       });
     });
 
     const handleKeyDown = $((e: MouseEvent) => {
       const trgt = e.target as HTMLTextAreaElement;
-      trgt.style.height = trgt.scrollHeight + "px";
+      trgt.style.height = trgt.scrollHeight + 'px';
     });
 
-    const blockClass = "my-1 border border-info rounded-md p-2 relative";
+    const blockClass = 'my-1 border border-info rounded-md p-2 relative';
 
     return (
       <>
         {/* select langs */}
         <FlexRow>
-          <div class='w-full basis-4/12'>
-            <div class='form-control w-full'>
-              <label class='label'>
-                <span class='label-text'>Китайские субтитры (с таймингом)</span>
+          <div class="w-full basis-4/12">
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Китайские субтитры (с таймингом)</span>
               </label>
               <select
-                class='select select-bordered w-full'
+                class="select select-bordered w-full"
                 onChange$={(e) =>
                   getCnCaptions.submit({
                     id: store.source,
@@ -249,7 +249,7 @@ export const VideoPreprocessFormForEdit = component$(
                   })
                 }
               >
-                <option key={0} value={""} selected>
+                <option key={0} value={''} selected>
                   Язык субтитров
                 </option>
                 {captionLangs.map((lang, ind) => (
@@ -260,13 +260,13 @@ export const VideoPreprocessFormForEdit = component$(
               </select>
             </div>
           </div>
-          <div class='w-full basis-3/12 mx-3'>
-            <div class='form-control w-full'>
-              <label class='label'>
-                <span class='label-text'>Пиньинь (с youtube)</span>
+          <div class="w-full basis-3/12 mx-3">
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Пиньинь (с youtube)</span>
               </label>
               <select
-                class='select select-bordered w-full'
+                class="select select-bordered w-full"
                 onChange$={(e) =>
                   getPyCaptions.submit({
                     id: store.source,
@@ -274,7 +274,7 @@ export const VideoPreprocessFormForEdit = component$(
                   })
                 }
               >
-                <option key={0} value={""} selected>
+                <option key={0} value={''} selected>
                   Язык субтитров
                 </option>
                 {captionLangs.map((lang, ind) => (
@@ -285,13 +285,13 @@ export const VideoPreprocessFormForEdit = component$(
               </select>
             </div>
           </div>
-          <div class='w-full basis-5/12'>
-            <div class='form-control w-full'>
-              <label class='label'>
-                <span class='label-text'>Русские субтитры</span>
+          <div class="w-full basis-5/12">
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Русские субтитры</span>
               </label>
               <select
-                class='select select-bordered w-full'
+                class="select select-bordered w-full"
                 onChange$={(e) =>
                   getRuCaptions.submit({
                     id: store.source,
@@ -299,7 +299,7 @@ export const VideoPreprocessFormForEdit = component$(
                   })
                 }
               >
-                <option key={0} value={""} selected>
+                <option key={0} value={''} selected>
                   Язык субтитров
                 </option>
                 {captionLangs.map((lang, ind) => (
@@ -314,36 +314,36 @@ export const VideoPreprocessFormForEdit = component$(
 
         {/* loading and pinyin source select */}
         <FlexRow>
-          <div class='w-full basis-4/12'>{getCnCaptions.isRunning && <Loader size={"sm"} />}</div>
-          <div class='w-full basis-3/12 mx-3'>
-            <div class='tooltip tooltip-info' data-tip={"После предобработки"}>
+          <div class="w-full basis-4/12">{getCnCaptions.isRunning && <Loader size={'sm'} />}</div>
+          <div class="w-full basis-3/12 mx-3">
+            <div class="tooltip tooltip-info" data-tip={'После предобработки'}>
               <button
-                class='btn btn-primary btn-sm'
+                class="btn btn-primary btn-sm"
                 onClick$={() => getTxtPinyin.submit({ chineseArr: store.chineseArr })}
               >
                 Взять с сервера
               </button>
             </div>
-            {(getPyCaptions.isRunning || getTxtPinyin.isRunning) && <Loader size={"sm"} />}
+            {(getPyCaptions.isRunning || getTxtPinyin.isRunning) && <Loader size={'sm'} />}
           </div>
-          <div class='w-full basis-5/12'>{getRuCaptions.isRunning && <Loader size={"sm"} />}</div>
+          <div class="w-full basis-5/12">{getRuCaptions.isRunning && <Loader size={'sm'} />}</div>
         </FlexRow>
 
         {/* textareas */}
         <FlexRow>
-          <div class='w-full basis-4/12 flex flex-row'>
-            <div class='-ml-1 mt-1 text-secondary'>
-              <div class='mb-5 mr-1'>sec.</div>
-              {getCnCaptions.isRunning && <Loader size={"sm"} />}
+          <div class="w-full basis-4/12 flex flex-row">
+            <div class="-ml-1 mt-1 text-secondary">
+              <div class="mb-5 mr-1">sec.</div>
+              {getCnCaptions.isRunning && <Loader size={'sm'} />}
               {getCnCaptions.value?.map?.((sub: VideoSub) => (
                 <p key={sub.start}>{sub.start}</p>
               ))}
             </div>
-            <div class='form-control w-full'>
-              <label class='label'>
-                <span class='label-text'>Китайский текст</span>
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Китайский текст</span>
                 {getCnCaptions.value && (
-                  <span class='label-text text-info'>
+                  <span class="label-text text-info">
                     Кол-во строк: {getCnCaptions.value.length}
                   </span>
                 )}
@@ -351,64 +351,64 @@ export const VideoPreprocessFormForEdit = component$(
 
               <textarea
                 onClick$={handleKeyDown}
-                class='textarea textarea-bordered h-24'
-                placeholder='汉字...'
+                class="textarea textarea-bordered h-24"
+                placeholder="汉字..."
                 bind:value={chineseText}
               ></textarea>
-              <label class='label'>
-                <span class='label-text-alt text-primary'>Кол-во строк должно совпадать</span>
+              <label class="label">
+                <span class="label-text-alt text-primary">Кол-во строк должно совпадать</span>
                 <span
-                  data-tip={"Не превышайте лимит"}
+                  data-tip={'Не превышайте лимит'}
                   class={`label-text-alt tooltip tooltip-info ${
                     chineseText.value.length > CONSTANTS.videoTextLen
-                      ? "text-error"
-                      : "text-primary"
+                      ? 'text-error'
+                      : 'text-primary'
                   }`}
                 >{`${chineseText.value.length} / ${CONSTANTS.videoTextLen}`}</span>
               </label>
             </div>
           </div>
 
-          <div class='w-full basis-3/12 mx-3'>
-            <div class='form-control w-full'>
-              <label class='label'>
-                <span class='label-text'>Пининь</span>
+          <div class="w-full basis-3/12 mx-3">
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Пининь</span>
                 {getPyCaptions.value && (
-                  <span class='label-text text-info'>
+                  <span class="label-text text-info">
                     Кол-во строк: {getPyCaptions.value.length}
                   </span>
                 )}
               </label>
               <textarea
                 onClick$={handleKeyDown}
-                class='textarea textarea-bordered h-24'
-                placeholder='Пиньинь (если на ютюбе нет, то грузите с сервера после предобработки)'
+                class="textarea textarea-bordered h-24"
+                placeholder="Пиньинь (если на ютюбе нет, то грузите с сервера после предобработки)"
                 bind:value={pinyinText}
               ></textarea>
-              <label class='label'>
-                <span class='label-text-alt text-primary'>Кол-во строк должно совпадать</span>
+              <label class="label">
+                <span class="label-text-alt text-primary">Кол-во строк должно совпадать</span>
               </label>
             </div>
           </div>
 
-          <div class='w-full basis-5/12'>
-            <div class='form-control w-full'>
-              <label class='label'>
-                <span class='label-text'>Перевод</span>
+          <div class="w-full basis-5/12">
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Перевод</span>
                 {getRuCaptions.value && (
-                  <span class='label-text text-info'>
+                  <span class="label-text text-info">
                     Кол-во строк: {getRuCaptions.value.length}
                   </span>
                 )}
               </label>
               <textarea
                 onClick$={handleKeyDown}
-                class='textarea textarea-bordered h-24'
-                placeholder='Ваш перевод...'
+                class="textarea textarea-bordered h-24"
+                placeholder="Ваш перевод..."
                 bind:value={origTranslation}
               ></textarea>
-              <label class='label'>
-                <span class='label-text-alt text-primary'>Кол-во строк должно совпадать</span>
+              <label class="label">
+                <span class="label-text-alt text-primary">Кол-во строк должно совпадать</span>
               </label>
             </div>
           </div>
@@ -416,9 +416,9 @@ export const VideoPreprocessFormForEdit = component$(
 
         {/* preprocess btn */}
         <FlexRow>
-          <div class='mt-3 ml-7'>
+          <div class="mt-3 ml-7">
             <button
-              class='btn btn-primary w-48'
+              class="btn btn-primary w-48"
               disabled={Boolean(!(chineseText.value.length && origTranslation.value.length))}
               onClick$={preprocessForm}
             >
@@ -429,7 +429,7 @@ export const VideoPreprocessFormForEdit = component$(
 
         {/* preview */}
         <FlexRow>
-          <div class='w-full basis-4/12'>
+          <div class="w-full basis-4/12">
             {tooltipTxt.value.length > 0 &&
               tooltipTxt.value.map((parag, i) => (
                 <div class={blockClass} key={i}>
@@ -446,7 +446,7 @@ export const VideoPreprocessFormForEdit = component$(
                 </div>
               ))}
           </div>
-          <div class='w-full basis-3/12 mx-3'>
+          <div class="w-full basis-3/12 mx-3">
             {store.pySubs.length > 0 &&
               store.pySubs.map((parag, i) => (
                 <div class={blockClass} key={i}>
@@ -455,7 +455,7 @@ export const VideoPreprocessFormForEdit = component$(
                 </div>
               ))}
           </div>
-          <div class='w-full basis-5/12'>
+          <div class="w-full basis-5/12">
             {store.ruSubs.length > 0 &&
               store.ruSubs.map((parag, i) => (
                 <div class={blockClass} key={i}>
@@ -468,13 +468,13 @@ export const VideoPreprocessFormForEdit = component$(
 
         {/* publish */}
         <FlexRow>
-          <div class='mt-3 ml-7'>
-            <button class='btn btn-primary w-48' disabled={!canPublish.value} onClick$={editVideo}>
+          <div class="mt-3 ml-7">
+            <button class="btn btn-primary w-48" disabled={!canPublish.value} onClick$={editVideo}>
               Опубликовать
             </button>
           </div>
         </FlexRow>
       </>
     );
-  }
+  },
 );

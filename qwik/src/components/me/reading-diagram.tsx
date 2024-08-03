@@ -1,7 +1,7 @@
 // @ts-ignore
-import { GoogleCharts } from "google-charts";
-import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
-import { dateToStr } from "~/misc/helpers/tools";
+import { GoogleCharts } from 'google-charts';
+import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+import { dateToStr } from '~/misc/helpers/tools';
 
 export type ReadStatType = {
   // user_id: string;
@@ -20,7 +20,7 @@ export const ReadingDiagram = component$(
   ({ data, readDailyGoal, readTodayNum }: ReadingDiagramType) => {
     const maxX = useSignal(1000);
     const MONTH_DAYS = 31;
-    const CHART_COLUMNS: [string, string, string] = ["Дата", "Прочитано, 字", "Цель, 字"];
+    const CHART_COLUMNS: [string, string, string] = ['Дата', 'Прочитано, 字', 'Цель, 字'];
 
     useVisibleTask$(({ track }) => {
       track(() => readDailyGoal);
@@ -32,7 +32,7 @@ export const ReadingDiagram = component$(
       if (maxGoal < maxResult) maxX.value = maxResult * 2;
 
       const today = new Date();
-      const chartRows: [[string, number | string, number | string]] = [["", 0, 0]];
+      const chartRows: [[string, number | string, number | string]] = [['', 0, 0]];
       chartRows[0] = [today.toISOString().slice(0, 10), readTodayNum, readDailyGoal];
 
       for (let i = 1; i < MONTH_DAYS; i++) {
@@ -59,35 +59,35 @@ export const ReadingDiagram = component$(
 
       chartRows.push(CHART_COLUMNS);
 
-      const TEXT_COLOR = { color: "rgb(180, 198, 239)" };
+      const TEXT_COLOR = { color: 'rgb(180, 198, 239)' };
       const chartOptions = {
         hAxis: {
-          title: "Дата",
+          title: 'Дата',
           textStyle: TEXT_COLOR,
           titleTextStyle: TEXT_COLOR,
         },
         vAxis: {
-          title: "Прочитано, 字",
+          title: 'Прочитано, 字',
           textStyle: TEXT_COLOR,
           titleTextStyle: TEXT_COLOR,
           viewWindow: { min: 1, max: { maxX: maxX.value } },
         },
         legend: {
-          position: "bottom",
-          alignment: "start",
+          position: 'bottom',
+          alignment: 'start',
           textStyle: TEXT_COLOR,
         },
-        backgroundColor: { fill: "transparent" },
-        seriesType: "area",
+        backgroundColor: { fill: 'transparent' },
+        seriesType: 'area',
         series: {
-          0: { pointShape: "circle", pointSize: 8 },
-          1: { type: "line" },
+          0: { pointShape: 'circle', pointSize: 8 },
+          1: { type: 'line' },
         },
       };
 
       function drawChart() {
         const readChart = new GoogleCharts.api.visualization.AreaChart(
-          document.getElementById("readingChart")
+          document.getElementById('readingChart'),
         );
         const chartData = GoogleCharts.api.visualization.arrayToDataTable(chartRows.reverse());
         readChart.draw(chartData, chartOptions);
@@ -97,13 +97,13 @@ export const ReadingDiagram = component$(
     });
 
     return (
-      <div class='mb-3 w-full h-80'>
-        <div class='prose'>
+      <div class="mb-3 w-full h-80">
+        <div class="prose">
           <h3>Статистика по чтению за месяц</h3>
         </div>
 
-        <div id='readingChart' class='stats h-80 w-full'></div>
+        <div id="readingChart" class="stats h-80 w-full"></div>
       </div>
     );
-  }
+  },
 );

@@ -1,8 +1,8 @@
-import { component$ } from "@builder.io/qwik";
-import { MainContent } from "../layout/main-content";
-import { Sidebar } from "../layout/sidebar";
-import { PageTitle } from "../layout/title";
-import { BackBtn } from "./back-btn";
+import { component$ } from '@builder.io/qwik';
+import { MainContent } from '../layout/main-content';
+import { Sidebar } from '../layout/sidebar';
+import { PageTitle } from '../layout/title';
+import { BackBtn } from './back-btn';
 
 type ContentPageHeadProps = {
   path: string;
@@ -11,7 +11,7 @@ type ContentPageHeadProps = {
 };
 
 export const ContentPageHead = component$(({ path, title, hits }: ContentPageHeadProps) => (
-  <div class={"flex flex-col md:flex-row"}>
+  <div class={'flex flex-col md:flex-row'}>
     <Sidebar noAds={true}>
       <BackBtn path={path} />
     </Sidebar>

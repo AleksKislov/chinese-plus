@@ -1,5 +1,5 @@
-import Cookies from "js-cookie";
-import { type Cookie } from "@builder.io/qwik-city";
+import Cookies from 'js-cookie';
+import { type Cookie } from '@builder.io/qwik-city';
 
 // export enum StatusCodes {
 //   NotFound = 404,
@@ -12,7 +12,7 @@ import { type Cookie } from "@builder.io/qwik-city";
 export interface UserFromDB {
   _id: ObjectId;
   name: string;
-  role?: "admin" | "moderator";
+  role?: 'admin' | 'moderator';
   email: string;
   finished_texts: string[] | null;
   seenVideos: string[] | null;
@@ -23,10 +23,10 @@ export interface UserFromDB {
 }
 
 export function logout() {
-  Cookies.remove("token");
+  Cookies.remove('token');
   // location.reload();
 }
 
 export const getTokenFromCookie = (cookie: Cookie) => {
-  return cookie.get("token")?.value || "";
+  return cookie.get('token')?.value || '';
 };

@@ -11,9 +11,9 @@ export const parseURL = (str: string): URL | undefined => {
 };
 
 function addProtocolIfNeeded(str: string) {
-  if (str.includes("http://") || str.includes("https://")) {
+  if (str.includes('http://') || str.includes('https://')) {
     return str;
   } else {
-    return "http://" + str;
+    return 'http://' + str;
   }
 }

@@ -1,5 +1,5 @@
-import { component$ } from "@builder.io/qwik";
-import { type Alert } from "~/root";
+import { component$ } from '@builder.io/qwik';
+import { type Alert } from '~/root';
 
 export const SingleAlert = component$(({ alert }: { alert: Alert }) => {
   const { bg, text } = alert;

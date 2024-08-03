@@ -1,4 +1,4 @@
-import { getRandInd } from "./get-rand-ind";
+import { getRandInd } from './get-rand-ind';
 
 export function getRandElem<T>(arr: T[] | null): T | null {
   if (!arr) return null;

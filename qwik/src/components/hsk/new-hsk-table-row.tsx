@@ -1,10 +1,10 @@
-import { component$, type Signal } from "@builder.io/qwik";
-import CONST_URLS from "~/misc/consts/urls";
-import { type NewHskWordType } from "~/routes/hsk/3/table";
-import { parseRussian } from "~/misc/helpers/translation";
-import { moreInfoSvg, playSvg } from "../common/media/svg";
-import { HideBtnsEnum } from "./hide-buttons";
-import { moreInfoModalId } from "../common/tooltips/word-tooltip";
+import { component$, type Signal } from '@builder.io/qwik';
+import CONST_URLS from '~/misc/consts/urls';
+import { type NewHskWordType } from '~/routes/hsk/3/table';
+import { parseRussian } from '~/misc/helpers/translation';
+import { moreInfoSvg, playSvg } from '../common/media/svg';
+import { HideBtnsEnum } from './hide-buttons';
+import { moreInfoModalId } from '../common/tooltips/word-tooltip';
 
 type NewHskTableRowType = {
   word: NewHskWordType;
@@ -22,35 +22,35 @@ export const NewHskTableRow = component$(
 
     return (
       <>
-        <tr class={"hover"}>
+        <tr class={'hover'}>
           <td>{id}</td>
           {!hideBtnsSig.value.includes(HideBtnsEnum.cn) && (
-            <td class={"prose"}>
-              <h2 class='w-24'>{cn}</h2>
+            <td class={'prose'}>
+              <h2 class="w-24">{cn}</h2>
             </td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.py) && (
-            <td class={"text-lg"}>
-              <div style={{ wordWrap: "break-word", whiteSpace: "normal" }}>{py}</div>
+            <td class={'text-lg'}>
+              <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{py}</div>
             </td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.ru) && (
             <td>
               <div
-                style={{ wordWrap: "break-word", whiteSpace: "normal" }}
+                style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}
                 dangerouslySetInnerHTML={parseRussian(ru, false)}
               ></div>
             </td>
           )}
           <td>
-            <button class='btn btn-sm btn-info' onClick$={() => pronounce(id, lvl)}>
+            <button class="btn btn-sm btn-info" onClick$={() => pronounce(id, lvl)}>
               {playSvg}
             </button>
           </td>
           <td>
             <label
               for={moreInfoModalId}
-              class={"btn btn-sm btn-info"}
+              class={'btn btn-sm btn-info'}
               onClick$={() => (currentWord.value = word)}
             >
               {moreInfoSvg}
@@ -59,5 +59,5 @@ export const NewHskTableRow = component$(
         </tr>
       </>
     );
-  }
+  },
 );

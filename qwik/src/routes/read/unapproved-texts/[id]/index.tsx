@@ -1,17 +1,17 @@
-import { component$ } from "@builder.io/qwik";
-import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city";
-import { ApiService } from "~/misc/actions/request";
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { Sidebar } from "~/components/common/layout/sidebar";
-import CONSTANTS from "~/misc/consts/consts";
-import { ContentPageCard } from "~/components/common/content-cards/content-page-card";
-import { WHERE } from "~/components/common/comments/comment-form";
-import { type CommentType } from "~/components/common/comments/comment-card";
-import { getContentComments } from "~/misc/actions/get-content-comments";
-import { parseTextWords } from "~/misc/helpers/content";
-import { ContentPageHead } from "~/components/common/ui/content-page-head";
-import { getWordsForTooltips, type TextFromDB, type TooltipText } from "../../texts/[id]";
-import { TextMainContent } from "~/components/read/text-main-content";
+import { component$ } from '@builder.io/qwik';
+import { type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
+import { ApiService } from '~/misc/actions/request';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import CONSTANTS from '~/misc/consts/consts';
+import { ContentPageCard } from '~/components/common/content-cards/content-page-card';
+import { WHERE } from '~/components/common/comments/comment-form';
+import { type CommentType } from '~/components/common/comments/comment-card';
+import { getContentComments } from '~/misc/actions/get-content-comments';
+import { parseTextWords } from '~/misc/helpers/content';
+import { ContentPageHead } from '~/components/common/ui/content-page-head';
+import { getWordsForTooltips, type TextFromDB, type TooltipText } from '../../texts/[id]';
+import { TextMainContent } from '~/components/read/text-main-content';
 
 export const getTextFromDB = (id: ObjectId): Promise<TextFromDB> => {
   return ApiService.get(`/api/texts/${id}`, undefined, null);
@@ -24,7 +24,7 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
 export const useGetText = routeLoader$(
   async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
     let curPage = 0;
-    const pg = query.get("pg") || "1";
+    const pg = query.get('pg') || '1';
     if (+pg && +pg > 0) curPage = +pg - 1;
 
     const textFromDb = await getTextFromDB(params.id);
@@ -35,7 +35,7 @@ export const useGetText = routeLoader$(
     const dbWords = await getWordsForTooltips(chineseArr, true);
     const tooltipTxt = parseTextWords(chineseArr, dbWords);
     return { ...textFromDb, tooltipTxt, curPage };
-  }
+  },
 );
 
 export default component$(() => {
@@ -60,7 +60,7 @@ export default component$(() => {
 
   return (
     <>
-      <ContentPageHead title={title} hits={hits} path='/read/unapproved-texts' />
+      <ContentPageHead title={title} hits={hits} path="/read/unapproved-texts" />
 
       <FlexRow>
         <Sidebar>
@@ -92,12 +92,12 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Тексты на китайском с переводом",
+  title: 'Chinese+ Тексты на китайском с переводом',
   meta: [
     {
-      name: "description",
+      name: 'description',
       content:
-        "Тексты на китайском языке на разные темы разных уровней сложности. С переводом всего текста и каждого слово по отдельности по клику.",
+        'Тексты на китайском языке на разные темы разных уровней сложности. С переводом всего текста и каждого слово по отдельности по клику.',
     },
   ],
 };

@@ -1,17 +1,17 @@
-import { component$, useSignal } from "@builder.io/qwik";
-import CONSTANTS from "~/misc/consts/consts";
-import { type TextCardInfo } from "~/routes/read/texts";
-import { WHERE } from "../common/comments/comment-form";
-import { UserDateDiv } from "../common/comments/user-with-date";
-import { TagsLine } from "../common/content-cards/tags-line";
-import { TextDesc } from "../common/content-cards/text-desc";
-import { CardTitle } from "../common/content-cards/card-title";
-import { CardImg } from "../common/content-cards/card-img";
-import { ContentLen } from "../common/content-cards/content-len";
-import { ContentCat } from "../common/content-cards/content-cat";
-import { ContentLvl } from "../common/content-cards/content-lvl";
-import { CardBtns } from "../common/content-cards/card-btns";
-import { TextSource } from "../common/content-cards/text-source";
+import { component$, useSignal } from '@builder.io/qwik';
+import CONSTANTS from '~/misc/consts/consts';
+import { type TextCardInfo } from '~/routes/read/texts';
+import { WHERE } from '../common/comments/comment-form';
+import { UserDateDiv } from '../common/comments/user-with-date';
+import { TagsLine } from '../common/content-cards/tags-line';
+import { TextDesc } from '../common/content-cards/text-desc';
+import { CardTitle } from '../common/content-cards/card-title';
+import { CardImg } from '../common/content-cards/card-img';
+import { ContentLen } from '../common/content-cards/content-len';
+import { ContentCat } from '../common/content-cards/content-cat';
+import { ContentLvl } from '../common/content-cards/content-lvl';
+import { CardBtns } from '../common/content-cards/card-btns';
+import { TextSource } from '../common/content-cards/text-source';
 
 type TextCardProps = {
   text: TextCardInfo;
@@ -40,7 +40,7 @@ export const TextCard = component$(({ text, isUnapproved }: TextCardProps) => {
   const likesSignal = useSignal(likes);
 
   return (
-    <div class='card lg:card-side w-full bg-base-300 mb-3 lg:max-h-96'>
+    <div class="card lg:card-side w-full bg-base-300 mb-3 lg:max-h-96">
       <CardImg
         contentId={textId}
         contentType={WHERE.text}
@@ -48,7 +48,7 @@ export const TextCard = component$(({ text, isUnapproved }: TextCardProps) => {
         isUnapproved={isUnapproved}
       />
 
-      <div class='card-body lg:w-2/3'>
+      <div class="card-body lg:w-2/3">
         <CardTitle
           contentId={textId}
           contentType={WHERE.text}
@@ -59,14 +59,14 @@ export const TextCard = component$(({ text, isUnapproved }: TextCardProps) => {
         <TagsLine tags={tags} />
         <UserDateDiv userId={userId} userName={userName} date={date} ptNum={0} />
 
-        <div class='grid lg:grid-cols-2 grid-cols-1 gap-2'>
+        <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
           <ContentLvl lvl={lvl} />
           <ContentCat txt={CONSTANTS.textCategories[category]} />
           <ContentLen len={length} />
           <TextSource source={source} />
         </div>
 
-        <div class='flex h-full flex-col justify-between '>
+        <div class="flex h-full flex-col justify-between ">
           <TextDesc desc={desc} />
 
           <CardBtns

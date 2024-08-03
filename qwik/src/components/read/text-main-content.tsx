@@ -1,23 +1,23 @@
-import { component$, useContext, useSignal, useStore } from "@builder.io/qwik";
-import { MainContent } from "../common/layout/main-content";
-import { Alerts } from "../common/alerts/alerts";
-import { FontSizeBtnGroup } from "../common/content-cards/font-size-btns";
-import { LongTxtPagination } from "./long-txt-pagination";
-import { AudioPlayer } from "./audio-player";
-import { Paragraph } from "./paragraph";
-import { countZnChars } from "~/misc/helpers/content";
-import { type Addressee, type CommentIdToReply, WHERE } from "../common/comments/comment-form";
-import { EditWordModal } from "../common/modals/edit-word-modal";
-import { MoreInfoModal } from "../common/modals/more-info-modal";
-import { EditChineseArrModal } from "../common/modals/edit-chinese-arr-modal";
-import { userContext } from "~/root";
-import { FontSizeBtns } from "../common/content-cards/content-page-card";
-import { type SimilarText, type TextFromDB, type TooltipText } from "~/routes/read/texts/[id]";
-import type { CommentType } from "../common/comments/comment-card";
-import { editWordModalId, moreInfoModalId } from "../common/tooltips/word-tooltip";
-import { Loader } from "../common/ui/loader";
-import { SimilarTxtImg } from "./similar-txt-img";
-import { CommentsFullBlock } from "../common/comments/comments-full-block";
+import { component$, useContext, useSignal, useStore } from '@builder.io/qwik';
+import { MainContent } from '../common/layout/main-content';
+import { Alerts } from '../common/alerts/alerts';
+import { FontSizeBtnGroup } from '../common/content-cards/font-size-btns';
+import { LongTxtPagination } from './long-txt-pagination';
+import { AudioPlayer } from './audio-player';
+import { Paragraph } from './paragraph';
+import { countZnChars } from '~/misc/helpers/content';
+import { type Addressee, type CommentIdToReply, WHERE } from '../common/comments/comment-form';
+import { EditWordModal } from '../common/modals/edit-word-modal';
+import { MoreInfoModal } from '../common/modals/more-info-modal';
+import { EditChineseArrModal } from '../common/modals/edit-chinese-arr-modal';
+import { userContext } from '~/root';
+import { FontSizeBtns } from '../common/content-cards/content-page-card';
+import { type SimilarText, type TextFromDB, type TooltipText } from '~/routes/read/texts/[id]';
+import type { CommentType } from '../common/comments/comment-card';
+import { editWordModalId, moreInfoModalId } from '../common/tooltips/word-tooltip';
+import { Loader } from '../common/ui/loader';
+import { SimilarTxtImg } from './similar-txt-img';
+import { CommentsFullBlock } from '../common/comments/comments-full-block';
 
 type TextMainContentProps = {
   text: TextFromDB & TooltipText & { curPage: number };
@@ -33,9 +33,9 @@ export const TextMainContent = component$(
     const fontSizeSig = useSignal(FontSizeBtns.md);
     const addressees = useSignal<Addressee[]>([]);
     const commentIdToReplyStore = useStore<CommentIdToReply>({
-      commentId: "",
-      name: "",
-      userId: "",
+      commentId: '',
+      name: '',
+      userId: '',
     });
 
     const {
@@ -53,25 +53,25 @@ export const TextMainContent = component$(
     const currentWord = useSignal<DictWord | null>(null);
     const showTranslation = useSignal(true);
 
-    const editChineseArrModalId = "editChineseArrModalId";
+    const editChineseArrModalId = 'editChineseArrModalId';
 
     return (
       <MainContent>
         <Alerts />
 
-        <div class={"flex justify-between w-full"}>
-          <div class={"pt-1"}>
+        <div class={'flex justify-between w-full'}>
+          <div class={'pt-1'}>
             <FontSizeBtnGroup fontSizeSig={fontSizeSig} />
           </div>
           <div>
-            <label class='label cursor-pointer'>
-              <span class='label-text mr-3 font-bold'>
-                {showTranslation.value ? "Без перевода" : "С переводом"}
+            <label class="label cursor-pointer">
+              <span class="label-text mr-3 font-bold">
+                {showTranslation.value ? 'Без перевода' : 'С переводом'}
               </span>
 
               <input
-                type='checkbox'
-                class='toggle toggle-accent'
+                type="checkbox"
+                class="toggle toggle-accent"
                 checked={!showTranslation.value}
                 onClick$={() => (showTranslation.value = !showTranslation.value)}
               />
@@ -105,11 +105,11 @@ export const TextMainContent = component$(
 
         {isApproved && similarTexts ? (
           <>
-            <div class={"prose my-3"}>
+            <div class={'prose my-3'}>
               <h3>Похожие тексты</h3>
             </div>
 
-            <div class='grid grid-cols-1 md:grid-cols-3 gap-3'>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
               {similarTexts?.map((txt, ind) => (
                 <SimilarTxtImg key={ind} txt={txt} />
               ))}
@@ -135,7 +135,7 @@ export const TextMainContent = component$(
                 cn: currentWord.value.chinese,
                 py: currentWord.value.pinyin,
                 ru: currentWord.value.russian,
-                lvl: "unknown",
+                lvl: 'unknown',
                 id: 0,
               }}
               modalId={moreInfoModalId}
@@ -152,5 +152,5 @@ export const TextMainContent = component$(
         )}
       </MainContent>
     );
-  }
+  },
 );

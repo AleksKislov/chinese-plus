@@ -1,6 +1,6 @@
-import { component$, useSignal } from "@builder.io/qwik";
-import { CommentCard, type CommentType } from "../common/comments/comment-card";
-import { getOldMentions, markMentionsAsOld, getLikedComments } from "~/routes/me";
+import { component$, useSignal } from '@builder.io/qwik';
+import { CommentCard, type CommentType } from '../common/comments/comment-card';
+import { getOldMentions, markMentionsAsOld, getLikedComments } from '~/routes/me';
 
 type PersonalMentionsType = {
   newMentions: CommentType[];
@@ -16,15 +16,15 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
 
   // console.log(oldMentions.value);
   return (
-    <div class='mb-3 mt-3 w-full'>
-      <div class='prose'>
+    <div class="mb-3 mt-3 w-full">
+      <div class="prose">
         <h3>Общение</h3>
       </div>
 
-      <div class='flex'>
-        <div class='tabs'>
+      <div class="flex">
+        <div class="tabs">
           <a
-            class={`tab tab-bordered ${showNewMentions.value ? "tab-active" : ""}`}
+            class={`tab tab-bordered ${showNewMentions.value ? 'tab-active' : ''}`}
             onClick$={() => {
               showNewMentions.value = true;
               showOldMentions.value = false;
@@ -34,7 +34,7 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
             Новые
           </a>
           <a
-            class={`tab tab-bordered ${showOldMentions.value ? "tab-active" : ""}`}
+            class={`tab tab-bordered ${showOldMentions.value ? 'tab-active' : ''}`}
             onClick$={() => {
               showNewMentions.value = false;
               showOldMentions.value = true;
@@ -44,7 +44,7 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
             Прочитанные
           </a>
           <a
-            class={`tab tab-bordered ${showLikedComments.value ? "tab-active" : ""}`}
+            class={`tab tab-bordered ${showLikedComments.value ? 'tab-active' : ''}`}
             onClick$={() => {
               showNewMentions.value = false;
               showOldMentions.value = false;
@@ -55,9 +55,9 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
           </a>
         </div>
         {newMentions.length > 0 && !showOldMentions.value ? (
-          <div class='tooltip tooltip-info' data-tip={"Пометить как прочитанные"}>
+          <div class="tooltip tooltip-info" data-tip={'Пометить как прочитанные'}>
             <button
-              class='btn btn-sm btn-primary ml-3'
+              class="btn btn-sm btn-primary ml-3"
               onClick$={async () => {
                 await markAsOld.submit();
                 location.reload();
@@ -70,7 +70,7 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
       </div>
 
       {showNewMentions.value && (
-        <div class='join join-vertical border-secondary mt-2 w-full'>
+        <div class="join join-vertical border-secondary mt-2 w-full">
           {!newMentions.length ? (
             <p>Нет новых комментариев</p>
           ) : (
@@ -78,7 +78,7 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
               <CommentCard
                 key={ind}
                 comment={comment}
-                commentIdToReply={{ commentId: "", userId: "", name: "" }}
+                commentIdToReply={{ commentId: '', userId: '', name: '' }}
                 addressees={{ value: [] }}
                 notForReply={true}
               />
@@ -88,7 +88,7 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
       )}
 
       {showOldMentions.value && (
-        <div class='join join-vertical border-secondary mt-2 w-full'>
+        <div class="join join-vertical border-secondary mt-2 w-full">
           {!oldMentions.value?.length ? (
             <p>Нет комментариев</p>
           ) : (
@@ -96,7 +96,7 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
               <CommentCard
                 key={ind}
                 comment={comment}
-                commentIdToReply={{ commentId: "", userId: "", name: "" }}
+                commentIdToReply={{ commentId: '', userId: '', name: '' }}
                 addressees={{ value: [] }}
                 notForReply={true}
               />
@@ -106,7 +106,7 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
       )}
 
       {showLikedComments.value && (
-        <div class='join join-vertical border-secondary mt-2 w-full'>
+        <div class="join join-vertical border-secondary mt-2 w-full">
           {!likedComments.value.length ? (
             <p>Нет понравившихся комментариев</p>
           ) : (
@@ -114,7 +114,7 @@ export const PersonalMentions = component$(({ newMentions }: PersonalMentionsTyp
               <CommentCard
                 key={ind}
                 comment={comment}
-                commentIdToReply={{ commentId: "", userId: "", name: "" }}
+                commentIdToReply={{ commentId: '', userId: '', name: '' }}
                 addressees={{ value: [] }}
                 notForReply={true}
               />

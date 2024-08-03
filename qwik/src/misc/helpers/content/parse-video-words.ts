@@ -1,4 +1,4 @@
-import { itirateWordsFromDB } from "./itirate-words-from-db";
+import { itirateWordsFromDB } from './itirate-words-from-db';
 
 export function parseVideoWords(chineseArr: string[][], tooltipWords: (string | DictWord)[][]) {
   const arr = [];

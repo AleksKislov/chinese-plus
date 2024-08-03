@@ -1,14 +1,14 @@
-import { component$, $, useSignal, useContext, type Signal } from "@builder.io/qwik";
-import CONST_URLS from "~/misc/consts/urls";
-import CONSTANTS from "~/misc/consts/consts";
-import type { OldHskWordType } from "~/routes/hsk/2/table";
-import Cookies from "js-cookie";
-import { ApiService } from "~/misc/actions/request";
-import { alertsContext } from "~/root";
-import { minusSvg, plusSvg, playSvg } from "../common/media/svg";
-import { HideBtnsEnum } from "./hide-buttons";
-import { globalAction$ } from "@builder.io/qwik-city";
-import { getTokenFromCookie } from "~/misc/actions/auth";
+import { component$, $, useSignal, useContext, type Signal } from '@builder.io/qwik';
+import CONST_URLS from '~/misc/consts/urls';
+import CONSTANTS from '~/misc/consts/consts';
+import type { OldHskWordType } from '~/routes/hsk/2/table';
+import Cookies from 'js-cookie';
+import { ApiService } from '~/misc/actions/request';
+import { alertsContext } from '~/root';
+import { minusSvg, plusSvg, playSvg } from '../common/media/svg';
+import { HideBtnsEnum } from './hide-buttons';
+import { globalAction$ } from '@builder.io/qwik-city';
+import { getTokenFromCookie } from '~/misc/actions/auth';
 
 type TableRowType = {
   word: OldHskWordType;
@@ -33,12 +33,12 @@ export const pronounce = (id: number, lvl: number) => {
 
 export const useAddUserHskWord = globalAction$((params, ev) => {
   const token = getTokenFromCookie(ev.cookie);
-  return ApiService.post("/api/words/", params.word, token);
+  return ApiService.post('/api/words/', params.word, token);
 });
 
 export const useRemoveUserHskWord = globalAction$((params, ev) => {
   const token = getTokenFromCookie(ev.cookie);
-  return ApiService.delete("/api/words/" + params.wordId, token);
+  return ApiService.delete('/api/words/' + params.wordId, token);
 });
 
 export const OldHskTableRow = component$(
@@ -54,22 +54,22 @@ export const OldHskTableRow = component$(
     const { chinese: cn, pinyin: py, translation: ru, word_id: id, level: lvl } = word;
 
     const addOrRemoveHskWord = $(async () => {
-      const token = Cookies.get("token");
+      const token = Cookies.get('token');
 
       if (!token) {
-        return alertsState.push({ bg: "alert-error", text: "Нужно войти" });
+        return alertsState.push({ bg: 'alert-error', text: 'Нужно войти' });
       }
 
       if (userSelectedSignal.value) {
         removeUserHskWord.submit({ wordId: word.word_id });
         userWordsLenSignal.value--;
         userSelectedSignal.value = !userSelectedSignal.value;
-        return alertsState.push({ bg: "alert-info", text: "Слово удалено из вашего словарика" });
+        return alertsState.push({ bg: 'alert-info', text: 'Слово удалено из вашего словарика' });
       }
 
       if (userWordsLenSignal.value >= CONSTANTS.users.vocabSize) {
         return alertsState.push({
-          bg: "alert-error",
+          bg: 'alert-error',
           text: `Лимит ${CONSTANTS.users.vocabSize} слов!`,
         });
       }
@@ -77,38 +77,38 @@ export const OldHskTableRow = component$(
       addUserHskWord.submit({ word });
       userWordsLenSignal.value++;
       userSelectedSignal.value = !userSelectedSignal.value;
-      return alertsState.push({ bg: "alert-success", text: "Слово добавлено в ваш словарик" });
+      return alertsState.push({ bg: 'alert-success', text: 'Слово добавлено в ваш словарик' });
     });
 
     return (
       <>
-        <tr class={"hover"}>
-          <td class={userSelected ? "bg-base-300" : ""}>{id}</td>
+        <tr class={'hover'}>
+          <td class={userSelected ? 'bg-base-300' : ''}>{id}</td>
           {!hideBtnsSig.value.includes(HideBtnsEnum.cn) && (
-            <td class={`prose ${userSelected ? "bg-base-300" : ""}`}>
-              <h2 class='w-24'>{cn}</h2>
+            <td class={`prose ${userSelected ? 'bg-base-300' : ''}`}>
+              <h2 class="w-24">{cn}</h2>
             </td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.py) && (
-            <td class={userSelected ? "bg-base-300" : ""}>{py}</td>
+            <td class={userSelected ? 'bg-base-300' : ''}>{py}</td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.ru) && (
-            <td class={userSelected ? "bg-base-300" : ""} style={{ maxWidth: "50%" }}>
-              <div style={{ wordWrap: "break-word", whiteSpace: "normal" }}>{ru}</div>
+            <td class={userSelected ? 'bg-base-300' : ''} style={{ maxWidth: '50%' }}>
+              <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{ru}</div>
             </td>
           )}
-          <td class={userSelected ? "bg-base-300" : ""}>
-            <button class='btn btn-sm btn-info' onClick$={() => pronounce(id, lvl)}>
+          <td class={userSelected ? 'bg-base-300' : ''}>
+            <button class="btn btn-sm btn-info" onClick$={() => pronounce(id, lvl)}>
               {playSvg}
             </button>
           </td>
-          <td class={userSelected ? "bg-base-300" : ""}>
+          <td class={userSelected ? 'bg-base-300' : ''}>
             {userSelectedSignal.value ? (
-              <button class='btn btn-sm btn-warning' onClick$={addOrRemoveHskWord}>
+              <button class="btn btn-sm btn-warning" onClick$={addOrRemoveHskWord}>
                 {minusSvg}
               </button>
             ) : (
-              <button class='btn btn-sm btn-info' onClick$={addOrRemoveHskWord}>
+              <button class="btn btn-sm btn-info" onClick$={addOrRemoveHskWord}>
                 {plusSvg}
               </button>
             )}
@@ -116,5 +116,5 @@ export const OldHskTableRow = component$(
         </tr>
       </>
     );
-  }
+  },
 );

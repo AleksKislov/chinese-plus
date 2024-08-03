@@ -5,20 +5,20 @@ import {
   type RequestEventAction,
   type DocumentHead,
   globalAction$,
-} from "@builder.io/qwik-city";
-import { $, component$, useContext, useSignal, useStore } from "@builder.io/qwik";
-import { PageTitle } from "~/components/common/layout/title";
-import { getTokenFromCookie } from "~/misc/actions/auth";
-import { ApiService } from "~/misc/actions/request";
-import { Alerts } from "~/components/common/alerts/alerts";
-import { AlertColorEnum, alertsContext, userContext } from "~/root";
-import { type VideoFromDB } from "~/routes/watch/videos/[id]";
-import CONSTANTS from "~/misc/consts/consts";
-import { OtherVideoFields } from "~/components/create-edit/other-video-fields";
-import { VideoPreprocessForm } from "~/components/create-edit/video-preprocess-form";
-import { arrorUturnDown } from "~/components/common/media/svg";
-import { YoutubeService } from "~/misc/actions/youtube-service";
-import { Loader } from "~/components/common/ui/loader";
+} from '@builder.io/qwik-city';
+import { $, component$, useContext, useSignal, useStore } from '@builder.io/qwik';
+import { PageTitle } from '~/components/common/layout/title';
+import { getTokenFromCookie } from '~/misc/actions/auth';
+import { ApiService } from '~/misc/actions/request';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { AlertColorEnum, alertsContext, userContext } from '~/root';
+import { type VideoFromDB } from '~/routes/watch/videos/[id]';
+import CONSTANTS from '~/misc/consts/consts';
+import { OtherVideoFields } from '~/components/create-edit/other-video-fields';
+import { VideoPreprocessForm } from '~/components/create-edit/video-preprocess-form';
+import { arrorUturnDown } from '~/components/common/media/svg';
+import { YoutubeService } from '~/misc/actions/youtube-service';
+import { Loader } from '~/components/common/ui/loader';
 
 export type NewVideoStore = {
   title: string;
@@ -50,13 +50,13 @@ export type VideoSub = {
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
-  if (!token) throw redirect(302, "/login");
+  if (!token) throw redirect(302, '/login');
 };
 
 export const usePublishVideo = routeAction$(async (params, ev): Promise<VideoFromDB | null> => {
   const token = getTokenFromCookie(ev.cookie);
   if (!token) return null;
-  return ApiService.post("/api/videos/create", params, token, null);
+  return ApiService.post('/api/videos/create', params, token, null);
 });
 
 export const useGetVideoInfo = routeAction$(async (params, ev): Promise<YTVideoInfo | null> => {
@@ -73,7 +73,7 @@ export const useGetTextPinyin = globalAction$(async (params, ev): Promise<string
 
 const getVideoCaptions = async (
   params: JSONObject,
-  ev: RequestEventAction
+  ev: RequestEventAction,
 ): Promise<VideoSub[] | null> => {
   const token = getTokenFromCookie(ev.cookie);
   if (!token) return null;
@@ -93,16 +93,16 @@ export const useGetPyCaptions = routeAction$(getVideoCaptions);
 export default component$(() => {
   const { isAdmin } = useContext(userContext);
   const alertsState = useContext(alertsContext);
-  const youtubeLink = useSignal("");
+  const youtubeLink = useSignal('');
   const getVideoInfo = useGetVideoInfo();
 
   const store: NewVideoStore = useStore({
     lvl: 1,
-    title: "",
-    desc: "",
+    title: '',
+    desc: '',
     length: 0,
-    tags: "",
-    source: "",
+    tags: '',
+    source: '',
     cnSubs: [],
     pySubs: [],
     ruSubs: [],
@@ -113,7 +113,7 @@ export default component$(() => {
 
   const getVideo = $(async () => {
     const videoUrl = new URL(youtubeLink.value);
-    const videoId = videoUrl.searchParams.get("v");
+    const videoId = videoUrl.searchParams.get('v');
     if (!videoId) return;
 
     await getVideoInfo.submit({ id: videoId });
@@ -125,43 +125,43 @@ export default component$(() => {
       });
     }
 
-    store.title = getVideoInfo.value.title || "";
-    store.desc = getVideoInfo.value.description || "";
-    store.tags = getVideoInfo.value.tags?.join(", ") || "";
+    store.title = getVideoInfo.value.title || '';
+    store.desc = getVideoInfo.value.description || '';
+    store.tags = getVideoInfo.value.tags?.join(', ') || '';
     store.source = videoId;
   });
 
   return (
     <>
-      <PageTitle txt={"Поделиться видео с субтитрами"} />
+      <PageTitle txt={'Поделиться видео с субтитрами'} />
       <Alerts />
 
-      <div class='w-full mb-4'>
-        <div class='form-control px-6'>
-          <label class='label'>
-            <span class='label-text'>Ссылка на видео с китайскими субтитрами</span>
-            <span class='label-text-alt'>Видео с youtube</span>
+      <div class="w-full mb-4">
+        <div class="form-control px-6">
+          <label class="label">
+            <span class="label-text">Ссылка на видео с китайскими субтитрами</span>
+            <span class="label-text-alt">Видео с youtube</span>
           </label>
-          <div class='join'>
+          <div class="join">
             <input
-              type='text'
-              placeholder='например, https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-              class='input input-bordered w-full join-item'
+              type="text"
+              placeholder="например, https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+              class="input input-bordered w-full join-item"
               bind:value={youtubeLink}
               onKeyDown$={(e: KeyboardEvent) => {
-                if (e.key === "Enter") getVideo();
+                if (e.key === 'Enter') getVideo();
               }}
             />
-            <button class='btn join-item btn-primary rounded-r' onClick$={getVideo}>
+            <button class="btn join-item btn-primary rounded-r" onClick$={getVideo}>
               {arrorUturnDown}
             </button>
           </div>
-          <p class=''>https://www.youtube.com/watch?v=o4SE2oG75S8</p>
+          <p class="">https://www.youtube.com/watch?v=o4SE2oG75S8</p>
         </div>
       </div>
 
       {getVideoInfo.isRunning && (
-        <span class='mx-6 my-3'>
+        <span class="mx-6 my-3">
           <Loader />
         </span>
       )}
@@ -180,11 +180,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Поделиться контентом",
+  title: 'Chinese+ Поделиться контентом',
   meta: [
     {
-      name: "description",
-      content: "Поделитесь обучающим контентом с остальными посетителями Chinese+",
+      name: 'description',
+      content: 'Поделитесь обучающим контентом с остальными посетителями Chinese+',
     },
   ],
 };

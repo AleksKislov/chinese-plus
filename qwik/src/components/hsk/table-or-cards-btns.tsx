@@ -1,5 +1,5 @@
-import { component$, useVisibleTask$ } from "@builder.io/qwik";
-import { type DisplayCardsStore } from "./hsk-table";
+import { component$, useVisibleTask$ } from '@builder.io/qwik';
+import { type DisplayCardsStore } from './hsk-table';
 
 export const TableOrCardsBtns = component$(
   ({ displayCards }: { displayCards: DisplayCardsStore }) => {
@@ -8,14 +8,14 @@ export const TableOrCardsBtns = component$(
     });
 
     return (
-      <div class={"sm:float-right float-left mb-2"}>
-        <span class={"mr-1 font-bold"}>Отображать: </span>
-        <div class='btn-group'>
+      <div class={'sm:float-right float-left mb-2'}>
+        <span class={'mr-1 font-bold'}>Отображать: </span>
+        <div class="btn-group">
           <button
-            class={`btn btn-sm btn-info lowercase ${displayCards.bool ? "btn-outline" : ""}`}
-            type='button'
+            class={`btn btn-sm btn-info lowercase ${displayCards.bool ? 'btn-outline' : ''}`}
+            type="button"
             onClick$={() => {
-              localStorage.setItem("displayCards", "0");
+              localStorage.setItem('displayCards', '0');
               displayCards.bool = false;
             }}
           >
@@ -23,10 +23,10 @@ export const TableOrCardsBtns = component$(
           </button>
 
           <button
-            type='button'
-            class={`btn btn-sm btn-info lowercase ${displayCards.bool ? "" : "btn-outline"}`}
+            type="button"
+            class={`btn btn-sm btn-info lowercase ${displayCards.bool ? '' : 'btn-outline'}`}
             onClick$={() => {
-              localStorage.setItem("displayCards", "1");
+              localStorage.setItem('displayCards', '1');
               displayCards.bool = true;
             }}
           >
@@ -35,5 +35,5 @@ export const TableOrCardsBtns = component$(
         </div>
       </div>
     );
-  }
+  },
 );

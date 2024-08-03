@@ -1,5 +1,5 @@
-import { component$ } from "@builder.io/qwik";
-import { PageHits } from "../content-cards/page-hits";
+import { component$ } from '@builder.io/qwik';
+import { PageHits } from '../content-cards/page-hits';
 
 type PageTitleProps = {
   txt: string;
@@ -11,13 +11,13 @@ export const PageTitle = component$(({ txt, hits, hSizeSm }: PageTitleProps) => 
   return (
     <>
       {hSizeSm ? (
-        <div class='prose'>
+        <div class="prose">
           <h2>
             {txt} <PageHits hits={hits || 0} />
           </h2>
         </div>
       ) : (
-        <div class='prose mb-3'>
+        <div class="prose mb-3">
           <h1>{txt}</h1>
         </div>
       )}

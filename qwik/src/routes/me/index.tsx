@@ -1,27 +1,27 @@
-import { component$, useContext } from "@builder.io/qwik";
+import { component$, useContext } from '@builder.io/qwik';
 import {
   routeLoader$,
   type RequestEvent,
   routeAction$,
   type DocumentHead,
-} from "@builder.io/qwik-city";
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { PageTitle } from "~/components/common/layout/title";
-import { ReadResultCard } from "~/components/me/read-result-card";
-import { ApiService } from "~/misc/actions/request";
-import { userContext } from "~/root";
-import { type TextsNumInfo } from "../read/texts";
-import { type ReadStatType, ReadingDiagram } from "~/components/me/reading-diagram";
-import { PersonalStats } from "~/components/me/personal-stats";
-import { getTokenFromCookie } from "~/misc/actions/auth";
-import { PersonalMentions } from "~/components/me/mentions";
-import { type CommentType } from "~/components/common/comments/comment-card";
-import { UserMainInfo } from "~/components/me/user-main-info";
-import { getNewMentions } from "../layout";
+} from '@builder.io/qwik-city';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { PageTitle } from '~/components/common/layout/title';
+import { ReadResultCard } from '~/components/me/read-result-card';
+import { ApiService } from '~/misc/actions/request';
+import { userContext } from '~/root';
+import { type TextsNumInfo } from '../read/texts';
+import { type ReadStatType, ReadingDiagram } from '~/components/me/reading-diagram';
+import { PersonalStats } from '~/components/me/personal-stats';
+import { getTokenFromCookie } from '~/misc/actions/auth';
+import { PersonalMentions } from '~/components/me/mentions';
+import { type CommentType } from '~/components/common/comments/comment-card';
+import { UserMainInfo } from '~/components/me/user-main-info';
+import { getNewMentions } from '../layout';
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
-  if (!token) throw redirect(302, "/login");
+  if (!token) throw redirect(302, '/login');
 };
 
 export const getTextsStats = routeLoader$((): Promise<TextsNumInfo> => {
@@ -31,18 +31,18 @@ export const getTextsStats = routeLoader$((): Promise<TextsNumInfo> => {
 export const getOldMentions = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return [];
-  return ApiService.get("/api/comments/to_me/true", token, []);
+  return ApiService.get('/api/comments/to_me/true', token, []);
 });
 
 export const getLikedComments = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return [];
-  return ApiService.get("/api/comments/liked?limit=20", token, []);
+  return ApiService.get('/api/comments/liked?limit=20', token, []);
 });
 
 export const markMentionsAsOld = routeAction$((_param, ev) => {
   const token = getTokenFromCookie(ev.cookie);
-  return ApiService.post("/api/comments/mark_mentions_as_seen", {}, token);
+  return ApiService.post('/api/comments/mark_mentions_as_seen', {}, token);
 });
 
 export const getReadStats = routeLoader$(async ({ cookie }): Promise<ReadStatType[]> => {
@@ -79,10 +79,10 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={"Личный кабинет"} />
+      <PageTitle txt={'Личный кабинет'} />
 
       <FlexRow>
-        <div class='w-full basis-1/2  mt-3'>
+        <div class="w-full basis-1/2  mt-3">
           <UserMainInfo
             id={userId}
             newAvatar={newAvatar}
@@ -98,7 +98,7 @@ export default component$(() => {
           />
         </div>
 
-        <div class='w-full basis-1/2'>
+        <div class="w-full basis-1/2">
           <ReadResultCard />
         </div>
       </FlexRow>
@@ -119,5 +119,5 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Личный кабинет",
+  title: 'Chinese+ Личный кабинет',
 };

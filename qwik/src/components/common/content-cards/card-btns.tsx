@@ -1,9 +1,9 @@
-import { component$, type Signal } from "@builder.io/qwik";
-import { WHERE, type WhereType } from "../comments/comment-form";
-import { audioSvg } from "../media/svg";
-import { BookmarkBtn } from "./bookmark-btn";
-import { CommentsBtn } from "./comments-btn";
-import { LikeBtn } from "./like-btn";
+import { component$, type Signal } from '@builder.io/qwik';
+import { WHERE, type WhereType } from '../comments/comment-form';
+import { audioSvg } from '../media/svg';
+import { BookmarkBtn } from './bookmark-btn';
+import { CommentsBtn } from './comments-btn';
+import { LikeBtn } from './like-btn';
 
 type CardBtnsProps = {
   contentId: string;
@@ -26,10 +26,10 @@ export const CardBtns = component$(
     isUnapproved,
   }: CardBtnsProps) => {
     return (
-      <div class='flex justify-end'>
+      <div class="flex justify-end">
         {withAudio && (
-          <div class='tooltip tooltip-info' data-tip={"С аудио"}>
-            <button class={`btn btn-sm btn-info ml-1`} type='button'>
+          <div class="tooltip tooltip-info" data-tip={'С аудио'}>
+            <button class={`btn btn-sm btn-info ml-1`} type="button">
               {audioSvg}
             </button>
           </div>
@@ -48,5 +48,5 @@ export const CardBtns = component$(
         />
       </div>
     );
-  }
+  },
 );

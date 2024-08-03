@@ -1,27 +1,27 @@
-import { component$, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
-import { type DocumentHead, routeLoader$, routeAction$ } from "@builder.io/qwik-city";
-import { ApiService } from "~/misc/actions/request";
+import { component$, useSignal, useTask$, useVisibleTask$ } from '@builder.io/qwik';
+import { type DocumentHead, routeLoader$, routeAction$ } from '@builder.io/qwik-city';
+import { ApiService } from '~/misc/actions/request';
 
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { Sidebar } from "~/components/common/layout/sidebar";
-import { MainContent } from "~/components/common/layout/main-content";
-import { PageTitle } from "~/components/common/layout/title";
-import { LevelFilter } from "~/components/common/ui/level-filter";
-import { UnsetFiltersBtn } from "~/components/common/ui/unset-filters-btn";
-import { CategoryFilter } from "~/components/common/ui/category-filter";
-import { WHERE } from "~/components/common/comments/comment-form";
-import { TextCard } from "~/components/read/text-card";
-import { type LevelUnion } from "~/routes/watch/videos";
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { MainContent } from '~/components/common/layout/main-content';
+import { PageTitle } from '~/components/common/layout/title';
+import { LevelFilter } from '~/components/common/ui/level-filter';
+import { UnsetFiltersBtn } from '~/components/common/ui/unset-filters-btn';
+import { CategoryFilter } from '~/components/common/ui/category-filter';
+import { WHERE } from '~/components/common/comments/comment-form';
+import { TextCard } from '~/components/read/text-card';
+import { type LevelUnion } from '~/routes/watch/videos';
 import {
   AudioFilter,
   type AudioFilterUnion,
   HasAudioFilter,
-} from "~/components/common/ui/has-audio-filter";
-import { ReadResultCard } from "~/components/me/read-result-card";
-import { MoreBtnAndLoader } from "~/components/common/ui/more-btn-and-loader";
-import { CreateTextCard } from "~/components/read/create-text-card";
-import { getTextsNumInfo } from "~/misc/actions/texts/get-texts-num-info";
-import { TextsNumInfoCard } from "~/components/read/text-num-info-card";
+} from '~/components/common/ui/has-audio-filter';
+import { ReadResultCard } from '~/components/me/read-result-card';
+import { MoreBtnAndLoader } from '~/components/common/ui/more-btn-and-loader';
+import { CreateTextCard } from '~/components/read/create-text-card';
+import { getTextsNumInfo } from '~/misc/actions/texts/get-texts-num-info';
+import { TextsNumInfoCard } from '~/components/read/text-num-info-card';
 
 export type TextCardInfo = {
   _id: ObjectId;
@@ -54,24 +54,24 @@ export const useGetTextsNumInfo = routeLoader$(getTextsNumInfo);
 export const getTextsWithParams = routeAction$((params): Promise<TextCardInfo[]> => {
   const { category, lvl, audio } = params;
   const catParam = category && `&categoryInd=${category}`;
-  const lvlParam = !lvl ? "" : `&level=${lvl}`;
-  const audioParam = audio === AudioFilter.HasAudio ? "&audioSrc=1" : "";
+  const lvlParam = !lvl ? '' : `&level=${lvl}`;
+  const audioParam = audio === AudioFilter.HasAudio ? '&audioSrc=1' : '';
   return ApiService.get(
     `/api/texts/infinite?skip=0${catParam}${lvlParam}${audioParam}`,
     undefined,
-    []
+    [],
   );
 });
 
 export const getTextsWithSkip = routeAction$((params): Promise<TextCardInfo[]> => {
   const { skip, category, lvl, audio } = params;
   const catParam = category && `&categoryInd=${category}`;
-  const lvlParam = !lvl ? "" : `&level=${lvl}`;
-  const audioParam = audio === AudioFilter.HasAudio ? "&audioSrc=1" : "";
+  const lvlParam = !lvl ? '' : `&level=${lvl}`;
+  const audioParam = audio === AudioFilter.HasAudio ? '&audioSrc=1' : '';
   return ApiService.get(
     `/api/texts/infinite?skip=${skip}${catParam}${lvlParam}${audioParam}`,
     undefined,
-    []
+    [],
   );
 });
 
@@ -80,8 +80,8 @@ export default component$(() => {
   const texts = useSignal<TextCardInfo[]>([]);
   const getTexts = getTextsWithParams();
   const getSkipTexts = getTextsWithSkip();
-  const levelSignal = useSignal<LevelUnion>("0");
-  const categorySignal = useSignal("");
+  const levelSignal = useSignal<LevelUnion>('0');
+  const categorySignal = useSignal('');
   const skipSignal = useSignal(0);
   const audioSignal = useSignal<AudioFilterUnion>(AudioFilter.All);
 
@@ -122,7 +122,7 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={"Китайские тексты с озвучкой"} />
+      <PageTitle txt={'Китайские тексты с озвучкой'} />
       <FlexRow>
         <Sidebar>
           <TextsNumInfoCard
@@ -135,7 +135,7 @@ export default component$(() => {
         </Sidebar>
 
         <MainContent>
-          <div class='grid sm:grid-cols-4 grid-cols-2 gap-1 mb-3'>
+          <div class="grid sm:grid-cols-4 grid-cols-2 gap-1 mb-3">
             <HasAudioFilter audioSignal={audioSignal} num={textsNumInfo.value?.withAudio} />
             <LevelFilter levelSignal={levelSignal} />
             <CategoryFilter categorySignal={categorySignal} contentType={WHERE.text} />
@@ -162,12 +162,12 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Тексты на китайском с переводом",
+  title: 'Chinese+ Тексты на китайском с переводом',
   meta: [
     {
-      name: "description",
+      name: 'description',
       content:
-        "Учебные тексты на китайском языке на разные темы разных уровней сложности. С переводом всего текста и каждого слова по отдельности по клику.",
+        'Учебные тексты на китайском языке на разные темы разных уровней сложности. С переводом всего текста и каждого слова по отдельности по клику.',
     },
   ],
 };

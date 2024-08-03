@@ -1,16 +1,16 @@
-import { component$ } from "@builder.io/qwik";
-import { type DocumentHead, useLocation } from "@builder.io/qwik-city";
-import { routeLoader$ } from "@builder.io/qwik-city";
-import { TableCard } from "~/components/hsk/table-card";
-import { Pagination } from "~/components/hsk/pagination";
-import { ApiService } from "~/misc/actions/request";
-import { NewHskTable } from "~/components/hsk/new-hsk-table";
-import { PageTitle } from "~/components/common/layout/title";
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { Sidebar } from "~/components/common/layout/sidebar";
-import { MainContent } from "~/components/common/layout/main-content";
-import { PhoneticsLinkCard } from "~/components/common/content-cards/phonetics-link-card";
-import { CharactersLinkCard } from "~/components/common/content-cards/characters-link-card";
+import { component$ } from '@builder.io/qwik';
+import { type DocumentHead, useLocation } from '@builder.io/qwik-city';
+import { routeLoader$ } from '@builder.io/qwik-city';
+import { TableCard } from '~/components/hsk/table-card';
+import { Pagination } from '~/components/hsk/pagination';
+import { ApiService } from '~/misc/actions/request';
+import { NewHskTable } from '~/components/hsk/new-hsk-table';
+import { PageTitle } from '~/components/common/layout/title';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { MainContent } from '~/components/common/layout/main-content';
+import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
+import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
 
 export type NewHskWordType = {
   _id: ObjectId;
@@ -22,8 +22,8 @@ export type NewHskWordType = {
 };
 
 export const getHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]> => {
-  const lvl = ev.query.get("lvl") || "1";
-  const lmt = ev.query.get("pg") || "0";
+  const lvl = ev.query.get('lvl') || '1';
+  const lmt = ev.query.get('pg') || '0';
   return await ApiService.get(`/api/newhskwords?hsk_level=${lvl}&limit=${lmt}`, undefined, []);
 });
 
@@ -33,12 +33,12 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={"Вся лексика для HSK 3.0"} />
+      <PageTitle txt={'Вся лексика для HSK 3.0'} />
 
       <FlexRow>
         <Sidebar>
           <TableCard
-            level={loc.url.searchParams.get("lvl") || "1"}
+            level={loc.url.searchParams.get('lvl') || '1'}
             isOldHsk={false}
             isForTests={false}
           />
@@ -48,8 +48,8 @@ export default component$(() => {
 
         <MainContent>
           <Pagination
-            level={loc.url.searchParams.get("lvl") || "1"}
-            curPage={+loc.url.searchParams.get("pg")! || 0}
+            level={loc.url.searchParams.get('lvl') || '1'}
+            curPage={+loc.url.searchParams.get('pg')! || 0}
             isOldHsk={false}
           />
 
@@ -61,11 +61,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Лексика HSK 3.0",
+  title: 'Chinese+ Лексика HSK 3.0',
   meta: [
     {
-      name: "description",
-      content: "Все слова нового HSK версии 3.0 с переводом и озвучкой разбитые по уровням.",
+      name: 'description',
+      content: 'Все слова нового HSK версии 3.0 с переводом и озвучкой разбитые по уровням.',
     },
   ],
 };

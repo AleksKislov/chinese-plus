@@ -1,5 +1,5 @@
-import { component$ } from "@builder.io/qwik";
-import { QUEST_NUM } from "./typing-game";
+import { component$ } from '@builder.io/qwik';
+import { QUEST_NUM } from './typing-game';
 
 type TypingGameStartProps = {
   level?: string;
@@ -8,12 +8,12 @@ type TypingGameStartProps = {
 };
 export const TypingGameStart = component$(
   ({ level, questionNum, isCalligraphy }: TypingGameStartProps) => {
-    const title = isCalligraphy ? "Успей нарисовать" : "Успей напечатать";
+    const title = isCalligraphy ? 'Успей нарисовать' : 'Успей напечатать';
     return (
-      <div class='prose mb-2'>
-        <h3 class='card-title'>
+      <div class="prose mb-2">
+        <h3 class="card-title">
           {questionNum > QUEST_NUM ? (
-            "Результат"
+            'Результат'
           ) : level ? (
             <>
               {title} <small>[ур. {level}]</small>
@@ -24,5 +24,5 @@ export const TypingGameStart = component$(
         </h3>
       </div>
     );
-  }
+  },
 );

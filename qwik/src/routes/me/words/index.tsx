@@ -1,21 +1,21 @@
-import { component$, useContext } from "@builder.io/qwik";
-import { Alerts } from "~/components/common/alerts/alerts";
-import { PageTitle } from "~/components/common/layout/title";
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { Sidebar } from "~/components/common/layout/sidebar";
-import { MainContent } from "~/components/common/layout/main-content";
-import { TypingGame } from "~/components/games/typing-game";
-import { SearchResutlTable } from "~/components/search/search-result-table";
-import { userContext } from "~/root";
-import { PrivateWordsCard } from "~/components/me/words/private-words-card";
-import { parseRussian } from "~/misc/helpers/translation";
-import { getTokenFromCookie } from "~/misc/actions/auth";
-import { type DocumentHead, type RequestEvent } from "@builder.io/qwik-city";
-import { CalligraphyGame } from "~/components/games/calligraphy-game";
+import { component$, useContext } from '@builder.io/qwik';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { PageTitle } from '~/components/common/layout/title';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { MainContent } from '~/components/common/layout/main-content';
+import { TypingGame } from '~/components/games/typing-game';
+import { SearchResutlTable } from '~/components/search/search-result-table';
+import { userContext } from '~/root';
+import { PrivateWordsCard } from '~/components/me/words/private-words-card';
+import { parseRussian } from '~/misc/helpers/translation';
+import { getTokenFromCookie } from '~/misc/actions/auth';
+import { type DocumentHead, type RequestEvent } from '@builder.io/qwik-city';
+import { CalligraphyGame } from '~/components/games/calligraphy-game';
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
-  if (!token) throw redirect(302, "/login");
+  if (!token) throw redirect(302, '/login');
 };
 
 export default component$(() => {
@@ -23,7 +23,7 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={"Мой словарик"} />
+      <PageTitle txt={'Мой словарик'} />
 
       <FlexRow>
         <Alerts />
@@ -35,7 +35,7 @@ export default component$(() => {
         <MainContent>
           <CalligraphyGame
             words={userState.words.map(({ chinese, pinyin, translation }) => ({
-              level: "",
+              level: '',
               id: 1,
               chinese,
               pinyin,
@@ -44,7 +44,7 @@ export default component$(() => {
           />
           <TypingGame
             words={userState.words.map(({ chinese, pinyin, translation }) => ({
-              level: "",
+              level: '',
               id: 1,
               chinese,
               pinyin,
@@ -67,5 +67,5 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Личный словарик",
+  title: 'Chinese+ Личный словарик',
 };

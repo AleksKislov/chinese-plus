@@ -4,15 +4,15 @@ import {
   createContextId,
   useContextProvider,
   useStore,
-} from "@builder.io/qwik";
-import { QwikCityProvider, RouterOutlet, ServiceWorkerRegister } from "@builder.io/qwik-city";
-import { RouterHead } from "./components/router-head/router-head";
+} from '@builder.io/qwik';
+import { QwikCityProvider, RouterOutlet, ServiceWorkerRegister } from '@builder.io/qwik-city';
+import { RouterHead } from './components/router-head/router-head';
 
-import globalStyles from "./global.css?inline";
-import { QwikPartytown } from "./components/partytown/partytown";
-import type { DonateGoal } from "./routes/(club)/donate";
+import globalStyles from './global.css?inline';
+import { QwikPartytown } from './components/partytown/partytown';
+import type { DonateGoal } from './routes/(club)/donate';
 
-export const IsLightThemeCookieName = "isLightTheme";
+export const IsLightThemeCookieName = 'isLightTheme';
 
 type ReadTodayMap = {
   [key: string]: number[];
@@ -40,7 +40,7 @@ export interface User {
   readTodayNum: number;
   readTodayMap: ReadTodayMap;
   hsk2WordsTotal: number;
-  role?: "admin" | "moderator";
+  role?: 'admin' | 'moderator';
   newAvatar?: NewAvatar;
 }
 
@@ -54,29 +54,29 @@ export interface Alert {
   bg: AlertBgUnion;
   text: string;
 }
-type AlertBgUnion = "alert-info" | "alert-success" | "alert-warning" | "alert-error";
+type AlertBgUnion = 'alert-info' | 'alert-success' | 'alert-warning' | 'alert-error';
 
 export const AlertColorEnum = {
-  info: "alert-info" as AlertBgUnion,
-  success: "alert-success" as AlertBgUnion,
-  warning: "alert-warning" as AlertBgUnion,
-  error: "alert-error" as AlertBgUnion,
+  info: 'alert-info' as AlertBgUnion,
+  success: 'alert-success' as AlertBgUnion,
+  warning: 'alert-warning' as AlertBgUnion,
+  error: 'alert-error' as AlertBgUnion,
 };
 
-export const userContext = createContextId<User>("user-context");
-export const alertsContext = createContextId<Alert[]>("alerts-context");
-export const configContext = createContextId<Config[]>("config-context");
-export const goalsContext = createContextId<DonateGoal[]>("goals-context");
+export const userContext = createContextId<User>('user-context');
+export const alertsContext = createContextId<Alert[]>('alerts-context');
+export const configContext = createContextId<Config[]>('config-context');
+export const goalsContext = createContextId<DonateGoal[]>('goals-context');
 
 export default component$(() => {
   useStyles$(globalStyles);
   const userState = useStore<User>({
-    _id: "",
-    name: "",
+    _id: '',
+    name: '',
     loggedIn: false,
     isAdmin: false,
     isModerator: false,
-    email: "",
+    email: '',
     finishedTexts: [],
     seenVideos: [],
     words: [],
@@ -99,11 +99,11 @@ export default component$(() => {
   return (
     <QwikCityProvider>
       <head>
-        <meta charSet='utf-8' />
+        <meta charSet="utf-8" />
         {/* <link rel='manifest' href='/manifest.json' /> */}
-        <QwikPartytown forward={["gtag", "dataLayer.push"]} />
+        <QwikPartytown forward={['gtag', 'dataLayer.push']} />
         <script
-          type='text/partytown'
+          type="text/partytown"
           dangerouslySetInnerHTML={`
             window.dataLayer = window.dataLayer || [];
             window.gtag = function() {
@@ -114,12 +114,12 @@ export default component$(() => {
         />
         <script
           async
-          type='text/partytown'
-          src='https://www.googletagmanager.com/gtag/js?id=G-PN0P7BPQCV'
+          type="text/partytown"
+          src="https://www.googletagmanager.com/gtag/js?id=G-PN0P7BPQCV"
         />
         <RouterHead />
       </head>
-      <body lang='en' class='text-neutral-content'>
+      <body lang="en" class="text-neutral-content">
         <RouterOutlet />
         <ServiceWorkerRegister />
       </body>

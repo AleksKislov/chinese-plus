@@ -1,7 +1,7 @@
-import { component$, useContext, useStore, $, useSignal } from "@builder.io/qwik";
-import CONSTANTS from "~/misc/consts/consts";
-import { userContext } from "~/root";
-import { msgTypes, useAddPost, type MsgType } from "~/routes/(club)/feedback";
+import { component$, useContext, useStore, $, useSignal } from '@builder.io/qwik';
+import CONSTANTS from '~/misc/consts/consts';
+import { userContext } from '~/root';
+import { msgTypes, useAddPost, type MsgType } from '~/routes/(club)/feedback';
 
 export const PostForm = component$(() => {
   const TITLE_LENGTH = 80;
@@ -9,9 +9,9 @@ export const PostForm = component$(() => {
   const addPost = useAddPost();
   const { loggedIn } = userState;
   const newPostStore = useStore({
-    emo: "",
-    title: "",
-    text: "",
+    emo: '',
+    title: '',
+    text: '',
   });
   const alreadySubmitted = useSignal(false);
 
@@ -45,15 +45,15 @@ export const PostForm = component$(() => {
 
   return (
     <>
-      <div class='card w-full bg-base-300'>
-        <div class='card-body'>
-          <h2 class='card-title'>Чем хотите поделиться?</h2>
-          <p class={"mb-2"}>
+      <div class="card w-full bg-base-300">
+        <div class="card-body">
+          <h2 class="card-title">Чем хотите поделиться?</h2>
+          <p class={'mb-2'}>
             {Object.keys(msgTypes)?.map((msg, ind) => (
               <span
                 key={ind}
                 class={`badge badge-info mr-1 cursor-pointer ${
-                  chosenBtn[msg as MsgType] ? "" : "badge-outline"
+                  chosenBtn[msg as MsgType] ? '' : 'badge-outline'
                 }`}
                 onClick$={() => {
                   for (const key in chosenBtn) chosenBtn[key as MsgType] = key === msg;
@@ -64,10 +64,10 @@ export const PostForm = component$(() => {
             ))}
           </p>
 
-          <div class='flex flex-wrap mb-1'>
-            <div class='form-control w-1/3 md:w-1/5 pr-1'>
+          <div class="flex flex-wrap mb-1">
+            <div class="form-control w-1/3 md:w-1/5 pr-1">
               <select
-                class='select select-bordered w-full'
+                class="select select-bordered w-full"
                 onChange$={(e) => {
                   // @ts-ignore
                   newPostStore.emo = e.target.value;
@@ -82,25 +82,25 @@ export const PostForm = component$(() => {
                   </option>
                 ))}
               </select>
-              <label class='label'>
-                <span class='label-text-alt'>Эмодзи</span>
+              <label class="label">
+                <span class="label-text-alt">Эмодзи</span>
               </label>
             </div>
 
-            <div class='form-control w-2/3 md:w-4/5 pl-1'>
+            <div class="form-control w-2/3 md:w-4/5 pl-1">
               <input
-                type='text'
-                placeholder='Заголовок сообщения'
-                class='input input-bordered w-full'
+                type="text"
+                placeholder="Заголовок сообщения"
+                class="input input-bordered w-full"
                 disabled={!loggedIn}
                 onKeyUp$={(e) => {
                   newPostStore.title = (e.target as HTMLInputElement).value;
                 }}
               />
-              <label class='label'>
+              <label class="label">
                 <span
                   class={`label-text-alt ${
-                    newPostStore.title.length > TITLE_LENGTH ? "text-error" : ""
+                    newPostStore.title.length > TITLE_LENGTH ? 'text-error' : ''
                   }`}
                 >
                   {newPostStore.title.length} / {TITLE_LENGTH}
@@ -110,22 +110,22 @@ export const PostForm = component$(() => {
           </div>
 
           <div
-            class={loggedIn ? "" : "tooltip tooltip-info"}
-            data-tip={loggedIn ? "" : "Авторизуйтесь"}
+            class={loggedIn ? '' : 'tooltip tooltip-info'}
+            data-tip={loggedIn ? '' : 'Авторизуйтесь'}
           >
-            <div class='form-control'>
+            <div class="form-control">
               <textarea
-                class='textarea textarea-bordered'
-                placeholder='Ваше сообщение'
+                class="textarea textarea-bordered"
+                placeholder="Ваше сообщение"
                 disabled={!loggedIn}
                 onKeyUp$={(e) => {
                   newPostStore.text = (e.target as HTMLInputElement).value;
                 }}
               ></textarea>
-              <label class='label'>
+              <label class="label">
                 <span
                   class={`label-text-alt ${
-                    newPostStore.text.length > CONSTANTS.commentLength ? "text-error" : ""
+                    newPostStore.text.length > CONSTANTS.commentLength ? 'text-error' : ''
                   }`}
                 >
                   {newPostStore.text.length} / {CONSTANTS.commentLength}
@@ -134,9 +134,9 @@ export const PostForm = component$(() => {
             </div>
           </div>
 
-          <div class='card-actions justify-end'>
+          <div class="card-actions justify-end">
             <button
-              class='btn btn-info btn-sm'
+              class="btn btn-info btn-sm"
               disabled={cantSubmit || alreadySubmitted.value}
               onClick$={submitPost}
             >

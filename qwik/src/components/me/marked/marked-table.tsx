@@ -1,20 +1,20 @@
-import { component$ } from "@builder.io/qwik";
-import { WHERE } from "~/components/common/comments/comment-form";
-import { type MarkedText, type MarkedVideo } from "~/routes/me/marked";
-import { bookMarkSvg, commentSvg, eyeSvg, heartSvg } from "~/components/common/media/svg";
-import { MarkedTableRow } from "./marked-table-row";
-import CONSTANTS from "~/misc/consts/consts";
+import { component$ } from '@builder.io/qwik';
+import { WHERE } from '~/components/common/comments/comment-form';
+import { type MarkedText, type MarkedVideo } from '~/routes/me/marked';
+import { bookMarkSvg, commentSvg, eyeSvg, heartSvg } from '~/components/common/media/svg';
+import { MarkedTableRow } from './marked-table-row';
+import CONSTANTS from '~/misc/consts/consts';
 
 type MarkedTableProps = {
   content: MarkedText[] | MarkedVideo[];
-  contentType: "text" | "video";
+  contentType: 'text' | 'video';
 };
 
 export const MarkedTable = component$(({ content, contentType }: MarkedTableProps) => {
   const isVideo = contentType === WHERE.video;
   return (
-    <div class='overflow-x-auto'>
-      <table class='table text-base-content'>
+    <div class="overflow-x-auto">
+      <table class="table text-base-content">
         <thead>
           <tr>
             <th>Автор</th>

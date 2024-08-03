@@ -1,9 +1,9 @@
-import { component$, Slot, useContext, useTask$, useVisibleTask$ } from "@builder.io/qwik";
-import Header from "../components/common/layout/header/header";
-import { routeLoader$ } from "@builder.io/qwik-city";
-import { ApiService } from "~/misc/actions/request";
-import { getTokenFromCookie, logout, type UserFromDB } from "~/misc/actions/auth";
-import { Footer } from "~/components/common/layout/footer";
+import { component$, Slot, useContext, useTask$, useVisibleTask$ } from '@builder.io/qwik';
+import Header from '../components/common/layout/header/header';
+import { routeLoader$ } from '@builder.io/qwik-city';
+import { ApiService } from '~/misc/actions/request';
+import { getTokenFromCookie, logout, type UserFromDB } from '~/misc/actions/auth';
+import { Footer } from '~/components/common/layout/footer';
 import {
   type UserWord,
   userContext,
@@ -11,38 +11,38 @@ import {
   type Config,
   IsLightThemeCookieName,
   goalsContext,
-} from "~/root";
-import { type CommentType } from "~/components/common/comments/comment-card";
-import { ThemeTypes } from "~/components/common/layout/header/theme-changer";
-import { type DonateGoal } from "./(club)/donate";
+} from '~/root';
+import { type CommentType } from '~/components/common/comments/comment-card';
+import { ThemeTypes } from '~/components/common/layout/header/theme-changer';
+import { type DonateGoal } from './(club)/donate';
 
 export const getNewMentions = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return [];
-  return ApiService.get("/api/comments/to_me/false", token, []);
+  return ApiService.get('/api/comments/to_me/false', token, []);
 });
 
 export const useGetUser = routeLoader$(async ({ cookie }): Promise<UserFromDB | null> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return null;
-  return ApiService.get("/api/auth", token, null);
+  return ApiService.get('/api/auth', token, null);
 });
 
 export const useGetBackendVersion = routeLoader$(async (): Promise<{ v: string } | null> => {
-  return ApiService.get("/api/project/version", undefined, null);
+  return ApiService.get('/api/project/version', undefined, null);
 });
 
 export const useGetUserHsk2WordsTotal = routeLoader$(async ({ cookie }): Promise<number> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return 0;
-  const res = await ApiService.get("/api/words", token, []);
+  const res = await ApiService.get('/api/words', token, []);
   return res?.length || 0;
 });
 
 export const useGetUserWords = routeLoader$(async ({ cookie }): Promise<UserWord[]> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return [];
-  return ApiService.get("/api/userwords", token, []);
+  return ApiService.get('/api/userwords', token, []);
 });
 
 export type PulseDataItem = {
@@ -60,7 +60,7 @@ export type PulseData = {
 };
 
 export const useGetPulse = routeLoader$((): Promise<PulseData> => {
-  return ApiService.get("/api/project/pulse", undefined, {
+  return ApiService.get('/api/project/pulse', undefined, {
     comment: {},
     post: {},
     text: {},
@@ -71,15 +71,15 @@ export const useGetPulse = routeLoader$((): Promise<PulseData> => {
 });
 
 export const useFeConfigs = routeLoader$((): Promise<Config[]> => {
-  return ApiService.get("/api/project/configs", undefined, []);
+  return ApiService.get('/api/project/configs', undefined, []);
 });
 
 export const useGetOurGoals = routeLoader$((): Promise<DonateGoal[]> => {
-  return ApiService.get("/api/donate/goals", undefined, []);
+  return ApiService.get('/api/donate/goals', undefined, []);
 });
 
 export const useCheckTheme = routeLoader$(({ cookie }): boolean => {
-  const isLightTheme = Boolean(+(cookie.get(IsLightThemeCookieName)?.value || "0"));
+  const isLightTheme = Boolean(+(cookie.get(IsLightThemeCookieName)?.value || '0'));
   return !isLightTheme;
 });
 
@@ -105,8 +105,8 @@ export default component$(() => {
     userState.email = user.value.email;
     userState.loggedIn = true;
     userState.role = user.value.role;
-    userState.isAdmin = user.value.role === "admin";
-    userState.isModerator = user.value.role === "moderator";
+    userState.isAdmin = user.value.role === 'admin';
+    userState.isModerator = user.value.role === 'moderator';
     userState.finishedTexts = user.value.finished_texts ? user.value.finished_texts : [];
     userState.seenVideos = user.value.seenVideos ? user.value.seenVideos : [];
     userState.readDailyGoal = user.value.daily_reading_goal || 0;
@@ -157,15 +157,15 @@ export default component$(() => {
   return (
     <>
       <main
-        class={"flex flex-col min-h-screen text-base-content"}
+        class={'flex flex-col min-h-screen text-base-content'}
         data-theme={isDarkTheme ? ThemeTypes.dark : ThemeTypes.light}
       >
         <Header pulse={pulse.value} />
-        <section class={"relative flex flex-col min-h-screen justify-between "}>
-          <div class='relative container mx-auto px-4 lg:px-28'>
+        <section class={'relative flex flex-col min-h-screen justify-between '}>
+          <div class="relative container mx-auto px-4 lg:px-28">
             <Slot />
           </div>
-          <Footer beVersion={beVersion.value?.v || "2.0.3"} />
+          <Footer beVersion={beVersion.value?.v || '2.0.3'} />
         </section>
       </main>
     </>

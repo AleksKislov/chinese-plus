@@ -1,31 +1,31 @@
-import { $, component$, useOnDocument, useSignal, useTask$ } from "@builder.io/qwik";
-import { type DocumentHead } from "@builder.io/qwik-city";
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { MainContent } from "~/components/common/layout/main-content";
-import { PageTitle } from "~/components/common/layout/title";
-import { Sidebar } from "~/components/common/layout/sidebar";
-import CONSTANTS from "~/misc/consts/consts";
-import { useSegmentAndGetTooltips } from "../(content)/create/text";
+import { $, component$, useOnDocument, useSignal, useTask$ } from '@builder.io/qwik';
+import { type DocumentHead } from '@builder.io/qwik-city';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { MainContent } from '~/components/common/layout/main-content';
+import { PageTitle } from '~/components/common/layout/title';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import CONSTANTS from '~/misc/consts/consts';
+import { useSegmentAndGetTooltips } from '../(content)/create/text';
 import {
   WordTooltip,
   editWordModalId,
   moreInfoModalId,
-} from "~/components/common/tooltips/word-tooltip";
-import { EditWordModal } from "~/components/common/modals/edit-word-modal";
-import { MoreInfoModal } from "~/components/common/modals/more-info-modal";
+} from '~/components/common/tooltips/word-tooltip';
+import { EditWordModal } from '~/components/common/modals/edit-word-modal';
+import { MoreInfoModal } from '~/components/common/modals/more-info-modal';
 
 export default component$(() => {
   const segmentAction = useSegmentAndGetTooltips();
-  const chineseText = useSignal("");
+  const chineseText = useSignal('');
   const tooltipTxt = useSignal<(string | DictWord)[][] | string[]>([]);
   const currentWord = useSignal<DictWord | undefined>(undefined);
   const lengthIsOk = useSignal(true);
 
   useOnDocument(
-    "keydown",
+    'keydown',
     $((e) => {
-      if ((e as KeyboardEvent).key === "Enter") preprocessForm();
-    })
+      if ((e as KeyboardEvent).key === 'Enter') preprocessForm();
+    }),
   );
 
   useTask$(({ track }) => {
@@ -40,26 +40,26 @@ export default component$(() => {
   });
 
   const preprocessForm = $(() => {
-    const trimmedChineseTxt = chineseText.value.trim().replace(/\n\s*\n/g, "\n");
+    const trimmedChineseTxt = chineseText.value.trim().replace(/\n\s*\n/g, '\n');
 
     if (!trimmedChineseTxt) return null;
     const chineseTextParagraphs = trimmedChineseTxt
-      .split("\n")
+      .split('\n')
       .map((parag) => parag.trim())
       .filter((parag) => Boolean(parag));
 
-    chineseText.value = chineseTextParagraphs.join("\n\n");
+    chineseText.value = chineseTextParagraphs.join('\n\n');
     segmentAction.submit({ txt: trimmedChineseTxt });
   });
 
   return (
     <>
-      <PageTitle txt={"Сегментация китайского текста"} />
+      <PageTitle txt={'Сегментация китайского текста'} />
 
       <FlexRow>
         <Sidebar>
-          <div class='card bg-base-200'>
-            <div class='card-body'>
+          <div class="card bg-base-200">
+            <div class="card-body">
               Инструмент сегментирует китайский текст на отдельные слова (перевод доступен по
               клику). <br />
               Используйте пробелы между иероглифами, чтобы сегментация сработала так, как нужно вам.
@@ -67,27 +67,27 @@ export default component$(() => {
           </div>
         </Sidebar>
         <MainContent>
-          <div class='prose'>
-            <div class='form-control w-full'>
-              <label class='label'>
-                <span class='label-text'>Вставьте китайский текст</span>
+          <div class="prose">
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Вставьте китайский текст</span>
               </label>
               <textarea
                 onClick$={() => {}}
-                class='textarea textarea-bordered h-24'
-                placeholder='汉字...'
+                class="textarea textarea-bordered h-24"
+                placeholder="汉字..."
                 bind:value={chineseText}
               ></textarea>
-              <label class='label'>
+              <label class="label">
                 <span
-                  class={`label-text-alt ${lengthIsOk.value ? "text-primary" : "text-error"}`}
+                  class={`label-text-alt ${lengthIsOk.value ? 'text-primary' : 'text-error'}`}
                 >{`${chineseText.value.length} / ${CONSTANTS.smTextLen}`}</span>
               </label>
             </div>
 
             <div>
               <button
-                class='btn btn-primary btn-sm'
+                class="btn btn-primary btn-sm"
                 onClick$={preprocessForm}
                 disabled={!lengthIsOk.value}
               >
@@ -121,7 +121,7 @@ export default component$(() => {
                   cn: currentWord.value.chinese,
                   py: currentWord.value.pinyin,
                   ru: currentWord.value.russian,
-                  lvl: "unknown",
+                  lvl: 'unknown',
                   id: 0,
                 }}
                 modalId={moreInfoModalId}
@@ -139,7 +139,7 @@ export const head: DocumentHead = () => {
     title: `Chinese+ Сегментация китайского текста`,
     meta: [
       {
-        name: "description",
+        name: 'description',
         content: `Инструмент сегментирует китайский текст на отдельные слова (перевод доступен по клику)`,
       },
     ],

@@ -1,11 +1,11 @@
-import { WHERE, type WhereType } from "~/components/common/comments/comment-form";
+import { WHERE, type WhereType } from '~/components/common/comments/comment-form';
 
 export const getContentPath = (
   contentType: WhereType,
   contentId: string,
-  isUnapproved?: boolean
+  isUnapproved?: boolean,
 ): string => {
-  const s = isUnapproved ? "unapproved-" : "";
+  const s = isUnapproved ? 'unapproved-' : '';
 
   switch (contentType) {
     case WHERE.text:
@@ -19,5 +19,5 @@ export const getContentPath = (
     case WHERE.post:
       return `/feedback/${contentId}`;
   }
-  return "/";
+  return '/';
 };

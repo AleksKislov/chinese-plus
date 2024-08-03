@@ -1,6 +1,6 @@
-import { component$ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
-import CONSTANTS from "~/misc/consts/consts";
+import { component$ } from '@builder.io/qwik';
+import { Link } from '@builder.io/qwik-city';
+import CONSTANTS from '~/misc/consts/consts';
 
 export type MenuLinkProps = {
   href: string;
@@ -15,13 +15,13 @@ export default component$(({ href, text, curVocabSize }: MenuLinkProps) => {
     <li>
       <Link
         href={href}
-        class='my-1 hover:text-secondary active:text-secondary focus:text-secondary'
+        class="my-1 hover:text-secondary active:text-secondary focus:text-secondary"
       >
-        {typeof curVocabSize === "number" ? (
+        {typeof curVocabSize === 'number' ? (
           <>
-            {text}{" "}
-            <div class='badge badge-xs badge-primary text-xs'>
-              {curVocabSize} <span class='mx-1 mb-0.5'>|</span> {vocabSize}
+            {text}{' '}
+            <div class="badge badge-xs badge-primary text-xs">
+              {curVocabSize} <span class="mx-1 mb-0.5">|</span> {vocabSize}
             </div>
           </>
         ) : (

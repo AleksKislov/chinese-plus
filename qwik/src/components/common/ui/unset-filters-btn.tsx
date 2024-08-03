@@ -1,5 +1,5 @@
-import { component$, type Signal } from "@builder.io/qwik";
-import type { MarkedSignalUnion, SortByType } from "~/routes/read/texts/all";
+import { component$, type Signal } from '@builder.io/qwik';
+import type { MarkedSignalUnion, SortByType } from '~/routes/read/texts/all';
 
 type UnsetFiltersBtnProps = {
   levelSignal?: Signal<string>;
@@ -28,21 +28,21 @@ export const UnsetFiltersBtn = component$(
     return (
       <button
         class={`btn btn-sm btn-outline btn-info h-full`}
-        type='button'
+        type="button"
         onClick$={() => {
-          categorySignal.value = "";
+          categorySignal.value = '';
           if (skipSignal) skipSignal.value = 0;
-          if (levelSignal) levelSignal.value = "0";
-          if (audioSignal) audioSignal.value = "0";
+          if (levelSignal) levelSignal.value = '0';
+          if (audioSignal) audioSignal.value = '0';
           if (sortSignal) sortSignal.value = false;
-          if (sortBy) sortBy.value = "date";
-          if (markedSignal) markedSignal.value = "all";
-          if (tagInput) tagInput.value = "";
-          if (chosenTag) chosenTag.value = "";
+          if (sortBy) sortBy.value = 'date';
+          if (markedSignal) markedSignal.value = 'all';
+          if (tagInput) tagInput.value = '';
+          if (chosenTag) chosenTag.value = '';
         }}
       >
         Сбросить
       </button>
     );
-  }
+  },
 );

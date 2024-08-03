@@ -1,32 +1,32 @@
-import { component$, useSignal, useTask$ } from "@builder.io/qwik";
-import { type RequestEvent, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
-import { Alerts } from "~/components/common/alerts/alerts";
-import { OldHskTable } from "~/components/hsk/hsk-table";
-import { ApiService } from "~/misc/actions/request";
-import { PageTitle } from "~/components/common/layout/title";
-import { FlexRow } from "~/components/common/layout/flex-row";
-import { Sidebar } from "~/components/common/layout/sidebar";
-import { MainContent } from "~/components/common/layout/main-content";
-import { getTokenFromCookie } from "~/misc/actions/auth";
-import { type UserOldHskWordType } from "~/routes/hsk/2/table";
-import { PrivateHskCard } from "~/components/me/hsk/private-hsk-card";
-import { TypingGame } from "~/components/games/typing-game";
-import { CalligraphyGame } from "~/components/games/calligraphy-game";
+import { component$, useSignal, useTask$ } from '@builder.io/qwik';
+import { type RequestEvent, routeLoader$, type DocumentHead } from '@builder.io/qwik-city';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { OldHskTable } from '~/components/hsk/hsk-table';
+import { ApiService } from '~/misc/actions/request';
+import { PageTitle } from '~/components/common/layout/title';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { MainContent } from '~/components/common/layout/main-content';
+import { getTokenFromCookie } from '~/misc/actions/auth';
+import { type UserOldHskWordType } from '~/routes/hsk/2/table';
+import { PrivateHskCard } from '~/components/me/hsk/private-hsk-card';
+import { TypingGame } from '~/components/games/typing-game';
+import { CalligraphyGame } from '~/components/games/calligraphy-game';
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
-  if (!token) throw redirect(302, "/login");
+  if (!token) throw redirect(302, '/login');
 };
 
 export const getUserHsk2Words = routeLoader$(async ({ cookie }): Promise<UserOldHskWordType[]> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return [];
-  return await ApiService.get("/api/words", token, []);
+  return await ApiService.get('/api/words', token, []);
 });
 
 export default component$(() => {
   const userHskWords = getUserHsk2Words();
-  const lvlSignal = useSignal("1");
+  const lvlSignal = useSignal('1');
   const wordsSignal = useSignal<UserOldHskWordType[] | null>(userHskWords?.value || []);
   const lvlWordsNum = useSignal({
     1: wordsSignal.value?.filter((word) => word.level === 1).length || 0,
@@ -51,7 +51,7 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={"Мой словарик HSK 2.0"} />
+      <PageTitle txt={'Мой словарик HSK 2.0'} />
 
       <FlexRow>
         <Alerts />
@@ -67,7 +67,7 @@ export default component$(() => {
               <CalligraphyGame
                 words={wordsSignal.value?.map((x) => ({
                   chinese: x.chinese,
-                  level: "" + x.level,
+                  level: '' + x.level,
                   id: x.word_id,
                   pinyin: x.pinyin,
                   translation: x.translation,
@@ -76,7 +76,7 @@ export default component$(() => {
               <TypingGame
                 words={wordsSignal.value?.map((x) => ({
                   chinese: x.chinese,
-                  level: "" + x.level,
+                  level: '' + x.level,
                   id: x.word_id,
                   pinyin: x.pinyin,
                   translation: x.translation,
@@ -84,11 +84,11 @@ export default component$(() => {
               />
             </>
           ) : (
-            <div class='card bg-base-200 text-base-content w-full mb-6'>
-              <div class='card-body'>
+            <div class="card bg-base-200 text-base-content w-full mb-6">
+              <div class="card-body">
                 <div>
-                  <div class='prose mb-2'>
-                    <h3 class='card-title'>Успей напечатать</h3>
+                  <div class="prose mb-2">
+                    <h3 class="card-title">Успей напечатать</h3>
                   </div>
                   <p>
                     Наберите хотя бы 10 слов в список ниже, чтобы активировать тест и проверить свои
@@ -96,13 +96,13 @@ export default component$(() => {
                   </p>
                 </div>
               </div>
-              <div class='flex justify-center'>
+              <div class="flex justify-center">
                 {[...new Array(10)].map((x, ind) => (
                   <div
                     key={ind}
-                    class={`badge mx-2 mb-2 border border-base-300 ${"bg-neutral-content"}`}
+                    class={`badge mx-2 mb-2 border border-base-300 ${'bg-neutral-content'}`}
                   >
-                    {" "}
+                    {' '}
                   </div>
                 ))}
               </div>
@@ -123,5 +123,5 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Chinese+ Личный словарик HSK",
+  title: 'Chinese+ Личный словарик HSK',
 };

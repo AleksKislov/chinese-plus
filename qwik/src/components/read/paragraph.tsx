@@ -1,8 +1,8 @@
-import { component$, type Signal } from "@builder.io/qwik";
-import { type FontSizeBtnsUnion, FontSizeMap } from "../common/content-cards/content-page-card";
-import { WordTooltip } from "../common/tooltips/word-tooltip";
-import { ParagPlus } from "./parag-plus";
-import { ParagNum } from "./parag-num";
+import { component$, type Signal } from '@builder.io/qwik';
+import { type FontSizeBtnsUnion, FontSizeMap } from '../common/content-cards/content-page-card';
+import { WordTooltip } from '../common/tooltips/word-tooltip';
+import { ParagPlus } from './parag-plus';
+import { ParagNum } from './parag-num';
 
 type ParagraphProps = {
   translation: string;
@@ -26,11 +26,11 @@ export const Paragraph = component$(
     showTranslation,
     forEditing,
   }: ParagraphProps) => {
-    const blockClass = "my-1 rounded-md p-2 relative bg-base-200";
+    const blockClass = 'my-1 rounded-md p-2 relative bg-base-200';
     const paragNum = ind + 1;
 
     return (
-      <div class={`grid ${showTranslation ? "lg:grid-cols-2" : ""} grid-cols-1 gap-2`}>
+      <div class={`grid ${showTranslation ? 'lg:grid-cols-2' : ''} grid-cols-1 gap-2`}>
         <div class={`${blockClass} ${FontSizeMap[fontSize]}`}>
           <ParagNum num={paragNum} />
           {tooltipedParag.map((word, i) => (
@@ -47,5 +47,5 @@ export const Paragraph = component$(
         )}
       </div>
     );
-  }
+  },
 );

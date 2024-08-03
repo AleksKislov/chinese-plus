@@ -1,25 +1,25 @@
-import { component$, useContext, $, useSignal, useTask$, type Signal } from "@builder.io/qwik";
-import { globalAction$, zod$, z } from "@builder.io/qwik-city";
-import { ApiService } from "~/misc/actions/request";
-import CONSTANTS from "~/misc/consts/consts";
-import { userContext } from "~/root";
-import { xMarkSvg } from "../media/svg";
-import { EmojiSelect } from "./emoji-select";
+import { component$, useContext, $, useSignal, useTask$, type Signal } from '@builder.io/qwik';
+import { globalAction$, zod$, z } from '@builder.io/qwik-city';
+import { ApiService } from '~/misc/actions/request';
+import CONSTANTS from '~/misc/consts/consts';
+import { userContext } from '~/root';
+import { xMarkSvg } from '../media/svg';
+import { EmojiSelect } from './emoji-select';
 
 export enum WHERE {
-  post = "post",
-  video = "video",
-  text = "text",
-  book = "book",
-  phoneticsLesson = "phoneticsLesson",
-  charactersLesson = "charactersLesson",
+  post = 'post',
+  video = 'video',
+  text = 'text',
+  book = 'book',
+  phoneticsLesson = 'phoneticsLesson',
+  charactersLesson = 'charactersLesson',
 }
 
-export type WhereType = "post" | "video" | "text" | "book" | "phoneticsLesson" | "charactersLesson";
+export type WhereType = 'post' | 'video' | 'text' | 'book' | 'phoneticsLesson' | 'charactersLesson';
 
 export const useAddComment = globalAction$(
   (params, ev) => {
-    const token = ev.cookie.get("token")?.value;
+    const token = ev.cookie.get('token')?.value;
     const { path, addressees, commentIdToReply, text } = params;
 
     return ApiService.post(
@@ -31,7 +31,7 @@ export const useAddComment = globalAction$(
         commentIdToReply,
       },
       token,
-      {}
+      {},
     );
   },
   zod$({
@@ -49,9 +49,9 @@ export const useAddComment = globalAction$(
     addressees: z.array(
       z.object({
         id: z.string(),
-      })
+      }),
     ),
-  })
+  }),
 );
 
 type CommentFormProps = {
@@ -79,22 +79,22 @@ export const getAddresseeStr = (add: Addressee): string => {
 
 export const AddresseeTag = {
   start: `<strong class='text-info'>`,
-  end: "</strong>",
+  end: '</strong>',
 };
 
 export const CommentForm = component$(
   ({ contentId, where, path, commentIdToReply, addressees }: CommentFormProps) => {
     const userState = useContext(userContext);
     const addComment = useAddComment();
-    const emoji = useSignal("");
+    const emoji = useSignal('');
     const { loggedIn } = userState;
-    const newText = useSignal("");
+    const newText = useSignal('');
     const alreadySubmitted = useSignal(false);
 
     const unsetCommentToReply = $(() => {
-      commentIdToReply.commentId = "";
-      commentIdToReply.name = "";
-      commentIdToReply.userId = "";
+      commentIdToReply.commentId = '';
+      commentIdToReply.name = '';
+      commentIdToReply.userId = '';
     });
 
     const submitPost = $(async () => {
@@ -106,7 +106,7 @@ export const CommentForm = component$(
         foundUsers.forEach((user) => {
           text = text.replace(
             getAddresseeStr(user),
-            `${AddresseeTag.start}${user.name}${AddresseeTag.end}`
+            `${AddresseeTag.start}${user.name}${AddresseeTag.end}`,
           );
         });
       }
@@ -122,8 +122,8 @@ export const CommentForm = component$(
 
       unsetCommentToReply();
       addressees.value = [];
-      newText.value = "";
-      emoji.value = "";
+      newText.value = '';
+      emoji.value = '';
 
       setTimeout(() => {
         alreadySubmitted.value = false;
@@ -132,13 +132,13 @@ export const CommentForm = component$(
 
     return (
       <>
-        <div class='card w-full bg-base-300 mb-3'>
-          <div class='card-body'>
-            <div class={"flex justify-between mb-2"}>
-              <h2 class='card-title pt-1'>Ваш комментарий</h2>
-              <div class='card-actions'>
+        <div class="card w-full bg-base-300 mb-3">
+          <div class="card-body">
+            <div class={'flex justify-between mb-2'}>
+              <h2 class="card-title pt-1">Ваш комментарий</h2>
+              <div class="card-actions">
                 <button
-                  class='btn btn-info btn-sm'
+                  class="btn btn-info btn-sm"
                   disabled={!loggedIn || alreadySubmitted.value}
                   onClick$={submitPost}
                 >
@@ -148,8 +148,8 @@ export const CommentForm = component$(
             </div>
 
             <div
-              class={loggedIn ? "" : "tooltip tooltip-info"}
-              data-tip={loggedIn ? "" : "Авторизуйтесь"}
+              class={loggedIn ? '' : 'tooltip tooltip-info'}
+              data-tip={loggedIn ? '' : 'Авторизуйтесь'}
             >
               <CommentTextArea
                 addressees={addressees}
@@ -163,16 +163,16 @@ export const CommentForm = component$(
         </div>
       </>
     );
-  }
+  },
 );
 
 export const parseForAddressees = (txt: string): Addressee[] => {
-  const resArr = txt.split("@@");
-  const onlyNames = resArr.filter((x) => x[0] === "[" && x[x.length - 1] === "}");
+  const resArr = txt.split('@@');
+  const onlyNames = resArr.filter((x) => x[0] === '[' && x[x.length - 1] === '}');
   const userSet = Array.from(new Set(onlyNames));
   return userSet.map((x) => {
-    const id = x.slice(1, x.indexOf("]"));
-    const name = x.slice(x.indexOf("{") + 1, x.length - 1);
+    const id = x.slice(1, x.indexOf(']'));
+    const name = x.slice(x.indexOf('{') + 1, x.length - 1);
     return { id, name };
   });
 };
@@ -189,14 +189,14 @@ export const CommentTextArea = component$(
   ({ addressees, commentIdToReply, newText, loggedIn, emoji }: CommentTextAreaProps) => {
     const unsetAddressee = $((add: Addressee) => {
       addressees.value = addressees.value.filter((x) => x.id !== add.id);
-      newText.value = newText.value.replace(getAddresseeStr(add), "");
+      newText.value = newText.value.replace(getAddresseeStr(add), '');
     });
 
     const unsetCommentToReply = $(() => {
       if (!commentIdToReply) return;
-      commentIdToReply.commentId = "";
-      commentIdToReply.name = "";
-      commentIdToReply.userId = "";
+      commentIdToReply.commentId = '';
+      commentIdToReply.name = '';
+      commentIdToReply.userId = '';
     });
 
     useTask$(({ track }) => {
@@ -211,7 +211,7 @@ export const CommentTextArea = component$(
 
     useTask$(({ track }) => {
       track(() => newText.value);
-      if (!newText.value.includes("@@")) return;
+      if (!newText.value.includes('@@')) return;
       const found = parseForAddressees(newText.value);
       if (!found.length) return;
 
@@ -224,19 +224,19 @@ export const CommentTextArea = component$(
     useTask$(({ track }) => {
       track(() => emoji.value);
       newText.value += emoji.value;
-      emoji.value = "";
+      emoji.value = '';
     });
 
     return (
       <>
         {addressees.value.length > 0 && (
-          <label class={"label"}>
-            <span class={"label-text-alt"}>
-              Вы обращаетесь к{" "}
+          <label class={'label'}>
+            <span class={'label-text-alt'}>
+              Вы обращаетесь к{' '}
               {addressees.value.map((x, ind) => (
                 <div
                   key={ind}
-                  class='badge badge-primary cursor-pointer pl-3 mr-1'
+                  class="badge badge-primary cursor-pointer pl-3 mr-1"
                   onClick$={() => unsetAddressee(x)}
                 >
                   {x.name} {xMarkSvg}
@@ -245,13 +245,13 @@ export const CommentTextArea = component$(
             </span>
           </label>
         )}
-        <div class='form-control'>
+        <div class="form-control">
           {commentIdToReply?.commentId && (
-            <label class={"label"}>
-              <span class={"label-text-alt"}>
-                Вы отвечаете <div class='badge badge-primary'>{commentIdToReply.name}</div> на
-                комментарий{" "}
-                <div class='badge badge-primary cursor-pointer pl-3' onClick$={unsetCommentToReply}>
+            <label class={'label'}>
+              <span class={'label-text-alt'}>
+                Вы отвечаете <div class="badge badge-primary">{commentIdToReply.name}</div> на
+                комментарий{' '}
+                <div class="badge badge-primary cursor-pointer pl-3" onClick$={unsetCommentToReply}>
                   {`#${commentIdToReply.commentId.slice(-3)}`} {xMarkSvg}
                 </div>
               </span>
@@ -260,18 +260,18 @@ export const CommentTextArea = component$(
 
           <textarea
             class={`textarea textarea-bordered`}
-            placeholder='Ваше сообщение'
+            placeholder="Ваше сообщение"
             disabled={!loggedIn}
             value={newText.value}
             onKeyUp$={(e) => {
               newText.value = (e.target as HTMLInputElement).value;
             }}
           ></textarea>
-          <div class='flex justify-between'>
-            <label class='label'>
+          <div class="flex justify-between">
+            <label class="label">
               <span
                 class={`label-text-alt ${
-                  newText.value.length > CONSTANTS.commentLength ? "text-error" : ""
+                  newText.value.length > CONSTANTS.commentLength ? 'text-error' : ''
                 }`}
               >
                 {newText.value.length} / {CONSTANTS.commentLength}
@@ -282,5 +282,5 @@ export const CommentTextArea = component$(
         </div>
       </>
     );
-  }
+  },
 );
