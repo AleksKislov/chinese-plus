@@ -1,5 +1,5 @@
-const Video = require("../../../models/Video");
-const Comment = require("../../../models/Comment");
+const Video = require('../../../models/Video');
+const Comment = require('../../../models/Comment');
 
 async function deleteComment(req, res) {
   const post = await Video.findById(req.params.id);

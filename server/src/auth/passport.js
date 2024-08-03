@@ -1,13 +1,13 @@
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const { googleStrategy } = require("./strategies");
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const { googleStrategy } = require('./strategies');
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
 passport.deserializeUser((id, done) => {
-  User.findById(id).then(user => {
+  User.findById(id).then((user) => {
     done(null, user);
   });
 });

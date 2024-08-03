@@ -1,4 +1,4 @@
-const User = require("../../../models/User");
+const User = require('../../../models/User');
 
 async function markAsRead(req, res) {
   const userId = req.user.id;
@@ -9,8 +9,8 @@ async function markAsRead(req, res) {
     {
       $addToSet: { finished_texts: textId },
     },
-    { new: true }
-  ).select("-password");
+    { new: true },
+  ).select('-password');
 
   return res.json(updatedUser);
 }

@@ -1,8 +1,8 @@
-const { validationResult } = require("express-validator");
-const { Notify } = require("../_misc");
+const { validationResult } = require('express-validator');
+const { Notify } = require('../_misc');
 
-const Text = require("../../../models/Text");
-const { shortUserInfoFields } = require("../../consts");
+const Text = require('../../../models/Text');
+const { shortUserInfoFields } = require('../../consts');
 
 async function updateTxt(req, res) {
   const errors = validationResult(req);
@@ -31,7 +31,7 @@ async function updateTxt(req, res) {
   let foundText;
   if (isApproved) {
     foundText = await Text.findById(textId);
-    if (!foundText) throw new Error("No text to update");
+    if (!foundText) throw new Error('No text to update');
   }
 
   const isLngTxtEdit = isLongText && Number.isInteger(pageToEdit);
@@ -65,14 +65,14 @@ async function updateTxt(req, res) {
   const updatedTxt = await Text.findByIdAndUpdate(
     textId,
     { $set: newFields },
-    { new: true }
-  ).populate("user", shortUserInfoFields);
+    { new: true },
+  ).populate('user', shortUserInfoFields);
 
   if (foundText && !foundText.isApproved && isApproved) {
     Notify.socialMedia(updatedTxt);
   }
 
-  return res.json({ status: "done" });
+  return res.json({ status: 'done' });
 }
 
 module.exports = { updateTxt };

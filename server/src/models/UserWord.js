@@ -1,22 +1,22 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const UserWordSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user"
+    ref: 'user',
   },
   chinese: {
-    type: String
+    type: String,
   },
   translation: {
-    type: String
+    type: String,
   },
   pinyin: {
-    type: String
+    type: String,
   },
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-module.exports = UserWord = mongoose.model("userword", UserWordSchema);
+module.exports = UserWord = mongoose.model('userword', UserWordSchema);

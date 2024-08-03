@@ -1,13 +1,13 @@
-const router = require("express").Router();
-const auth = require("../../middleware/auth");
+const router = require('express').Router();
+const auth = require('../../middleware/auth');
 
-const { likeVideoLesson } = require("../../src/api/services/videos");
+const { likeVideoLesson } = require('../../src/api/services/videos');
 
 /**
  *  @route    PUT api/charactersLessons/like/:id
  *  @desc     Like a video lesson on phonetics
  *  @access   Private
  */
-router.put("/like/:id", auth, likeVideoLesson);
+router.put('/like/:id', auth, likeVideoLesson);
 
 module.exports = router;

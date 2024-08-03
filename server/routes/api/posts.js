@@ -1,25 +1,25 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const auth = require("../../middleware/auth");
-const adminAuth = require("../../middleware/admin-auth");
-const { check, validationResult } = require("express-validator");
-const { Notify } = require("../../src/api/services/_misc");
+const auth = require('../../middleware/auth');
+const adminAuth = require('../../middleware/admin-auth');
+const { check, validationResult } = require('express-validator');
+const { Notify } = require('../../src/api/services/_misc');
 
-const User = require("../../src/models/User");
-const Post = require("../../src/models/Post");
-const Comment = require("../../src/models/Comment");
-const { shortUserInfoFields } = require("../../src/api/consts");
+const User = require('../../src/models/User');
+const Post = require('../../src/models/Post');
+const Comment = require('../../src/models/Comment');
+const { shortUserInfoFields } = require('../../src/api/consts');
 
 // @route   POST api/posts
 // @desc    Create a post
 // access   Private
 router.post(
-  "/",
+  '/',
   [
     auth,
     [
-      check("text", "Нужен текст").not().isEmpty(),
-      check("title", "Нужен заголовок").not().isEmpty(),
+      check('text', 'Нужен текст').not().isEmpty(),
+      check('title', 'Нужен заголовок').not().isEmpty(),
     ],
   ],
   async (req, res) => {
@@ -28,7 +28,7 @@ router.post(
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     try {
-      const user = await User.findById(req.user.id).select("-password");
+      const user = await User.findById(req.user.id).select('-password');
       const { text, title, tag } = req.body;
 
       const newPost = new Post({
@@ -39,7 +39,7 @@ router.post(
       });
 
       const post = await newPost.save();
-      if (user.name === "admin") {
+      if (user.name === 'admin') {
         Notify.socialMedia(post);
       } else {
         Notify.admin(`New post from ${user.name} in /posts. Title: ${title}. Text: ${text}`);
@@ -48,9 +48,9 @@ router.post(
       res.json(post);
     } catch (err) {
       console.error(err);
-      res.status(500).send("Server error");
+      res.status(500).send('Server error');
     }
-  }
+  },
 );
 
 /**
@@ -58,14 +58,14 @@ router.post(
  * @desc    Get posts using inifinite scroll by tag
  * @access  Public
  */
-router.get("/infinite", async (req, res) => {
+router.get('/infinite', async (req, res) => {
   const { skip, tag } = req.query;
   try {
     const searshQuery = tag ? { tag } : {};
     const skipNum = skip && /^\d+$/.test(skip) ? Number(skip) : 0;
     const posts = await Post.find(searshQuery, undefined, { skip: skipNum, limit: 5 })
-      .populate("user", shortUserInfoFields)
-      .select("-avatar -name")
+      .populate('user', shortUserInfoFields)
+      .select('-avatar -name')
       .sort({
         date: -1,
       });
@@ -73,46 +73,46 @@ router.get("/infinite", async (req, res) => {
     res.json(posts);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
 // @route   GET api/posts/:id
 // @desc    Get post by id
 // access   Public
-router.get("/:id", async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
-      .populate("user", shortUserInfoFields)
-      .select("-avatar -name");
-    if (!post) return res.status(404).json({ msg: "Post not found" });
+      .populate('user', shortUserInfoFields)
+      .select('-avatar -name');
+    if (!post) return res.status(404).json({ msg: 'Post not found' });
 
     res.json(post);
   } catch (err) {
     console.error(err);
-    if (err.kind === "ObjectId") return res.status(404).json({ msg: "Post not found" });
+    if (err.kind === 'ObjectId') return res.status(404).json({ msg: 'Post not found' });
 
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
 // @route   DELETE api/posts/:id
 // @desc    Delete post by id
 // access   Private
-router.delete("/delete/:id", adminAuth, async (req, res) => {
+router.delete('/delete/:id', adminAuth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
-    if (!post) return res.status(404).json({ msg: "Post not found" });
+    if (!post) return res.status(404).json({ msg: 'Post not found' });
 
     await post.remove();
 
-    res.json({ msg: "Post removed" });
+    res.json({ msg: 'Post removed' });
   } catch (err) {
     console.error(err);
-    if (err.kind === "ObjectId") return res.status(404).json({ msg: "Post not found" });
+    if (err.kind === 'ObjectId') return res.status(404).json({ msg: 'Post not found' });
 
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -120,8 +120,8 @@ router.delete("/delete/:id", adminAuth, async (req, res) => {
 // @desc    Comment on a post
 // access   Private
 router.post(
-  "/comment/:id",
-  [auth, [check("text", "Text is requierd").not().isEmpty()]],
+  '/comment/:id',
+  [auth, [check('text', 'Text is requierd').not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
 
@@ -142,15 +142,15 @@ router.post(
       res.json(post.comments);
     } catch (err) {
       console.error(err);
-      res.status(500).send("Server error");
+      res.status(500).send('Server error');
     }
-  }
+  },
 );
 
 // @route   DELETE api/posts/comment/:id/:comment_id
 // @desc    Delete a Comment of a post
 // access   Private
-router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
+router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     const comment = await Comment.findById(req.params.comment_id);
@@ -163,7 +163,7 @@ router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
     res.json(post.comments_id);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 

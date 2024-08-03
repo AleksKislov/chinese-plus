@@ -1,5 +1,5 @@
-const Text = require("../../../models/Text");
-const { shortUserInfoFields } = require("../../consts");
+const Text = require('../../../models/Text');
+const { shortUserInfoFields } = require('../../consts');
 
 async function getTextsInChunks(req, res) {
   const { skip } = req.query;
@@ -10,8 +10,8 @@ async function getTextsInChunks(req, res) {
     limit: 10,
   })
     .sort({ date: -1 })
-    .select("-origintext -translation -chinese_arr -pages")
-    .populate("user", shortUserInfoFields);
+    .select('-origintext -translation -chinese_arr -pages')
+    .populate('user', shortUserInfoFields);
 
   return res.json(texts);
 }

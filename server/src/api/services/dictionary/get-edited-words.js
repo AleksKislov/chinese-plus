@@ -1,4 +1,4 @@
-const Dictionary = require("../../../models/Dictionary");
+const Dictionary = require('../../../models/Dictionary');
 
 async function getEditedWords(req, res) {
   const { skip } = req.query;

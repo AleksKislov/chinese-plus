@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require('axios');
 
 const YT_URLS = {
   captions: `${process.env.YT_BASE_URL}captions?key=${process.env.GC_API_KEY}`,
@@ -7,7 +7,7 @@ const YT_URLS = {
 
 async function getYtInfo(req, res) {
   const { videoId } = req.query;
-  if (!videoId) throw new Error("No videoId provided");
+  if (!videoId) throw new Error('No videoId provided');
 
   const result = await Promise.all([
     axios.get(`${YT_URLS.captions}&part=snippet&videoId=${videoId}`),

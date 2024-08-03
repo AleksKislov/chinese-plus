@@ -1,5 +1,5 @@
-const Video = require("../../../models/Video");
-const User = require("../../../models/User");
+const Video = require('../../../models/Video');
+const User = require('../../../models/User');
 
 async function likeVideo(req, res) {
   const userName = await User.findById(req.user.id);

@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const TextSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: "user" },
+  user: { type: Schema.Types.ObjectId, ref: 'user' },
   title: { type: String, required: true },
   description: { type: String },
   origintext: [{ type: String }],
@@ -22,7 +22,7 @@ const TextSchema = new Schema({
     {
       comment: {
         type: Schema.Types.ObjectId,
-        ref: "comment",
+        ref: 'comment',
       },
     },
   ],
@@ -30,7 +30,7 @@ const TextSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "user",
+        ref: 'user',
       },
       name: { type: String },
     },
@@ -45,7 +45,7 @@ const TextSchema = new Schema({
   date: { type: Date, default: Date.now },
 });
 
-module.exports = Text = mongoose.model("text", TextSchema);
+module.exports = Text = mongoose.model('text', TextSchema);
 
 // textCategories: [
 //   "Учебные и HSK",

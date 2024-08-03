@@ -1,4 +1,4 @@
-const Dictionary = require("../../../models/Dictionary");
+const Dictionary = require('../../../models/Dictionary');
 
 async function rollbackUpdate(req, res) {
   const { wordId, prevInd } = req.query;

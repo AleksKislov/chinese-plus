@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const connectDB = async (mongoUrl) => {
   try {
@@ -8,9 +8,9 @@ const connectDB = async (mongoUrl) => {
       useCreateIndex: true,
       useFindAndModify: false,
     });
-    console.log("Mongo DB connected");
+    console.log('Mongo DB connected');
   } catch (err) {
-    console.log("MONGO NOT CONNECTED ERROR", err.message);
+    console.log('MONGO NOT CONNECTED ERROR', err.message);
     process.exit(1);
   }
 };

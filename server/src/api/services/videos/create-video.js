@@ -1,8 +1,8 @@
-const { validationResult } = require("express-validator");
+const { validationResult } = require('express-validator');
 
-const Video = require("../../../models/Video");
-const { Notify } = require("../_misc");
-const { shortUserInfoFields } = require("../../consts");
+const Video = require('../../../models/Video');
+const { Notify } = require('../_misc');
+const { shortUserInfoFields } = require('../../consts');
 
 async function createVideo(req, res) {
   const errors = validationResult(req);
@@ -28,7 +28,7 @@ async function createVideo(req, res) {
   });
 
   const video = await newVideo.save();
-  const resultVid = await Video.findById(video._id).populate("user", shortUserInfoFields);
+  const resultVid = await Video.findById(video._id).populate('user', shortUserInfoFields);
 
   Notify.admin(`New VIDEO from ${resultVid.user.name}. Title: ${title}`);
   return res.json(resultVid);

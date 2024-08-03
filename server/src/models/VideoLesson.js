@@ -1,14 +1,14 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const VideoLessonSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: "user" },
+  user: { type: Schema.Types.ObjectId, ref: 'user' },
   title: { type: String, required: true },
   desc: { type: String },
   category: {
     type: String,
-    enum: ["phonetics", "characters"],
-    default: "misc",
+    enum: ['phonetics', 'characters'],
+    default: 'misc',
   },
   tags: [{ type: String, lowercase: true }],
   lvl: { type: Number, default: 0 },
@@ -18,7 +18,7 @@ const VideoLessonSchema = new Schema({
     {
       comment: {
         type: Schema.Types.ObjectId,
-        ref: "comment",
+        ref: 'comment',
       },
     },
   ],
@@ -26,7 +26,7 @@ const VideoLessonSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "user",
+        ref: 'user',
       },
       name: { type: String },
     },
@@ -34,4 +34,4 @@ const VideoLessonSchema = new Schema({
   date: { type: Date, default: Date.now },
 });
 
-module.exports = VideoLesson = mongoose.model("videolesson", VideoLessonSchema);
+module.exports = VideoLesson = mongoose.model('videolesson', VideoLessonSchema);

@@ -1,4 +1,4 @@
-const Hskword = require("../../../models/Hskword");
+const Hskword = require('../../../models/Hskword');
 
 async function getNewHskByLvlAndLimit(req, res) {
   const WORDS_NUM = 200;

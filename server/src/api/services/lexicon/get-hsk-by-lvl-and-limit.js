@@ -1,8 +1,8 @@
-const Lexicon = require("../../../models/Lexicon");
+const Lexicon = require('../../../models/Lexicon');
 
 async function getHskByLvlAndLimit(req, res) {
   const WORDS_NUM = 200;
-  const level = req.query.hsk_level || "1";
+  const level = req.query.hsk_level || '1';
   const limit = Number(req.query.limit) || 0;
 
   const firstIdPerLvl = {

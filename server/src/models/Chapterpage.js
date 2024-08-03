@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ChapterpageSchema = new Schema({
   chapter: { type: Number }, // chapter in book.contents
   book: {
     type: Schema.Types.ObjectId,
-    ref: "books"
+    ref: 'books',
   }, // book this page belongs to
   page_number: { type: Number },
   origintext: [{ type: String }],
@@ -17,14 +17,14 @@ const ChapterpageSchema = new Schema({
     {
       comment: {
         type: Schema.Types.ObjectId,
-        ref: "comments"
-      }
-    }
+        ref: 'comments',
+      },
+    },
   ],
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-module.exports = Chapterpage = mongoose.model("chapterpage", ChapterpageSchema);
+module.exports = Chapterpage = mongoose.model('chapterpage', ChapterpageSchema);

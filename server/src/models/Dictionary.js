@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const DictionarySchema = new mongoose.Schema({
   chinese: { type: String },
   russian: { type: String },
@@ -20,4 +20,4 @@ const DictionarySchema = new mongoose.Schema({
   },
 });
 
-module.exports = Dictionary = mongoose.model("dictionary", DictionarySchema);
+module.exports = Dictionary = mongoose.model('dictionary', DictionarySchema);

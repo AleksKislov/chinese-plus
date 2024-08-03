@@ -1,8 +1,8 @@
-const { validationResult } = require("express-validator");
-const { Notify } = require("../_misc");
+const { validationResult } = require('express-validator');
+const { Notify } = require('../_misc');
 
-const Video = require("../../../models/Video");
-const { shortUserInfoFields } = require("../../consts");
+const Video = require('../../../models/Video');
+const { shortUserInfoFields } = require('../../consts');
 
 async function updateVideo(req, res) {
   const errors = validationResult(req);
@@ -27,7 +27,7 @@ async function updateVideo(req, res) {
   let foundVid;
   if (isApproved) {
     foundVid = await Video.findById(videoId);
-    if (!foundVid) throw new Error("No video to update");
+    if (!foundVid) throw new Error('No video to update');
   }
 
   let newFields = {};
@@ -47,14 +47,14 @@ async function updateVideo(req, res) {
   const updatedVid = await Video.findByIdAndUpdate(
     videoId,
     { $set: newFields },
-    { new: true }
-  ).populate("user", shortUserInfoFields);
+    { new: true },
+  ).populate('user', shortUserInfoFields);
 
   if (foundVid && !foundVid.isApproved && isApproved) {
     Notify.socialMedia(updatedVid);
   }
 
-  return res.json({ status: "done", _id: videoId });
+  return res.json({ status: 'done', _id: videoId });
 }
 
 module.exports = { updateVideo };

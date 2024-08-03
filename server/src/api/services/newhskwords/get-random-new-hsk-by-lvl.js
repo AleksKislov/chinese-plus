@@ -1,7 +1,7 @@
-const Hskword = require("../../../models/Hskword");
+const Hskword = require('../../../models/Hskword');
 
 async function getRandomNewHskByLvl(req, res) {
-  const lvl = req.query.hsk_level || "1";
+  const lvl = req.query.hsk_level || '1';
 
   const allLexicon = await Hskword.aggregate([
     { $match: { lvl } },

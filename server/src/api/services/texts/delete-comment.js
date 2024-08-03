@@ -1,5 +1,5 @@
-const Text = require("../../../models/Text");
-const Comment = require("../../../models/Comment");
+const Text = require('../../../models/Text');
+const Comment = require('../../../models/Comment');
 
 async function deleteComment(req, res) {
   const post = await Text.findById(req.params.id);

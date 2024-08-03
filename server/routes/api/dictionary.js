@@ -1,36 +1,36 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const Hanzi = require("./dict/dictionary");
-const mdbg = require("mdbg");
-const { getAllWords, getWordsForParag } = require("./services");
-const auth = require("../../middleware/auth");
+const Hanzi = require('./dict/dictionary');
+const mdbg = require('mdbg');
+const { getAllWords, getWordsForParag } = require('./services');
+const auth = require('../../middleware/auth');
 
-const Dictionary = require("../../src/models/Dictionary");
+const Dictionary = require('../../src/models/Dictionary');
 
-const { updateWord, rollbackUpdate, getEditedWords } = require("../../src/api/services/dictionary");
+const { updateWord, rollbackUpdate, getEditedWords } = require('../../src/api/services/dictionary');
 
 /**
  * @route     GET api/dictionary?word=...
  * @desc      get chinese word from dictionary
  * @access    Public
  */
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   const word = req.query.word;
   let re, lexicon;
 
   try {
     if (word.match(/[\wа-я]+/gi)) {
-      re = new RegExp("[\\s|\\]](" + word + ")");
-      lexicon = await Dictionary.find({ russian: { $regex: re, $options: "gm" } });
+      re = new RegExp('[\\s|\\]](' + word + ')');
+      lexicon = await Dictionary.find({ russian: { $regex: re, $options: 'gm' } });
     } else {
-      re = new RegExp("^(" + word + ")");
-      lexicon = await Dictionary.find({ chinese: { $regex: re, $options: "i" } });
+      re = new RegExp('^(' + word + ')');
+      lexicon = await Dictionary.find({ chinese: { $regex: re, $options: 'i' } });
     }
 
     res.json(lexicon);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -39,7 +39,7 @@ router.get("/", async (req, res) => {
  * @desc      get words with previously edited values
  * @access    Public
  */
-router.get("/editedWords", getEditedWords);
+router.get('/editedWords', getEditedWords);
 
 /**
  * @route       POST api/dictionary
@@ -65,7 +65,7 @@ router.get("/editedWords", getEditedWords);
  * @desc      Add one word to dictionary
  * @access    Private
  */
-router.post("/", auth, async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const alreadyExists = await Dictionary.find({ chinese: req.body.chinese });
 
@@ -74,7 +74,7 @@ router.post("/", auth, async (req, res) => {
     }
 
     await new Dictionary(req.body).save();
-    res.send("Data inserted");
+    res.send('Data inserted');
   } catch (err) {
     console.log(err);
   }
@@ -85,7 +85,7 @@ router.post("/", auth, async (req, res) => {
  * @desc      Get all the words in a text
  * @access    Public
  */
-router.post("/allwords", async (req, res) => {
+router.post('/allwords', async (req, res) => {
   const { isShortRu } = req.query;
   try {
     const words = await getAllWords(req.body);
@@ -97,33 +97,33 @@ router.post("/allwords", async (req, res) => {
     res.json(words);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
 function shortenTranslation(txt) {
-  if (!txt) return "";
-  txt = txt.replace(/\[\*\]\[ex\].*?\[\/ex\]\[\/\*\]/g, "").replaceAll("[m3][/m]", "");
+  if (!txt) return '';
+  txt = txt.replace(/\[\*\]\[ex\].*?\[\/ex\]\[\/\*\]/g, '').replaceAll('[m3][/m]', '');
   if (txt.length > 400) {
-    const ind = txt.slice(200, txt.length).indexOf("[m2]");
+    const ind = txt.slice(200, txt.length).indexOf('[m2]');
     txt = txt.slice(0, ind + 200);
   }
   return txt;
 }
 
-router.post("/wordsForParag", auth, async (req, res) => {
+router.post('/wordsForParag', auth, async (req, res) => {
   const userId = req.user?.id;
 
   try {
     res.json(await getWordsForParag({ ...req.body, userId }));
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
 // @todo сделать в виде одного запроса
-router.post("/allWordsForVideo", async (req, res) => {
+router.post('/allWordsForVideo', async (req, res) => {
   try {
     const promises = req.body.map((arr) => getAllWords(arr));
     const segmentedSubs = await Promise.all(promises);
@@ -136,22 +136,22 @@ router.post("/allWordsForVideo", async (req, res) => {
     res.json(segmentedSubs);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
-router.post("/getTextPinyin", auth, async (req, res) => {
+router.post('/getTextPinyin', auth, async (req, res) => {
   try {
     const promises = req.body.map((word) => mdbg.get(word).catch((e) => word));
     const resArr = await Promise.all(promises); // some long words might stay as is
 
     const splitWordsArr = resArr.map((el) => {
-      if (el.hasOwnProperty("definitions") || el.length === 1) return el;
-      return el.split("");
+      if (el.hasOwnProperty('definitions') || el.length === 1) return el;
+      return el.split('');
     });
 
     const singleCharPromises = splitWordsArr.flat(1).map((el) => {
-      if (!el.hasOwnProperty("definitions")) {
+      if (!el.hasOwnProperty('definitions')) {
         return mdbg.get(el).catch((e) => el);
       }
       return el;
@@ -160,17 +160,17 @@ router.post("/getTextPinyin", auth, async (req, res) => {
     const readyObjects = await Promise.all(singleCharPromises);
 
     const pinyinText = readyObjects.map((el) => {
-      if (!el.hasOwnProperty("definitions")) return el;
+      if (!el.hasOwnProperty('definitions')) return el;
 
       const innerArr = Object.values(el.definitions);
-      const pyObj = innerArr.find((x) => x.hasOwnProperty("pinyin"));
+      const pyObj = innerArr.find((x) => x.hasOwnProperty('pinyin'));
       return pyObj.pinyin;
     });
 
     const allChunks = [];
     let chunk = [];
     pinyinText.forEach((x) => {
-      if (x !== "\n") {
+      if (x !== '\n') {
         chunk.push(x);
       } else {
         allChunks.push(chunk);
@@ -182,7 +182,7 @@ router.post("/getTextPinyin", auth, async (req, res) => {
     res.json(allChunks);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -191,18 +191,18 @@ router.post("/getTextPinyin", auth, async (req, res) => {
  * @desc    GET all words that have...
  * @access  Public
  */
-router.get("/certain/:word", async (req, res) => {
+router.get('/certain/:word', async (req, res) => {
   const word = req.params.word;
   let re, lexicon;
 
   // console.log(word);
   try {
-    if (word === "eng") {
+    if (word === 'eng') {
       re = new RegExp(/^[\p{Latin}\p{Common}]+$/);
       lexicon = await Dictionary.find({
-        russian: { $regex: re, $options: "g" },
+        russian: { $regex: re, $options: 'g' },
       }).countDocuments();
-    } else if (word === "pinyin") {
+    } else if (word === 'pinyin') {
       re = new RegExp(/ --| _/);
       lexicon = await Dictionary.find({
         pinyin: { $regex: re },
@@ -221,7 +221,7 @@ router.get("/certain/:word", async (req, res) => {
     res.json(lexicon);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -230,7 +230,7 @@ router.get("/certain/:word", async (req, res) => {
  * @desc      GET all words from text SEGMENTED
  * @access    Public
  */
-router.post("/segmenter", (req, res) => {
+router.post('/segmenter', (req, res) => {
   res.send(Hanzi.segment(req.body.text));
 });
 
@@ -285,7 +285,7 @@ router.post("/segmenter", (req, res) => {
  * @desc    update translation or pinyin for a word
  * @access  Private
  */
-router.put("/updateWord", auth, updateWord);
+router.put('/updateWord', auth, updateWord);
 
 /**
  * @method  PUT
@@ -293,6 +293,6 @@ router.put("/updateWord", auth, updateWord);
  * @route   api/dictionary/rollbackUpdate?wordId...&prevInd=
  * @access  Private
  */
-router.put("/rollbackUpdate", auth, rollbackUpdate);
+router.put('/rollbackUpdate', auth, rollbackUpdate);
 
 module.exports = router;

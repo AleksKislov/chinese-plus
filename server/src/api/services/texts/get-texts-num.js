@@ -1,7 +1,7 @@
-const Text = require("../../../models/Text");
+const Text = require('../../../models/Text');
 
 async function getTextsNum(req, res) {
-  const allTexts = await Text.find().select("isApproved audioSrc");
+  const allTexts = await Text.find().select('isApproved audioSrc');
   const withAudio = allTexts.filter((x) => x.audioSrc).length;
   const approvedTexts = allTexts.filter((x) => x.isApproved);
   const total = allTexts.length;

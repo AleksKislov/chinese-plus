@@ -1,6 +1,6 @@
-const User = require("../../models/User");
-const uuid = require("uuid");
-const bcrypt = require("bcryptjs");
+const User = require('../../models/User');
+const uuid = require('uuid');
+const bcrypt = require('bcryptjs');
 
 const googleStrategy = {
   strategyOptions: {
@@ -13,7 +13,7 @@ const googleStrategy = {
     try {
       const user = await User.findOne({
         $or: [{ googleId: profile.id }, { email: profile.emails[0].value }],
-      }).select("-password");
+      }).select('-password');
 
       if (user && user.googleId) {
         done(null, user);
@@ -24,8 +24,8 @@ const googleStrategy = {
           {
             $set: { googleId: profile.id },
           },
-          { new: true }
-        ).select("-password");
+          { new: true },
+        ).select('-password');
         done(null, updatedUser);
       } else {
         const newUser = new User({

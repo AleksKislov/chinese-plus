@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // new hsk vocab lvls 1 to 7,8,9
 const HskwordSchema = new mongoose.Schema({
@@ -10,4 +10,4 @@ const HskwordSchema = new mongoose.Schema({
   opt: { type: String },
 });
 
-module.exports = Hskword = mongoose.model("hskword", HskwordSchema);
+module.exports = Hskword = mongoose.model('hskword', HskwordSchema);

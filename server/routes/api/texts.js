@@ -1,7 +1,7 @@
-const router = require("express").Router();
-const auth = require("../../middleware/auth");
+const router = require('express').Router();
+const auth = require('../../middleware/auth');
 // const adminAuth = require("../../middleware/admin-auth");
-const { check } = require("express-validator");
+const { check } = require('express-validator');
 
 const {
   createTxt,
@@ -21,8 +21,8 @@ const {
   getMarkedTexts,
   editChineseArr,
   getSimilarTexts,
-} = require("../../src/api/services/texts");
-const adminAuth = require("../../middleware/admin-auth");
+} = require('../../src/api/services/texts');
+const adminAuth = require('../../middleware/admin-auth');
 
 /**
  * @method    POST
@@ -31,16 +31,16 @@ const adminAuth = require("../../middleware/admin-auth");
  * @access    Private
  */
 router.post(
-  "/create",
+  '/create',
   [
     auth,
     [
-      check("origintext", "Нужен текст").not().isEmpty(),
-      check("title", "Нужен заголовок").not().isEmpty(),
-      check("level", "Нужно указать уровень").not().isEmpty(),
+      check('origintext', 'Нужен текст').not().isEmpty(),
+      check('title', 'Нужен заголовок').not().isEmpty(),
+      check('level', 'Нужно указать уровень').not().isEmpty(),
     ],
   ],
-  createTxt
+  createTxt,
 );
 
 /**
@@ -49,7 +49,7 @@ router.post(
  * @desc      Update a text
  * @access    Private
  */
-router.post("/update", auth, updateTxt);
+router.post('/update', auth, updateTxt);
 
 /**
  * @method    PUT
@@ -57,7 +57,7 @@ router.post("/update", auth, updateTxt);
  * @desc      Update text's chinese_arr
  * @access    Private
  */
-router.put("/edit-chinese-arr", adminAuth, editChineseArr);
+router.put('/edit-chinese-arr', adminAuth, editChineseArr);
 
 /**
  * @method    GET
@@ -65,41 +65,41 @@ router.put("/edit-chinese-arr", adminAuth, editChineseArr);
  * @desc      get all marked texts
  * @access    Private
  */
-router.get("/marked", auth, getMarkedTexts);
+router.get('/marked', auth, getMarkedTexts);
 
 /**
  * @route     GET api/texts
  * @desc      Get ALL approved texts
  * @access    Public
  */
-router.get("/", getAllApprovedTexts);
+router.get('/', getAllApprovedTexts);
 
 /**
  * @route     GET api/texts/similar
  * @desc      Get similar texts using tags and lvl
  * @access    Public
  */
-router.get("/similar", getSimilarTexts);
+router.get('/similar', getSimilarTexts);
 
 /**
  * @route   GET api/texts/statistics
  * @desc    Get texts per user statistics info, who publish how many texts
  */
-router.get("/statistics", getTextsPerUserStats);
+router.get('/statistics', getTextsPerUserStats);
 
 // /**
 //  * @route     DELETE api/texts/:id
 //  * @desc      Delete a Text
 //  * @access    Private
 //  */
-router.delete("/delete/:id", adminAuth, deleteText);
+router.delete('/delete/:id', adminAuth, deleteText);
 
 /**
  * @route     DELETE api/texts/comment/:id/:comment_id
  * @desc      Delete a Comment of a text
  * @access    Private
  */
-router.delete("/comment/:id/:comment_id", auth, deleteComment);
+router.delete('/comment/:id/:comment_id', auth, deleteComment);
 
 /**
  * @method  GET
@@ -107,16 +107,16 @@ router.delete("/comment/:id/:comment_id", auth, deleteComment);
  * @desc    Get texts using inifinite scroll and category index
  * @access  Public
  */
-router.get("/infinite", getTextsInChunks);
+router.get('/infinite', getTextsInChunks);
 
-router.get("/not_approved", getNotApprovedTexts);
+router.get('/not_approved', getNotApprovedTexts);
 
 /**
  *  @route   GET api/texts/texts_num
  *  @desc    Get the number of texts, approved and not
  *  @access  Public
  */
-router.get("/texts_num", getTextsNum);
+router.get('/texts_num', getTextsNum);
 
 /**
  * @method  GET
@@ -124,7 +124,7 @@ router.get("/texts_num", getTextsNum);
  * @desc    Get the text by ID
  * @access  Public
  */
-router.get("/:id", getById);
+router.get('/:id', getById);
 
 /**
  * @method    GET
@@ -132,19 +132,19 @@ router.get("/:id", getById);
  * @desc      Get all the texts by user who published them
  * @access    Public
  */
-router.get("/user/:userId", getByUserId);
+router.get('/user/:userId', getByUserId);
 
 /**
  * @desc    Mark text as already read for the user
  */
-router.post("/mark_finished_texts/:id", auth, markAsRead);
-router.post("/unmark_finished_texts/:id", auth, markAsNotRead);
+router.post('/mark_finished_texts/:id', auth, markAsRead);
+router.post('/unmark_finished_texts/:id', auth, markAsNotRead);
 
 /**
  *  @route    PUT api/texts/like/:id
  *  @desc     Like a text
  *  @access   Private
  */
-router.put("/like/:id", auth, likeText);
+router.put('/like/:id', auth, likeText);
 
 module.exports = router;

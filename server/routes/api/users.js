@@ -1,22 +1,22 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const { check, validationResult } = require("express-validator");
-const auth = require("../../middleware/auth");
-const { updateOrCreate, fetchReading, encodeJWT } = require("../api/services");
+const bcrypt = require('bcryptjs');
+const { check, validationResult } = require('express-validator');
+const auth = require('../../middleware/auth');
+const { updateOrCreate, fetchReading, encodeJWT } = require('../api/services');
 
-const User = require("../../src/models/User");
+const User = require('../../src/models/User');
 /**
  * @route     POST api/users
  * @desc      Register user
  * @access    Public
  */
 router.post(
-  "/",
+  '/',
   [
-    check("name", "Name is required").not().isEmpty(),
-    check("email", "Please include a valid email").isEmail(),
-    check("password", "Please enter a password with 6 or more characters").isLength({ min: 6 }),
+    check('name', 'Name is required').not().isEmpty(),
+    check('email', 'Please include a valid email').isEmail(),
+    check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -30,8 +30,8 @@ router.post(
       let user = await User.findOne({ email });
       let namedUser = await User.findOne({ name });
 
-      if (user) return res.status(400).json({ errors: [{ msg: "Такой пользователь уже есть" }] });
-      if (namedUser) return res.status(400).json({ errors: [{ msg: "Имя уже занято" }] });
+      if (user) return res.status(400).json({ errors: [{ msg: 'Такой пользователь уже есть' }] });
+      if (namedUser) return res.status(400).json({ errors: [{ msg: 'Имя уже занято' }] });
 
       user = new User({
         name,
@@ -53,9 +53,9 @@ router.post(
       res.json({ token });
     } catch (err) {
       console.log(err.message);
-      res.status(500).send("Server error");
+      res.status(500).send('Server error');
     }
-  }
+  },
 );
 
 /**
@@ -63,7 +63,7 @@ router.post(
  * @desc      Add number of read chars into DB for this user
  * @access    Private
  */
-router.post("/read_today", auth, async (req, res) => {
+router.post('/read_today', auth, async (req, res) => {
   let { num, path, ind } = req.body;
   num = parseInt(num);
   ind = parseInt(ind);
@@ -84,8 +84,8 @@ router.post("/read_today", auth, async (req, res) => {
       {
         $set: { read_today_num: user.read_today_num + num, read_today_arr: newObj },
       },
-      { new: true }
-    ).select("-password");
+      { new: true },
+    ).select('-password');
 
     updateOrCreate({
       user_id,
@@ -96,7 +96,7 @@ router.post("/read_today", auth, async (req, res) => {
     res.json(updatedUser);
   } catch (err) {
     console.log(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -105,7 +105,7 @@ router.post("/read_today", auth, async (req, res) => {
  * @desc      Remove read paragraph from user DB
  * @access    Private
  */
-router.post("/unread_today", auth, async (req, res) => {
+router.post('/unread_today', auth, async (req, res) => {
   let { num, path, ind } = req.body;
   num = parseInt(num);
   ind = parseInt(ind);
@@ -119,7 +119,7 @@ router.post("/unread_today", auth, async (req, res) => {
       const indToDelete = newObj[path].indexOf(ind);
       newObj[path].splice(indToDelete, 1);
     } else {
-      throw new Error("No such text here!");
+      throw new Error('No such text here!');
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -127,8 +127,8 @@ router.post("/unread_today", auth, async (req, res) => {
       {
         $set: { read_today_num: user.read_today_num - num, read_today_arr: newObj },
       },
-      { new: true }
-    ).select("-password");
+      { new: true },
+    ).select('-password');
 
     updateOrCreate({
       user_id,
@@ -139,7 +139,7 @@ router.post("/unread_today", auth, async (req, res) => {
     res.json(updatedUser);
   } catch (err) {
     console.log(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -148,7 +148,7 @@ router.post("/unread_today", auth, async (req, res) => {
  * @desc      Set daily reaing goal
  * @access    Private
  */
-router.post("/daily_reading_goal/:num", auth, async (req, res) => {
+router.post('/daily_reading_goal/:num', auth, async (req, res) => {
   const daily_reading_goal = parseInt(req.params.num);
   const user_id = req.user.id;
 
@@ -158,8 +158,8 @@ router.post("/daily_reading_goal/:num", auth, async (req, res) => {
       {
         $set: { daily_reading_goal },
       },
-      { new: true }
-    ).select("-password");
+      { new: true },
+    ).select('-password');
 
     updateOrCreate({
       user_id,
@@ -170,11 +170,11 @@ router.post("/daily_reading_goal/:num", auth, async (req, res) => {
     res.json(updatedUser);
   } catch (err) {
     console.log(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
-router.get("/reading_results", auth, async (req, res) => {
+router.get('/reading_results', auth, async (req, res) => {
   const user_id = req.user.id;
   const arr = await fetchReading(user_id);
 
@@ -187,10 +187,10 @@ router.get("/reading_results", auth, async (req, res) => {
  * @desc      Reset today reading history
  * @access    Private
  */
-router.post("/reset_reading", async (req, res) => {
-  const token = req.header("special-token");
+router.post('/reset_reading', async (req, res) => {
+  const token = req.header('special-token');
   if (!(token && token === process.env.SPECIAL_TOKEN)) {
-    return res.status(401).json({ msg: "No token, authorization denied" });
+    return res.status(401).json({ msg: 'No token, authorization denied' });
   }
 
   try {
@@ -198,12 +198,12 @@ router.post("/reset_reading", async (req, res) => {
       {},
       {
         $set: { read_today_num: 0, read_today_arr: {} },
-      }
+      },
     );
-    res.json({ ok: "200 OK" });
+    res.json({ ok: '200 OK' });
   } catch (err) {
     console.log(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -213,12 +213,12 @@ router.post("/reset_reading", async (req, res) => {
  * @desc      Change avatar
  * @access    Private
  */
-router.post("/set_my_avatar", auth, async (req, res) => {
+router.post('/set_my_avatar', auth, async (req, res) => {
   const userId = req.user.id;
   const { type, background, seed } = req.body;
 
   if (!seed || !type || !background) {
-    return res.status(400).json({ errors: [{ msg: "Не хватает параметров" }] });
+    return res.status(400).json({ errors: [{ msg: 'Не хватает параметров' }] });
   }
 
   const newAvatar = { type, background, seed };
@@ -228,7 +228,7 @@ router.post("/set_my_avatar", auth, async (req, res) => {
     res.json(newAvatar);
   } catch (err) {
     console.log(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -237,16 +237,16 @@ router.post("/set_my_avatar", auth, async (req, res) => {
  * @desc      Get one user info
  * @access    Public
  */
-router.get("/:userId", async (req, res) => {
+router.get('/:userId', async (req, res) => {
   try {
-    const profile = await User.findById(req.params.userId).select("name newAvatar _id role");
-    if (!profile) return res.status(400).json({ msg: "Profile not found" });
+    const profile = await User.findById(req.params.userId).select('name newAvatar _id role');
+    if (!profile) return res.status(400).json({ msg: 'Profile not found' });
     res.json(profile);
   } catch (err) {
     console.error(err.message);
 
-    if (err.kind == "ObjectId") return res.status(400).json({ msg: "Profile not found" });
-    res.status(500).send("Server error");
+    if (err.kind == 'ObjectId') return res.status(400).json({ msg: 'Profile not found' });
+    res.status(500).send('Server error');
   }
 });
 

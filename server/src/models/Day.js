@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const DaySchema = new mongoose.Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: 'user',
   },
   have_read: { type: Number },
   daily_goal: { type: Number },
@@ -13,4 +13,4 @@ const DaySchema = new mongoose.Schema({
   },
 });
 
-module.exports = Day = mongoose.model("day", DaySchema);
+module.exports = Day = mongoose.model('day', DaySchema);

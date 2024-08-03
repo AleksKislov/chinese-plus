@@ -1,5 +1,5 @@
-const Day = require("../../../src/models/Day");
-const errHandler = (err) => console.log("Reading day error: ", err);
+const Day = require('../../../src/models/Day');
+const errHandler = (err) => console.log('Reading day error: ', err);
 
 /**
  * @param {object} newData  - { user_id<string>, have_read<int>, daily_goal<int> }
@@ -19,7 +19,7 @@ const updateOrCreate = async (newData) => {
     {
       $set: { have_read, daily_goal },
     },
-    { new: true }
+    { new: true },
   );
   return { day, created: false };
 };

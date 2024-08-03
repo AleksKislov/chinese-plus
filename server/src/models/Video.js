@@ -1,14 +1,14 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const VideoSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: "user" },
+  user: { type: Schema.Types.ObjectId, ref: 'user' },
   title: { type: String, required: true },
   desc: { type: String },
   category: {
     type: String,
-    enum: ["misc", "song", "ads", "cartoon", "science", "documentary", "news"],
-    default: "misc",
+    enum: ['misc', 'song', 'ads', 'cartoon', 'science', 'documentary', 'news'],
+    default: 'misc',
   },
   cnSubs: [
     {
@@ -30,7 +30,7 @@ const VideoSchema = new Schema({
     {
       comment: {
         type: Schema.Types.ObjectId,
-        ref: "comment",
+        ref: 'comment',
       },
     },
   ],
@@ -38,7 +38,7 @@ const VideoSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "user",
+        ref: 'user',
       },
       name: { type: String },
     },
@@ -46,4 +46,4 @@ const VideoSchema = new Schema({
   date: { type: Date, default: Date.now },
 });
 
-module.exports = Video = mongoose.model("video", VideoSchema);
+module.exports = Video = mongoose.model('video', VideoSchema);

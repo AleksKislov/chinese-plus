@@ -1,25 +1,25 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const auth = require("../../middleware/auth");
+const auth = require('../../middleware/auth');
 // const puppeteer = require("puppeteer");
 
-const UserWord = require("../../src/models/UserWord");
+const UserWord = require('../../src/models/UserWord');
 
 /**
  * @route     GET api/userwords
  * @desc      Get all the words for personal vocabulary
  * @access    Private
  */
-router.get("/", auth, async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const words = await UserWord.find({ user: req.user.id }).sort({ date: -1 });
 
-    if (words.length <= 0) return res.status(400).json({ msg: "There are no words yet" });
+    if (words.length <= 0) return res.status(400).json({ msg: 'There are no words yet' });
 
     res.json(words);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -28,7 +28,7 @@ router.get("/", auth, async (req, res) => {
  * @desc      Add new word to your vocab
  * @access    Private
  */
-router.post("/", auth, async (req, res) => {
+router.post('/', auth, async (req, res) => {
   const { chinese, translation, pinyin } = req.body;
 
   let newWords = {};
@@ -44,7 +44,7 @@ router.post("/", auth, async (req, res) => {
     return res.json(words);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -53,14 +53,14 @@ router.post("/", auth, async (req, res) => {
  * @desc    Delete word from your vocab
  * @access  Private
  */
-router.delete("/:chinese", auth, async (req, res) => {
+router.delete('/:chinese', auth, async (req, res) => {
   const chinese = req.params.chinese;
   try {
     await UserWord.findOneAndDelete({ chinese, user: req.user.id });
-    return res.json({ msg: "Word removed" });
+    return res.json({ msg: 'Word removed' });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 

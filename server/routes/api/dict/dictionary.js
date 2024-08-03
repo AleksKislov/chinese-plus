@@ -1,4 +1,4 @@
-const { LongestMatchSegmenter } = require("./segmenter.js");
+const { LongestMatchSegmenter } = require('./segmenter.js');
 const HANZI_DICT = {};
 const checkIfWordExists = (word) => HANZI_DICT[word];
 const segmenter = new LongestMatchSegmenter(checkIfWordExists);
@@ -15,7 +15,7 @@ function fillDict(arr) {
 
 setTimeout(async () => {
   try {
-    fillDict(await Dictionary.aggregate([{ $group: { _id: "$chinese" } }]));
+    fillDict(await Dictionary.aggregate([{ $group: { _id: '$chinese' } }]));
   } catch (err) {
     console.log(err);
   }

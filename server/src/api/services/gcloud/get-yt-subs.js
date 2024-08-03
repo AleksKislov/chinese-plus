@@ -1,8 +1,8 @@
-const { getSubtitles } = require("youtube-captions-scraper");
+const { getSubtitles } = require('youtube-captions-scraper');
 
 async function getYtSubs(req, res) {
   const { videoId, lang } = req.query;
-  if (!videoId) throw new Error("No videoId provided");
+  if (!videoId) throw new Error('No videoId provided');
 
   const captions = await getSubtitles({
     videoID: videoId,

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const BookauthorSchema = new Schema({
@@ -13,10 +13,10 @@ const BookauthorSchema = new Schema({
     {
       book: {
         type: Schema.Types.ObjectId,
-        ref: "books"
-      }
-    }
-  ]
+        ref: 'books',
+      },
+    },
+  ],
 });
 
-module.exports = Bookauthor = mongoose.model("bookauthor", BookauthorSchema);
+module.exports = Bookauthor = mongoose.model('bookauthor', BookauthorSchema);

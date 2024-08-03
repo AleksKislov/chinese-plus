@@ -1,14 +1,14 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const auth = require("../../middleware/auth");
-const { check, validationResult } = require("express-validator");
+const auth = require('../../middleware/auth');
+const { check, validationResult } = require('express-validator');
 
-const Book = require("../../src/models/Book");
-const Bookauthor = require("../../src/models/Bookauthor");
-const Chapterpage = require("../../src/models/Chapterpage");
-const Comment = require("../../src/models/Comment");
+const Book = require('../../src/models/Book');
+const Bookauthor = require('../../src/models/Bookauthor');
+const Chapterpage = require('../../src/models/Chapterpage');
+const Comment = require('../../src/models/Comment');
 
-router.post("/new_author", auth, async (req, res) => {
+router.post('/new_author', auth, async (req, res) => {
   const { nameRus, nameChinese, yearBorn, yearDead, about, pictureUrl, isChinese } = req.body;
 
   const newAuthor = new Bookauthor({
@@ -26,13 +26,13 @@ router.post("/new_author", auth, async (req, res) => {
     res.json(author);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
 router.post(
-  "/new_book",
-  [auth, [check("author", "Нужен автор!").not().isEmpty()]],
+  '/new_book',
+  [auth, [check('author', 'Нужен автор!').not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -52,7 +52,7 @@ router.post(
       pictureUrl,
     } = req.body;
 
-    genre = genre.split(",").map((word) => word.trim());
+    genre = genre.split(',').map((word) => word.trim());
 
     try {
       const bookAuthor = await Bookauthor.findById(author);
@@ -83,14 +83,14 @@ router.post(
       res.json(book);
     } catch (err) {
       console.error(err);
-      res.status(500).send("Server error");
+      res.status(500).send('Server error');
     }
-  }
+  },
 );
 
 router.post(
-  "/new_chapter",
-  [auth, [check("book", "Нужно указать книгу!").not().isEmpty()]],
+  '/new_chapter',
+  [auth, [check('book', 'Нужно указать книгу!').not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -115,9 +115,9 @@ router.post(
       res.json(editedBook);
     } catch (err) {
       console.error(err);
-      res.status(500).send("Server error");
+      res.status(500).send('Server error');
     }
-  }
+  },
 );
 
 /**
@@ -126,8 +126,8 @@ router.post(
  * @access    Private
  */
 router.post(
-  "/new_chapterpage",
-  [auth, [check("origintext", "Нужен текст").not().isEmpty()]],
+  '/new_chapterpage',
+  [auth, [check('origintext', 'Нужен текст').not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -150,13 +150,13 @@ router.post(
           {
             $set: newFields,
           },
-          { new: true }
+          { new: true },
         );
 
         return res.json(updatedPage);
       } catch (err) {
         console.error(err);
-        res.status(500).send("Server error");
+        res.status(500).send('Server error');
       }
     } else
       try {
@@ -177,57 +177,57 @@ router.post(
         await Book.findByIdAndUpdate(
           book,
           {
-            $push: { "contents.$[outer].pages": page._id },
+            $push: { 'contents.$[outer].pages': page._id },
           },
-          { arrayFilters: [{ "outer.chapterId": parseInt(chapter) }] }
+          { arrayFilters: [{ 'outer.chapterId': parseInt(chapter) }] },
         );
 
         res.json(page);
       } catch (err) {
         console.error(err);
-        res.status(500).send("Server error");
+        res.status(500).send('Server error');
       }
-  }
+  },
 );
 
-router.get("/allbooks", async (req, res) => {
+router.get('/allbooks', async (req, res) => {
   try {
-    const books = await Book.find().sort({ date: -1 }).select("-contents");
+    const books = await Book.find().sort({ date: -1 }).select('-contents');
     res.json(books);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
-router.get("/get_book/:bookId", async (req, res) => {
+router.get('/get_book/:bookId', async (req, res) => {
   try {
     const book = await Book.findById(req.params.bookId);
 
-    if (!book) return res.status(404).json({ msg: "Text not found" });
+    if (!book) return res.status(404).json({ msg: 'Text not found' });
 
     res.json(book);
   } catch (err) {
     console.error(err);
-    if (err.kind === "ObjectId") return res.status(404).json({ msg: "Book not found!" });
-    res.status(500).send("Server error");
+    if (err.kind === 'ObjectId') return res.status(404).json({ msg: 'Book not found!' });
+    res.status(500).send('Server error');
   }
 });
 
-router.get("/get_page/:pageId", async (req, res) => {
+router.get('/get_page/:pageId', async (req, res) => {
   try {
     const page = await Chapterpage.findById(req.params.pageId);
-    if (!page) return res.status(404).json({ msg: "Страница не найдена" });
+    if (!page) return res.status(404).json({ msg: 'Страница не найдена' });
     res.json(page);
   } catch (err) {
     console.error(err);
-    if (err.kind === "ObjectId") return res.status(404).json({ msg: "Страница не найдена" });
-    res.status(500).send("Server error");
+    if (err.kind === 'ObjectId') return res.status(404).json({ msg: 'Страница не найдена' });
+    res.status(500).send('Server error');
   }
 });
 
 // calculate chapter length
-router.post("/chapter_length", async (req, res) => {
+router.post('/chapter_length', async (req, res) => {
   let { bookId, chapterId } = req.body;
 
   try {
@@ -238,7 +238,7 @@ router.post("/chapter_length", async (req, res) => {
       _id: {
         $in: allPagesId,
       },
-    }).select("-origintext -translation -chinese_arr");
+    }).select('-origintext -translation -chinese_arr');
     // console.log(allPagesId);
     const chapterLength = allPages.reduce((acc, currentVal) => acc + currentVal.length, 0);
 
@@ -246,21 +246,21 @@ router.post("/chapter_length", async (req, res) => {
     const editedBook = await Book.updateOne(
       {
         _id: bookId,
-        "contents.chapterId": chapterId,
+        'contents.chapterId': chapterId,
       },
       {
-        $set: { "contents.$.length": chapterLength },
-      }
+        $set: { 'contents.$.length': chapterLength },
+      },
     );
     res.json(editedBook);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
 // calculate book total length
-router.post("/book_length", async (req, res) => {
+router.post('/book_length', async (req, res) => {
   let { bookId } = req.body;
 
   try {
@@ -273,20 +273,20 @@ router.post("/book_length", async (req, res) => {
       {
         $set: { length },
       },
-      { new: true }
+      { new: true },
     );
 
     res.json(editedBook);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
 // @route   DELETE api/books/comment/:id/:comment_id
 // @desc    Delete a Comment from book page
 // access   Private
-router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
+router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
   try {
     const post = await Chapterpage.findById(req.params.id);
     const comment = await Comment.findById(req.params.comment_id);
@@ -299,7 +299,7 @@ router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
     res.json(post.comments_id);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 

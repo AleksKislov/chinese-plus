@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // old hsk words, lvls 1 to 6
 const LexiconSchema = new mongoose.Schema({
@@ -19,4 +19,4 @@ const LexiconSchema = new mongoose.Schema({
   },
 });
 
-module.exports = Lexicon = mongoose.model("lexicon", LexiconSchema);
+module.exports = Lexicon = mongoose.model('lexicon', LexiconSchema);

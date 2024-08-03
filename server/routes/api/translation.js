@@ -1,7 +1,7 @@
-const router = require("express").Router();
+const router = require('express').Router();
 
-const auth = require("../../middleware/auth");
-const { getPics, getTranslation } = require("../../src/api/services/translation");
+const auth = require('../../middleware/auth');
+const { getPics, getTranslation } = require('../../src/api/services/translation');
 
 /**
  * @method    POST
@@ -9,7 +9,7 @@ const { getPics, getTranslation } = require("../../src/api/services/translation"
  * @desc      Get google translation for Chinese txt
  * @access    Private
  */
-router.post("/", auth, getTranslation);
+router.post('/', auth, getTranslation);
 
 /**
  * @method    GET
@@ -17,7 +17,7 @@ router.post("/", auth, getTranslation);
  * @desc      Get pictures for the text from unsplash
  * @access    Private
  */
-router.get("/unsplash/:pic_theme", auth, getPics);
+router.get('/unsplash/:pic_theme', auth, getPics);
 
 // router.post("/rus_to_zh", auth, async (req, res) => {
 //   const translation = await translateRuText(req.body.text);

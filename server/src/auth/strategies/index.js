@@ -1,3 +1,3 @@
-const { googleStrategy } = require("./google");
+const { googleStrategy } = require('./google');
 
 module.exports = { googleStrategy };

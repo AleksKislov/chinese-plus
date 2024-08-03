@@ -1,7 +1,7 @@
-const Text = require("../../../models/Text");
-const Video = require("../../../models/Video");
-const Donate = require("../../../models/Donate");
-const { shortUserInfoFields } = require("../../consts");
+const Text = require('../../../models/Text');
+const Video = require('../../../models/Video');
+const Donate = require('../../../models/Donate');
+const { shortUserInfoFields } = require('../../consts');
 
 // @todo
 // const ReputationValueMap = {
@@ -20,13 +20,13 @@ const { shortUserInfoFields } = require("../../consts");
  */
 async function getTextsPerUserStats(req, res) {
   const [texts, videos, allDonates] = await Promise.all([
-    Text.find({ isApproved: 1 }).select("user -_id").populate("user", shortUserInfoFields),
-    Video.find({ isApproved: 1 }).select("user -_id").populate("user", shortUserInfoFields),
+    Text.find({ isApproved: 1 }).select('user -_id').populate('user', shortUserInfoFields),
+    Video.find({ isApproved: 1 }).select('user -_id').populate('user', shortUserInfoFields),
     Donate.find({ userId: { $ne: null } })
-      .select("userId -_id")
-      .populate("userId", shortUserInfoFields),
+      .select('userId -_id')
+      .populate('userId', shortUserInfoFields),
   ]);
-  const withoutAdmin = (x) => x.user.name !== "admin";
+  const withoutAdmin = (x) => x.user.name !== 'admin';
   const textsAuthors = texts.filter(withoutAdmin);
   const videoAuthors = videos.filter(withoutAdmin);
   const donates = allDonates.filter((x) => x.userId);

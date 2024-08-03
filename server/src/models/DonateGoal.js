@@ -1,15 +1,15 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const DonateGoalSchema = new mongoose.Schema({
   donateIds: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "donate",
+      ref: 'donate',
     },
   ],
   priority: { type: Number, default: 1, enum: [1, 2, 3] },
   title: { type: String },
-  currency: { type: String, default: "RUB" },
+  currency: { type: String, default: 'RUB' },
   amountNeeded: { type: Number },
   amountCollected: { type: Number, default: 0 },
   desc: { type: String, required: true },
@@ -22,4 +22,4 @@ const DonateGoalSchema = new mongoose.Schema({
   },
 });
 
-module.exports = DonateGoal = mongoose.model("donategoal", DonateGoalSchema);
+module.exports = DonateGoal = mongoose.model('donategoal', DonateGoalSchema);

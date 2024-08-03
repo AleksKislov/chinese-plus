@@ -1,10 +1,10 @@
-const { validationResult } = require("express-validator");
-const { Notify } = require("../_misc");
-const Hanzi = require("../../../../routes/api/dict/dictionary");
+const { validationResult } = require('express-validator');
+const { Notify } = require('../_misc');
+const Hanzi = require('../../../../routes/api/dict/dictionary');
 
 const CHARS_PER_PAGE = 800;
-const Text = require("../../../models/Text");
-const { shortUserInfoFields } = require("../../consts");
+const Text = require('../../../models/Text');
+const { shortUserInfoFields } = require('../../consts');
 
 async function createTxt(req, res) {
   const errors = validationResult(req);
@@ -52,7 +52,7 @@ async function createTxt(req, res) {
   });
 
   const text = await newText.save();
-  const resultTxt = await Text.findById(text._id).populate("user", shortUserInfoFields);
+  const resultTxt = await Text.findById(text._id).populate('user', shortUserInfoFields);
 
   Notify.admin(`New TEXT from ${resultTxt.user.name}. Title: ${title}`);
   return res.json(resultTxt);
@@ -64,7 +64,7 @@ async function createTxt(req, res) {
  * @return {Page[]}
  */
 function getPagesForLngTxt(origintext, translation) {
-  let pageText = "";
+  let pageText = '';
   let pageTranslation = [];
   let pageOriginTxt = [];
   let pages = [];
@@ -72,12 +72,12 @@ function getPagesForLngTxt(origintext, translation) {
   for (let i = 0; i < origintext.length; i++) {
     if (pageText.length >= CHARS_PER_PAGE) {
       pages.push(new Page(Hanzi.segment(pageText.trim()), pageTranslation, pageOriginTxt));
-      pageText = "";
+      pageText = '';
       pageTranslation = [];
       pageOriginTxt = [];
     }
 
-    pageText += origintext[i] + "\n";
+    pageText += origintext[i] + '\n';
     pageTranslation.push(translation[i]);
     pageOriginTxt.push(origintext[i]);
   }

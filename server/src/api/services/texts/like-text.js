@@ -1,5 +1,5 @@
-const Text = require("../../../models/Text");
-const User = require("../../../models/User");
+const Text = require('../../../models/Text');
+const User = require('../../../models/User');
 
 async function likeText(req, res) {
   const user = await User.findById(req.user.id);

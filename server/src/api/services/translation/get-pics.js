@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require('axios');
 
 async function getPics(req, res) {
   const headers = { Authorization: process.env.UNSPLASH_APIKEY };

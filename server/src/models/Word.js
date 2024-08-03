@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const WordSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: 'user',
   },
   word_id: {
     type: Number,
@@ -26,4 +26,4 @@ const WordSchema = new mongoose.Schema({
   },
 });
 
-module.exports = Word = mongoose.model("word", WordSchema);
+module.exports = Word = mongoose.model('word', WordSchema);

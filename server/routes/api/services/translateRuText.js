@@ -1,5 +1,5 @@
-require("dotenv").config({ path: ".env.prod" });
-const { Translate } = require("@google-cloud/translate").v2;
+require('dotenv').config({ path: '.env.prod' });
+const { Translate } = require('@google-cloud/translate').v2;
 const translate = new Translate();
 
 /**
@@ -7,10 +7,10 @@ const translate = new Translate();
  * a single piece of text, or an array of strings for translating
  * multiple texts.
  */
-const translateRuText = async text => {
+const translateRuText = async (text) => {
   let [translations] = await translate
-    .translate(text, "zh")
-    .catch(err => console.log("ОШИБКА GCLOUD TRANSLATE", err));
+    .translate(text, 'zh')
+    .catch((err) => console.log('ОШИБКА GCLOUD TRANSLATE', err));
   translations = Array.isArray(translations) ? translations : [translations];
 
   // console.log(translation);

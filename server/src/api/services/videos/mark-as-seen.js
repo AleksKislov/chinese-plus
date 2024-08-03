@@ -1,8 +1,8 @@
-const User = require("../../../models/User");
+const User = require('../../../models/User');
 
 async function markAsSeen(req, res) {
-  let mongoMethod = "$addToSet";
-  if (req.path.includes("unmark")) mongoMethod = "$pull";
+  let mongoMethod = '$addToSet';
+  if (req.path.includes('unmark')) mongoMethod = '$pull';
 
   const userId = req.user.id;
   const videoId = req.params.id;
@@ -10,8 +10,8 @@ async function markAsSeen(req, res) {
   const updatedUser = await User.findByIdAndUpdate(
     userId,
     { [mongoMethod]: { seenVideos: videoId } },
-    { new: true }
-  ).select("-password");
+    { new: true },
+  ).select('-password');
 
   return res.json(updatedUser);
 }

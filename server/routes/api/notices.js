@@ -1,8 +1,8 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const adminAuth = require("../../middleware/admin-auth");
+const adminAuth = require('../../middleware/admin-auth');
 
-const Notice = require("../../src/models/Notice");
+const Notice = require('../../src/models/Notice');
 
 // router.post("/", async (req, res) => {
 //   try {
@@ -22,20 +22,20 @@ const Notice = require("../../src/models/Notice");
 //   }
 // });
 
-router.post("/edit", adminAuth, async (req, res) => {
+router.post('/edit', adminAuth, async (req, res) => {
   try {
     const { text, display, color, link } = req.body;
     const [notice] = await Notice.find();
     await Notice.updateOne(
       { _id: notice._id },
       { $set: { text, display, color, link } },
-      { upsert: true, runValidators: true }
+      { upsert: true, runValidators: true },
     );
 
-    res.json({ msg: "done" });
+    res.json({ msg: 'done' });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
@@ -44,14 +44,14 @@ router.post("/edit", adminAuth, async (req, res) => {
  * @desc      Get the notice (one)
  * @access    Public
  */
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const notices = await Notice.find();
 
     res.json(notices[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 

@@ -1,4 +1,4 @@
-const { Translate } = require("@google-cloud/translate").v2;
+const { Translate } = require('@google-cloud/translate').v2;
 const translate = new Translate();
 
 /**
@@ -8,8 +8,8 @@ const translate = new Translate();
  */
 const googleTranslate = async (text) => {
   let [translations] = await translate
-    .translate(text, "ru")
-    .catch((err) => console.log("ОШИБКА GCLOUD TRANSLATE", err));
+    .translate(text, 'ru')
+    .catch((err) => console.log('ОШИБКА GCLOUD TRANSLATE', err));
   translations = Array.isArray(translations) ? translations : [translations];
 
   return translations;

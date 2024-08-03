@@ -1,17 +1,17 @@
-const axios = require("axios");
-const qs = require("qs");
-const { isDevelopment } = require("../../../../server");
+const axios = require('axios');
+const qs = require('qs');
+const { isDevelopment } = require('../../../../server');
 
 const tgUrl = process.env.TELEGRAM_NOTICE_URL;
 const testChatId = process.env.TEST_CHAT_ID;
 const tgChannelId = isDevelopment ? testChatId : process.env.TGCHANNEL_ID;
-const vkChannelId = isDevelopment ? "" : process.env.VKCHANNEL_ID;
+const vkChannelId = isDevelopment ? '' : process.env.VKCHANNEL_ID;
 const vkToken = process.env.VKCHANNEL_TOKEN;
 
 class Notify {
   static admin(txt) {
     return axios
-      .get(encodeURI(`${tgUrl}&text=${txt.replace(/<[^>]*>?/gm, "")}&chat_id=${testChatId}`))
+      .get(encodeURI(`${tgUrl}&text=${txt.replace(/<[^>]*>?/gm, '')}&chat_id=${testChatId}`))
       .catch(console.log);
   }
 
@@ -21,16 +21,16 @@ class Notify {
 
   static vkPublic(message) {
     const data = qs.stringify({
-      v: "5.131",
+      v: '5.131',
       owner_id: vkChannelId,
       access_token: vkToken,
       message,
     });
 
     const config = {
-      method: "post",
-      url: "https://api.vk.com/method/wall.post",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      method: 'post',
+      url: 'https://api.vk.com/method/wall.post',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       data,
     };
 
@@ -47,22 +47,22 @@ function getTxt(content, isVk) {
   const obj = {};
   const id = content._id;
   const userName = content.user.name;
-  const base = "https://www.chineseplus.club/";
+  const base = 'https://www.chineseplus.club/';
 
   if (content.cnSubs) {
     const link = `${base}watch/videos/${id}`;
-    obj.head = getMsgHeader("video", link, content.lvl, userName, isVk);
+    obj.head = getMsgHeader('video', link, content.lvl, userName, isVk);
     obj.desc = content.desc;
     obj.link = link;
   } else if (content.origintext) {
     const link = `${base}read/texts/${id}`;
-    obj.head = getMsgHeader("text", link, content.level, userName, isVk);
+    obj.head = getMsgHeader('text', link, content.level, userName, isVk);
     obj.desc = content.description;
     obj.link = link;
   } else {
     const link = `${base}feedback/${id}`;
-    obj.head = getMsgHeader("post", link, null, null, isVk);
-    obj.desc = content.text.replace(/\<br \/>/g, "\n");
+    obj.head = getMsgHeader('post', link, null, null, isVk);
+    obj.desc = content.text.replace(/\<br \/>/g, '\n');
     obj.link = link;
   }
 
@@ -74,29 +74,29 @@ function getTxt(content, isVk) {
 function getMsgHeader(contentType, link, lvl, userName, isVk) {
   if (isVk) {
     switch (contentType) {
-      case "video":
+      case 'video':
         return `🎬 Новое видео от пользователя ${userName}! ${
-          lvl ? `Уровень: ${getStars(lvl)}` : ""
+          lvl ? `Уровень: ${getStars(lvl)}` : ''
         }`;
-      case "text":
+      case 'text':
         return `📚 Новый текст от пользователя ${userName}! ${
-          lvl ? `Уровень: ${getStars(lvl)}` : ""
+          lvl ? `Уровень: ${getStars(lvl)}` : ''
         }`;
-      case "post":
+      case 'post':
         return `🚀 Новости от админа!`;
     }
   }
 
   switch (contentType) {
-    case "video":
+    case 'video':
       return `🎬 Новое <a href='${link}'>видео</a> от пользователя ${userName}! ${
-        lvl ? `Уровень: ${getStars(lvl)}` : ""
+        lvl ? `Уровень: ${getStars(lvl)}` : ''
       }`;
-    case "text":
+    case 'text':
       return `📚 Новый <a href='${link}'>текст</a> от пользователя ${userName}! ${
-        lvl ? `Уровень: ${getStars(lvl)}` : ""
+        lvl ? `Уровень: ${getStars(lvl)}` : ''
       }`;
-    case "post":
+    case 'post':
       return `🚀 <a href='${link}'>Новости</a> от админа!`;
   }
 }
@@ -111,14 +111,14 @@ function writeMsg({ head, title, desc, link }, isVk) {
       ? `
 
 🔗 ${link}`
-      : ""
+      : ''
   }`;
 }
 
 function getStars(lvl) {
-  let s = "";
+  let s = '';
   for (let i = 0; i < lvl; i++) {
-    s += "⭐";
+    s += '⭐';
   }
   return s;
 }

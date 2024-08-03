@@ -1,20 +1,20 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const Comment = require("../../src/models/Comment");
-const Post = require("../../src/models/Post");
-const Text = require("../../src/models/Text");
-const Video = require("../../src/models/Video");
-const Donate = require("../../src/models/Donate");
-const User = require("../../src/models/User");
-const Config = require("../../src/models/Config");
+const Comment = require('../../src/models/Comment');
+const Post = require('../../src/models/Post');
+const Text = require('../../src/models/Text');
+const Video = require('../../src/models/Video');
+const Donate = require('../../src/models/Donate');
+const User = require('../../src/models/User');
+const Config = require('../../src/models/Config');
 
 const VERSION = process.env.BE_VERSION;
 
-router.get("/version", (req, res) => {
+router.get('/version', (req, res) => {
   res.json({ v: VERSION });
 });
 
-router.get("/pulse", async (req, res) => {
+router.get('/pulse', async (req, res) => {
   const currentDate = new Date();
   const last2MonthsStartDate = new Date(currentDate.getTime() - 2 * 28 * 24 * 60 * 60 * 1000);
   const last1MonthStartDate = new Date(currentDate.getTime() - 28 * 24 * 60 * 60 * 1000);
@@ -22,31 +22,31 @@ router.get("/pulse", async (req, res) => {
 
   try {
     const [comments, posts, texts, videos, donates, users] = await Promise.all([
-      Comment.find(searchCond).select("date user"),
-      Post.find(searchCond).select("date user"),
-      Text.find({ ...searchCond, isApproved: 1 }).select("date user"),
-      Video.find({ ...searchCond, isApproved: 1 }).select("date user"),
+      Comment.find(searchCond).select('date user'),
+      Post.find(searchCond).select('date user'),
+      Text.find({ ...searchCond, isApproved: 1 }).select('date user'),
+      Video.find({ ...searchCond, isApproved: 1 }).select('date user'),
       Donate.find({
         createdAt: { $gte: last2MonthsStartDate },
-      }).select("createdAt userId"),
-      User.find(searchCond).select("date"),
+      }).select('createdAt userId'),
+      User.find(searchCond).select('date'),
     ]);
 
     res.json({
-      comment: getMetricsFor2Months(comments, "date", currentDate, last1MonthStartDate),
-      post: getMetricsFor2Months(posts, "date", currentDate, last1MonthStartDate),
-      text: getMetricsFor2Months(texts, "date", currentDate, last1MonthStartDate),
-      video: getMetricsFor2Months(videos, "date", currentDate, last1MonthStartDate),
-      donate: getMetricsFor2Months(donates, "createdAt", currentDate, last1MonthStartDate),
-      user: getMetricsFor2Months(users, "date", currentDate, last1MonthStartDate),
+      comment: getMetricsFor2Months(comments, 'date', currentDate, last1MonthStartDate),
+      post: getMetricsFor2Months(posts, 'date', currentDate, last1MonthStartDate),
+      text: getMetricsFor2Months(texts, 'date', currentDate, last1MonthStartDate),
+      video: getMetricsFor2Months(videos, 'date', currentDate, last1MonthStartDate),
+      donate: getMetricsFor2Months(donates, 'createdAt', currentDate, last1MonthStartDate),
+      user: getMetricsFor2Months(users, 'date', currentDate, last1MonthStartDate),
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 
-function getMetricsFor2Months(arr, datePropName = "date", currentDate, last1MonthStartDate) {
+function getMetricsFor2Months(arr, datePropName = 'date', currentDate, last1MonthStartDate) {
   const lastMonth = getCountForLastMonth(arr, datePropName, currentDate, last1MonthStartDate);
   return {
     lastMonth: lastMonth,
@@ -61,13 +61,13 @@ function getCountForLastMonth(arr, datePropName, currentDate, last1MonthStartDat
   }).length;
 }
 
-router.get("/configs", async (req, res) => {
+router.get('/configs', async (req, res) => {
   try {
     const conf = await Config.find();
     return res.json(conf);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send('Server error');
   }
 });
 

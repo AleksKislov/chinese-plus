@@ -1,7 +1,7 @@
-const Video = require("../../../models/Video");
+const Video = require('../../../models/Video');
 
 async function getVideosNum(req, res) {
-  const allVideos = await Video.find().select("isApproved");
+  const allVideos = await Video.find().select('isApproved');
   const approvedVideos = allVideos.filter((x) => x.isApproved);
   const total = allVideos.length;
   const approved = approvedVideos.length;

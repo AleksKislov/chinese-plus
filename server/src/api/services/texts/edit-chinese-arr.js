@@ -1,8 +1,8 @@
-const Text = require("../../../models/Text");
+const Text = require('../../../models/Text');
 
 async function editChineseArr(req, res) {
   const { textId, chineseArr, isLongText, pageToEdit, originText } = req.body;
-  if (!chineseArr || !Array.isArray(chineseArr)) throw new Error("No chinese arr to update");
+  if (!chineseArr || !Array.isArray(chineseArr)) throw new Error('No chinese arr to update');
 
   const isLngTxtEdit = isLongText && Number.isInteger(pageToEdit);
 
@@ -15,7 +15,7 @@ async function editChineseArr(req, res) {
   }
 
   await Text.findByIdAndUpdate(textId, { $set: newFields }, { new: true });
-  return res.json({ status: "done" });
+  return res.json({ status: 'done' });
 }
 
 module.exports = { editChineseArr };

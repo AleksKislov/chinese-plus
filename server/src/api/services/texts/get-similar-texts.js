@@ -1,8 +1,8 @@
-const Text = require("../../../models/Text");
+const Text = require('../../../models/Text');
 
 async function getSimilarTexts(req, res) {
   const level = +req.query.lvl || 1;
-  const tags = req.query.tags?.split(",") || [];
+  const tags = req.query.tags?.split(',') || [];
   const isApproved = 1;
 
   const texts = await Text.aggregate([
@@ -18,7 +18,7 @@ async function getSimilarTexts(req, res) {
     },
     {
       $unionWith: {
-        coll: "texts",
+        coll: 'texts',
         pipeline: [
           {
             $match: {
@@ -38,7 +38,7 @@ async function getSimilarTexts(req, res) {
         _id: 1,
         title: 1,
         audioSrc: 1,
-        picUrl: "$pic_url",
+        picUrl: '$pic_url',
       },
     },
   ]);

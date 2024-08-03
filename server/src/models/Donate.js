@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const DonateSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: 'user',
     required: false,
   },
   operationId: { type: String, required: true, unique: true },
@@ -17,4 +17,4 @@ const DonateSchema = new mongoose.Schema({
   },
 });
 
-module.exports = Donate = mongoose.model("donate", DonateSchema);
+module.exports = Donate = mongoose.model('donate', DonateSchema);

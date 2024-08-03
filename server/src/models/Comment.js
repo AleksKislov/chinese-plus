@@ -1,14 +1,14 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const CommentSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: "user",
+    ref: 'user',
   },
   post_id: {
     type: Schema.Types.ObjectId,
-    ref: "post",
+    ref: 'post',
   },
   destination: { type: String }, // WHERE a comment sits
   path: { type: String },
@@ -22,7 +22,7 @@ const CommentSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: "user",
+        ref: 'user',
       },
       name: { type: String },
     },
@@ -33,4 +33,4 @@ const CommentSchema = new Schema({
   },
 });
 
-module.exports = Comment = mongoose.model("comment", CommentSchema);
+module.exports = Comment = mongoose.model('comment', CommentSchema);

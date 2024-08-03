@@ -1,14 +1,14 @@
-const axios = require("axios");
-const router = require("express").Router();
+const axios = require('axios');
+const router = require('express').Router();
 
-const Donate = require("../../src/models/Donate");
-const DonateGoal = require("../../src/models/DonateGoal");
-const { shortUserInfoFields } = require("../../src/api/consts");
+const Donate = require('../../src/models/Donate');
+const DonateGoal = require('../../src/models/DonateGoal');
+const { shortUserInfoFields } = require('../../src/api/consts');
 
-const DONATE_LABEL_START = "supportChinesePlus";
-const LABEL_SEPARATOR = "#";
+const DONATE_LABEL_START = 'supportChinesePlus';
+const LABEL_SEPARATOR = '#';
 
-router.post("/history", async (req, res) => {
+router.post('/history', async (req, res) => {
   const records = +req.query.records || 30;
   try {
     const [yooMoneyDonates, mongoDonates, oldGoals] = await Promise.all([
@@ -61,7 +61,7 @@ router.post("/history", async (req, res) => {
   }
 });
 
-router.get("/goals", async (_req, res) => {
+router.get('/goals', async (_req, res) => {
   try {
     const [financialGoals, notFinancialGoal] = await Promise.all([
       getGoals(1, true),
@@ -82,7 +82,7 @@ async function getGoals(lim = 0, onlyNotFinished = false) {
   const filters = { isActive: true };
   if (onlyNotFinished) filters.isFinished = false;
   return DonateGoal.find(filters, undefined, limit)
-    .select("-donateIds -isActive")
+    .select('-donateIds -isActive')
     .sort({ isFinished: 1, priority: -1 });
 }
 
@@ -98,7 +98,7 @@ async function getNotFinancialGoal() {
       return notFinancialGoals[0];
     }
   } catch (err) {
-    console.log("[TG ERR]", err.message);
+    console.log('[TG ERR]', err.message);
     return null;
   }
 }
@@ -122,24 +122,24 @@ function getNewDonates(yooMoneyDonates, mongoDonates) {
 async function getYooMoneyDonates(records = 30) {
   const headers = {
     Authorization: `Bearer ${process.env.YOO_MONEY_TOKEN}`,
-    "Content-Type": "application/x-www-form-urlencoded",
+    'Content-Type': 'application/x-www-form-urlencoded',
   };
 
-  const historyUrl = "https://yoomoney.ru/api/operation-history";
+  const historyUrl = 'https://yoomoney.ru/api/operation-history';
   const params = { records /* type: "deposition" */ };
 
   const { data } = await axios.post(historyUrl, params, { headers });
 
   return data.operations.filter(
-    (x) => x.direction === "in" && x.status === "success" && x.label?.includes(DONATE_LABEL_START)
+    (x) => x.direction === 'in' && x.status === 'success' && x.label?.includes(DONATE_LABEL_START),
   );
 }
 
 async function getMongoDonates(withPopulate) {
   if (!withPopulate) return Donate.find().sort({ createdAt: -1 });
   return Donate.find()
-    .select("-label -datetime -operationId")
-    .populate("userId", shortUserInfoFields)
+    .select('-label -datetime -operationId')
+    .populate('userId', shortUserInfoFields)
     .sort({ createdAt: -1 });
 }
 

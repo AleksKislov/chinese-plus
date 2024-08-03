@@ -1,4 +1,4 @@
-const Lexicon = require("../../../models/Lexicon");
+const Lexicon = require('../../../models/Lexicon');
 
 async function getRandomHskByLvl(req, res) {
   const level = Number(req.query.hsk_level) || 1;
