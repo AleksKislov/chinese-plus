@@ -11,7 +11,7 @@ node_modules
 # Cache
 .cache
 .mf
-.vscode
+#.vscode
 .rollup.cache
 tsconfig.tsbuildinfo
 
