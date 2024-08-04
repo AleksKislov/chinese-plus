@@ -1,8 +1,10 @@
 const axios = require('axios');
 
+const YT_BASE_URL = 'https://www.googleapis.com/youtube/v3/';
+
 const YT_URLS = {
-  captions: `${process.env.YT_BASE_URL}captions?key=${process.env.GC_API_KEY}`,
-  info: `${process.env.YT_BASE_URL}videos?key=${process.env.GC_API_KEY}`,
+  captions: `${YT_BASE_URL}captions?key=${process.env.GC_API_KEY}`,
+  info: `${YT_BASE_URL}videos?key=${process.env.GC_API_KEY}`,
 };
 
 async function getYtInfo(req, res) {
