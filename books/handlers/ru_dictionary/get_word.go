@@ -72,6 +72,7 @@ func GetWord(c *fiber.Ctx) error {
 	} else {
 		response.Word = &ruWord
 	}
+	log.Print(response)
 
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
@@ -107,13 +108,16 @@ func checkRuWord(text string) ([]PossibleWord, error) {
 	}
 
 	// Limit replacements to 10 if there are more
-	if len(parsed.Matches) > 0 && len(parsed.Matches[0].Replacements) > 10 {
-		parsed.Matches[0].Replacements = parsed.Matches[0].Replacements[:10]
-	}
+	if len(parsed.Matches) > 0 {
+		// Limit replacements to 10 if there are more
+		if len(parsed.Matches[0].Replacements) > 10 {
+			parsed.Matches[0].Replacements = parsed.Matches[0].Replacements[:10]
+		}
 
-	for ind, wordObj := range parsed.Matches[0].Replacements {
-		result[ind].Value = wordObj.Value
-		result[ind].CanBeFound = false
+		for ind, wordObj := range parsed.Matches[0].Replacements {
+			result[ind].Value = wordObj.Value
+			result[ind].CanBeFound = false
+		}
 	}
 
 	return result, nil

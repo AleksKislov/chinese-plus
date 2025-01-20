@@ -8,17 +8,31 @@ export const useEditChineseArr = globalAction$((body, ev) => {
   return ApiService.put(`/api/texts/edit-chinese-arr`, body, token, {});
 });
 
-type EditChineseArrProps = { chineseArr: string[]; modalId: string; textId: ObjectId };
+type EditChineseArrProps = {
+  chineseArr: string[];
+  modalId: string;
+  textId: ObjectId;
+  pageToEdit: number | null;
+  isLongTxt: boolean;
+  translation: string[] | null;
+};
 
 export const EditChineseArrModal = component$(
-  ({ chineseArr, modalId, textId }: EditChineseArrProps) => {
+  ({ chineseArr, modalId, textId, pageToEdit, isLongTxt, translation }: EditChineseArrProps) => {
     const editChineseArr = useEditChineseArr();
     const newChineseArr = useStore({ value: chineseArr.join(' ').split('\n') });
 
     const submitEdition = $(async () => {
       const readyChineseArr = newChineseArr.value.join(' \n ').split(' ').filter(Boolean);
       const originText = newChineseArr.value.map((x) => x.trim());
-      await editChineseArr.submit({ textId, chineseArr: readyChineseArr, originText });
+      await editChineseArr.submit({
+        textId,
+        chineseArr: readyChineseArr,
+        originText,
+        pageToEdit: isLongTxt ? pageToEdit : null,
+        isLongText: isLongTxt,
+        translation,
+      });
       location.reload();
     });
 
@@ -26,7 +40,7 @@ export const EditChineseArrModal = component$(
       <div class="text-base-content">
         <input type="checkbox" id={modalId} class="modal-toggle" />
         <label class="modal text-left" for={modalId}>
-          <label class="modal-box relative" for="">
+          <label class="modal-box relative w-11/12 max-w-5xl" for="">
             <label for={modalId} class="btn btn-sm btn-circle absolute right-2 top-2">
               ✕
             </label>
