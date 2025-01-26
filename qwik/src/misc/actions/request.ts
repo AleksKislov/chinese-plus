@@ -47,7 +47,7 @@ class ApiServiceFactory {
       }
       return await res.json();
     } catch (err) {
-      console.log(err);
+      console.log('[fetch fail] for ', this._baseUrl + path, err);
       return defaultVal;
     }
   }

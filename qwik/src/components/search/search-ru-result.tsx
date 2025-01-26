@@ -22,7 +22,7 @@ export const SearchRuResult = component$(({ ruWord, showExamples }: SearchRuResu
               <li key={ind}>
                 {x.canBeFound ? (
                   <Link
-                    href={'/search?ru=' + x.value}
+                    href={'/search?q=' + x.value}
                     class="link link-hover link-secondary font-bold"
                   >
                     {x.value}

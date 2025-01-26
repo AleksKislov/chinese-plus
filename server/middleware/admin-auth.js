@@ -5,7 +5,7 @@ module.exports = function (req, res, next) {
   const token = req.header('x-auth-token');
 
   if (isDevelopment) {
-    req.user = { id: process.env.SNUM23_ID };
+    req.user = { id: process.env.DEV_USER_ID };
     return next();
   }
 

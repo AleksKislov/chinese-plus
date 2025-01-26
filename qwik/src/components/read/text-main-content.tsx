@@ -145,9 +145,12 @@ export const TextMainContent = component$(
 
         {isAdmin && (
           <EditChineseArrModal
-            chineseArr={chineseArr}
+            chineseArr={isLongTxt ? pages[curPage].chinese_arr : chineseArr}
+            translation={isLongTxt ? pages[curPage].translation : null}
             modalId={editChineseArrModalId}
             textId={textId}
+            isLongTxt={isLongTxt}
+            pageToEdit={curPage}
           />
         )}
       </MainContent>
