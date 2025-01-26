@@ -45,9 +45,11 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// @route   DELETE api/words/:word_id
-// @desc    Add new words to your hsk vocab
-// @access  Private
+/**
+ * @desc    Add new words to your hsk vocab
+ * @route   DELETE api/words/:word_id
+ * @access  Private
+ */
 router.delete('/:word_id', auth, async (req, res) => {
   // req.user.id
   const word_id = parseInt(req.params.word_id);
