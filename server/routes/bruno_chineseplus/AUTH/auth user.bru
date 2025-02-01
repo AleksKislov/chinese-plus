@@ -1,0 +1,22 @@
+meta {
+  name: auth user
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{local_server}}/api/auth
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "snum23@yandex.ru",
+    "password": "123456"
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("authToken", res.body.token)
+}

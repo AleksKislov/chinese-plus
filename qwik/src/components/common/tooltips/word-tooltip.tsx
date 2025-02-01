@@ -38,7 +38,6 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
   useVisibleTask$(({ track }) => {
     const val = track(() => getFullTranslation.value);
     const translation = (val?.[0] as DictWord).russian;
-    console.log('here', val);
     if (translation && currentWord) {
       setCurrentWord(word as DictWord, translation);
     }

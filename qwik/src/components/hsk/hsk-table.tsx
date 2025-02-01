@@ -13,7 +13,7 @@ export type PinyinAboveStore = { bool: boolean };
 type OldHskTableType = {
   hskWords: OldHskWordType[];
   userHskWords: UserOldHskWordType[];
-  isPrivate?: boolean;
+  isPrivate: boolean;
 };
 
 export const OldHskTable = component$(({ hskWords, userHskWords, isPrivate }: OldHskTableType) => {
@@ -47,10 +47,9 @@ export const OldHskTable = component$(({ hskWords, userHskWords, isPrivate }: Ol
                   key={word._id}
                   word={word as OldHskWordType}
                   hideBtnsSig={hideBtnsSig}
-                  userSelected={
-                    Array.isArray(userHskWords) &&
-                    userHskWords.some((x) => x.word_id === (word as OldHskWordType).word_id)
-                  }
+                  userSelected={userHskWords?.some(
+                    (x) => x.word_id === (word as OldHskWordType).word_id,
+                  )}
                   userWordsLen={Array.isArray(userHskWords) ? userHskWords.length : 0}
                 />
               ))}

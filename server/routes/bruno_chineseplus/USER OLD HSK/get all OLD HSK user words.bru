@@ -1,0 +1,15 @@
+meta {
+  name: get all OLD HSK user words
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{local_server}}/api/words
+  body: none
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}

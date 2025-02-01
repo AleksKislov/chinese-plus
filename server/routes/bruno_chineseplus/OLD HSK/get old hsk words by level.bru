@@ -1,0 +1,16 @@
+meta {
+  name: get old hsk words by level
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{local_server}}/api/lexicon?hsk_level=1&limit=0
+  body: none
+  auth: none
+}
+
+params:query {
+  hsk_level: 1
+  limit: 0
+}

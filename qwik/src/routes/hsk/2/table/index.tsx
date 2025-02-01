@@ -25,12 +25,12 @@ export type OldHskWordType = {
 
 export type UserOldHskWordType = {
   _id: ObjectId;
-  user: string;
   word_id: number;
   chinese: string;
   pinyin: string;
   translation: string;
   level: number;
+  hskWordId: ObjectId;
 };
 
 export const getUserHsk2Words = routeLoader$(async ({ cookie }): Promise<UserOldHskWordType[]> => {
@@ -74,7 +74,11 @@ export default component$(() => {
             isOldHsk={true}
           />
 
-          <OldHskTable hskWords={hskWords?.value || []} userHskWords={userHskWords?.value || []} />
+          <OldHskTable
+            hskWords={hskWords?.value || []}
+            userHskWords={userHskWords?.value || []}
+            isPrivate={false}
+          />
         </MainContent>
       </FlexRow>
     </>

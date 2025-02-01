@@ -1,0 +1,15 @@
+meta {
+  name: delete user word
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{local_server}}/api/words/5ec14af0a627f1215739a49f
+  body: none
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}

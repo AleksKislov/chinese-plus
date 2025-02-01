@@ -4,19 +4,24 @@ const UserWordSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
   },
-  chinese: {
-    type: String,
-  },
-  translation: {
-    type: String,
-  },
-  pinyin: {
-    type: String,
+  wordId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'dictionary',
   },
   date: {
     type: Date,
     default: Date.now,
   },
+  // deprecated fields
+  // chinese: {
+  //   type: String,
+  // },
+  // translation: {
+  //   type: String,
+  // },
+  // pinyin: {
+  //   type: String,
+  // },
 });
 
 module.exports = UserWord = mongoose.model('userword', UserWordSchema);

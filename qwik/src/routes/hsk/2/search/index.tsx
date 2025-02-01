@@ -27,7 +27,7 @@ export default component$(() => {
         </Sidebar>
 
         <MainContent>
-          <OldHskTable hskWords={hskWords?.value || []} userHskWords={[]} />
+          <OldHskTable hskWords={hskWords?.value || []} userHskWords={[]} isPrivate={false} />
         </MainContent>
       </FlexRow>
     </>
