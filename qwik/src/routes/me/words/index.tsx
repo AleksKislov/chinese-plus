@@ -52,8 +52,8 @@ export default component$(() => {
             }))}
           />
           <SearchResutlTable
-            words={userState.words.map(({ chinese, pinyin, translation, _id }) => ({
-              _id,
+            words={userState.words.map(({ chinese, pinyin, translation, dictWordId }) => ({
+              _id: dictWordId,
               chinese,
               pinyin,
               russian: translation,

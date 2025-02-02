@@ -24,6 +24,7 @@ export type UserWord = {
   pinyin: string;
   translation: string;
   date: ISODate;
+  dictWordId: ObjectId;
 };
 
 export interface User {

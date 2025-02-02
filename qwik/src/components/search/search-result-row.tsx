@@ -61,17 +61,6 @@ export const SearchResultRow = component$(
             )}
           </td>
           <td>
-            {/* {typeof word === "string" ? (
-              ""
-            ) : userWords.some((x) => x.chinese === word.chinese) ? (
-              <button class='btn btn-sm btn-warning' onClick$={() => {}}>
-                {minusSvg}
-              </button>
-            ) : (
-              <button class='btn btn-sm btn-info' onClick$={() => {}}>
-                {plusSvg}
-              </button>
-            )} */}
             <OwnWordBtn word={word as DictWord} />
           </td>
         </tr>

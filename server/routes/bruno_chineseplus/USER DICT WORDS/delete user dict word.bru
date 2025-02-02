@@ -1,0 +1,15 @@
+meta {
+  name: delete user dict word
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{local_server}}/api/userwords/5f04808d68566a15a9fed984
+  body: none
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}

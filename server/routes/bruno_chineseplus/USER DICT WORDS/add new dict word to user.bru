@@ -1,0 +1,15 @@
+meta {
+  name: add new dict word to user
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{local_server}}/api/userwords/5f0477a4172f4114b21d362e
+  body: none
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}

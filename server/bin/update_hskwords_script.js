@@ -1,6 +1,37 @@
 const mongoose = require('mongoose');
-const Word = require('../src/models/Word');
 const OldHskWord = require('../src/models/Lexicon');
+const WordSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+  },
+  wordId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'lexicon',
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+  // deprecated fields
+  word_id: {
+    type: Number,
+  },
+  level: {
+    type: Number,
+  },
+  chinese: {
+    type: String,
+  },
+  translation: {
+    type: String,
+  },
+  pinyin: {
+    type: String,
+  },
+});
+
+const Word = mongoose.model('word', WordSchema);
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/contactKeeper', {
@@ -10,9 +41,10 @@ mongoose.connect('mongodb://localhost:27017/contactKeeper', {
 
 const updateWordCollection = async () => {
   try {
-    const words = await Word.find();
+    const words = await Word.find({ wordId: { $exists: false } });
 
     console.log(words.length);
+
     for (const word of words) {
       const lexiconWord = await OldHskWord.findOne({
         level: word.level,

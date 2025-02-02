@@ -14,22 +14,6 @@ const WordSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  // deprecated fields
-  // word_id: {
-  //   type: Number,
-  // },
-  // level: {
-  //   type: Number,
-  // },
-  // chinese: {
-  //   type: String,
-  // },
-  // translation: {
-  //   type: String,
-  // },
-  // pinyin: {
-  //   type: String,
-  // },
 });
 
 module.exports = Word = mongoose.model('word', WordSchema);

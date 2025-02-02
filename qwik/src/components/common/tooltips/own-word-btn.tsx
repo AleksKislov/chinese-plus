@@ -6,21 +6,24 @@ import { ApiService } from '~/misc/actions/request';
 import { globalAction$, z, zod$ } from '@builder.io/qwik-city';
 
 export const useAddUserWord = globalAction$(
-  (body, ev) => {
+  (params, ev) => {
     const token = ev.cookie.get('token')?.value || '';
-    return ApiService.post('/api/userwords', body, token);
+    return ApiService.post('/api/userwords/' + params.wordId, {}, token);
   },
   zod$({
-    chinese: z.string(),
-    translation: z.string(),
-    pinyin: z.string(),
+    wordId: z.string(),
   }),
 );
 
-export const useDelUserWord = globalAction$((w, ev) => {
-  const token = ev.cookie.get('token')?.value || '';
-  return ApiService.delete('/api/userwords/' + w.chinese, token);
-}, zod$({ chinese: z.string() }));
+export const useDelUserWord = globalAction$(
+  (params, ev) => {
+    const token = ev.cookie.get('token')?.value || '';
+    return ApiService.delete('/api/userwords/' + params.wordId, token);
+  },
+  zod$({
+    wordId: z.string(),
+  }),
+);
 
 export const OwnWordBtn = component$(({ word }: { word: DictWord }) => {
   const addUserWord = useAddUserWord();
@@ -33,6 +36,7 @@ export const OwnWordBtn = component$(({ word }: { word: DictWord }) => {
   if (typeof word !== 'string') {
     isUserWord = loggedIn && userState.words.some((w) => w.chinese === word.chinese);
   }
+
   return (
     <>
       {isUserWord ? (
@@ -43,8 +47,9 @@ export const OwnWordBtn = component$(({ word }: { word: DictWord }) => {
           <label
             class="btn btn-sm btn-warning"
             onClick$={() => {
-              delUserWord.submit({ chinese: word.chinese });
-              userState.words = userState.words.filter((w) => w.chinese !== word.chinese);
+              const wordId = word._id;
+              delUserWord.submit({ wordId });
+              userState.words = userState.words.filter((w) => w.dictWordId !== wordId);
               alertsState.push({
                 bg: 'alert-info',
                 text: 'Слово удалено из вашего словарика',
@@ -65,11 +70,7 @@ export const OwnWordBtn = component$(({ word }: { word: DictWord }) => {
                   text: 'Авторизуйтесь для добавления слова в ваш словарик',
                 });
               }
-              addUserWord.submit({
-                chinese: word.chinese,
-                translation: word.russian,
-                pinyin: word.pinyin,
-              });
+              addUserWord.submit({ wordId: word._id });
               userState.words = [
                 ...userState.words,
                 {
@@ -78,6 +79,7 @@ export const OwnWordBtn = component$(({ word }: { word: DictWord }) => {
                   chinese: word.chinese,
                   translation: word.russian,
                   pinyin: word.pinyin,
+                  dictWordId: word._id,
                 },
               ];
               alertsState.push({
