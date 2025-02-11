@@ -102,7 +102,7 @@ const CONSTANTS = {
   },
   maxWordsPerPage: 200,
   users: {
-    vocabSize: 150,
+    vocabSize: 300,
   },
   CONTENT: {
     video: 'video',
