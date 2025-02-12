@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const OldHskWord = require('../src/models/Lexicon');
+
 const WordSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -13,7 +14,6 @@ const WordSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  // deprecated fields
   word_id: {
     type: Number,
   },
@@ -33,40 +33,53 @@ const WordSchema = new mongoose.Schema({
 
 const Word = mongoose.model('word', WordSchema);
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/contactKeeper', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const uri = 'mongodb://127.0.0.1:27017/contactKeeper?retryWrites=true&w=majority';
 
-const updateWordCollection = async () => {
+async function main() {
   try {
+    // Connect with better error handling
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 30000,
+      connectTimeoutMS: 30000,
+      socketTimeoutMS: 30000,
+    });
+
+    console.log('Connected to MongoDB');
+
     const words = await Word.find({ wordId: { $exists: false } });
+    console.log(`Found ${words.length} words to update`);
 
-    console.log(words.length);
-
+    let updated = 0;
     for (const word of words) {
-      const lexiconWord = await OldHskWord.findOne({
-        level: word.level,
-        word_id: word.word_id,
-      });
+      try {
+        const lexiconWord = await OldHskWord.findOne({
+          level: word.level,
+          word_id: word.word_id,
+        });
 
-      if (lexiconWord) {
-        // Update the Word document with the ObjectId from the Lexicon document
-        word.wordId = lexiconWord._id;
-
-        // Save the updated Word document back to the database
-        await word.save();
+        if (lexiconWord) {
+          word.wordId = lexiconWord._id;
+          await word.save();
+          updated++;
+          if (updated % 100 === 0) {
+            console.log(`Updated ${updated}/${words.length} words`);
+          }
+        }
+      } catch (error) {
+        console.error(`Error updating word (ID: ${word.word_id}, Level: ${word.level}):`, error);
+        continue;
       }
     }
 
-    console.log('Word collection updated successfully');
+    console.log(`Successfully updated ${updated} words`);
   } catch (error) {
-    console.error('Error updating Word collection:', error);
+    console.error('Script error:', error);
   } finally {
-    // Close the database connection
-    mongoose.connection.close();
+    await mongoose.connection.close();
+    console.log('MongoDB connection closed');
   }
-};
+}
 
-updateWordCollection();
+main().catch(console.error);

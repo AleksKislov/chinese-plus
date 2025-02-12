@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-// const UserWord = require('../src/models/UserWord');
 const DictWord = require('../src/models/Dictionary');
 
 const UserWordSchema = new mongoose.Schema({
@@ -15,7 +14,6 @@ const UserWordSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  // deprecated fields
   chinese: {
     type: String,
   },
@@ -29,36 +27,54 @@ const UserWordSchema = new mongoose.Schema({
 
 const UserWord = mongoose.model('userword', UserWordSchema);
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/contactKeeper', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const uri = 'mongodb://localhost:27017/contactKeeper?retryWrites=true&w=majority';
 
-const updateWordCollection = async () => {
+async function main() {
   try {
+    // Connect with better error handling
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 30000, // Increase timeout
+      connectTimeoutMS: 30000,
+      socketTimeoutMS: 30000,
+    });
+
+    console.log('Connected to MongoDB');
+
     const words = await UserWord.find({ wordId: { $exists: false } });
+    console.log(`Found ${words.length} words to update`);
 
-    console.log(words.length);
-
+    let updated = 0;
     for (const word of words) {
-      const lexiconWord = await DictWord.findOne({
-        chinese: word.chinese,
-      });
+      try {
+        const lexiconWord = await DictWord.findOne({
+          chinese: word.chinese,
+        });
 
-      if (lexiconWord) {
-        word.wordId = lexiconWord._id;
-        await word.save();
+        if (lexiconWord) {
+          word.wordId = lexiconWord._id;
+          await word.save();
+          updated++;
+          if (updated % 100 === 0) {
+            // Log progress every 100 updates
+            console.log(`Updated ${updated}/${words.length} words`);
+          }
+        }
+      } catch (error) {
+        console.error(`Error updating word ${word.chinese}:`, error);
+        continue; // Continue with next word even if one fails
       }
     }
 
-    console.log('Word collection updated successfully');
+    console.log(`Successfully updated ${updated} words`);
   } catch (error) {
-    console.error('Error updating Word collection:', error);
+    console.error('Script error:', error);
   } finally {
-    // Close the database connection
-    mongoose.connection.close();
+    await mongoose.connection.close();
+    console.log('MongoDB connection closed');
   }
-};
+}
 
-updateWordCollection();
+// Run the script
+main().catch(console.error);
