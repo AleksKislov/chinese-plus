@@ -1,13 +1,38 @@
 const mongoose = require('mongoose');
-const DictWord = require('../src/models/Dictionary');
+const scriptMongoose = new mongoose.Mongoose();
 
-const UserWordSchema = new mongoose.Schema({
+// const DictWord = require('../src/models/Dictionary');
+
+const DictionarySchema = new scriptMongoose.Schema({
+  chinese: { type: String },
+  russian: { type: String },
+  pinyin: { type: String },
+  edited: {
+    type: Boolean,
+    default: false,
+  },
+  previous: {
+    type: Array,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+const DictWord = scriptMongoose.model('dictionary', DictionarySchema);
+
+const UserWordSchema = new scriptMongoose.Schema({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: scriptMongoose.Schema.Types.ObjectId,
     ref: 'user',
   },
   wordId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: scriptMongoose.Schema.Types.ObjectId,
     ref: 'dictionary',
   },
   date: {
@@ -25,14 +50,14 @@ const UserWordSchema = new mongoose.Schema({
   },
 });
 
-const UserWord = mongoose.model('userword', UserWordSchema);
+const UserWord = scriptMongoose.model('userword', UserWordSchema);
 
 const uri = 'mongodb://localhost:27017/contactKeeper?retryWrites=true&w=majority';
 
 async function main() {
   try {
     // Connect with better error handling
-    await mongoose.connect(uri, {
+    await scriptMongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       serverSelectionTimeoutMS: 30000, // Increase timeout
@@ -71,7 +96,7 @@ async function main() {
   } catch (error) {
     console.error('Script error:', error);
   } finally {
-    await mongoose.connection.close();
+    await scriptMongoose.connection.close();
     console.log('MongoDB connection closed');
   }
 }
