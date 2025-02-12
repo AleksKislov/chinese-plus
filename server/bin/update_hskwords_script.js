@@ -1,7 +1,28 @@
 const mongoose = require('mongoose');
-const OldHskWord = require('../src/models/Lexicon');
+// const OldHskWord = require('../src/models/Lexicon');
+const scriptMongoose = new mongoose.Mongoose();
 
-const WordSchema = new mongoose.Schema({
+const LexiconSchema = new scriptMongoose.Schema({
+  word_id: {
+    type: Number,
+  },
+  level: {
+    type: Number,
+  },
+  chinese: {
+    type: String,
+  },
+  translation: {
+    type: String,
+  },
+  pinyin: {
+    type: String,
+  },
+});
+
+const OldHskWord = scriptMongoose.model('lexicon', LexiconSchema);
+
+const WordSchema = new scriptMongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
@@ -31,14 +52,14 @@ const WordSchema = new mongoose.Schema({
   },
 });
 
-const Word = mongoose.model('word', WordSchema);
+const Word = scriptMongoose.model('word', WordSchema);
 
 const uri = 'mongodb://127.0.0.1:27017/contactKeeper?retryWrites=true&w=majority';
 
 async function main() {
   try {
     // Connect with better error handling
-    await mongoose.connect(uri, {
+    await scriptMongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       serverSelectionTimeoutMS: 30000,
@@ -77,7 +98,7 @@ async function main() {
   } catch (error) {
     console.error('Script error:', error);
   } finally {
-    await mongoose.connection.close();
+    await scriptMongoose.connection.close();
     console.log('MongoDB connection closed');
   }
 }
