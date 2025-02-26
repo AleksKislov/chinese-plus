@@ -273,7 +273,7 @@ export default component$(() => {
               <td>凵</td>
               <td> </td>
               <td> </td>
-              <td>qu3</td>
+              <td>kan3</td>
               <td>раскрытый рот</td>
               <td>2</td>
             </tr>
