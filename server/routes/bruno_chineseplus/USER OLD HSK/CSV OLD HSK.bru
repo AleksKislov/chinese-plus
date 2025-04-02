@@ -1,13 +1,17 @@
 meta {
-  name: get all user dict words
+  name: CSV OLD HSK
   type: http
-  seq: 1
+  seq: 4
 }
 
 get {
-  url: {{local_server}}/api/userwords
+  url: {{local_server}}/api/words/csv
   body: none
   auth: none
+}
+
+params:query {
+  ~is_html: 1
 }
 
 headers {

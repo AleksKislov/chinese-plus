@@ -4,6 +4,7 @@ const {
   getRandomNewHskByLvl,
   getNewHskByLvlAndLimit,
   searchNewHsk,
+  downloadNewHskCsv,
   // getAudio,
 } = require('../../src/api/services/newhskwords');
 
@@ -30,5 +31,12 @@ router.get('/', getNewHskByLvlAndLimit);
  * @access    Public
  */
 router.post('/search', searchNewHsk);
+
+/**
+ * @route     GET api/newhskwords/csv/:hsk_level?is_html=1&has_examples=1
+ * @desc      download csv with chinese words from hsk vocab by level (is_html is for ANKI html representation)
+ * @access    Public
+ */
+router.get('/csv/:hsk_level', downloadNewHskCsv);
 
 module.exports = router;

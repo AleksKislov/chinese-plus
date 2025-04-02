@@ -1,0 +1,15 @@
+meta {
+  name: get new hsk csv for anki
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{local_server}}/api/newhskwords/csv/1?has_examples=1
+  body: none
+  auth: inherit
+}
+
+params:query {
+  has_examples: 1
+}

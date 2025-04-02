@@ -1,0 +1,19 @@
+meta {
+  name: CSV for dict words
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{local_server}}/api/userwords/csv
+  body: none
+  auth: none
+}
+
+params:query {
+  ~has_examples: 1
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}

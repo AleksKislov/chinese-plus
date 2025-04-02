@@ -26,7 +26,6 @@ router.post(
     const { name, password, email } = req.body;
 
     try {
-      // User exists?
       let user = await User.findOne({ email });
       let namedUser = await User.findOne({ name });
 
@@ -43,12 +42,6 @@ router.post(
       user.password = await bcrypt.hash(password, salt);
       await user.save();
 
-      // const payload = { user: { id: user.id } };
-
-      // jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
-      //   if (err) throw err;
-      //   res.json({ token });
-      // });
       const token = await encodeJWT(user._id);
       res.json({ token });
     } catch (err) {
