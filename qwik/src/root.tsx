@@ -119,6 +119,10 @@ export default component$(() => {
                 });            
             `}
         />
+
+        <RouterHead />
+      </head>
+      <body lang="en" class="text-neutral-content">
         <noscript>
           <div>
             <img
@@ -128,9 +132,6 @@ export default component$(() => {
             />
           </div>
         </noscript>
-        <RouterHead />
-      </head>
-      <body lang="en" class="text-neutral-content">
         <RouterOutlet />
         <ServiceWorkerRegister />
       </body>

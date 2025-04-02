@@ -3,7 +3,7 @@ import { featuresArr } from './features';
 import HanziWriter from 'hanzi-writer';
 import { HanziWriterSettings } from '~/routes/search';
 
-featuresArr;
+// featuresArr;
 type FeatureCardProps = {
   title: string;
   ind: number;
