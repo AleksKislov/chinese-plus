@@ -12,6 +12,7 @@ import { parseRussian } from '~/misc/helpers/translation';
 import { getTokenFromCookie } from '~/misc/actions/auth';
 import { type DocumentHead, type RequestEvent } from '@builder.io/qwik-city';
 import { CalligraphyGame } from '~/components/games/calligraphy-game';
+import { CsvCard } from '~/components/hsk/csv-card';
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
@@ -30,6 +31,7 @@ export default component$(() => {
 
         <Sidebar>
           <PrivateWordsCard wordsTotal={userState.words.length} />
+          <CsvCard level={null} isOldHsk={false} isPrivate={true} />
         </Sidebar>
 
         <MainContent>

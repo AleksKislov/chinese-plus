@@ -7,6 +7,7 @@ const downloadOldHskCsv = async (req, res) => {
 
   const allLexicon = await Lexicon.aggregate([
     { $match: { level: +hskLevel } },
+    { $sort: { word_id: 1 } },
     { $project: { _id: 0, __v: 0, word_id: 0 } },
   ]);
 

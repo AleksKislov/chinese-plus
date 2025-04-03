@@ -5,11 +5,9 @@ const downloadUserOldHskCsv = async (req, res) => {
   // const { hsk_level: hskLevel } = req.params;
   const { is_html: isHtml } = req.query;
 
-  const allWords = await OldHskUserWord.find({ user: req.user.id }).populate('wordId', [
-    'chinese',
-    'translation',
-    'pinyin',
-  ]);
+  const allWords = await OldHskUserWord.find({ user: req.user.id })
+    .populate('wordId', ['chinese', 'translation', 'pinyin'])
+    .sort({ date: -1 });
 
   if (allWords.length === 0) {
     return res.status(404).json({ msg: 'No words found' });

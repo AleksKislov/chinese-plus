@@ -8,6 +8,7 @@ const downloadNewHskCsv = async (req, res) => {
 
   const allWords = await NewHskWord.aggregate([
     { $match: { lvl: hskLevel } },
+    { $sort: { id: 1 } },
     { $project: { _id: 0, __v: 0, id: 0 } },
   ]);
 

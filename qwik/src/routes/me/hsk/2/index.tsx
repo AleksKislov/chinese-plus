@@ -12,6 +12,7 @@ import { type UserOldHskWordType } from '~/routes/hsk/2/table';
 import { PrivateHskCard } from '~/components/me/hsk/private-hsk-card';
 import { TypingGame } from '~/components/games/typing-game';
 import { CalligraphyGame } from '~/components/games/calligraphy-game';
+import { CsvCard } from '~/components/hsk/csv-card';
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
@@ -58,6 +59,7 @@ export default component$(() => {
 
         <Sidebar>
           <PrivateHskCard lvlSignal={lvlSignal} lvlWordsNumMap={lvlWordsNum.value} />
+          <CsvCard level={null} isOldHsk={true} isPrivate={true} />
         </Sidebar>
 
         <MainContent>
