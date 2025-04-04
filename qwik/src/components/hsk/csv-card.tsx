@@ -1,7 +1,6 @@
 import { $, component$ } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
 import Cookies from 'js-cookie';
-import { ApiService } from '~/misc/actions/request';
 
 type CsvCardProps = {
   level: string | null;
@@ -15,7 +14,7 @@ export const CsvCard = component$(({ level, isOldHsk, isPrivate }: CsvCardProps)
   const privateHsk = isOldHsk ? 'words/csv' : 'userwords/csv';
   const urlPath = isPrivate ? privateHsk : nonPrivateHsk + (level || '1');
 
-  const plainCsvLink = `${ApiService.baseUrl}/api/${urlPath}`;
+  const plainCsvLink = `https://chineseplus.club/api/${urlPath}`;
 
   const hskType = isNotHsk ? '' : `HSK${isOldHsk ? '2' : '3'}.0`;
 
@@ -105,6 +104,12 @@ export const CsvCard = component$(({ level, isOldHsk, isPrivate }: CsvCardProps)
             </p>
           </>
         )}
+        <div class="card-actions justify-end text-sm">
+          Зачем это{' '}
+          <Link class="link link-hover font-bold " href="/feedback/67ef7991872a080013634967">
+            нужно
+          </Link>
+        </div>
       </div>
     </div>
   );
