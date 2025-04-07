@@ -18,6 +18,8 @@ type TableRowType = {
   isPrivate?: boolean;
 };
 
+const SOUND_VERSION = '?v=1';
+
 export const pronounce = (id: number, lvl: number) => {
   const o: { [key: number]: number } = {
     1: id - 1,
@@ -28,7 +30,7 @@ export const pronounce = (id: number, lvl: number) => {
     6: id - 2501,
   };
   const wordId = o[lvl];
-  new Audio(`${CONST_URLS.myAudioURL}hsk${lvl}/${wordId}.mp3`).play();
+  new Audio(`${CONST_URLS.myAudioURL}hsk${lvl}/${wordId}.mp3${SOUND_VERSION}`).play();
 };
 
 export const useAddUserHskWord = globalAction$(

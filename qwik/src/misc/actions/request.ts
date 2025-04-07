@@ -25,6 +25,10 @@ class ApiServiceFactory {
     this._baseUrl = baseUrl;
   }
 
+  get baseUrl(): string {
+    return this._baseUrl;
+  }
+
   _getReqOptions(method: string, body: string | null, token?: string): ReqOptions {
     const options: ReqOptions = {
       headers,

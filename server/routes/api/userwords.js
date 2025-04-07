@@ -4,6 +4,8 @@ const auth = require('../../middleware/auth');
 
 const UserDictWord = require('../../src/models/UserWord');
 
+const { downloadUserDictWordsCsv } = require('../../src/api/services/userwords');
+
 /**
  * @route     GET api/userwords
  * @desc      Get all the words for personal vocabulary
@@ -76,5 +78,13 @@ router.delete('/:wordId', auth, async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+/**
+ * @method   GET
+ * @route    api/userwords/csv?has_examples=1
+ * @desc     download csv with user words from dictionary
+ * @access   Private
+ */
+router.get('/csv', auth, downloadUserDictWordsCsv);
 
 module.exports = router;

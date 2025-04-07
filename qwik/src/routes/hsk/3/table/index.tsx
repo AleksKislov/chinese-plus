@@ -11,6 +11,7 @@ import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
+import { CsvCard } from '~/components/hsk/csv-card';
 
 export type NewHskWordType = {
   _id: ObjectId;
@@ -42,6 +43,11 @@ export default component$(() => {
             isOldHsk={false}
             isForTests={false}
           />
+          <CsvCard
+            level={loc.url.searchParams.get('lvl') || '1'}
+            isOldHsk={false}
+            isPrivate={false}
+          />
           <PhoneticsLinkCard />
           <CharactersLinkCard />
         </Sidebar>
@@ -65,7 +71,8 @@ export const head: DocumentHead = {
   meta: [
     {
       name: 'description',
-      content: 'Все слова нового HSK версии 3.0 с переводом и озвучкой разбитые по уровням.',
+      content:
+        'Все слова нового HSK версии 3.0 с переводом и озвучкой разбитые по уровням. Можно скачать CSV с лексикой (например, для ANKI).',
     },
   ],
 };

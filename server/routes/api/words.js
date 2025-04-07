@@ -4,6 +4,8 @@ const auth = require('../../middleware/auth');
 
 const OldHskUserWord = require('../../src/models/Word');
 
+const { downloadUserOldHskCsv } = require('../../src/api/services/words');
+
 // @route   GET api/words
 // @desc    Get all your HSK words
 // access   Private
@@ -89,5 +91,13 @@ router.delete('/:wordId', auth, async (req, res) => {
 //     res.status(500).send('Server error');
 //   }
 // });
+
+/**
+ * @method   GET
+ * @route    api/words/csv
+ * @desc     download csv with user words from dictionary
+ * @access   Private
+ */
+router.get('/csv', auth, downloadUserOldHskCsv);
 
 module.exports = router;
