@@ -12,7 +12,7 @@ import { MoreInfoModal } from '../common/modals/more-info-modal';
 import { EditChineseArrModal } from '../common/modals/edit-chinese-arr-modal';
 import { userContext } from '~/root';
 import { FontSizeBtns } from '../common/content-cards/content-page-card';
-import { type SimilarText, type TextFromDB, type TooltipText } from '~/routes/read/texts/[id]';
+import { type TooltipParagraph, type SimilarText, type TextFromDB } from '~/routes/read/texts/[id]';
 import type { CommentType } from '../common/comments/comment-card';
 import { editWordModalId, moreInfoModalId } from '../common/tooltips/word-tooltip';
 import { Loader } from '../common/ui/loader';
@@ -20,11 +20,11 @@ import { SimilarTxtImg } from './similar-txt-img';
 import { CommentsFullBlock } from '../common/comments/comments-full-block';
 
 type TextMainContentProps = {
-  text: TextFromDB & TooltipText & { curPage: number };
+  text: TextFromDB & { curPage: number };
   comments: CommentType[];
   similarTexts?: SimilarText[] | null;
   restLoading?: boolean;
-  tooltipTxt: (string | DictWord)[][] | null;
+  tooltipTxt: TooltipParagraph[] | null;
 };
 
 export const TextMainContent = component$(

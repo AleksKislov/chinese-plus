@@ -1,12 +1,5 @@
-import { component$, useVisibleTask$ } from '@builder.io/qwik';
-import {
-  type DocumentHead,
-  routeLoader$,
-  routeAction$,
-  useLocation,
-  z,
-  zod$,
-} from '@builder.io/qwik-city';
+import { component$, useVisibleTask$, useStore } from '@builder.io/qwik';
+import { type DocumentHead, routeLoader$, routeAction$, z, zod$ } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
@@ -32,8 +25,17 @@ export type TextFromDB = TextCardInfo &
     pages: (TextContent & { _id: ObjectId })[];
   };
 
+export type TooltipSegment = string | DictWord;
+export type TooltipParagraph = TooltipSegment[]; // Tooltip data for one paragraph
 export type TooltipText = {
-  tooltipTxt: (string | DictWord)[][];
+  tooltipTxt: TooltipParagraph[]; // Array of paragraphs, each containing tooltip segments
+};
+
+export type SimilarText = {
+  _id: ObjectId;
+  audioSrc?: 0 | 1;
+  title: string;
+  picUrl: string;
 };
 
 export const getTextFromDB = (id: ObjectId): Promise<TextFromDB> => {
@@ -43,7 +45,7 @@ export const getTextFromDB = (id: ObjectId): Promise<TextFromDB> => {
 export const getWordsForTooltips = (
   wordsArr: string[],
   isShortRu?: boolean,
-): Promise<(string | DictWord)[]> => {
+): Promise<TooltipSegment> => {
   const shortRu = isShortRu ? '?isShortRu=1' : '';
   return ApiService.post(`/api/dictionary/allwords${shortRu}`, wordsArr, undefined, []);
 };
@@ -52,50 +54,44 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
   return getContentComments(WHERE.text, params.id);
 });
 
-export type SimilarText = {
-  _id: ObjectId;
-  audioSrc?: 0 | 1;
-  title: string;
-  picUrl: string;
-};
-
-// export const useGetSimilarTexts = globalAction$((params): Promise<SimilarText[]> => {
-//   const { lvl, tags } = params;
-//   return ApiService.get(`/api/texts/similar?lvl=${lvl}&tags=${tags}`, undefined, []);
-// });
-
 export const useGetText = routeLoader$(
-  async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
+  async ({ params, query }): Promise<TextFromDB & { curPage: number }> => {
     const curPage = getCurrentPageNum(query.get('pg'));
     const textFromDb = await getTextFromDB(params.id);
-    const chineseArr = getChineseArr(textFromDb, curPage);
-
-    // first load only the 1st parag
-    const firstParag = chineseArr.slice(0, chineseArr.indexOf('\n'));
-    const dbWords = await getWordsForTooltips(firstParag, true);
-    const tooltipTxt = parseTextWords(firstParag, dbWords);
-    return { ...textFromDb, tooltipTxt, curPage };
+    return { ...textFromDb, curPage };
   },
 );
 
-export const useGetRestTooltipTxt = routeAction$(
-  async (params): Promise<[(string | DictWord)[][], SimilarText[]]> => {
-    const { chineseArr, lvl, tags, isApproved } = params;
-    const dbWords = await getWordsForTooltips(chineseArr, true);
-    return Promise.all([
-      parseTextWords(chineseArr, dbWords),
-      isApproved
-        ? ApiService.get(`/api/texts/similar?lvl=${lvl}&tags=${tags}`, undefined, [])
-        : undefined,
-    ]);
+export const useGetParagraphTooltipTxt = routeAction$(
+  async (params): Promise<TooltipParagraph[]> => {
+    const { paragraphWords } = params;
+    if (!paragraphWords || paragraphWords.length === 0) {
+      return [];
+    }
+    const dbWords = await getWordsForTooltips(paragraphWords, true);
+    // Assuming parseTextWords takes words and dbWords, and returns the structured tooltip data for that paragraph
+    return parseTextWords(paragraphWords, dbWords);
   },
   zod$({
-    chineseArr: z.array(z.string()),
-    lvl: z.number().int(),
-    tags: z.array(z.string()),
-    isApproved: z.boolean(),
+    paragraphWords: z.array(z.string()),
   }),
 );
+
+// Action to get similar texts (separated)
+// export const useGetSimilarTextsAction = routeAction$(
+//   async (params): Promise<SimilarText[]> => {
+//     const { lvl, tags, isApproved } = params;
+//     if (!isApproved) {
+//       return []; // Only fetch if approved
+//     }
+//     return ApiService.get(`/api/texts/similar?lvl=${lvl}&tags=${tags.join(',')}`, undefined, []);
+//   },
+//   zod$({
+//     lvl: z.number().int(),
+//     tags: z.array(z.string()),
+//     isApproved: z.boolean(),
+//   }),
+// );
 
 export function getCurrentPageNum(pg: string | null = '1'): number {
   if (!pg) return 0;
@@ -104,19 +100,60 @@ export function getCurrentPageNum(pg: string | null = '1'): number {
 }
 
 export function getChineseArr(textFromDb: TextFromDB, curPage: number): string[] {
-  let chineseArr = textFromDb.chinese_arr;
-  if (textFromDb.pages && textFromDb.pages.length) {
-    chineseArr = textFromDb.pages[curPage].chinese_arr;
+  // Ensure pages exist and curPage is within bounds
+  if (textFromDb.pages && textFromDb.pages.length > curPage && curPage >= 0) {
+    return textFromDb.pages[curPage]?.chinese_arr || [];
   }
-  return chineseArr;
+  // Fallback to root chinese_arr if pages aren't used or curPage is invalid
+  return textFromDb.chinese_arr || [];
 }
 
+// Helper to split the flat chinese_arr into paragraphs based on '\n'
+export function splitChineseArrIntoParagraphs(chineseArr: string[]): string[][] {
+  const paragraphs: string[][] = [];
+  let currentParagraph: string[] = [];
+  for (const word of chineseArr) {
+    if (word === '\n') {
+      if (currentParagraph.length > 0) {
+        paragraphs.push(currentParagraph);
+      }
+      // Also add the newline itself if needed for structure, or handle paragraphs differently
+      // paragraphs.push(['\n']); // Option 1: Add newline as its own paragraph (unlikely)
+      currentParagraph = []; // Start new paragraph
+    } else {
+      currentParagraph.push(word);
+    }
+  }
+  // Add the last paragraph if it wasn't empty
+  if (currentParagraph.length > 0) {
+    paragraphs.push(currentParagraph);
+  }
+  return paragraphs;
+}
+
+// --- Component ---
 export default component$(() => {
-  // const getSimilar = useGetSimilarTexts();
-  const getRestParags = useGetRestTooltipTxt();
-  const text = useGetText();
+  const textLoader = useGetText();
   const comments = getComments();
-  const loc = useLocation();
+  // const loc = useLocation();
+
+  // Action hooks
+  const getParagraphTooltips = useGetParagraphTooltipTxt();
+  // const getSimilarTexts = useGetSimilarTextsAction();
+
+  // Store for all tooltip data (initialized with the first paragraph)
+  // Ensure the structure matches what TextMainContent expects
+  const tooltipStore = useStore<{
+    paragraphs: TooltipParagraph[]; // Array of paragraphs, each is an array of segments
+    isLoading: boolean;
+    similarTexts?: SimilarText[];
+    similarTextsLoading: boolean;
+  }>({
+    paragraphs: [], // Start empty, will be populated
+    isLoading: true, // Initially loading subsequent paragraphs
+    similarTexts: undefined,
+    similarTextsLoading: true,
+  });
 
   const {
     _id: textId,
@@ -133,18 +170,64 @@ export default component$(() => {
     length,
     source,
     isApproved,
-  } = text.value;
+    curPage, // Get current page from loader
+  } = textLoader.value;
 
-  useVisibleTask$(async () => {
-    const pg = loc.url.searchParams.get('pg');
-    const currentPage = getCurrentPageNum(pg);
-    await getRestParags.submit({
-      chineseArr: getChineseArr(text.value, currentPage),
-      lvl,
-      tags,
-      isApproved: Boolean(isApproved),
-    });
-  });
+  // UseVisibleTask$ for progressive loading
+  useVisibleTask$(
+    async ({ cleanup }) => {
+      tooltipStore.isLoading = true; // Set loading state
+      // tooltipStore.similarTextsLoading = true;
+
+      // 2. Get the full chinese array for the current page
+      const chineseArr = getChineseArr(textLoader.value, curPage);
+      const paragraphs = splitChineseArrIntoParagraphs(chineseArr);
+
+      // 3. Fetch Similar Texts (only once)
+      // getSimilarTexts
+      //   .submit({ lvl, tags, isApproved: Boolean(isApproved) })
+      //   .then((result) => {
+      //     tooltipStore.similarTexts = result;
+      //   })
+      //   .finally(() => {
+      //     tooltipStore.similarTextsLoading = false;
+      //   });
+
+      let isCancelled = false;
+      cleanup(() => (isCancelled = true)); // Handle component unmount during loading
+
+      // 4. Loop through remaining paragraphs (starting from the second one)
+      try {
+        for (let i = 0; i < paragraphs.length; i++) {
+          if (isCancelled) break; // Stop if component unmounted
+
+          const paragraphWords = paragraphs[i];
+          if (paragraphWords.length > 0) {
+            const result = await getParagraphTooltips.submit({ paragraphWords });
+            if (isCancelled) break;
+
+            if (result && result.value?.length > 0) {
+              // IMPORTANT: Qwik reactivity needs direct assignment or methods like push
+              // Be careful with how parseTextWords structures the result.
+              // Assuming result is TooltipParagraph[] containing data for *one* paragraph.
+              tooltipStore.paragraphs.push(...result.value);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching paragraph tooltips:', error);
+        // Handle error appropriately
+      } finally {
+        if (!isCancelled) {
+          tooltipStore.isLoading = false; // Loading finished
+        }
+      }
+
+      // Watch for changes in relevant data (e.g., page number) to re-trigger
+      // Qwik handles re-running routeLoader$ on navigation, which re-runs useVisibleTask$
+    },
+    { strategy: 'document-ready' },
+  ); // or 'document-idle'
 
   return (
     <>
@@ -166,16 +249,21 @@ export default component$(() => {
             contentType={WHERE.text}
             contentId={textId}
             textSource={source}
-            isApproved={true}
+            isApproved={Boolean(isApproved)} // Ensure boolean
           />
           <ReadResultCard />
         </Sidebar>
+        {/* Pass the store's data and loading state to the main content */}
         <TextMainContent
-          similarTexts={getRestParags.value?.[1]}
-          tooltipTxt={getRestParags.value?.[0] || text.value.tooltipTxt}
-          text={text.value}
+          // Use the combined tooltip data from the store
+          tooltipTxt={tooltipStore.paragraphs}
+          text={textLoader.value} // Pass the base text info
           comments={comments.value}
-          restLoading={getRestParags.isRunning}
+          // Indicate loading state for subsequent paragraphs
+          restLoading={tooltipStore.isLoading}
+          // Pass similar texts and their loading state
+          similarTexts={tooltipStore.similarTexts}
+          // similarTextsLoading={tooltipStore.similarTextsLoading}
         />
       </FlexRow>
     </>
