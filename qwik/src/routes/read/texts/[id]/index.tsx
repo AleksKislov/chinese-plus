@@ -1,4 +1,4 @@
-import { component$, useVisibleTask$, useStore } from '@builder.io/qwik';
+import { component$, useVisibleTask$ } from '@builder.io/qwik';
 import { type DocumentHead, routeLoader$, routeAction$, z, zod$ } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
 import { FlexRow } from '~/components/common/layout/flex-row';
@@ -55,55 +55,17 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
   return getContentComments(WHERE.text, params.id);
 });
 
-// export const useGetText = routeLoader$(
-//   async ({ params, query }): Promise<TextFromDB & { curPage: number }> => {
-//     const curPage = getCurrentPageNum(query.get('pg'));
-//     const textFromDb = await getTextFromDB(params.id);
-//     return { ...textFromDb, curPage };
-//   },
-// );
-
 export const useGetText = routeLoader$(
-  async ({
-    params,
-    query,
-  }): Promise<TextFromDB & TooltipText & { curPage: number; newLineIdx: number[] }> => {
+  async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
     const curPage = getCurrentPageNum(query.get('pg'));
     const textFromDb = await getTextFromDB(params.id);
     const chineseArr = getChineseArr(textFromDb, curPage);
-
-    // first load only the 1st half of the texts
-    const newLineIdx: number[] = [];
-    chineseArr.forEach((str, index) => {
-      if (str === '\n') newLineIdx.push(index);
-    });
-    const firstParags =
-      newLineIdx.length < 3
-        ? chineseArr
-        : chineseArr.slice(0, newLineIdx[Math.floor(newLineIdx.length / 2)]);
-    // console.log({ firstParags });
-    const dbWords = await getWordsForTooltips(firstParags, true);
-    const tooltipTxt = parseTextWords(firstParags, dbWords);
-    return { ...textFromDb, tooltipTxt, curPage, newLineIdx };
+    const dbWords = await getWordsForTooltips(chineseArr, true);
+    const tooltipTxt = parseTextWords(chineseArr, dbWords);
+    return { ...textFromDb, tooltipTxt, curPage };
   },
 );
 
-export const useGetParagraphTooltipTxt = routeAction$(
-  async (params): Promise<TooltipParagraph[]> => {
-    const { paragraphWords } = params;
-    if (!paragraphWords || paragraphWords.length === 0) {
-      return [];
-    }
-    const dbWords = await getWordsForTooltips(paragraphWords, true);
-    // Assuming parseTextWords takes words and dbWords, and returns the structured tooltip data for that paragraph
-    return parseTextWords(paragraphWords, dbWords);
-  },
-  zod$({
-    paragraphWords: z.array(z.string()),
-  }),
-);
-
-// Action to get similar texts (separated)
 export const useGetSimilarTextsAction = routeAction$(
   async (params): Promise<SimilarText[]> => {
     const { lvl, tags, textId } = params;
@@ -139,21 +101,7 @@ export function getChineseArr(textFromDb: TextFromDB, curPage: number): string[]
 export default component$(() => {
   const textLoader = useGetText();
   const comments = getComments();
-
-  const getParagraphTooltips = useGetParagraphTooltipTxt();
   const getSimilarTexts = useGetSimilarTextsAction();
-
-  const tooltipStore = useStore<{
-    paragraphs: TooltipParagraph[]; // Array of paragraphs, each is an array of segments
-    isLoading: boolean;
-    similarTexts?: SimilarText[];
-    similarTextsLoading: boolean;
-  }>({
-    paragraphs: [], // Start empty, will be populated
-    isLoading: true, // Initially loading subsequent paragraphs
-    similarTexts: undefined,
-    similarTextsLoading: true,
-  });
 
   const {
     _id: textId,
@@ -170,46 +118,13 @@ export default component$(() => {
     length,
     source,
     isApproved,
-    curPage,
-    newLineIdx,
+    tooltipTxt,
   } = textLoader.value;
 
   useVisibleTask$(
-    async ({}) => {
-      tooltipStore.paragraphs = [...textLoader.value.tooltipTxt];
-      tooltipStore.isLoading = true; // Set loading state
-
-      const chineseArr = getChineseArr(textLoader.value, curPage);
-      if (newLineIdx.length < 3) {
-        tooltipStore.isLoading = false; // Set loading state
-        return;
-      }
-
-      const secondHalfParags = chineseArr.slice(newLineIdx[Math.floor(newLineIdx.length / 2)] + 1);
-      const result = await getParagraphTooltips.submit({ paragraphWords: secondHalfParags });
-
-      // @ts-ignore
-      if (result && result.value?.length > 0) {
-        tooltipStore.paragraphs.push(...(result.value as TooltipParagraph[]));
-      }
-      tooltipStore.isLoading = false; // Set loading state
-    },
-    { strategy: 'document-ready' },
-  );
-
-  useVisibleTask$(
-    async () => {
+    () => {
       if (!isApproved) return; // Only fetch if approved
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      getSimilarTexts
-        .submit({ lvl, tags, textId })
-        .then((result) => {
-          tooltipStore.similarTexts = result.value as SimilarText[];
-        })
-        .finally(() => {
-          tooltipStore.similarTextsLoading = false;
-        });
+      getSimilarTexts.submit({ lvl, tags, textId });
     },
     { strategy: 'document-ready' },
   );
@@ -239,11 +154,11 @@ export default component$(() => {
           <ReadResultCard />
         </Sidebar>
         <TextMainContent
-          tooltipTxt={tooltipStore.paragraphs}
+          tooltipTxt={tooltipTxt}
           text={textLoader.value}
           comments={comments.value}
-          restLoading={tooltipStore.isLoading}
-          similarTexts={tooltipStore.similarTexts}
+          restLoading={false}
+          similarTexts={getSimilarTexts.value as SimilarText[]}
         />
       </FlexRow>
     </>
