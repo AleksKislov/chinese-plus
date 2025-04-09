@@ -55,11 +55,36 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
   return getContentComments(WHERE.text, params.id);
 });
 
+// export const useGetText = routeLoader$(
+//   async ({ params, query }): Promise<TextFromDB & { curPage: number }> => {
+//     const curPage = getCurrentPageNum(query.get('pg'));
+//     const textFromDb = await getTextFromDB(params.id);
+//     return { ...textFromDb, curPage };
+//   },
+// );
+
 export const useGetText = routeLoader$(
-  async ({ params, query }): Promise<TextFromDB & { curPage: number }> => {
+  async ({
+    params,
+    query,
+  }): Promise<TextFromDB & TooltipText & { curPage: number; newLineIdx: number[] }> => {
     const curPage = getCurrentPageNum(query.get('pg'));
     const textFromDb = await getTextFromDB(params.id);
-    return { ...textFromDb, curPage };
+    const chineseArr = getChineseArr(textFromDb, curPage);
+
+    // first load only the 1st half of the texts
+    const newLineIdx: number[] = [];
+    chineseArr.forEach((str, index) => {
+      if (str === '\n') newLineIdx.push(index);
+    });
+    const firstParags =
+      newLineIdx.length < 3
+        ? chineseArr
+        : chineseArr.slice(0, newLineIdx[Math.floor(newLineIdx.length / 2)]);
+    // console.log({ firstParags });
+    const dbWords = await getWordsForTooltips(firstParags, true);
+    const tooltipTxt = parseTextWords(firstParags, dbWords);
+    return { ...textFromDb, tooltipTxt, curPage, newLineIdx };
   },
 );
 
@@ -111,29 +136,6 @@ export function getChineseArr(textFromDb: TextFromDB, curPage: number): string[]
   return textFromDb.chinese_arr || [];
 }
 
-// Helper to split the flat chinese_arr into paragraphs based on '\n'
-export function splitChineseArrIntoParagraphs(chineseArr: string[]): string[][] {
-  const paragraphs: string[][] = [];
-  let currentParagraph: string[] = [];
-  for (const word of chineseArr) {
-    if (word === '\n') {
-      if (currentParagraph.length > 0) {
-        paragraphs.push(currentParagraph);
-      }
-      // Also add the newline itself if needed for structure, or handle paragraphs differently
-      // paragraphs.push(['\n']); // Option 1: Add newline as its own paragraph (unlikely)
-      currentParagraph = []; // Start new paragraph
-    } else {
-      currentParagraph.push(word);
-    }
-  }
-  // Add the last paragraph if it wasn't empty
-  if (currentParagraph.length > 0) {
-    paragraphs.push(currentParagraph);
-  }
-  return paragraphs;
-}
-
 export default component$(() => {
   const textLoader = useGetText();
   const comments = getComments();
@@ -169,41 +171,28 @@ export default component$(() => {
     source,
     isApproved,
     curPage,
+    newLineIdx,
   } = textLoader.value;
 
   useVisibleTask$(
-    async ({ cleanup }) => {
+    async ({}) => {
+      tooltipStore.paragraphs = [...textLoader.value.tooltipTxt];
       tooltipStore.isLoading = true; // Set loading state
 
-      // 2. Get the full chinese array for the current page
       const chineseArr = getChineseArr(textLoader.value, curPage);
-      const paragraphs = splitChineseArrIntoParagraphs(chineseArr);
-
-      let isCancelled = false;
-      cleanup(() => (isCancelled = true)); // Handle component unmount during loading
-
-      try {
-        for (let i = 0; i < paragraphs.length; i++) {
-          if (isCancelled) break; // Stop if component unmounted
-
-          const paragraphWords = paragraphs[i];
-          if (paragraphWords.length > 0) {
-            const result = await getParagraphTooltips.submit({ paragraphWords });
-            if (isCancelled) break;
-
-            // @ts-ignore
-            if (result && result.value?.length > 0) {
-              tooltipStore.paragraphs.push(...(result.value as TooltipParagraph[]));
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching paragraph tooltips:', error);
-      } finally {
-        if (!isCancelled) {
-          tooltipStore.isLoading = false; // Loading finished
-        }
+      if (newLineIdx.length < 3) {
+        tooltipStore.isLoading = false; // Set loading state
+        return;
       }
+
+      const secondHalfParags = chineseArr.slice(newLineIdx[Math.floor(newLineIdx.length / 2)] + 1);
+      const result = await getParagraphTooltips.submit({ paragraphWords: secondHalfParags });
+
+      // @ts-ignore
+      if (result && result.value?.length > 0) {
+        tooltipStore.paragraphs.push(...(result.value as TooltipParagraph[]));
+      }
+      tooltipStore.isLoading = false; // Set loading state
     },
     { strategy: 'document-ready' },
   );
