@@ -13,6 +13,7 @@ import { parseTextWords } from '~/misc/helpers/content';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
 import { ReadResultCard } from '~/components/me/read-result-card';
 import { TextMainContent } from '~/components/read/text-main-content';
+import { type TooltipSegment } from '~/misc/helpers/content/parse-text-words';
 
 export type TextContent = {
   origintext: string[];
@@ -25,7 +26,6 @@ export type TextFromDB = TextCardInfo &
     pages: (TextContent & { _id: ObjectId })[];
   };
 
-export type TooltipSegment = string | DictWord;
 export type TooltipParagraph = TooltipSegment[]; // Tooltip data for one paragraph
 export type TooltipText = {
   tooltipTxt: TooltipParagraph[]; // Array of paragraphs, each containing tooltip segments
@@ -36,6 +36,7 @@ export type SimilarText = {
   audioSrc?: 0 | 1;
   title: string;
   picUrl: string;
+  matchingTags?: string[];
 };
 
 export const getTextFromDB = (id: ObjectId): Promise<TextFromDB> => {
@@ -45,7 +46,7 @@ export const getTextFromDB = (id: ObjectId): Promise<TextFromDB> => {
 export const getWordsForTooltips = (
   wordsArr: string[],
   isShortRu?: boolean,
-): Promise<TooltipSegment> => {
+): Promise<TooltipSegment[]> => {
   const shortRu = isShortRu ? '?isShortRu=1' : '';
   return ApiService.post(`/api/dictionary/allwords${shortRu}`, wordsArr, undefined, []);
 };
@@ -78,20 +79,22 @@ export const useGetParagraphTooltipTxt = routeAction$(
 );
 
 // Action to get similar texts (separated)
-// export const useGetSimilarTextsAction = routeAction$(
-//   async (params): Promise<SimilarText[]> => {
-//     const { lvl, tags, isApproved } = params;
-//     if (!isApproved) {
-//       return []; // Only fetch if approved
-//     }
-//     return ApiService.get(`/api/texts/similar?lvl=${lvl}&tags=${tags.join(',')}`, undefined, []);
-//   },
-//   zod$({
-//     lvl: z.number().int(),
-//     tags: z.array(z.string()),
-//     isApproved: z.boolean(),
-//   }),
-// );
+export const useGetSimilarTextsAction = routeAction$(
+  async (params): Promise<SimilarText[]> => {
+    const { lvl, tags, textId } = params;
+
+    return ApiService.get(
+      `/api/texts/similar?lvl=${lvl}&tags=${tags.join(',')}&text_id=${textId}`,
+      undefined,
+      [],
+    );
+  },
+  zod$({
+    lvl: z.number().int(),
+    tags: z.array(z.string()),
+    textId: z.string(),
+  }),
+);
 
 export function getCurrentPageNum(pg: string | null = '1'): number {
   if (!pg) return 0;
@@ -131,18 +134,13 @@ export function splitChineseArrIntoParagraphs(chineseArr: string[]): string[][] 
   return paragraphs;
 }
 
-// --- Component ---
 export default component$(() => {
   const textLoader = useGetText();
   const comments = getComments();
-  // const loc = useLocation();
 
-  // Action hooks
   const getParagraphTooltips = useGetParagraphTooltipTxt();
-  // const getSimilarTexts = useGetSimilarTextsAction();
+  const getSimilarTexts = useGetSimilarTextsAction();
 
-  // Store for all tooltip data (initialized with the first paragraph)
-  // Ensure the structure matches what TextMainContent expects
   const tooltipStore = useStore<{
     paragraphs: TooltipParagraph[]; // Array of paragraphs, each is an array of segments
     isLoading: boolean;
@@ -170,33 +168,20 @@ export default component$(() => {
     length,
     source,
     isApproved,
-    curPage, // Get current page from loader
+    curPage,
   } = textLoader.value;
 
-  // UseVisibleTask$ for progressive loading
   useVisibleTask$(
     async ({ cleanup }) => {
       tooltipStore.isLoading = true; // Set loading state
-      // tooltipStore.similarTextsLoading = true;
 
       // 2. Get the full chinese array for the current page
       const chineseArr = getChineseArr(textLoader.value, curPage);
       const paragraphs = splitChineseArrIntoParagraphs(chineseArr);
 
-      // 3. Fetch Similar Texts (only once)
-      // getSimilarTexts
-      //   .submit({ lvl, tags, isApproved: Boolean(isApproved) })
-      //   .then((result) => {
-      //     tooltipStore.similarTexts = result;
-      //   })
-      //   .finally(() => {
-      //     tooltipStore.similarTextsLoading = false;
-      //   });
-
       let isCancelled = false;
       cleanup(() => (isCancelled = true)); // Handle component unmount during loading
 
-      // 4. Loop through remaining paragraphs (starting from the second one)
       try {
         for (let i = 0; i < paragraphs.length; i++) {
           if (isCancelled) break; // Stop if component unmounted
@@ -206,28 +191,39 @@ export default component$(() => {
             const result = await getParagraphTooltips.submit({ paragraphWords });
             if (isCancelled) break;
 
+            // @ts-ignore
             if (result && result.value?.length > 0) {
-              // IMPORTANT: Qwik reactivity needs direct assignment or methods like push
-              // Be careful with how parseTextWords structures the result.
-              // Assuming result is TooltipParagraph[] containing data for *one* paragraph.
-              tooltipStore.paragraphs.push(...result.value);
+              tooltipStore.paragraphs.push(...(result.value as TooltipParagraph[]));
             }
           }
         }
       } catch (error) {
         console.error('Error fetching paragraph tooltips:', error);
-        // Handle error appropriately
       } finally {
         if (!isCancelled) {
           tooltipStore.isLoading = false; // Loading finished
         }
       }
-
-      // Watch for changes in relevant data (e.g., page number) to re-trigger
-      // Qwik handles re-running routeLoader$ on navigation, which re-runs useVisibleTask$
     },
     { strategy: 'document-ready' },
-  ); // or 'document-idle'
+  );
+
+  useVisibleTask$(
+    async () => {
+      if (!isApproved) return; // Only fetch if approved
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      getSimilarTexts
+        .submit({ lvl, tags, textId })
+        .then((result) => {
+          tooltipStore.similarTexts = result.value as SimilarText[];
+        })
+        .finally(() => {
+          tooltipStore.similarTextsLoading = false;
+        });
+    },
+    { strategy: 'document-ready' },
+  );
 
   return (
     <>
@@ -253,17 +249,12 @@ export default component$(() => {
           />
           <ReadResultCard />
         </Sidebar>
-        {/* Pass the store's data and loading state to the main content */}
         <TextMainContent
-          // Use the combined tooltip data from the store
           tooltipTxt={tooltipStore.paragraphs}
-          text={textLoader.value} // Pass the base text info
+          text={textLoader.value}
           comments={comments.value}
-          // Indicate loading state for subsequent paragraphs
           restLoading={tooltipStore.isLoading}
-          // Pass similar texts and their loading state
           similarTexts={tooltipStore.similarTexts}
-          // similarTextsLoading={tooltipStore.similarTextsLoading}
         />
       </FlexRow>
     </>

@@ -15,8 +15,15 @@ export const SimilarTxtImg = component$(({ txt }: SimilarTxtImgProps) => {
     >
       <div class="card-body">
         <a href={getContentPath(WHERE.text, txt._id)}>
-          <h2 class="card-title hover:text-secondary">{txt.title}</h2>
+          <h2 class="card-title hover:text-secondary mb-1">{txt.title}</h2>
         </a>
+        <p class="text-sm text-gray-400">
+          {txt.matchingTags?.map((tag, ind) => (
+            <span key={ind} class="badge badge-outline mr-1">
+              {tag}
+            </span>
+          ))}
+        </p>
       </div>
     </div>
   );

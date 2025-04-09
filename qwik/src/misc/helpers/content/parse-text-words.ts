@@ -1,6 +1,8 @@
 import { itirateWordsFromDB } from './itirate-words-from-db';
 
-export const parseTextWords = (chineseArr: string[], wordsFromDB: (string | DictWord)[]) => {
+export type TooltipSegment = string | DictWord;
+
+export const parseTextWords = (chineseArr: string[], wordsFromDB: TooltipSegment[]) => {
   const newArr = itirateWordsFromDB(chineseArr, wordsFromDB);
   return chunkTxtArr(newArr).filter((chunk) => Boolean(chunk)); // array of object arrays
 };
