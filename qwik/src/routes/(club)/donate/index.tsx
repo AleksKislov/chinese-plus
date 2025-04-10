@@ -1,5 +1,5 @@
 import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
-import { type DocumentHead, routeAction$ } from '@builder.io/qwik-city';
+import { type DocumentHead, routeAction$, routeLoader$ } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { PageTitle } from '~/components/common/layout/title';
 import { ApiService } from '~/misc/actions/request';
@@ -7,6 +7,7 @@ import { DonateCard } from '~/components/donate/donate-card';
 import { DonateForm } from '~/components/donate/donate-form';
 import { DonateGoals } from '~/components/donate/donate-goals';
 import { Loader } from '~/components/common/ui/loader';
+import { DonateCrypto, type DonateWallet } from '~/components/donate/donate-crypto';
 
 export type Donate = {
   _id: ObjectId;
@@ -35,8 +36,18 @@ export const useGetDonatesAndGoals = routeAction$(
   },
 );
 
+// export const useGetDonateWallets = routeAction$(async (): Promise<DonateWallet[]> => {
+//   return ApiService.get(`/api/donate/receiving_wallets`, undefined, []);
+// });
+
+export const useGetDonateWallets = routeLoader$(async (): Promise<DonateWallet[]> => {
+  return ApiService.get(`/api/donate/receiving_wallets`, undefined, []);
+});
+
 export default component$(() => {
   const getDonatesAndGoals = useGetDonatesAndGoals();
+  const getDonateWallets = useGetDonateWallets();
+
   const donates = useSignal<Donate[] | null>(null);
   const goals = useSignal<DonateGoal[] | null>(null);
 
@@ -58,6 +69,7 @@ export default component$(() => {
       <FlexRow>
         <div class="w-full md:w-1/2 mb-3 mr-4">
           <DonateForm />
+          <DonateCrypto wallets={getDonateWallets.value as DonateWallet[]} />
           <DonateGoals goals={goals.value || []} />
         </div>
 

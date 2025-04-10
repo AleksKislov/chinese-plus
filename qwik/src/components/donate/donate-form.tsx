@@ -21,8 +21,8 @@ export const DonateForm = component$(() => {
         <div class="flex flex-col mb-1">
           <div class="label">
             <span class="label-text-alt">
-              При клике вы попадете на сайт Yoomoney (раньше: Яндекс.деньги) и сможете сделать
-              перевод картой или через свой кошелек Yoomoney
+              При клике вы попадете на сайт Yoomoney и сможете сделать перевод картой или через свой
+              кошелек Yoomoney
             </span>
           </div>
           <div class="flex lg:flex-row flex-col">
