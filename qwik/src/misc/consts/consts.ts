@@ -1,7 +1,7 @@
 const CONSTANTS = {
   appVersion: '2.30.1',
   bgTextLen: 16000,
-  smTextLen: 900,
+  smTextLen: 800,
   videoTextLen: 1500,
   symbolsToIgnore: [
     ' ',
@@ -64,7 +64,7 @@ const CONSTANTS = {
     documentary: 'документальное',
     news: 'новости',
   },
-  commentLength: 800,
+  commentLength: 900,
   commentEmojis: [
     '🔥',
     '🙏🏻',

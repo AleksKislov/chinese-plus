@@ -1,4 +1,4 @@
-import { component$, useStyles$, useVisibleTask$ } from '@builder.io/qwik';
+import { component$, useContext, useStyles$, useVisibleTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { tableMap, pinyinMap } from '~/misc/consts/pinyin';
 import styles from './table.css?inline';
@@ -6,6 +6,9 @@ import CONST_URLS from '~/misc/consts/urls';
 import { PageTitle } from '~/components/common/layout/title';
 import { infoAlertSvg } from '~/components/common/media/svg';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
+import { configContext } from '~/root';
+import YANDEX_ADS from '~/misc/consts/ads';
+import { LentaAds } from '~/components/common/ads/lenta-ads';
 
 export const initHiglights = () => {
   const tbody = document.querySelector('tbody') as HTMLTableSectionElement;
@@ -43,6 +46,9 @@ export const playAudioFromBtn = (sound: string) => {
 
 export default component$(() => {
   useStyles$(styles);
+  const configState = useContext(configContext);
+
+  const yandexAds = configState.find((x) => x.type === YANDEX_ADS.lenta);
 
   const consonansts = Object.keys(tableMap);
 
@@ -159,6 +165,8 @@ export default component$(() => {
           </tbody>
         </table>
       </div>
+
+      {yandexAds?.isActive && <LentaAds />}
     </>
   );
 });

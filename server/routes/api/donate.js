@@ -3,6 +3,7 @@ const router = require('express').Router();
 
 const Donate = require('../../src/models/Donate');
 const DonateGoal = require('../../src/models/DonateGoal');
+const DonateWallet = require('../../src/models/DonateWallet');
 const { shortUserInfoFields } = require('../../src/api/consts');
 
 const DONATE_LABEL_START = 'supportChinesePlus';
@@ -71,6 +72,15 @@ router.get('/goals', async (_req, res) => {
     const result = financialGoals;
     if (notFinancialGoal) result.push(notFinancialGoal);
     res.json(result);
+  } catch (err) {
+    res.status(500).json({ err });
+  }
+});
+
+router.get('/receiving_wallets', async (_req, res) => {
+  try {
+    const wallets = await DonateWallet.find({ isActive: true });
+    res.json(wallets);
   } catch (err) {
     res.status(500).json({ err });
   }

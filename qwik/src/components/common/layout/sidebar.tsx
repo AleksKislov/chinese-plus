@@ -3,6 +3,8 @@ import { Link } from '@builder.io/qwik-city';
 import { DonateGoalCard } from '~/components/donate/donate-goal-card';
 import { getRandElem } from '~/misc/helpers/tools';
 import { configContext, goalsContext } from '~/root';
+import { SidebarAds } from '../ads/sidebar-ads';
+import YANDEX_ADS from '~/misc/consts/ads';
 
 type SidebarType = {
   noAds?: boolean;
@@ -12,6 +14,7 @@ export const Sidebar = component$(({ noAds }: SidebarType) => {
   const configState = useContext(configContext);
   const goalsState = useContext(goalsContext);
 
+  const yandexAds = configState.find((x) => x.type === YANDEX_ADS.banner);
   const adsInfoArr = configState.filter((x) => x.type === 'ads');
   const adsInfo = adsInfoArr[Math.floor(Math.random() * adsInfoArr.length)];
 
@@ -38,6 +41,7 @@ export const Sidebar = component$(({ noAds }: SidebarType) => {
 
       <Slot />
 
+      {!noAds && yandexAds?.isActive && <SidebarAds />}
       {!noAds && randomGoal && <DonateGoalCard goal={randomGoal} isCompact={true} />}
     </div>
   );

@@ -1,0 +1,17 @@
+meta {
+  name: similar
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{local_server}}/api/texts/similar?lvl=2&tags=чэнъюй,成语,идиома,hsk4&text_id=5ff9b22d63d84f44b3dd2ecf
+  body: none
+  auth: inherit
+}
+
+params:query {
+  lvl: 2
+  tags: чэнъюй,成语,идиома,hsk4
+  text_id: 5ff9b22d63d84f44b3dd2ecf
+}

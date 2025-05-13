@@ -1,0 +1,11 @@
+meta {
+  name: wallets
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{local_server}}/api/donate/receiving_wallets
+  body: none
+  auth: inherit
+}

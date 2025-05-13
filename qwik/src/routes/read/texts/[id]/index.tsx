@@ -1,12 +1,5 @@
 import { component$, useVisibleTask$ } from '@builder.io/qwik';
-import {
-  type DocumentHead,
-  routeLoader$,
-  routeAction$,
-  useLocation,
-  z,
-  zod$,
-} from '@builder.io/qwik-city';
+import { type DocumentHead, routeLoader$, routeAction$, z, zod$ } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
@@ -20,6 +13,7 @@ import { parseTextWords } from '~/misc/helpers/content';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
 import { ReadResultCard } from '~/components/me/read-result-card';
 import { TextMainContent } from '~/components/read/text-main-content';
+import { type TooltipSegment } from '~/misc/helpers/content/parse-text-words';
 
 export type TextContent = {
   origintext: string[];
@@ -32,8 +26,17 @@ export type TextFromDB = TextCardInfo &
     pages: (TextContent & { _id: ObjectId })[];
   };
 
+export type TooltipParagraph = TooltipSegment[]; // Tooltip data for one paragraph
 export type TooltipText = {
-  tooltipTxt: (string | DictWord)[][];
+  tooltipTxt: TooltipParagraph[]; // Array of paragraphs, each containing tooltip segments
+};
+
+export type SimilarText = {
+  _id: ObjectId;
+  audioSrc?: 0 | 1;
+  title: string;
+  picUrl: string;
+  matchingTags?: string[];
 };
 
 export const getTextFromDB = (id: ObjectId): Promise<TextFromDB> => {
@@ -43,7 +46,7 @@ export const getTextFromDB = (id: ObjectId): Promise<TextFromDB> => {
 export const getWordsForTooltips = (
   wordsArr: string[],
   isShortRu?: boolean,
-): Promise<(string | DictWord)[]> => {
+): Promise<TooltipSegment[]> => {
   const shortRu = isShortRu ? '?isShortRu=1' : '';
   return ApiService.post(`/api/dictionary/allwords${shortRu}`, wordsArr, undefined, []);
 };
@@ -52,48 +55,31 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
   return getContentComments(WHERE.text, params.id);
 });
 
-export type SimilarText = {
-  _id: ObjectId;
-  audioSrc?: 0 | 1;
-  title: string;
-  picUrl: string;
-};
-
-// export const useGetSimilarTexts = globalAction$((params): Promise<SimilarText[]> => {
-//   const { lvl, tags } = params;
-//   return ApiService.get(`/api/texts/similar?lvl=${lvl}&tags=${tags}`, undefined, []);
-// });
-
 export const useGetText = routeLoader$(
   async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
     const curPage = getCurrentPageNum(query.get('pg'));
     const textFromDb = await getTextFromDB(params.id);
     const chineseArr = getChineseArr(textFromDb, curPage);
-
-    // first load only the 1st parag
-    const firstParag = chineseArr.slice(0, chineseArr.indexOf('\n'));
-    const dbWords = await getWordsForTooltips(firstParag, true);
-    const tooltipTxt = parseTextWords(firstParag, dbWords);
+    const dbWords = await getWordsForTooltips(chineseArr, true);
+    const tooltipTxt = parseTextWords(chineseArr, dbWords);
     return { ...textFromDb, tooltipTxt, curPage };
   },
 );
 
-export const useGetRestTooltipTxt = routeAction$(
-  async (params): Promise<[(string | DictWord)[][], SimilarText[]]> => {
-    const { chineseArr, lvl, tags, isApproved } = params;
-    const dbWords = await getWordsForTooltips(chineseArr, true);
-    return Promise.all([
-      parseTextWords(chineseArr, dbWords),
-      isApproved
-        ? ApiService.get(`/api/texts/similar?lvl=${lvl}&tags=${tags}`, undefined, [])
-        : undefined,
-    ]);
+export const useGetSimilarTextsAction = routeAction$(
+  async (params): Promise<SimilarText[]> => {
+    const { lvl, tags, textId } = params;
+
+    return ApiService.get(
+      `/api/texts/similar?lvl=${lvl}&tags=${tags.join(',')}&text_id=${textId}`,
+      undefined,
+      [],
+    );
   },
   zod$({
-    chineseArr: z.array(z.string()),
     lvl: z.number().int(),
     tags: z.array(z.string()),
-    isApproved: z.boolean(),
+    textId: z.string(),
   }),
 );
 
@@ -104,19 +90,18 @@ export function getCurrentPageNum(pg: string | null = '1'): number {
 }
 
 export function getChineseArr(textFromDb: TextFromDB, curPage: number): string[] {
-  let chineseArr = textFromDb.chinese_arr;
-  if (textFromDb.pages && textFromDb.pages.length) {
-    chineseArr = textFromDb.pages[curPage].chinese_arr;
+  // Ensure pages exist and curPage is within bounds
+  if (textFromDb.pages && textFromDb.pages.length > curPage && curPage >= 0) {
+    return textFromDb.pages[curPage]?.chinese_arr || [];
   }
-  return chineseArr;
+  // Fallback to root chinese_arr if pages aren't used or curPage is invalid
+  return textFromDb.chinese_arr || [];
 }
 
 export default component$(() => {
-  // const getSimilar = useGetSimilarTexts();
-  const getRestParags = useGetRestTooltipTxt();
-  const text = useGetText();
+  const textLoader = useGetText();
   const comments = getComments();
-  const loc = useLocation();
+  const getSimilarTexts = useGetSimilarTextsAction();
 
   const {
     _id: textId,
@@ -133,18 +118,16 @@ export default component$(() => {
     length,
     source,
     isApproved,
-  } = text.value;
+    tooltipTxt,
+  } = textLoader.value;
 
-  useVisibleTask$(async () => {
-    const pg = loc.url.searchParams.get('pg');
-    const currentPage = getCurrentPageNum(pg);
-    await getRestParags.submit({
-      chineseArr: getChineseArr(text.value, currentPage),
-      lvl,
-      tags,
-      isApproved: Boolean(isApproved),
-    });
-  });
+  useVisibleTask$(
+    () => {
+      if (!isApproved) return; // Only fetch if approved
+      getSimilarTexts.submit({ lvl, tags, textId });
+    },
+    { strategy: 'document-ready' },
+  );
 
   return (
     <>
@@ -166,16 +149,16 @@ export default component$(() => {
             contentType={WHERE.text}
             contentId={textId}
             textSource={source}
-            isApproved={true}
+            isApproved={Boolean(isApproved)} // Ensure boolean
           />
           <ReadResultCard />
         </Sidebar>
         <TextMainContent
-          similarTexts={getRestParags.value?.[1]}
-          tooltipTxt={getRestParags.value?.[0] || text.value.tooltipTxt}
-          text={text.value}
+          tooltipTxt={tooltipTxt}
+          text={textLoader.value}
           comments={comments.value}
-          restLoading={getRestParags.isRunning}
+          restLoading={false}
+          similarTexts={getSimilarTexts.value as SimilarText[]}
         />
       </FlexRow>
     </>

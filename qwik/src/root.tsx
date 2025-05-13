@@ -104,7 +104,6 @@ export default component$(() => {
         {/* <link rel='manifest' href='/manifest.json' /> */}
         <QwikPartytown forward={['ym']} />
         <script
-          type="text/partytown"
           dangerouslySetInnerHTML={`
                 (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
                 m[i].l=1*new Date();
@@ -119,6 +118,9 @@ export default component$(() => {
                 });            
             `}
         />
+        {/* <script>window.yaContextCb=window.yaContextCb||[]</script> */}
+        <script dangerouslySetInnerHTML={`window.yaContextCb=window.yaContextCb||[]`}></script>
+        <script src="https://yandex.ru/ads/system/context.js" async></script>
 
         <RouterHead />
       </head>
