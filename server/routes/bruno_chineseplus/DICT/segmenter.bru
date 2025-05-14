@@ -1,0 +1,17 @@
+meta {
+  name: segmenter
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{local_server}}/api/dictionary/v2/segmenter
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "text": "国内并不支持，普通人要用上它非常困难"
+  }
+}

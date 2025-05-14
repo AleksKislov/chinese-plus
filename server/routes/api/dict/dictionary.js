@@ -2,6 +2,7 @@ const { LongestMatchSegmenter } = require('./segmenter.js');
 const HANZI_DICT = {};
 const checkIfWordExists = (word) => HANZI_DICT[word];
 const segmenter = new LongestMatchSegmenter(checkIfWordExists);
+// const nodejieba = require('nodejieba');
 
 /**
  * @description load all chinese words in memory into HANZI_DICT{word: 1}
@@ -9,7 +10,11 @@ const segmenter = new LongestMatchSegmenter(checkIfWordExists);
  */
 function fillDict(arr) {
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i]?._id) HANZI_DICT[[arr[i]._id]] = 1;
+    const word = arr[i]?._id;
+    if (word) {
+      // nodejieba.insertWord(word);
+      HANZI_DICT[word] = 1;
+    }
   }
 }
 

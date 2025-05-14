@@ -39,6 +39,30 @@ class LongestMatchSegmenter {
     }
     return segments;
   }
+
+  getLongestMatchFromEnd(str) {
+    const maxLength = Math.min(str.length, 8); // Example: max word length 5
+    for (let len = maxLength; len > 0; len--) {
+      const substr = str.slice(-len);
+      if (this.dict(substr)) return substr;
+    }
+    return null;
+  }
+
+  segmentFromEnd(str) {
+    let seg;
+    const segments = [];
+
+    while (str.length > 0) {
+      // Find longest match at the end
+      seg = this.getLongestMatchFromEnd(str);
+      if (!seg) seg = str.substr(-1); // Take last char if no match found
+
+      str = str.slice(0, -seg.length); // Remove seg from end
+      segments.unshift(seg); // Insert at beginning to keep order
+    }
+    return segments;
+  }
 }
 
 module.exports = { LongestMatchSegmenter };

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Hanzi = require('./dict/dictionary');
 const mdbg = require('mdbg');
+const nodejieba = require('nodejieba');
 const { getAllWords, getWordsForParag } = require('./services');
 const auth = require('../../middleware/auth');
 
@@ -231,7 +232,18 @@ router.get('/certain/:word', async (req, res) => {
  * @access    Public
  */
 router.post('/segmenter', (req, res) => {
-  res.send(Hanzi.segment(req.body.text));
+  const text = req.body.text;
+  res.send(Hanzi.segment(text));
+});
+
+router.post('/v2/segmenter', (req, res) => {
+  const text = req.body.text;
+  res.send(Hanzi.segmentFromEnd(text));
+});
+
+router.post('/v3/segmenter', (req, res) => {
+  const text = req.body.text;
+  res.send(nodejieba.cut(text));
 });
 
 /**
