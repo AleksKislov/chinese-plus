@@ -9,7 +9,6 @@ import { QwikCityProvider, RouterOutlet, ServiceWorkerRegister } from '@builder.
 import { RouterHead } from './components/router-head/router-head';
 
 import globalStyles from './global.css?inline';
-import { QwikPartytown } from './components/partytown/partytown';
 import type { DonateGoal } from './routes/(club)/donate';
 
 export const IsLightThemeCookieName = 'isLightTheme';
@@ -102,7 +101,6 @@ export default component$(() => {
       <head>
         <meta charSet="utf-8" />
         {/* <link rel='manifest' href='/manifest.json' /> */}
-        <QwikPartytown forward={['ym']} />
         <script
           dangerouslySetInnerHTML={`
                 (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
