@@ -139,12 +139,14 @@ export default component$(() => {
                         <option disabled selected>
                           Выбрать ответ
                         </option>
-                        {collectOptions(testWords.value, word, OPTIONS_NUM).map((opt) => (
-                          <option
-                            value={opt.id}
-                            key={opt.id}
-                            dangerouslySetInnerHTML={opt.translation}
-                          ></option>
+                        {collectOptions(testWords.value, word, OPTIONS_NUM).map((opt, ind) => (
+                          <optgroup label={`${ind + 1}`} key={ind}>
+                            <option
+                              value={opt.id}
+                              key={opt.id}
+                              dangerouslySetInnerHTML={opt.translation}
+                            ></option>
+                          </optgroup>
                         ))}
                       </select>
                     </div>
