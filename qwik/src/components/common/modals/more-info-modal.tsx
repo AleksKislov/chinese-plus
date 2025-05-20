@@ -12,7 +12,7 @@ export const MoreInfoModal = component$(
       <div class="text-base-content">
         <input type="checkbox" id={modalId} class="modal-toggle" />
         <label class="modal text-left" for={modalId}>
-          <label class="modal-box relative" for="">
+          <label class="modal-box relative border border-info" for="">
             <label for={modalId} class="btn btn-sm btn-circle absolute right-2 top-2">
               ✕
             </label>

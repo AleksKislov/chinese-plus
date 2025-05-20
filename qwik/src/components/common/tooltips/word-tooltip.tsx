@@ -82,7 +82,7 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
       {typeof word !== 'string' && (
         <div
           tabIndex={0}
-          class={`rounded-box dropdown-content card card-compact bg-neutral-focus text-neutral-content w-64 p-1 shadow z-30 ${
+          class={`rounded-box dropdown-content card card-compact bg-base-100 text-base-content border-info border w-64 p-1 shadow z-30 ${
             showTooltip.value ? '' : 'hidden'
           } ${isScreenCenter.value && isRightSide.value ? '-right-14' : ''}
           ${isScreenCenter.value && !isRightSide.value ? '-left-14' : ''} 

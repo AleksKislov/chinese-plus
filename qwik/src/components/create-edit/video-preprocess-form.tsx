@@ -41,7 +41,7 @@ export const VideoPreprocessForm = component$(
     const chineseText = useSignal('');
     const pinyinText = useSignal('');
     const origTranslation = useSignal('');
-    const currentWord = useSignal(undefined);
+    const currentWord = useSignal(null);
     const tooltipTxt = useSignal<(DictWord | string)[][]>([]);
 
     useTask$(({ track }) => {
