@@ -8,7 +8,6 @@ const Comment = require('../../src/models/Comment');
 const Post = require('../../src/models/Post');
 const Text = require('../../src/models/Text');
 const Video = require('../../src/models/Video');
-const Chapterpage = require('../../src/models/Chapterpage');
 const { Notify } = require('../../src/api/services/_misc');
 const { shortUserInfoFields } = require('../../src/api/consts');
 const VideoLesson = require('../../src/models/VideoLesson');
@@ -72,7 +71,7 @@ async function getCommentDestinationById(where, id) {
   if (where === 'post') return Post.findById(id);
   if (where === 'text') return Text.findById(id);
   if (where === 'video') return Video.findById(id);
-  if (where === 'book') return Chapterpage.findById(id);
+  // if (where === 'book') return Chapterpage.findById(id);
   if (['phoneticsLesson', 'charactersLesson'].includes(where)) {
     return VideoLesson.findById(id);
   }

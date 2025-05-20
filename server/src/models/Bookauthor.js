@@ -2,21 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const BookauthorSchema = new Schema({
-  nameRus: { type: String },
-  nameChinese: { type: String },
-  yearBorn: { type: Number },
-  yearDead: { type: Number },
+  name: {
+    ru: { type: String, default: null },
+    cn: { type: String, default: null },
+  },
+  year: {
+    born: { type: Number },
+    dead: { type: Number, default: true },
+  },
   about: { type: String },
-  pictureUrl: { type: String },
   isChinese: { type: Boolean },
-  books: [
-    {
-      book: {
-        type: Schema.Types.ObjectId,
-        ref: 'books',
-      },
-    },
-  ],
 });
 
-module.exports = Bookauthor = mongoose.model('bookauthor', BookauthorSchema);
+module.exports = Bookauthor = mongoose.model('bookauthors', BookauthorSchema);

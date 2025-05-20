@@ -1,8 +1,7 @@
 const { validationResult } = require('express-validator');
-const { Notify } = require('../_misc');
+const { Notify, CHARS_PER_PAGE } = require('../_misc');
 const Hanzi = require('../../../../routes/api/dict/dictionary');
 
-const CHARS_PER_PAGE = 800;
 const Text = require('../../../models/Text');
 const { shortUserInfoFields } = require('../../consts');
 
