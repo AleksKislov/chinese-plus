@@ -70,7 +70,7 @@ export default component$(({ pulse }: { pulse: PulseData }) => {
                 </li>
                 <MenuLink href="/search" text="Словарь" />
                 <MenuLink href="/feedback" text="Форум" />
-                <MenuLink href="/heroes" text="Герои" />
+                <MenuLink href="/heroes" text="Герои клуба" />
                 <MenuLink href="/donate" text="Донат и цели" />
                 <ThemeChanger />
               </ul>
@@ -121,10 +121,8 @@ export default component$(({ pulse }: { pulse: PulseData }) => {
                 </li>
 
                 <MenuLink href="/search" text="Словарь" />
-                {/* <MenuLink href='/feedback' text='Форум' />
-                <MenuLink href='/heroes' text='Герои' />
-                <MenuLink href='/donate' text='Донат и цели' /> */}
                 <MenuItem name={ourClub.name} links={ourClub.links} />
+                <MenuLink href="/feedback" text="Форум" />
 
                 <ThemeChanger />
                 <ClubPulse data={pulse} />
@@ -250,15 +248,11 @@ export const watch: MenuItemProps = {
 };
 
 export const ourClub: MenuItemProps = {
-  name: 'Наш Клуб',
+  name: 'Донат 💰',
   links: [
     {
-      href: '/feedback',
-      text: 'Форум',
-    },
-    {
       href: '/heroes',
-      text: 'Герои',
+      text: 'Герои клуба',
     },
     {
       href: '/donate',

@@ -13,7 +13,7 @@ export const PageTitle = component$(({ txt, hits, hSizeSm }: PageTitleProps) => 
       {hSizeSm ? (
         <div class="prose">
           <h2>
-            {txt} <PageHits hits={hits || 0} />
+            {txt} {hits && <PageHits hits={hits || 0} />}
           </h2>
         </div>
       ) : (

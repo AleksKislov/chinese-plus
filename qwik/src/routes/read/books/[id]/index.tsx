@@ -10,14 +10,21 @@ import { ContentPageHead } from '~/components/common/ui/content-page-head';
 // import { TextMainContent } from '~/components/read/text-main-content';
 import { type BookCardInfo } from '..';
 import { ApiService } from '~/misc/actions/request';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { MainContent } from '~/components/common/layout/main-content';
 
 export type BookContents = {
   book: BookCardInfo;
   contents: Object;
 };
 
-export const useGetBookContents = routeLoader$((): Promise<BookContents> => {
-  return ApiService.get(`/api/books/all`, undefined, []);
+// export const useGetText = routeLoader$(
+//   async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
+//     const curPage = getCurrentPageNum(query.get('pg'));
+//     const textFromDb = await getTextFromDB(params.id);
+
+export const useGetBookContents = routeLoader$(({ params }): Promise<BookContents> => {
+  return ApiService.get(`/api/books/${params.id}`, undefined, []);
 });
 
 export default component$(() => {
@@ -25,13 +32,20 @@ export default component$(() => {
 
   const {
     book: { title },
+    contents,
   } = bookLoader.value;
 
   return (
     <>
-      <ContentPageHead title={title.ru} hits={0} path="/read/books" />
+      <ContentPageHead title={title.ru} path="/read/books" />
 
       <FlexRow>
+        <Sidebar></Sidebar>
+        <MainContent>
+          <div>
+            <p class="mb-4">{JSON.stringify(contents, null, 2)}</p>
+          </div>
+        </MainContent>
         {/* <Sidebar>
           <ContentPageCard
             desc={desc}

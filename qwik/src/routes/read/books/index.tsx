@@ -1,5 +1,5 @@
 import { component$ } from '@builder.io/qwik';
-import { routeLoader$, type DocumentHead } from '@builder.io/qwik-city';
+import { Link, routeLoader$, type DocumentHead } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { Sidebar } from '~/components/common/layout/sidebar';
@@ -49,7 +49,12 @@ export default component$(() => {
           {books.value.map((book, ind) => (
             // <TextCard key={ind} text={text} />
             <div key={ind}>
-              {book.title.cn} - {book._id}
+              <Link
+                href={'/read/books/' + book._id}
+                class="link link-hover link-secondary font-bold"
+              >
+                {book.title.cn} - {book._id}
+              </Link>
             </div>
           ))}
         </MainContent>
