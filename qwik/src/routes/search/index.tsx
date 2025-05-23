@@ -52,7 +52,7 @@ export const HanziWriterSettings = {
 };
 
 export const segmenter = async (text: string): Promise<string[]> => {
-  return ApiService.post('/api/dictionary/v2/segmenter', { text }, undefined, []);
+  return ApiService.post('/api/dictionary/segmenter', { text }, undefined, []);
 };
 
 export const getChineseWordsArr = async (input: string): Promise<string[]> => {

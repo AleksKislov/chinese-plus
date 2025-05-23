@@ -46,32 +46,6 @@ export default component$(() => {
             <p class="mb-4">{JSON.stringify(contents, null, 2)}</p>
           </div>
         </MainContent>
-        {/* <Sidebar>
-          <ContentPageCard
-            desc={desc}
-            length={length}
-            tags={tags}
-            userId={userId}
-            userName={userName}
-            date={date}
-            lvl={lvl}
-            picUrl={picUrl}
-            category={CONSTANTS.textCategories[categoryInd]}
-            likes={likes}
-            contentType={WHERE.text}
-            contentId={textId}
-            textSource={source}
-            isApproved={Boolean(isApproved)} // Ensure boolean
-          />
-          <ReadResultCard />
-        </Sidebar>
-        <TextMainContent
-          tooltipTxt={tooltipTxt}
-          text={textLoader.value}
-          comments={comments.value}
-          restLoading={false}
-          similarTexts={getSimilarTexts.value as SimilarText[]}
-        /> */}
       </FlexRow>
     </>
   );
