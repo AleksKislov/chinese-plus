@@ -1,0 +1,17 @@
+meta {
+  name: book page comments 
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{local_server}}/api/comments?where=book_page&page_ind=0&chapter_id=6829a2e45e323431ae591475
+  body: none
+  auth: inherit
+}
+
+params:query {
+  where: book_page
+  page_ind: 0
+  chapter_id: 6829a2e45e323431ae591475
+}

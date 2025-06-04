@@ -10,12 +10,18 @@ export enum WHERE {
   post = 'post',
   video = 'video',
   text = 'text',
-  book = 'book',
+  book = 'book_page',
   phoneticsLesson = 'phoneticsLesson',
   charactersLesson = 'charactersLesson',
 }
 
-export type WhereType = 'post' | 'video' | 'text' | 'book' | 'phoneticsLesson' | 'charactersLesson';
+export type WhereType =
+  | 'post'
+  | 'video'
+  | 'text'
+  | 'book_page'
+  | 'phoneticsLesson'
+  | 'charactersLesson';
 
 export const useAddComment = globalAction$(
   (params, ev) => {
@@ -23,7 +29,7 @@ export const useAddComment = globalAction$(
     const { path, addressees, commentIdToReply, text } = params;
 
     return ApiService.post(
-      `/api/comments?where=${params.where}&id=${params.id}`,
+      `/api/comments?where=${params.where}&id=${encodeURIComponent(params.id)}`,
       {
         text,
         path,

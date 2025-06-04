@@ -6,10 +6,9 @@ const googleStrategy = {
   strategyOptions: {
     clientID: process.env.AUTH_GOOGLE_CLIENT_ID,
     clientSecret: process.env.AUTH_GOOGLE_SECRET,
-    callbackURL: `/api/auth/google/redirect`,
+    callbackURL: 'https://www.chineseplus.club/api/auth/google/redirect',
   },
   verify: async (accessToken, refreshToken, profile, done) => {
-    // console.log(profile);
     try {
       const user = await User.findOne({
         $or: [{ googleId: profile.id }, { email: profile.emails[0].value }],

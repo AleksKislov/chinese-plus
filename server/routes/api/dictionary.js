@@ -226,24 +226,23 @@ router.get('/certain/:word', async (req, res) => {
   }
 });
 
+const SEGMENTER_VERSIONS = {
+  default: Hanzi.segment.bind(Hanzi),
+  v2: Hanzi.segmentFromEnd.bind(Hanzi),
+  v3: nodejieba.cut,
+};
+
 /**
  * @route     GET api/dictionary/segmenter
  * @desc      GET all words from text SEGMENTED
  * @access    Public
  */
 router.post('/segmenter', (req, res) => {
+  const { version } = req.query;
   const text = req.body.text;
-  res.send(Hanzi.segment(text));
-});
-
-router.post('/v2/segmenter', (req, res) => {
-  const text = req.body.text;
-  res.send(Hanzi.segmentFromEnd(text));
-});
-
-router.post('/v3/segmenter', (req, res) => {
-  const text = req.body.text;
-  res.send(nodejieba.cut(text));
+  const segmenter = SEGMENTER_VERSIONS[version] || SEGMENTER_VERSIONS.default;
+  const chineseArr = segmenter(text).filter((word) => word !== ' ');
+  res.send(chineseArr);
 });
 
 /**

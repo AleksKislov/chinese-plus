@@ -90,7 +90,7 @@ export const ContentPageCard = component$(
           </div>
           <ContentLvl lvl={lvl} />
           <ContentCat txt={category} />
-          {length && <ContentLen len={length} />}
+          <ContentLen len={length || 0} />
           {textSource && <TextSource source={textSource} />}
           {(contentType === WHERE.video || contentType === WHERE.text) && (
             <div>

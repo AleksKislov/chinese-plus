@@ -1,10 +1,11 @@
 import { component$ } from '@builder.io/qwik';
-import { Link, routeLoader$, type DocumentHead } from '@builder.io/qwik-city';
+import { routeLoader$, type DocumentHead } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { PageTitle } from '~/components/common/layout/title';
 import { ReadResultCard } from '~/components/me/read-result-card';
+import { BookCard } from '~/components/read/book-card';
 import { ApiService } from '~/misc/actions/request';
 
 export type BookAuthor = {
@@ -28,6 +29,7 @@ export type BookCardInfo = {
   isChinese: Boolean;
   about: string;
   picUrl: string;
+  translationSrc: string;
 };
 
 export const getBooks = routeLoader$((): Promise<BookCardInfo[]> => {
@@ -42,20 +44,23 @@ export default component$(() => {
       <PageTitle txt={'Книги на китайском языке'} />
       <FlexRow>
         <Sidebar>
+          <div class="card w-full bg-base-200 my-3">
+            <div class="card-body">
+              <h2 class="card-title">О разделе</h2>
+              <p>
+                Книги с переводом всего текста и каждого слова по отдельности по клику.
+                <br />
+                ВНИМАНИЕ: так как перевод художественный, то кол-во параграфов в переводе может
+                отличаться от оригинала.
+              </p>
+            </div>
+          </div>
           <ReadResultCard />
         </Sidebar>
 
         <MainContent>
           {books.value.map((book, ind) => (
-            // <TextCard key={ind} text={text} />
-            <div key={ind}>
-              <Link
-                href={'/read/books/' + book._id}
-                class="link link-hover link-secondary font-bold"
-              >
-                {book.title.cn} - {book._id}
-              </Link>
-            </div>
+            <BookCard key={ind} book={book} />
           ))}
         </MainContent>
       </FlexRow>

@@ -15,6 +15,7 @@ export type Donate = {
   amount: number;
   currency: string; // RUB only
   createdAt: ISODate;
+  isCryptoAnon: boolean;
 };
 
 export type DonateGoal = {

@@ -1,7 +1,6 @@
 import { component$, useContext, useSignal, useStore } from '@builder.io/qwik';
 import { MainContent } from '../common/layout/main-content';
 import { Alerts } from '../common/alerts/alerts';
-import { FontSizeBtnGroup } from '../common/content-cards/font-size-btns';
 import { LongTxtPagination } from './long-txt-pagination';
 import { AudioPlayer } from './audio-player';
 import { Paragraph } from './paragraph';
@@ -18,6 +17,7 @@ import { editWordModalId, moreInfoModalId } from '../common/tooltips/word-toolti
 import { Loader } from '../common/ui/loader';
 import { SimilarTxtImg } from './similar-txt-img';
 import { CommentsFullBlock } from '../common/comments/comments-full-block';
+import { TextHeadBtns } from '../common/read/text-head-btns';
 
 type TextMainContentProps = {
   text: TextFromDB & { curPage: number };
@@ -59,25 +59,7 @@ export const TextMainContent = component$(
       <MainContent>
         <Alerts />
 
-        <div class={'flex justify-between w-full'}>
-          <div class={'pt-1'}>
-            <FontSizeBtnGroup fontSizeSig={fontSizeSig} />
-          </div>
-          <div>
-            <label class="label cursor-pointer">
-              <span class="label-text mr-3 font-bold">
-                {showTranslation.value ? 'Без перевода' : 'С переводом'}
-              </span>
-
-              <input
-                type="checkbox"
-                class="toggle toggle-accent"
-                checked={!showTranslation.value}
-                onClick$={() => (showTranslation.value = !showTranslation.value)}
-              />
-            </label>
-          </div>
-        </div>
+        <TextHeadBtns showTranslation={showTranslation} fontSizeSig={fontSizeSig} />
 
         {isLongTxt && <LongTxtPagination numOfPages={pages.length} curPage={curPage} />}
 

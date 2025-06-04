@@ -12,16 +12,21 @@ const BookSchema = new Schema({
     ref: 'bookauthors',
   },
   isChinese: { type: Boolean }, // originally Chinese book or not
-  length: { type: Number, default: 0 }, // total quantity of characters
+  // length: { type: Number, default: 0 }, // total quantity of characters
   about: {
     type: String,
     required: true,
   },
   genres: [{ type: String, lowercase: true }], // tags
   picUrl: { type: String },
+  translationSrc: { type: String },
   date: {
     type: Date,
     default: Date.now,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
   },
 });
 

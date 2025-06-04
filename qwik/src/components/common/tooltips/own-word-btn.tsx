@@ -34,7 +34,7 @@ export const OwnWordBtn = component$(({ word }: { word: DictWord }) => {
 
   let isUserWord = false;
   if (typeof word !== 'string') {
-    isUserWord = loggedIn && userState.words.some((w) => w.chinese === word.chinese);
+    isUserWord = loggedIn && userState.words?.some((w) => w.chinese === word.chinese);
   }
 
   return (

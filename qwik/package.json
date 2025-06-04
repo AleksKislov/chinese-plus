@@ -59,6 +59,7 @@
     "hanzi-writer": "^3.5.0",
     "js-cookie": "^3.0.1",
     "sharp": "0.32.6",
+    "transliteration": "^2.3.5",
     "youtube-iframe": "^1.0.3"
   }
 }

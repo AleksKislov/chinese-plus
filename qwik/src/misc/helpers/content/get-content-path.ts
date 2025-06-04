@@ -1,9 +1,14 @@
+import { type CommentPageInfo } from '~/components/common/comments/comment-card';
 import { WHERE, type WhereType } from '~/components/common/comments/comment-form';
+import { getBookUrl } from './get-book-url';
+import { type BookCardInfo } from '~/routes/read/books';
 
 export const getContentPath = (
   contentType: WhereType,
   contentId: string,
   isUnapproved?: boolean,
+  pageInfo?: CommentPageInfo,
+  book?: BookCardInfo,
 ): string => {
   const s = isUnapproved ? 'unapproved-' : '';
 
@@ -18,6 +23,15 @@ export const getContentPath = (
       return `/watch/characters-lessons/${contentId}`;
     case WHERE.post:
       return `/feedback/${contentId}`;
+    case WHERE.book:
+      if (pageInfo) {
+        return `${getBookUrl(pageInfo?.book as BookCardInfo)}/${pageInfo?.belongsTo}/?page=${
+          pageInfo?.ind
+        }`;
+      }
+      if (book) {
+        return getBookUrl(book);
+      }
   }
   return '/';
 };

@@ -8,8 +8,9 @@ type DonateCardProps = {
 };
 
 export const DonateCard = component$(({ donate }: DonateCardProps) => {
-  const { userId: userInfo, createdAt: date, amount, currency } = donate;
+  const { userId: userInfo, createdAt: date, amount, currency, isCryptoAnon } = donate;
 
+  const userName = isCryptoAnon ? 'Анонимный CRYPTO BRO' : userInfo?.name || 'Aноним';
   return (
     <div class="card w-full bg-base-200 mb-3">
       <div class="card-body">
@@ -27,7 +28,7 @@ export const DonateCard = component$(({ donate }: DonateCardProps) => {
               </div>
               <UserDateDiv
                 userId={userInfo?._id || ''}
-                userName={userInfo?.name || 'Aноним'}
+                userName={userName}
                 date={date}
                 isAnon={!userInfo}
                 ptNum={2}

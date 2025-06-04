@@ -1,0 +1,65 @@
+meta {
+  name: add chapters
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{local_server}}/api/books/chapter
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "bookId": "5fcca514def76b716f98989d",
+    "chapters": [
+      {
+        "ind": 5,
+        "title": {
+          "cn": "第五章",
+          "ru": "Глава 5"
+        }
+      },
+      {
+        "ind": 6,
+        "title": {
+          "cn": "第六章",
+          "ru": "Глава 6"
+        }
+      },
+      {
+        "ind": 7,
+        "title": {
+          "cn": "第七章",
+          "ru": "Глава 7"
+        }
+      },
+      {
+        "ind": 8,
+        "title": {
+          "cn": "第八章",
+          "ru": "Глава 8"
+        }
+      },
+      {
+        "ind": 9,
+        "title": {
+          "cn": "第九章",
+          "ru": "Глава 9"
+        }
+      },
+      {
+        "ind": 10,
+        "title": {
+          "cn": "第十章",
+          "ru": "Глава 10"
+        }
+      }
+    ]
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("authToken", res.body.token)
+}

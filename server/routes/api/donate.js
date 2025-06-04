@@ -118,6 +118,7 @@ function getNewDonates(yooMoneyDonates, mongoDonates) {
     .filter((newDonate) => mongoDonates.every((x) => x.operationId !== newDonate.operation_id))
     .map((newDonate) => {
       const user = newDonate.label.split(LABEL_SEPARATOR)[1];
+
       return {
         userId: user || null,
         operationId: newDonate.operation_id,

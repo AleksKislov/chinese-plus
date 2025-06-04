@@ -1,0 +1,22 @@
+meta {
+  name: all books
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{local_server}}/api/books/all
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "email": "snum23@yandex.ru",
+    "password": "123456"
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("authToken", res.body.token)
+}

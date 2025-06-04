@@ -51,8 +51,13 @@ export const HanziWriterSettings = {
   delayBetweenLoops: 3000,
 };
 
-export const segmenter = async (text: string): Promise<string[]> => {
-  return ApiService.post('/api/dictionary/segmenter', { text }, undefined, []);
+export type SEGMENTER_VERSION = 'v1' | 'v2' | 'v3';
+
+export const segmenter = async (
+  text: string,
+  version: SEGMENTER_VERSION = 'v1',
+): Promise<string[]> => {
+  return ApiService.post('/api/dictionary/segmenter?version=' + version, { text }, undefined, []);
 };
 
 export const getChineseWordsArr = async (input: string): Promise<string[]> => {

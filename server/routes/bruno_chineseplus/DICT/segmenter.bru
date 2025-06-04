@@ -5,13 +5,17 @@ meta {
 }
 
 post {
-  url: {{local_server}}/api/dictionary/v3/segmenter
+  url: {{local_server}}/api/dictionary/segmenter?version=v3
   body: json
   auth: inherit
 }
 
+params:query {
+  version: v3
+}
+
 body:json {
   {
-    "text": "国内并不支持，\n普通人要用上它非常困难"
+    "text": "国内并不支持，\n普通人要用上它非常困难。十来个人,\n你好"
   }
 }

@@ -24,8 +24,22 @@ export type CommentType = {
     name: string;
   };
   path?: string; // only for books, not in quick yet:
-  destination: 'book' | 'text' | 'video' | 'post';
+  destination: 'book_page' | 'text' | 'video' | 'post';
   date: ISODate;
+  pageInfo?: CommentPageInfo; // for book_page comments
+};
+
+// for book_page comments
+export type CommentPageInfo = {
+  book: {
+    title: {
+      ru: string;
+      cn: string;
+    };
+    _id: ObjectId; // book_id
+  };
+  belongsTo: ObjectId; // chapter_id
+  ind: number; // page index
 };
 
 type CommentCardProps = {
@@ -60,7 +74,7 @@ export const CommentCard = component$(
     const isLiked = loggedIn && likes.some((like) => like.user === userState._id);
 
     const modalId = `edit-modal-${_id}`;
-    const href = getContentPath(contentType, contentId, false);
+    const href = getContentPath(contentType, contentId, false, comment.pageInfo);
     const getAnchor = (id: string): string => `${id.slice(-3)}`;
     const anchor = getAnchor(_id);
 

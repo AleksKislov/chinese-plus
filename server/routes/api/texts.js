@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const auth = require('../../middleware/auth');
-// const adminAuth = require("../../middleware/admin-auth");
+const adminAuth = require('../../middleware/admin-auth');
 const { check } = require('express-validator');
 
 const {
@@ -22,7 +22,6 @@ const {
   editChineseArr,
   getSimilarTexts,
 } = require('../../src/api/services/texts');
-const adminAuth = require('../../middleware/admin-auth');
 
 /**
  * @method    POST

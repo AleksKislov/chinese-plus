@@ -1,0 +1,22 @@
+meta {
+  name: page by book id, chapter id and ind
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{local_server}}/api/books/5fcca514def76b716f98989d/6829a2e45e323431ae591475/0
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "email": "snum23@yandex.ru",
+    "password": "123456"
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("authToken", res.body.token)
+}

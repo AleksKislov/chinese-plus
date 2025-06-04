@@ -11,6 +11,7 @@ const DonateSchema = new mongoose.Schema({
   label: { type: String },
   datetime: { type: String },
   currency: { type: String },
+  isCryptoAnon: { type: Boolean, default: false },
   createdAt: {
     type: Date,
     default: Date.now,

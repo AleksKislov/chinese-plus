@@ -12,7 +12,16 @@ const { Notify } = require('../../src/api/services/_misc');
 const { shortUserInfoFields } = require('../../src/api/consts');
 const VideoLesson = require('../../src/models/VideoLesson');
 const mongoose = require('mongoose');
-// const adminAuth = require("../../middleware/admin-auth");
+const BookPage = require('../../src/models/BookPage');
+
+const COMMENT_DESTINATION = {
+  post: 'post',
+  video: 'video',
+  text: 'text',
+  book: 'book_page',
+  phoneticsLesson: 'phoneticsLesson',
+  charactersLesson: 'charactersLesson',
+};
 
 // @route   POST api/comments?where=...&id=
 // @desc    Create a comment
@@ -68,11 +77,20 @@ router.post('/', [auth, [check('text', 'Нужен текст').not().isEmpty()]
 });
 
 async function getCommentDestinationById(where, id) {
-  if (where === 'post') return Post.findById(id);
-  if (where === 'text') return Text.findById(id);
-  if (where === 'video') return Video.findById(id);
-  // if (where === 'book') return Chapterpage.findById(id);
-  if (['phoneticsLesson', 'charactersLesson'].includes(where)) {
+  if (where === COMMENT_DESTINATION.post) {
+    return Post.findById(id);
+  }
+  if (where === COMMENT_DESTINATION.text) {
+    return Text.findById(id);
+  }
+  if (where === COMMENT_DESTINATION.video) {
+    return Video.findById(id);
+  }
+  if (where === COMMENT_DESTINATION.book) {
+    return BookPage.findById(id).populate('book', ['_id', 'title']);
+  }
+
+  if ([COMMENT_DESTINATION.phoneticsLesson, COMMENT_DESTINATION.charactersLesson].includes(where)) {
     return VideoLesson.findById(id);
   }
   throw new Error('No destination for the comment!');
@@ -120,20 +138,51 @@ router.get('/to_me/:seen_it', auth, async (req, res) => {
   }
 });
 
+async function getCommentForBookPage(pageInd, chapterId) {
+  const found = await BookPage.find({ belongsTo: chapterId, ind: pageInd }).populate('book', [
+    '_id',
+    'title',
+  ]);
+  return found.length > 0 ? found[0] : null;
+}
 // @route   GET api/comments?where=...&id=
-// @desc    Get all comments
+// @desc    Get all comments for the given content page
 // access   Public
 router.get('/', async (req, res) => {
-  const { where, id } = req.query;
+  const { where, id, page_ind, chapter_id } = req.query;
+
+  const isBook = where === COMMENT_DESTINATION.book;
 
   try {
-    const destination = await getCommentDestinationById(where, id);
+    const destination =
+      isBook && chapter_id
+        ? await getCommentForBookPage(page_ind, chapter_id)
+        : await getCommentDestinationById(where, id);
+
+    if (!destination) {
+      return res.status(404).json({ msg: 'Destination not found' });
+    }
+
     const comments = await Comment.find({
       _id: { $in: destination.comments_id },
     })
       .populate('user', shortUserInfoFields)
       .select('-avatar -name')
       .sort({ date: 1 });
+
+    if (isBook) {
+      const bookComments = comments.map((comment) => {
+        return {
+          ...comment.toObject(),
+          pageInfo: {
+            book: destination.book.toObject(),
+            belongsTo: destination.belongsTo,
+            ind: destination.ind,
+          },
+        };
+      });
+      return res.json(bookComments);
+    }
 
     res.json(comments);
   } catch (err) {
@@ -175,11 +224,33 @@ router.put('/like/:id', auth, async (req, res) => {
  */
 router.get('/last', async (req, res) => {
   try {
-    const comments = await Comment.find()
+    const rawComments = await Comment.find()
       .sort({ date: -1 })
       .populate('user', shortUserInfoFields)
       .select('-avatar -name')
       .limit(10);
+
+    // if comments include book_page comments, add page info
+    const commentsWithPageInfo = await Promise.all(
+      rawComments.map(async (comment) => {
+        if (comment.destination === COMMENT_DESTINATION.book) {
+          const bookPage = await BookPage.findById(comment.post_id).populate('book', [
+            '_id',
+            'title',
+          ]);
+          return {
+            ...comment.toObject(),
+            pageInfo: {
+              book: bookPage.book.toObject(),
+              belongsTo: bookPage.belongsTo,
+              ind: bookPage.ind,
+            },
+          };
+        }
+        return comment;
+      }),
+    );
+    const comments = commentsWithPageInfo.filter((comment) => comment !== null);
 
     res.json(comments);
   } catch (err) {

@@ -13,7 +13,7 @@ import { OtherTextFields } from '~/components/create-edit/other-text-fields';
 import { TextPreprocessForm } from '~/components/create-edit/text-preprocess-form';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { getWordsForTooltips, type TextFromDB } from '~/routes/read/texts/[id]';
-import { segmenter } from '~/routes/search';
+import { segmenter, type SEGMENTER_VERSION } from '~/routes/search';
 import { parseTextWords } from '~/misc/helpers/content';
 
 export type ThemePicType = {
@@ -59,7 +59,9 @@ export const usePublishText = routeAction$(async (params, ev): Promise<TextFromD
 
 export const useSegmentAndGetTooltips = globalAction$(
   async (params): Promise<{ allwords: string[]; tooltipTxt: (string | DictWord)[][] }> => {
-    const allwords = (await segmenter(params.txt as string)).filter((word) => word !== ' ');
+    const allwords = (
+      await segmenter(params.txt as string, params.version as SEGMENTER_VERSION)
+    ).filter((word) => word !== ' ');
     const tooltipTxt = parseTextWords(allwords, await getWordsForTooltips(allwords, true));
     return { allwords, tooltipTxt };
   },
