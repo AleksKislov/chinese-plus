@@ -12,6 +12,7 @@ import { EditBtn } from './edit-btn';
 import CONST_URLS from '~/misc/consts/urls';
 import { BookmarkBtn } from './bookmark-btn';
 import { DeleteContentBtn } from './delete-content-btn';
+import { UniqCharsTotal } from './uniq-chars-total';
 
 type ContentPageCardProps = {
   contentType: WhereType;
@@ -28,6 +29,7 @@ type ContentPageCardProps = {
   likes: ContentLike[];
   textSource?: string;
   isApproved: boolean;
+  uniqCharsTotal?: number;
 };
 
 export enum FontSizeBtns {
@@ -60,6 +62,7 @@ export const ContentPageCard = component$(
     contentId,
     textSource,
     isApproved,
+    uniqCharsTotal,
   }: ContentPageCardProps) => {
     const likesSignal = useSignal(likes);
     const imageSrc = useSignal(picUrl);
@@ -91,6 +94,8 @@ export const ContentPageCard = component$(
           <ContentLvl lvl={lvl} />
           <ContentCat txt={category} />
           <ContentLen len={length || 0} />
+          <UniqCharsTotal num={uniqCharsTotal} />
+
           {textSource && <TextSource source={textSource} />}
           {(contentType === WHERE.video || contentType === WHERE.text) && (
             <div>

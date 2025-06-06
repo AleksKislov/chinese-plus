@@ -16,9 +16,11 @@ import { TextMainContent } from '~/components/read/text-main-content';
 import { type TooltipSegment } from '~/misc/helpers/content/parse-text-words';
 
 export type TextContent = {
-  origintext: string[];
+  // origintext?: string[];
   translation: string[];
   chinese_arr: string[];
+  origParagsLen: number[];
+  uniqCharsTotal: number;
 };
 
 export type TextFromDB = TextCardInfo &
@@ -39,8 +41,8 @@ export type SimilarText = {
   matchingTags?: string[];
 };
 
-export const getTextFromDB = (id: ObjectId): Promise<TextFromDB> => {
-  return ApiService.get(`/api/texts/${id}`, undefined, null);
+export const getTextFromDB = (id: ObjectId, noOrigin: boolean): Promise<TextFromDB> => {
+  return ApiService.get(`/api/texts/${id}?no_origin=` + noOrigin, undefined, null);
 };
 
 export const getWordsForTooltips = (
@@ -58,7 +60,7 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
 export const useGetText = routeLoader$(
   async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
     const curPage = getCurrentPageNum(query.get('pg'));
-    const textFromDb = await getTextFromDB(params.id);
+    const textFromDb = await getTextFromDB(params.id, true);
     const chineseArr = getChineseArr(textFromDb, curPage);
     const dbWords = await getWordsForTooltips(chineseArr, true);
     const tooltipTxt = parseTextWords(chineseArr, dbWords);
@@ -119,6 +121,7 @@ export default component$(() => {
     source,
     isApproved,
     tooltipTxt,
+    uniqCharsTotal,
   } = textLoader.value;
 
   useVisibleTask$(
@@ -149,6 +152,7 @@ export default component$(() => {
             contentType={WHERE.text}
             contentId={textId}
             textSource={source}
+            uniqCharsTotal={uniqCharsTotal}
             isApproved={Boolean(isApproved)} // Ensure boolean
           />
           <ReadResultCard />

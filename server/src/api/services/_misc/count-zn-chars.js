@@ -52,4 +52,12 @@ const countZnChars = (str) => {
   return str.length;
 };
 
-module.exports = { countZnChars };
+const countUniqChars = (str) => {
+  if (!str) return 0;
+
+  const symbolsToIgnoreSet = new Set(symbolsToIgnore);
+  const chars = str.split('').filter((char) => !symbolsToIgnoreSet.has(char));
+  return new Set(chars).size;
+};
+
+module.exports = { countZnChars, countUniqChars };

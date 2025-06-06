@@ -4,7 +4,6 @@ import { Alerts } from '../common/alerts/alerts';
 import { LongTxtPagination } from './long-txt-pagination';
 import { AudioPlayer } from './audio-player';
 import { Paragraph } from './paragraph';
-import { countZnChars } from '~/misc/helpers/content';
 import { type Addressee, type CommentIdToReply, WHERE } from '../common/comments/comment-form';
 import { EditWordModal } from '../common/modals/edit-word-modal';
 import { MoreInfoModal } from '../common/modals/more-info-modal';
@@ -42,7 +41,8 @@ export const TextMainContent = component$(
       _id: textId,
       translation,
       chinese_arr: chineseArr,
-      origintext,
+      // origintext,
+      origParagsLen,
       pages,
       curPage,
       audioSrc: hasAudio,
@@ -71,7 +71,7 @@ export const TextMainContent = component$(
             fontSize={fontSizeSig.value}
             tooltipedParag={parag}
             translation={isLongTxt ? pages[curPage].translation[i] : translation[i]}
-            strLen={countZnChars(isLongTxt ? pages[curPage].origintext[i] : origintext[i])}
+            strLen={isLongTxt ? pages[curPage].origParagsLen[i] : origParagsLen[i]}
             ind={i}
             currentWord={currentWord}
             showTranslation={showTranslation.value}

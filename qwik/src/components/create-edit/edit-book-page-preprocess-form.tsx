@@ -4,12 +4,19 @@ import { FlexRow } from '../common/layout/flex-row';
 import { Paragraph } from '../read/paragraph';
 import { FontSizeBtns } from '../common/content-cards/content-page-card';
 import { useNavigate } from '@builder.io/qwik-city';
-import { type BookPageContent } from '~/routes/read/books/[id]/[chapter_id]';
 import { useSegmentAndGetTooltips } from '~/routes/(content)/create/text';
 import { useEditPageText } from '~/routes/(content)/edit/book-page/[id]';
 
+export type BookOrigPageContent = {
+  _id: ObjectId;
+  length: number;
+  translation: string[];
+  origintext: string[];
+  chinese_arr: string[];
+};
+
 type TextPreprocessFormProps = {
-  store: Partial<BookPageContent>;
+  store: Partial<BookOrigPageContent>;
 };
 
 export const EditBookPagePreprocessForm = component$(({ store }: TextPreprocessFormProps) => {

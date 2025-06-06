@@ -5,7 +5,7 @@ import { ApiService } from '~/misc/actions/request';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { getWordsForTooltips, type TooltipParagraph } from '~/routes/read/texts/[id]';
-import { countZnChars, parseTextWords } from '~/misc/helpers/content';
+import { parseTextWords } from '~/misc/helpers/content';
 import { Paragraph } from '~/components/read/paragraph';
 import { BookInfoCard } from '~/components/books/book-info-card';
 import { useGetBookContents } from '../layout';
@@ -23,13 +23,16 @@ import { type CommentType } from '~/components/common/comments/comment-card';
 import { EditWordModal } from '~/components/common/modals/edit-word-modal';
 import { MoreInfoModal } from '~/components/common/modals/more-info-modal';
 import { editWordModalId, moreInfoModalId } from '~/components/common/tooltips/word-tooltip';
+import { ReadResultCard } from '~/components/me/read-result-card';
+import { EditBtn } from '~/components/common/content-cards/edit-btn';
 
 export type BookPageContent = {
   _id: ObjectId;
   length: number;
   translation: string[];
-  origintext: string[];
+  // origintext: string[];
   chinese_arr: string[];
+  origParagsLen: number[];
 };
 
 export type BookPage = {
@@ -86,6 +89,7 @@ export default component$(() => {
       <FlexRow>
         <Sidebar>
           <BookInfoCard book={book} />
+          <ReadResultCard />
         </Sidebar>
         <MainContent>
           <div class="prose mb-2">
@@ -102,7 +106,7 @@ export default component$(() => {
                 fontSize={fontSizeSig.value}
                 tooltipedParag={tooltipTxt[i] || []}
                 translation={page.translation[i] || ''}
-                strLen={countZnChars(page.origintext[i] || '')}
+                strLen={page.origParagsLen[i] || 0}
                 ind={i}
                 currentWord={currentWord}
                 showTranslation={showTranslation.value}
@@ -126,6 +130,13 @@ export default component$(() => {
               />
             </div>
           )}
+
+          <EditBtn
+            contentType={WHERE.book}
+            contentId={page._id}
+            creatorId={'not_needed'} // only for admin
+            isApproved={true}
+          />
 
           <CommentsFullBlock
             contentId={page._id}

@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{local_server}}/api/books/5fcca514def76b716f98989d/6829a2e45e323431ae591475/0
+  url: {{local_server}}/api/books/5fcca514def76b716f98989d/6829a2e45e323431ae591475/0?no_origin=true
   body: none
   auth: none
+}
+
+params:query {
+  no_origin: true
 }
 
 body:json {

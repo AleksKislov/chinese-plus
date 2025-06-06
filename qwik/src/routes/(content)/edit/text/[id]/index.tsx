@@ -3,12 +3,12 @@ import { component$, useContext, useStore } from '@builder.io/qwik';
 import { PageTitle } from '~/components/common/layout/title';
 import { getTokenFromCookie } from '~/misc/actions/auth';
 import { Alerts } from '~/components/common/alerts/alerts';
-import { getTextFromDB, type TextFromDB } from '~/routes/read/texts/[id]';
 import { type NewTextStore } from '~/routes/(content)/create/text';
 import { EditTextFields } from '~/components/create-edit/edit-text-fields';
 import { userContext } from '~/root';
 import { ApiService } from '~/misc/actions/request';
 import { EditTextPreprocessForm } from '~/components/create-edit/edit-text-preprocess-form';
+import { type TextCardInfo } from '~/routes/read/texts';
 
 export type ThemePicType = {
   full: string;
@@ -26,18 +26,35 @@ export type EditTextStore = NewTextStore & {
   curPage: number;
 };
 
+export type FullTextContent = {
+  origintext: string[];
+  translation: string[];
+  chinese_arr: string[];
+  origParagsLen: number[];
+  uniqCharsTotal: number;
+};
+
+export type FullTextFromDB = TextCardInfo &
+  FullTextContent & {
+    pages: (FullTextContent & { _id: ObjectId })[];
+  };
+
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
   if (!token) throw redirect(302, '/login');
 };
 
+export const getFullTextFromDB = (id: ObjectId): Promise<FullTextFromDB> => {
+  return ApiService.get(`/api/texts/${id}`, undefined, null);
+};
+
 export const useGetText = routeLoader$(
-  async ({ params, query }): Promise<TextFromDB & { curPage: number }> => {
+  async ({ params, query }): Promise<FullTextFromDB & { curPage: number }> => {
     let curPage = 0;
     const pg = query.get('pg') || '1';
     if (+pg && +pg > 0) curPage = +pg - 1;
 
-    const textFromDb = await getTextFromDB(params.id);
+    const textFromDb = await getFullTextFromDB(params.id);
     return { ...textFromDb, curPage };
   },
 );

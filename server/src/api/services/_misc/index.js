@@ -1,4 +1,4 @@
-const { countZnChars } = require('./count-zn-chars');
+const { countZnChars, countUniqChars } = require('./count-zn-chars');
 const { Notify } = require('./notify');
 const { markupTranslation } = require('./mark-up-translation');
 const { getDictWordsCsv } = require('./get-dict-words-csv');
@@ -12,4 +12,5 @@ module.exports = {
   getDictWordsCsv,
   CHARS_PER_PAGE,
   getBookChineseArr,
+  countUniqChars,
 };

@@ -32,7 +32,7 @@ export const BookInfoCard = component$(
 
           <InfoLine name={'Писатель'} value={author.name.ru + ' | ' + author.name.cn} />
           <InfoLine name={'Год'} value={'' + year} />
-          <ContentLen len={length || 12} isBook={true} />
+          <ContentLen len={length} isBook={true} />
           <TextSource source={translationSrc} isTranslation={true} />
 
           <TextDesc desc={about} />

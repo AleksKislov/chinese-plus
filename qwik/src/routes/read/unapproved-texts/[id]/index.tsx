@@ -1,6 +1,6 @@
 import { component$ } from '@builder.io/qwik';
 import { type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
-import { ApiService } from '~/misc/actions/request';
+// import { ApiService } from '~/misc/actions/request';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import CONSTANTS from '~/misc/consts/consts';
@@ -10,13 +10,17 @@ import { type CommentType } from '~/components/common/comments/comment-card';
 import { getContentComments } from '~/misc/actions/get-content-comments';
 import { parseTextWords } from '~/misc/helpers/content';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
-import { getWordsForTooltips, type TextFromDB, type TooltipText } from '../../texts/[id]';
+import {
+  getTextFromDB,
+  getWordsForTooltips,
+  type TextFromDB,
+  type TooltipText,
+} from '../../texts/[id]';
 import { TextMainContent } from '~/components/read/text-main-content';
 
-export const getTextFromDB = (id: ObjectId): Promise<TextFromDB> => {
-  return ApiService.get(`/api/texts/${id}`, undefined, null);
-};
-
+// export const getTextFromDB = (id: ObjectId, noOrigin: boolean): Promise<TextFromDB> => {
+//   return ApiService.get(`/api/texts/${id}?no_origin=` + noOrigin, undefined, null);
+// };
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
   return getContentComments(WHERE.text, params.id);
 });
@@ -27,7 +31,8 @@ export const useGetText = routeLoader$(
     const pg = query.get('pg') || '1';
     if (+pg && +pg > 0) curPage = +pg - 1;
 
-    const textFromDb = await getTextFromDB(params.id);
+    const textFromDb = await getTextFromDB(params.id, true);
+    console.log('textFromDb', textFromDb);
     let chineseArr = textFromDb.chinese_arr;
     if (textFromDb.pages && textFromDb.pages.length) {
       chineseArr = textFromDb.pages[curPage].chinese_arr;

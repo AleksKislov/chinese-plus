@@ -1,5 +1,6 @@
 const BookPage = require('../../../models/BookPage');
 
+// for editing purposes, needs origintext
 const getBookPageById = async (req, res) => {
   const { page_id: pageId } = req.params;
 

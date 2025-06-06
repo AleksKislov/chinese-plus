@@ -1,6 +1,6 @@
 import { component$, useContext } from '@builder.io/qwik';
 import { userContext } from '~/root';
-import { type WhereType } from '../comments/comment-form';
+import { WHERE, type WhereType } from '../comments/comment-form';
 import { editSvg } from '../media/svg';
 import { useLocation, useNavigate } from '@builder.io/qwik-city';
 
@@ -21,11 +21,16 @@ export const EditBtn = component$(
 
     const curPage = loc.url.searchParams.get('pg'); // for long texts
     // если не модер, то редактировать только свое до публикации
+    const isBook = contentType === WHERE.book;
+    const url = isBook
+      ? `/edit/book-page/${contentId}`
+      : `/edit/${contentType}/${contentId}/${curPage ? '?pg=' + curPage : ''}`;
+
     return isAdmin || isModerator || (!isApproved && ownsContent) ? (
       <button
         class={`btn btn-sm btn-outline btn-warning mt-2`}
         type="button"
-        onClick$={() => nav(`/edit/${contentType}/${contentId}/${curPage ? '?pg=' + curPage : ''}`)}
+        onClick$={() => nav(url)}
       >
         {editSvg} edit
       </button>
