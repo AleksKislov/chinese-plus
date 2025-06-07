@@ -18,7 +18,7 @@ const {
  */
 router.get('/all', async (req, res) => {
   try {
-    const books = await Book.find({ isActive: true }).populate('author', ['name']);
+    const books = await Book.find({ isActive: true }).populate('author', ['name', 'country']);
     res.json(books);
   } catch (err) {
     console.error(err);
@@ -46,13 +46,11 @@ router.get('/:id', async (req, res) => {
   const bookId = req.params.id;
 
   try {
-    const book = await Book.findById(bookId).populate('author', ['name', 'year']);
+    const book = await Book.findById(bookId).populate('author', ['name', 'year', 'country']);
 
     if (!book) return res.status(404).json({ msg: 'Book not found' });
 
-    const contentsPromise = BookContent.find({ book: bookId })
-      .select('ind title length')
-      .sort({ ind: 1 });
+    const contentsPromise = BookContent.find({ book: bookId }).select('ind title').sort({ ind: 1 });
 
     const pagesPromise = BookPage.find({ book: bookId }).select('ind length belongsTo');
 

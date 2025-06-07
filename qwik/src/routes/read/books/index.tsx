@@ -14,6 +14,7 @@ export type BookAuthor = {
     ru: string;
     cn: string;
   };
+  country: string;
 };
 
 export type BookCardInfo = {
@@ -23,7 +24,6 @@ export type BookCardInfo = {
     cn: string;
   };
   genres: string[];
-  length: number;
   year: number;
   author: BookAuthor;
   isChinese: Boolean;

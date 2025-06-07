@@ -11,8 +11,6 @@ const BookSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'bookauthors',
   },
-  isChinese: { type: Boolean }, // originally Chinese book or not
-  // length: { type: Number, default: 0 }, // total quantity of characters
   about: {
     type: String,
     required: true,

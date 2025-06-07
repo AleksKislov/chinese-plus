@@ -1,4 +1,7 @@
 const CONSTANTS = {
+  countries: {
+    china: 'Китай',
+  },
   appVersion: '2.30.1',
   bgTextLen: 16000,
   smTextLen: 800,

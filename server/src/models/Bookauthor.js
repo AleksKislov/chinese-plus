@@ -8,10 +8,10 @@ const BookauthorSchema = new Schema({
   },
   year: {
     born: { type: Number },
-    dead: { type: Number, default: true },
+    dead: { type: Number, default: null },
   },
   about: { type: String },
-  isChinese: { type: Boolean },
+  country: { type: String, default: null },
 });
 
 module.exports = Bookauthor = mongoose.model('bookauthors', BookauthorSchema);
