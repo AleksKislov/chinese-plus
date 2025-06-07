@@ -53,7 +53,7 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={'Вся лексика для HSK 2.0'} />
+      <PageTitle txt={'Вся лексика HSK 2.0'} />
 
       <FlexRow>
         <Alerts />

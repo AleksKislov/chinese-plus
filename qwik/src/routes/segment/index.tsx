@@ -13,14 +13,21 @@ import {
 } from '~/components/common/tooltips/word-tooltip';
 import { EditWordModal } from '~/components/common/modals/edit-word-modal';
 import { MoreInfoModal } from '~/components/common/modals/more-info-modal';
+import { SEGMENTER_ENUM, type SEGMENTER_VERSION } from '../search';
 
 export default component$(() => {
   const segmentAction = useSegmentAndGetTooltips();
   const chineseText = useSignal('');
   const tooltipTxt = useSignal<(string | DictWord)[][] | string[]>([]);
-  const currentWord = useSignal<DictWord | undefined>(undefined);
+  const currentWord = useSignal<DictWord | null>(null);
   const lengthIsOk = useSignal(true);
+  const segmentVersionSignal = useSignal<SEGMENTER_VERSION>('v1');
 
+  const segmentVersions = [
+    SEGMENTER_ENUM.v1,
+    SEGMENTER_ENUM.v2,
+    SEGMENTER_ENUM.v3,
+  ] as SEGMENTER_VERSION[];
   useOnDocument(
     'keydown',
     $((e) => {
@@ -49,7 +56,7 @@ export default component$(() => {
       .filter((parag) => Boolean(parag));
 
     chineseText.value = chineseTextParagraphs.join('\n\n');
-    segmentAction.submit({ txt: trimmedChineseTxt });
+    segmentAction.submit({ txt: trimmedChineseTxt, version: segmentVersionSignal.value });
   });
 
   return (
@@ -63,6 +70,35 @@ export default component$(() => {
               Инструмент сегментирует китайский текст на отдельные слова (перевод доступен по
               клику). <br />
               Используйте пробелы между иероглифами, чтобы сегментация сработала так, как нужно вам.
+            </div>
+          </div>
+
+          <div class="card bg-base-200 mt-3">
+            <div class="card-body">
+              <h2 class="card-title">Версии сегментатора</h2>
+              <p>
+                1-я и 2-я версии ищут наиболее длинные сочетания иероглифов (т. е. словосочетания
+                тоже) по нашему словарю.
+                <br />
+                2-я версия осуществляет поиск с конца текста.
+                <br />
+                3-я версия - более строгая, как правило делит на отдельные слова.
+              </p>
+              <div class="btn-group ml-1">
+                {segmentVersions.map((txt, ind) => (
+                  <button
+                    key={ind}
+                    class={`btn btn-sm btn-outline btn-info ${
+                      txt === segmentVersionSignal.value ? 'btn-active' : ''
+                    }`}
+                    onClick$={() => {
+                      segmentVersionSignal.value = txt;
+                    }}
+                  >
+                    {txt}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </Sidebar>
@@ -85,7 +121,7 @@ export default component$(() => {
               </label>
             </div>
 
-            <div>
+            <div class="mb-3">
               <button
                 class="btn btn-primary btn-sm"
                 onClick$={preprocessForm}

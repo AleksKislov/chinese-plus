@@ -27,7 +27,7 @@ export const TextPreprocessForm = component$(({ store }: TextPreprocessFormProps
   const textLengthSignal = useSignal('text-primary');
   const origTranslation = useSignal('');
   const tooltipTxt = useSignal<(string | DictWord)[][] | string[]>([]);
-  const currentWord = useSignal<DictWord | undefined>(undefined);
+  const currentWord = useSignal<DictWord | null>(null);
 
   useTask$(({ track }) => {
     track(() => chineseText.value.length);

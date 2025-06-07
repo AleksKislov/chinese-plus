@@ -12,7 +12,7 @@ export const BookContentsComponent = component$(
 
     return (
       <div>
-        <div class="prose my-1">
+        <div class="prose my-1 ml-2">
           <h3>Содержание</h3>
         </div>
 
@@ -20,14 +20,16 @@ export const BookContentsComponent = component$(
           {Object.entries(contents).map(([key, value]) => (
             <div class="collapse collapse-arrow join-item border-base-300 border" key={key}>
               <input type="radio" name="my-accordion-4" checked={isCurrentChapter(value._id)} />
-              <div class="collapse-title font-semibold">
-                {value.title.ru} | {value.title.cn}{' '}
-                <span class="float-right">
+              <div class="collapse-title flex justify-between items-center">
+                <div class="flex flex-col">
+                  <span class="">{value.title.cn}</span>
+                  <span class="text-xs">{value.title.ru}</span>
+                </div>
+                <span>
                   <span class="badge badge-accent badge-outline">{value.length}</span> 字
                 </span>
               </div>
               <div class="collapse-content text-sm">
-                {/* <p class="mb-1">Страницы:</p> */}
                 <div>
                   {value.pages.map((page, i) => (
                     <Link

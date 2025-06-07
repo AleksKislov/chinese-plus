@@ -90,6 +90,7 @@ export default component$(() => {
         <Sidebar>
           <BookInfoCard book={book} />
           <ReadResultCard />
+          <BookContentsComponent bookContents={bookLoader.value} />
         </Sidebar>
         <MainContent>
           <div class="prose mb-2">
@@ -100,7 +101,6 @@ export default component$(() => {
 
           {Array.from({ length: Math.max(page.translation.length, tooltipTxt.length) }).map(
             (_, i) => (
-              // редактировать можно только кол-во параграфов перевода
               <Paragraph
                 key={i}
                 fontSize={fontSizeSig.value}
@@ -147,7 +147,7 @@ export default component$(() => {
             comments={comments.value}
           />
 
-          <BookContentsComponent bookContents={bookLoader.value} />
+          {/* <BookContentsComponent bookContents={bookLoader.value} /> */}
         </MainContent>
       </FlexRow>
     </>

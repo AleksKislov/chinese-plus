@@ -53,6 +53,12 @@ export const HanziWriterSettings = {
 
 export type SEGMENTER_VERSION = 'v1' | 'v2' | 'v3';
 
+export const SEGMENTER_ENUM = {
+  v1: 'v1', // from start default
+  v2: 'v2', // from end
+  v3: 'v3', // nodejieba
+};
+
 export const segmenter = async (
   text: string,
   version: SEGMENTER_VERSION = 'v1',

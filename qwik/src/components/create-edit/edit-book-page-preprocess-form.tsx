@@ -6,6 +6,7 @@ import { FontSizeBtns } from '../common/content-cards/content-page-card';
 import { useNavigate } from '@builder.io/qwik-city';
 import { useSegmentAndGetTooltips } from '~/routes/(content)/create/text';
 import { useEditPageText } from '~/routes/(content)/edit/book-page/[id]';
+import { SEGMENTER_ENUM } from '~/routes/search';
 
 export type BookOrigPageContent = {
   _id: ObjectId;
@@ -77,7 +78,7 @@ export const EditBookPagePreprocessForm = component$(({ store }: TextPreprocessF
     store.origintext = chineseTextParagraphs;
     store.translation = translationParagraphs;
 
-    segmentAction.submit({ txt: trimmedChineseTxt, version: 'v3' });
+    segmentAction.submit({ txt: trimmedChineseTxt, version: SEGMENTER_ENUM.v3 });
   });
 
   const editText = $(async () => {

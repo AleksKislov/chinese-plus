@@ -59,10 +59,12 @@ export const usePublishText = routeAction$(async (params, ev): Promise<TextFromD
 
 export const useSegmentAndGetTooltips = globalAction$(
   async (params): Promise<{ allwords: string[]; tooltipTxt: (string | DictWord)[][] }> => {
-    const allwords = (
-      await segmenter(params.txt as string, params.version as SEGMENTER_VERSION)
-    ).filter((word) => word !== ' ');
-    const tooltipTxt = parseTextWords(allwords, await getWordsForTooltips(allwords, true));
+    const allwords = await segmenter(params.txt as string, params.version as SEGMENTER_VERSION);
+
+    const tooltipTxt = parseTextWords(
+      allwords.filter((word) => word !== ' '),
+      await getWordsForTooltips(allwords, true),
+    );
     return { allwords, tooltipTxt };
   },
 );

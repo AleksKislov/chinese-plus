@@ -34,7 +34,7 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={'Вся лексика для HSK 3.0'} />
+      <PageTitle txt={'Вся лексика HSK 3.0'} />
 
       <FlexRow>
         <Sidebar>
@@ -67,7 +67,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Лексика HSK 3.0',
+  title: 'Chinese+ Лексика HSK 3.0 с озвучкой',
   meta: [
     {
       name: 'description',

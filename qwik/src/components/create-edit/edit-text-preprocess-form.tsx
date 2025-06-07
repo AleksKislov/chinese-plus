@@ -30,7 +30,7 @@ export const EditTextPreprocessForm = component$(({ store }: TextPreprocessFormP
   const chineseText = useSignal(store.chineseTextParagraphs.join('\n\n'));
   const origTranslation = useSignal(store.translationParagraphs.join('\n\n'));
   const tooltipTxt = useSignal<(string | DictWord)[][] | string[]>([]);
-  const currentWord = useSignal<DictWord | undefined>(undefined);
+  const currentWord = useSignal<DictWord | null>(null);
 
   useTask$(({ track }) => {
     track(() => chineseText.value.length);
