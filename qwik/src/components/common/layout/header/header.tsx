@@ -37,13 +37,12 @@ export default component$(({ pulse }: { pulse: PulseData }) => {
                 tabIndex={0}
                 class="dropdown-content z-[1] menu bg-base-200 w-64 rounded-box text-base-content"
               >
-                {/* <MenuItemNew name={read.name} links={read.links} /> */}
                 <li>
                   <details class="z-40">
                     <summary>{read.name}</summary>
                     <ul class="w-52 bg-base-200">
                       <MenuItemNew name={'Тексты'} links={read.links} />
-                      <MenuLink href={'/read/unapproved-texts'} text={'На проверке'} />
+                      <MenuLink href={'/read/books'} text={'Книги'} />
                       <MenuLink href={'/segment'} text={'Сегментатор'} />
                     </ul>
                   </details>
@@ -90,7 +89,7 @@ export default component$(({ pulse }: { pulse: PulseData }) => {
                   </label>
                   <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content">
                     <MenuItemNew name={'Тексты'} links={read.links} />
-                    <MenuLink href={'/read/unapproved-texts'} text={'На проверке'} />
+                    <MenuLink href={'/read/books'} text={'Книги'} />
                     <MenuLink href={'/segment'} text={'Сегментатор'} />
                   </ul>
                 </li>
@@ -233,16 +232,16 @@ export const watch: MenuItemProps = {
       text: 'Видео',
     },
     {
-      href: '/watch/unapproved-videos',
-      text: 'На проверке',
-    },
-    {
       href: '/watch/phonetics-lessons',
       text: 'Уроки фонетики',
     },
     {
       href: '/watch/characters-lessons',
       text: 'Уроки иероглифики',
+    },
+    {
+      href: '/watch/unapproved-videos',
+      text: 'На проверке',
     },
   ],
 };
@@ -271,6 +270,10 @@ export const read: MenuItemProps = {
     {
       href: '/read/texts/all',
       text: 'Весь список',
+    },
+    {
+      href: '/read/unapproved-texts',
+      text: 'На проверке',
     },
   ],
 };

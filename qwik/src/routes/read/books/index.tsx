@@ -44,7 +44,7 @@ export default component$(() => {
       <PageTitle txt={'Книги на китайском языке'} />
       <FlexRow>
         <Sidebar>
-          <div class="card w-full bg-base-200 my-3">
+          <div class="card w-full bg-base-200 mb-3">
             <div class="card-body">
               <h2 class="card-title">О разделе</h2>
               <p>
