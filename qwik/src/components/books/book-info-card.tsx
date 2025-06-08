@@ -27,7 +27,8 @@ export const BookInfoCard = component$(
         <div class="card-body">
           <TagsLine tags={genres} />
 
-          <InfoLine name={'Писатель'} value={author.name.ru + ' | ' + author.name.cn} />
+          <InfoLine name={'Писатель'} value={author.name.ru} />
+          <InfoLine name={'作者'} value={author.name.cn} />
           <InfoLine name={'Год'} value={'' + year} />
           <CountryInfoLine country={author.country} />
           <TextSource source={translationSrc} isTranslation={true} />

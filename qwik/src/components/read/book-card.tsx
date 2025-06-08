@@ -13,6 +13,7 @@ type BookCardProps = {
   book: BookCardInfo;
 };
 
+// for all books page
 export const BookCard = component$(({ book }: BookCardProps) => {
   const { _id: bookId, genres, year, author, translationSrc, about, picUrl } = book;
 
@@ -35,10 +36,12 @@ export const BookCard = component$(({ book }: BookCardProps) => {
           title={book.title.ru}
           isUnapproved={undefined}
         />
+        <h3>{book.title.cn}</h3>
         <TagsLine tags={genres} />
 
         <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
-          <InfoLine name={'Писатель'} value={author.name.ru + ' | ' + author.name.cn} />
+          <InfoLine name={'Писатель'} value={author.name.ru} />
+          <InfoLine name={'作者'} value={author.name.cn} />
           <InfoLine name={'Год'} value={'' + year} />
           <CountryInfoLine country={author.country} />
 

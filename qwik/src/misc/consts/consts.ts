@@ -1,6 +1,8 @@
 const CONSTANTS = {
   countries: {
     china: 'Китай',
+    russia: 'Россия',
+    'great britain': 'Великобритания',
   },
   appVersion: '2.30.1',
   bgTextLen: 16000,
