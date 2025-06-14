@@ -16,12 +16,12 @@ export const featuresArr = [
     pic: (
       <span class="text-4xl">
         <WordTooltip
-          currentWord={{ value: undefined }}
+          currentWord={{ value: null }}
           word={{
             chinese: '我',
             _id: '5f04819868566a15a9ff0227',
             pinyin: ' wǒ',
-            previous: [],
+            // previous: [],
             russian:
               ' [m1]1) я; мой[/m][m2][*][ex]我是学生 я ― учащийся[/ex][/*][/m][m2][*][ex]我父亲 мой отец[/ex][/*][/m][m1]2) мы; наш ([i]о коллективе, стране[/i])[/m][m2][*][ex]我方 наша сторона, наши[/ex][/*][/m][m2][*][ex]我军 наша армия[/ex][/*][/m][m2][*][ex]敌我 противник и мы[/ex][/*][/m][m1]3) сам; самоличный, частный, личный[/m][m2][*][ex]自我 сам; собственный[/ex][/*][/m][m2][*][ex]大公无我 всё общественное, нет ничего личного (собственного)[/ex][/*][/m]',
           }}
@@ -33,13 +33,17 @@ export const featuresArr = [
         Все{' '}
         <Link href="/read/texts" class="link link-secondary">
           тексты
+        </Link>
+        ,{' '}
+        <Link href="/read/books" class="link link-secondary">
+          книги
         </Link>{' '}
         и{' '}
         <Link href="/watch/videos" class="link link-secondary">
           видео
         </Link>{' '}
         с параллельным переводом и переводом каждого слова. Кликните на{' '}
-        <span class="text-secondary">иероглиф</span>
+        <span class="text-secondary">我</span>
       </p>
     ),
   },

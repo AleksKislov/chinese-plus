@@ -25,7 +25,7 @@ export const CardImg = component$(
             height="600"
             src={errorPic.value || picUrl}
             alt="Content pic"
-            class="w-full h-full lg:object-cover"
+            // class="w-full h-full lg:object-cover"
             style={contentType === WHERE.video ? { transform: 'scale(1.35)' } : {}}
             onError$={() => (errorPic.value = CONST_URLS.defaultTextPic)}
           />
