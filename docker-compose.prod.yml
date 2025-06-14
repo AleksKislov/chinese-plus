@@ -8,7 +8,7 @@ services:
     ports:
       - "127.0.0.1:27017:27017"
     volumes:
-      - mongodata:/data/db
+      - new_bylh_mongodata:/data/db
     networks:
       new_bylh_bylh_net:
 
@@ -54,7 +54,8 @@ services:
       new_bylh_bylh_net:
 
 volumes:
-  mongodata:
+  new_bylh_mongodata:
+    external: true
 
 networks:
   new_bylh_bylh_net:
