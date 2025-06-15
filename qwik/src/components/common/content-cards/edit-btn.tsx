@@ -1,4 +1,4 @@
-import { component$, useContext } from '@builder.io/qwik';
+import { $, component$, useContext } from '@builder.io/qwik';
 import { userContext } from '~/root';
 import { WHERE, type WhereType } from '../comments/comment-form';
 import { editSvg } from '../media/svg';
@@ -19,21 +19,42 @@ export const EditBtn = component$(
     const loc = useLocation();
     const nav = useNavigate();
 
-    const curPage = loc.url.searchParams.get('pg'); // for long texts
-    // если не модер, то редактировать только свое до публикации
-    const isBook = contentType === WHERE.book;
-    const url = isBook
-      ? `/edit/book-page/${contentId}`
-      : `/edit/${contentType}/${contentId}/${curPage ? '?pg=' + curPage : ''}`;
+    // Do not show the button if the user doesn't have permission
+    if (!(isAdmin || isModerator || (!isApproved && ownsContent))) {
+      return null;
+    }
 
-    return isAdmin || isModerator || (!isApproved && ownsContent) ? (
+    const onClickHandler$ = $(() => {
+      const curPage = loc.url.searchParams.get('pg');
+      const isBook = contentType === WHERE.book;
+
+      // 1. Construct the PATHNAME string correctly
+      const pathname = isBook
+        ? `/edit/book-page/${contentId}`
+        : `/edit/${contentType}/${contentId}`;
+
+      // 2. Create a new URL object, resolving the pathname against the current origin.
+      // loc.url can be used as the base.
+      const destinationUrl = new URL(pathname, loc.url);
+
+      // 3. Append search params correctly
+      if (curPage) {
+        destinationUrl.searchParams.set('pg', curPage);
+      }
+
+      // 4. Navigate using the full, valid URL.
+      // The .href property gives the full string, e.g., "http://localhost:5173/edit/..."
+      nav(destinationUrl.href);
+    });
+
+    return (
       <button
         class={`btn btn-sm btn-outline btn-warning mt-2`}
         type="button"
-        onClick$={() => nav(url)}
+        onClick$={onClickHandler$}
       >
         {editSvg} edit
       </button>
-    ) : null;
+    );
   },
 );

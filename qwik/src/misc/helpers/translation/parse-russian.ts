@@ -1,14 +1,18 @@
 import { markUpRuText } from './mark-up-ru-text';
-// import { sanitizer } from "./sanitizer";
+
+export const ExamplesMarker = "<span class='tippyExample block'>";
 
 export const parseRussian = (translation: string, showExamples: boolean): string => {
   if (!translation) return ' ';
   let russian = markUpRuText(translation, showExamples);
 
-  // shorten words from dictionary/allwords
-  if (russian.length > 2000) {
-    const ind = russian.slice(1000, russian.length).indexOf("<span class='tippyExample block'>");
-    russian = russian.slice(0, ind + 1000);
+  // Only truncate if the text is long AND the examples marker is present.
+  if (russian.length > 2000 && russian.includes(ExamplesMarker)) {
+    const firstExampleIndex = russian.indexOf(ExamplesMarker);
+
+    if (firstExampleIndex > 0) {
+      russian = russian.substring(0, firstExampleIndex);
+    }
   }
 
   return russian;

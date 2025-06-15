@@ -34,7 +34,14 @@ export const OwnWordBtn = component$(({ word }: { word: DictWord }) => {
 
   let isUserWord = false;
   if (typeof word !== 'string') {
-    isUserWord = loggedIn && userState.words?.some((w) => w.chinese === word.chinese);
+    try {
+      isUserWord =
+        loggedIn &&
+        Array.isArray(userState.words) &&
+        userState.words?.some((w) => w.chinese === word.chinese);
+    } catch (error) {
+      console.error('Error checking user words:', error);
+    }
   }
 
   return (

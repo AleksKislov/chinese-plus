@@ -37,9 +37,14 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
 
   useVisibleTask$(({ track }) => {
     const val = track(() => getFullTranslation.value);
-    const translation = (val?.[0] as DictWord).russian;
+    const translation = (val?.[0] as DictWord)?.russian;
     if (translation && currentWord) {
-      setCurrentWord(word as DictWord, translation);
+      // setCurrentWord(word as DictWord, translation);
+      currentWord.value = null;
+      // setTimeout(() => {
+      currentWord.value = word as DictWord;
+      currentWord.value.russian = translation;
+      // });
     }
   });
 
@@ -53,7 +58,14 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
 
   let isUserWord = false;
   if (typeof word !== 'string') {
-    isUserWord = loggedIn && userState.words?.some((w) => w.chinese === word.chinese);
+    try {
+      isUserWord =
+        loggedIn &&
+        Array.isArray(userState.words) &&
+        userState.words?.some((w) => w.chinese === word.chinese);
+    } catch (error) {
+      console.error('Error checking user words:', error);
+    }
   }
 
   return (
