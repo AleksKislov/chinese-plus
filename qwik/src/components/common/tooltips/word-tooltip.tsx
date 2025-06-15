@@ -48,13 +48,14 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
     }
   });
 
-  const setCurrentWord = $((word: DictWord, translation?: string) => {
-    currentWord.value = null;
-    setTimeout(() => {
-      currentWord.value = word;
-      if (translation) currentWord.value.russian = translation;
-    });
-  });
+  // const setCurrentWord = $((word: DictWord, translation?: string) => {
+  //   console.log('HE~RE');
+  //   currentWord.value = null;
+  //   setTimeout(() => {
+  //     currentWord.value = word;
+  //     if (translation) currentWord.value.russian = translation;
+  //   });
+  // });
 
   let isUserWord = false;
   if (typeof word !== 'string') {
@@ -82,7 +83,9 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
         tabIndex={0}
         onClick$={() => {
           // currentWord.value = word as DictWord;
-          setCurrentWord(word as DictWord);
+          // setCurrentWord(word as DictWord);
+          getFullTranslation.submit({ chineseWord: (word as DictWord)?.chinese });
+
           showTooltip.value = true;
         }}
         class={`rounded cursor-pointer hover:bg-info hover:text-info-content ${
@@ -122,9 +125,9 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
                   <label
                     for={moreInfoModalId}
                     class={'btn btn-sm btn-info mr-1'}
-                    onClick$={() => {
-                      getFullTranslation.submit({ chineseWord: word.chinese });
-                    }}
+                    // onClick$={() => {
+                    //   getFullTranslation.submit({ chineseWord: word.chinese });
+                    // }}
                   >
                     {moreInfoSvg}
                   </label>
