@@ -1,6 +1,6 @@
 import { markUpRuText } from './mark-up-ru-text';
 
-export const ExamplesMarker = "<span class='tippyExample block'>";
+export const ExamplesMarker = "<div class='text-sky-300 indent-5";
 
 export const parseRussian = (translation: string, showExamples: boolean): string => {
   if (!translation) return ' ';
