@@ -1,4 +1,4 @@
-import { component$ } from '@builder.io/qwik';
+import { component$, useContext } from '@builder.io/qwik';
 import { type DocumentHead, useLocation } from '@builder.io/qwik-city';
 import { routeLoader$ } from '@builder.io/qwik-city';
 import { TableCard } from '~/components/hsk/table-card';
@@ -12,6 +12,9 @@ import { MainContent } from '~/components/common/layout/main-content';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
 import { CsvCard } from '~/components/hsk/csv-card';
+import { configContext } from '~/root';
+import YANDEX_ADS from '~/misc/consts/ads';
+import { BannerAds } from '~/components/common/ads/sidebar-ads';
 
 export type NewHskWordType = {
   _id: ObjectId;
@@ -29,6 +32,9 @@ export const getHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]> =>
 });
 
 export default component$(() => {
+  const configState = useContext(configContext);
+  const bannerAds = configState.find((x) => x.type === YANDEX_ADS.banner);
+
   const loc = useLocation();
   const hskWords = getHskWords();
 
@@ -53,6 +59,8 @@ export default component$(() => {
         </Sidebar>
 
         <MainContent>
+          {bannerAds?.isActive && <BannerAds />}
+
           <Pagination
             level={loc.url.searchParams.get('lvl') || '1'}
             curPage={+loc.url.searchParams.get('pg')! || 0}

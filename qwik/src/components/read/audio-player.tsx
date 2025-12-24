@@ -83,7 +83,8 @@ export const AudioPlayer = component$(({ textId }: { textId: ObjectId }) => {
               class="rounded-md py-1 px-2"
               value={audioRate.value}
               onChange$={(e) => {
-                const rate = +e.target.value;
+                // @ts-ignore
+                const rate = +e.target?.value;
                 audioRate.value = rate;
                 audioPlayer.value!.playbackRate = rate;
               }}

@@ -16,13 +16,13 @@ export const TextHeadBtns = component$(({ fontSizeSig, showTranslation }: TxtHea
       <div>
         <label class="label cursor-pointer">
           <span class="label-text mr-3 font-bold">
-            {showTranslation.value ? 'Без перевода' : 'С переводом'}
+            {showTranslation.value ? 'С переводом' : 'Без перевода'}
           </span>
 
           <input
             type="checkbox"
             class="toggle toggle-accent"
-            checked={!showTranslation.value}
+            checked={showTranslation.value}
             onClick$={() => (showTranslation.value = !showTranslation.value)}
           />
         </label>

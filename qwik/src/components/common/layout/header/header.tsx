@@ -69,8 +69,8 @@ export default component$(({ pulse }: { pulse: PulseData }) => {
                 </li>
                 <MenuLink href="/search" text="Словарь" />
                 <MenuLink href="/feedback" text="Форум" />
-                <MenuLink href="/heroes" text="Герои клуба" />
-                <MenuLink href="/donate" text="Донат и цели" />
+                {/* <MenuLink href="/heroes" text="Герои клуба" /> */}
+                {/* <MenuLink href="/donate" text="Донат и цели" /> */}
                 <ThemeChanger />
               </ul>
             </div>
@@ -120,7 +120,7 @@ export default component$(({ pulse }: { pulse: PulseData }) => {
                 </li>
 
                 <MenuLink href="/search" text="Словарь" />
-                <MenuItem name={ourClub.name} links={ourClub.links} />
+                {/* <MenuItem name={ourClub.name} links={ourClub.links} /> */}
                 <MenuLink href="/feedback" text="Форум" />
 
                 <ThemeChanger />
