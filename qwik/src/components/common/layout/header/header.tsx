@@ -3,16 +3,15 @@ import { userContext } from '~/root';
 import { Link } from '@builder.io/qwik-city';
 import { MenuItem, type MenuItemProps } from './menu-item';
 import { dropdownArrowBottom, enterSvg, logoSvg } from '../../media/svg';
-import { type PulseData, getNewMentions } from '~/routes/layout';
+import { getNewMentions } from '~/routes/layout';
 import { AvatarImg } from '../../media/avatar-img';
 import MenuLink from './menu-link';
 import { MenuItemNew } from './menu-item-new';
 import { ThemeChanger } from './theme-changer';
 import { Brand } from './brand';
-import { ClubPulse } from './club-pulse';
 import { AuthMenu } from './auth-menu';
 
-export default component$(({ pulse }: { pulse: PulseData }) => {
+export default component$(() => {
   const newMentions = getNewMentions();
   const userState = useContext(userContext);
   const isMobile = useSignal(false);
@@ -124,7 +123,6 @@ export default component$(({ pulse }: { pulse: PulseData }) => {
                 <MenuLink href="/feedback" text="Форум" />
 
                 <ThemeChanger />
-                <ClubPulse data={pulse} />
               </ul>
             </div>
           </div>
@@ -132,7 +130,6 @@ export default component$(({ pulse }: { pulse: PulseData }) => {
           {/* brand for mobile */}
           <div class="navbar-center lg:hidden">
             <div class="flex">
-              <ClubPulse data={pulse} />
               <Link class="btn btn-ghost normal-case text-2xl" href="/">
                 <Brand isMobile={true} />
               </Link>
@@ -253,10 +250,10 @@ export const ourClub: MenuItemProps = {
       href: '/heroes',
       text: 'Герои клуба',
     },
-    {
-      href: '/donate',
-      text: 'Донат и цели',
-    },
+    // {
+    //   href: '/donate',
+    //   text: 'Донат и цели',
+    // },
   ],
 };
 

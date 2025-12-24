@@ -11,9 +11,9 @@ export const Footer = component$(({ beVersion }: { beVersion: string }) => {
           Контакты
         </Link>
 
-        <Link class="link link-hover" href="/donate">
+        {/* <Link class="link link-hover" href="/donate">
           Донат и цели
-        </Link>
+        </Link> */}
 
         <Link class="link link-hover" href="/feedback">
           Форум

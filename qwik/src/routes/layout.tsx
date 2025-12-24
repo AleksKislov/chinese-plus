@@ -10,11 +10,9 @@ import {
   configContext,
   type Config,
   IsLightThemeCookieName,
-  goalsContext,
 } from '~/root';
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { ThemeTypes } from '~/components/common/layout/header/theme-changer';
-import { type DonateGoal } from './(club)/donate';
 
 export const getNewMentions = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
   const token = getTokenFromCookie(cookie);
@@ -45,37 +43,8 @@ export const useGetUserWords = routeLoader$(async ({ cookie }): Promise<UserWord
   return ApiService.get('/api/userwords', token, []);
 });
 
-export type PulseDataItem = {
-  lastMonth: number;
-  prevMonth: number;
-};
-
-export type PulseData = {
-  comment: PulseDataItem;
-  post: PulseDataItem;
-  text: PulseDataItem;
-  video: PulseDataItem;
-  donate: PulseDataItem;
-  user: PulseDataItem;
-};
-
-export const useGetPulse = routeLoader$((): Promise<PulseData> => {
-  return ApiService.get('/api/project/pulse', undefined, {
-    comment: {},
-    post: {},
-    text: {},
-    video: {},
-    donate: {},
-    user: {},
-  });
-});
-
 export const useFeConfigs = routeLoader$((): Promise<Config[]> => {
   return ApiService.get('/api/project/configs', undefined, []);
-});
-
-export const useGetOurGoals = routeLoader$((): Promise<DonateGoal[]> => {
-  return ApiService.get('/api/donate/goals', undefined, []);
 });
 
 export const useCheckTheme = routeLoader$(({ cookie }): boolean => {
@@ -90,11 +59,8 @@ export default component$(() => {
   const hsk2WordsTotal = useGetUserHsk2WordsTotal();
   const userWords = useGetUserWords();
   const beVersion = useGetBackendVersion();
-  const pulse = useGetPulse();
   const feConfigs = useFeConfigs();
-  const getOurGoals = useGetOurGoals();
   const configState = useContext(configContext);
-  const goalsState = useContext(goalsContext);
 
   useTask$(({ track }) => {
     track(() => user.value);
@@ -149,18 +115,13 @@ export default component$(() => {
     configState.push(...res.filter((x) => x.isActive));
   });
 
-  useTask$(({ track }) => {
-    const res = track(() => getOurGoals.value);
-    goalsState.push(...res);
-  });
-
   return (
     <>
       <main
         class={'flex flex-col min-h-screen text-base-content'}
         data-theme={isDarkTheme ? ThemeTypes.dark : ThemeTypes.light}
       >
-        <Header pulse={pulse.value} />
+        <Header />
         <section class={'relative flex flex-col min-h-screen justify-between '}>
           <div class="relative container mx-auto px-4 lg:px-28">
             <Slot />
