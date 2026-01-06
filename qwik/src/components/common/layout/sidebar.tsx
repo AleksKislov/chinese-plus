@@ -1,9 +1,7 @@
 import { component$, Slot, useContext } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
-import { DonateGoalCard } from '~/components/donate/donate-goal-card';
-import { getRandElem } from '~/misc/helpers/tools';
-import { configContext, goalsContext } from '~/root';
-import { SidebarAds } from '../ads/sidebar-ads';
+import { configContext } from '~/root';
+import { BannerAds } from '../ads/sidebar-ads';
 import YANDEX_ADS from '~/misc/consts/ads';
 
 type SidebarType = {
@@ -12,13 +10,11 @@ type SidebarType = {
 
 export const Sidebar = component$(({ noAds }: SidebarType) => {
   const configState = useContext(configContext);
-  const goalsState = useContext(goalsContext);
 
   const yandexAds = configState.find((x) => x.type === YANDEX_ADS.banner);
   const adsInfoArr = configState.filter((x) => x.type === 'ads');
   const adsInfo = adsInfoArr[Math.floor(Math.random() * adsInfoArr.length)];
 
-  const randomGoal = getRandElem(goalsState);
   return (
     <div class="w-full md:w-1/4 mb-3 mr-4">
       {!noAds && adsInfo && (
@@ -41,8 +37,7 @@ export const Sidebar = component$(({ noAds }: SidebarType) => {
 
       <Slot />
 
-      {!noAds && yandexAds?.isActive && <SidebarAds />}
-      {!noAds && randomGoal && <DonateGoalCard goal={randomGoal} isCompact={true} />}
+      {!noAds && yandexAds?.isActive && <BannerAds />}
     </div>
   );
 });

@@ -97,6 +97,9 @@ async function getGoals(lim = 0, onlyNotFinished = false) {
 }
 
 async function getNotFinancialGoal() {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  if (isDevelopment) return 0;
+
   try {
     const [notFinancialGoals, tgData] = await Promise.all([
       DonateGoal.find({ isActive: true, notFinancial: true }, undefined, { limit: 1 }),
@@ -109,7 +112,7 @@ async function getNotFinancialGoal() {
     }
   } catch (err) {
     console.log('[TG ERR]', err.message);
-    return null;
+    return 0;
   }
 }
 

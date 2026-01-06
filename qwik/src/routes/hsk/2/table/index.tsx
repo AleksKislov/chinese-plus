@@ -1,4 +1,4 @@
-import { component$ } from '@builder.io/qwik';
+import { component$, useContext } from '@builder.io/qwik';
 import { type DocumentHead, useLocation } from '@builder.io/qwik-city';
 import { routeLoader$ } from '@builder.io/qwik-city';
 import { Alerts } from '~/components/common/alerts/alerts';
@@ -14,6 +14,9 @@ import { getTokenFromCookie } from '~/misc/actions/auth';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
 import { CsvCard } from '~/components/hsk/csv-card';
+import { configContext } from '~/root';
+import YANDEX_ADS from '~/misc/consts/ads';
+import { BannerAds } from '~/components/common/ads/sidebar-ads';
 
 export type OldHskWordType = {
   _id: ObjectId;
@@ -47,6 +50,9 @@ export const getHskWords = routeLoader$(async ({ query }): Promise<OldHskWordTyp
 });
 
 export default component$(() => {
+  const configState = useContext(configContext);
+  const bannerAds = configState.find((x) => x.type === YANDEX_ADS.banner);
+
   const loc = useLocation();
   const hskWords = getHskWords();
   const userHskWords = getUserHsk2Words();
@@ -58,7 +64,7 @@ export default component$(() => {
       <FlexRow>
         <Alerts />
 
-        <Sidebar>
+        <Sidebar noAds={true}>
           <TableCard
             level={loc.url.searchParams.get('lvl') || '1'}
             isOldHsk={true}
@@ -74,6 +80,8 @@ export default component$(() => {
         </Sidebar>
 
         <MainContent>
+          {bannerAds?.isActive && <BannerAds />}
+
           <Pagination
             level={loc.url.searchParams.get('lvl') || '1'}
             curPage={+loc.url.searchParams.get('pg')! || 0}

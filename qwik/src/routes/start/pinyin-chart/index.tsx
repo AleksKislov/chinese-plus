@@ -9,6 +9,7 @@ import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-l
 import { configContext } from '~/root';
 import YANDEX_ADS from '~/misc/consts/ads';
 import { LentaAds } from '~/components/common/ads/lenta-ads';
+import { BannerAds } from '~/components/common/ads/sidebar-ads';
 
 export const initHiglights = () => {
   const tbody = document.querySelector('tbody') as HTMLTableSectionElement;
@@ -48,7 +49,8 @@ export default component$(() => {
   useStyles$(styles);
   const configState = useContext(configContext);
 
-  const yandexAds = configState.find((x) => x.type === YANDEX_ADS.lenta);
+  const lentaAds = configState.find((x) => x.type === YANDEX_ADS.lenta);
+  const bannerAds = configState.find((x) => x.type === YANDEX_ADS.banner);
 
   const consonansts = Object.keys(tableMap);
 
@@ -66,6 +68,8 @@ export default component$(() => {
       </div>
 
       <PhoneticsLinkCard />
+
+      {bannerAds?.isActive && <BannerAds />}
 
       <div class="overflow-x-auto">
         <table class="table table-compact text-base-content">
@@ -166,7 +170,7 @@ export default component$(() => {
         </table>
       </div>
 
-      {yandexAds?.isActive && <LentaAds />}
+      {lentaAds?.isActive && <LentaAds />}
     </>
   );
 });

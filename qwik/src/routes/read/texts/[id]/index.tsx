@@ -137,7 +137,7 @@ export default component$(() => {
       <ContentPageHead title={title} hits={hits} path="/read/texts" />
 
       <FlexRow>
-        <Sidebar>
+        <Sidebar noAds={true}>
           <ContentPageCard
             desc={desc}
             length={length}

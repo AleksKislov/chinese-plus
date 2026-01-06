@@ -8,7 +8,7 @@ import { type Addressee, type CommentIdToReply, WHERE } from '../common/comments
 import { EditWordModal } from '../common/modals/edit-word-modal';
 import { MoreInfoModal } from '../common/modals/more-info-modal';
 import { EditChineseArrModal } from '../common/modals/edit-chinese-arr-modal';
-import { userContext } from '~/root';
+import { configContext, userContext } from '~/root';
 import { FontSizeBtns } from '../common/content-cards/content-page-card';
 import { type TooltipParagraph, type SimilarText, type TextFromDB } from '~/routes/read/texts/[id]';
 import type { CommentType } from '../common/comments/comment-card';
@@ -17,6 +17,8 @@ import { Loader } from '../common/ui/loader';
 import { SimilarTxtImg } from './similar-txt-img';
 import { CommentsFullBlock } from '../common/comments/comments-full-block';
 import { TextHeadBtns } from '../common/read/text-head-btns';
+import { BannerAds } from '../common/ads/sidebar-ads';
+import YANDEX_ADS from '~/misc/consts/ads';
 
 type TextMainContentProps = {
   text: TextFromDB & { curPage: number };
@@ -28,6 +30,8 @@ type TextMainContentProps = {
 
 export const TextMainContent = component$(
   ({ text, comments, restLoading, tooltipTxt, similarTexts }: TextMainContentProps) => {
+    const configState = useContext(configContext);
+
     const { isAdmin } = useContext(userContext);
     const fontSizeSig = useSignal(FontSizeBtns.md);
     const addressees = useSignal<Addressee[]>([]);
@@ -48,6 +52,8 @@ export const TextMainContent = component$(
       audioSrc: hasAudio,
       isApproved,
     } = text;
+
+    const yandexAds = configState.find((x) => x.type === YANDEX_ADS.banner);
 
     const isLongTxt = Boolean(pages && pages.length);
     const currentWord = useSignal<DictWord | null>(null);
@@ -84,6 +90,8 @@ export const TextMainContent = component$(
             edit chinese
           </label>
         )}
+
+        {yandexAds?.isActive && <BannerAds />}
 
         {isApproved && similarTexts ? (
           <>

@@ -1,11 +1,10 @@
 import { component$, useVisibleTask$ } from '@builder.io/qwik';
 
-export const SidebarAds = component$(() => {
+export const BannerAds = component$(() => {
   useVisibleTask$(
     () => {
       // @ts-ignore
       window.yaContextCb?.push(() => {
-        console.log('here');
         // @ts-ignore
         Ya?.Context.AdvManager.render({
           blockId: 'R-A-15425793-1',
@@ -18,9 +17,9 @@ export const SidebarAds = component$(() => {
 
   return (
     <div class="card w-full bg-base-200 my-3">
-      <div class="card-body">
-        <div id="yandex_rtb_R-A-15425793-1"></div>
-      </div>
+      {/* <div class="card-body"> */}
+      <div id="yandex_rtb_R-A-15425793-1"></div>
+      {/* </div> */}
     </div>
   );
 });

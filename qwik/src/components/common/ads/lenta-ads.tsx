@@ -18,9 +18,9 @@ export const LentaAds = component$(() => {
 
   return (
     <div class="card w-full bg-base-200 my-3">
-      <div class="card-body">
-        <div id="yandex_rtb_R-A-15425793-2"></div>
-      </div>
+      {/* <div class="card-body"> */}
+      <div id="yandex_rtb_R-A-15425793-2"></div>
+      {/* </div> */}
     </div>
   );
 });

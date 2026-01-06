@@ -1,18 +1,24 @@
-import { component$ } from '@builder.io/qwik';
+import { component$, useContext } from '@builder.io/qwik';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { type DocumentHead } from '@builder.io/qwik-city';
 import { MainContent } from '~/components/common/layout/main-content';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { PageTitle } from '~/components/common/layout/title';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
+import YANDEX_ADS from '~/misc/consts/ads';
+import { configContext } from '~/root';
+import { BannerAds } from '~/components/common/ads/sidebar-ads';
 
 export default component$(() => {
+  const configState = useContext(configContext);
+  const bannerAds = configState.find((x) => x.type === YANDEX_ADS.banner);
+
   return (
     <>
       <PageTitle txt={'Ключи китайских иероглифов'} />
 
       <FlexRow>
-        <Sidebar>
+        <Sidebar noAds={true}>
           <div class="card bg-primary text-primary-content">
             <div class="card-body">
               <h2 class="card-title">Ключи</h2>
@@ -76,6 +82,8 @@ export default component$(() => {
       </FlexRow>
 
       <div class="overflow-x-auto">
+        {bannerAds?.isActive && <BannerAds />}
+
         <table class="table table-compact table-zebra w-full text-base-content">
           <thead>
             <tr>
@@ -369,7 +377,7 @@ export default component$(() => {
               <td>厂</td>
               <td> </td>
               <td> </td>
-              <td>han4</td>
+              <td>han3</td>
               <td>обрыв</td>
               <td>2</td>
               <td>厂字旁</td>
