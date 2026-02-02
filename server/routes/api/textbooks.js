@@ -4,13 +4,6 @@ const router = express.Router();
 const Textbook = require('../../src/models/Textbook');
 const { getAllWords, shortenTranslation } = require('./services');
 
-//  const words = await getAllWords(req.body);
-//     if (isShortRu) {
-//       for (let i = 0; i < words.length; i++) {
-//         words[i].russian = shortenTranslation(words[i].russian);
-//       }
-//     }
-
 /**
  * @route     GET api/textbooks
  * @desc      get all levels and topics from textbooks
