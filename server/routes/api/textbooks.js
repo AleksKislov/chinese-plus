@@ -70,4 +70,33 @@ router.get('/', async (req, res) => {
   }
 });
 
+// for local usage
+// router.post('/new', async (req, res) => {
+//   const { level, all } = req.body;
+
+//   const promises = [];
+//   for (let i = 0; i < all.length; i++) {
+//     const item = all[i];
+
+//     item.ind = i;
+//     item.level = level;
+//     item.content.map((contentItem) => {
+//       contentItem.examples = contentItem.examples.map((example) => {
+//         example.audio = '';
+//         return example;
+//       });
+//       return contentItem;
+//     });
+//     promises.push(item);
+//   }
+
+//   try {
+//     await Textbook.insertMany(promises);
+//     res.json({ msg: 'Textbooks added' });
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send('Server error');
+//   }
+// });
+
 module.exports = router;
