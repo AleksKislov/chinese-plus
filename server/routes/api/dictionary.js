@@ -3,7 +3,7 @@ const router = express.Router();
 const Hanzi = require('./dict/dictionary');
 const mdbg = require('mdbg');
 const nodejieba = require('nodejieba');
-const { getAllWords, getWordsForParag } = require('./services');
+const { getAllWords, getWordsForParag, shortenTranslation } = require('./services');
 const auth = require('../../middleware/auth');
 
 const Dictionary = require('../../src/models/Dictionary');
@@ -101,16 +101,6 @@ router.post('/allwords', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
-
-function shortenTranslation(txt) {
-  if (!txt) return '';
-  txt = txt.replace(/\[\*\]\[ex\].*?\[\/ex\]\[\/\*\]/g, '').replaceAll('[m3][/m]', '');
-  if (txt.length > 400) {
-    const ind = txt.slice(200, txt.length).indexOf('[m2]');
-    txt = txt.slice(0, ind + 200);
-  }
-  return txt;
-}
 
 router.post('/wordsForParag', auth, async (req, res) => {
   const userId = req.user?.id;

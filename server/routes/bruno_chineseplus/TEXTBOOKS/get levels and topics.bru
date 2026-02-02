@@ -1,0 +1,20 @@
+meta {
+  name: get levels and topics
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{local_server}}/api/textbooks
+  body: none
+  auth: inherit
+}
+
+params:query {
+  ~lvl: 1
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
