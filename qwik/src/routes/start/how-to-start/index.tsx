@@ -18,8 +18,11 @@ export const points = [
     title: 'Далее - лексика и грамматика',
     txt: (
       <span>
-        Далее можно начать знакомиться с лексикой и грамматикой китайского языка. Лексику можно
-        начинать учить с 1-го уровня{' '}
+        Далее можно начать знакомиться с лексикой и{' '}
+        <Link class="link font-bold hover:link-success" href="/start/textbook/">
+          грамматикой
+        </Link>{' '}
+        китайского языка. Лексику можно начинать учить с 1-го уровня{' '}
         <Link class="link font-bold hover:link-success" href="/hsk/2/table">
           HSK
         </Link>

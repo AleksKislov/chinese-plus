@@ -49,11 +49,12 @@ export default component$(() => {
                 <MenuItemNew name={watch.name} links={watch.links} />
                 <li>
                   <details class="z-40">
-                    <summary>Начинающим</summary>
+                    <summary>Учебник</summary>
                     <ul class="w-52 bg-base-200">
                       <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
                       <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
                       <MenuItemNew name={startChars.name} links={startChars.links} />
+                      <MenuLink href={'/start/textbook'} text={'Грамматика'} />
                     </ul>
                   </details>
                 </li>
@@ -97,13 +98,14 @@ export default component$(() => {
 
                 <li tabIndex={0} class="dropdown dropdown-hover hover:text-success">
                   <label class="my-1 hover:text-secondary">
-                    Начинающим
+                    Учебник
                     {dropdownArrowBottom}
                   </label>
                   <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content">
                     <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
                     <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
                     <MenuItemNew name={startChars.name} links={startChars.links} />
+                    <MenuLink href={'/start/textbook'} text={'Грамматика'} />
                   </ul>
                 </li>
 
