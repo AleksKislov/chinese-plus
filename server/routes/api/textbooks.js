@@ -44,6 +44,8 @@ router.get('/', async (req, res) => {
               const wordData = allChineseForTooltips.find((w) => w.chinese === cnWord);
               if (wordData) {
                 tooltips.push(wordData);
+              } else {
+                tooltips.push(cnWord);
               }
             }
             example.cn = tooltips;
@@ -71,6 +73,15 @@ router.get('/', async (req, res) => {
 });
 
 // for local usage
+// function pinyinToAscii(s) {
+//   return s
+//     .normalize('NFD')
+//     .replace(/[\u0300-\u036f]/g, '')
+//     .replace(/ü/g, 'u')
+//     .replace("'", '')
+//     .replace(',', '');
+// }
+
 // router.post('/new', async (req, res) => {
 //   const { level, all } = req.body;
 
@@ -82,7 +93,7 @@ router.get('/', async (req, res) => {
 //     item.level = level;
 //     item.content.map((contentItem) => {
 //       contentItem.examples = contentItem.examples.map((example) => {
-//         example.audio = '';
+//         example.audio = pinyinToAscii(example.py.split(' ').join(''));
 //         return example;
 //       });
 //       return contentItem;
