@@ -38,7 +38,7 @@ export const TextbookContent = component$(({ topics }: { topics: TextbookType[] 
       {topics.map((topic) => (
         <details
           key={topic._id}
-          class="collapse bg-base-100 border border-base-300 my-2 overflow-visible"
+          class="collapse bg-base-100 border border-primary my-2 overflow-visible"
         >
           <summary class="collapse-title font-semibold text-lg my-2">
             {topic.ind + 1}. {topic.topic}

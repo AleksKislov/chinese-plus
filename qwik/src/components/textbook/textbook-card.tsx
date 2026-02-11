@@ -1,5 +1,5 @@
 import { component$ } from '@builder.io/qwik';
-import { Link } from '@builder.io/qwik-city';
+import { useNavigate } from '@builder.io/qwik-city';
 
 import CONSTANTS from '~/misc/consts/consts';
 import { type ShortTextbookType } from '~/routes/start/textbook';
@@ -11,6 +11,8 @@ type TextbookCardProps = {
 };
 
 export const TextbookCard = component$(({ val, curLevel }: TextbookCardProps) => {
+  const nav = useNavigate();
+
   const levels = Object.keys(val);
 
   const rmHyphen = (str: string): string => str.replaceAll('-', '');
@@ -27,21 +29,23 @@ export const TextbookCard = component$(({ val, curLevel }: TextbookCardProps) =>
       <div class="overflow-x-auto">
         <table class="table w-full overflow-hidden !rounded-t-none">
           <tbody>
-            {levels.map((lvl) => (
-              <tr
-                key={lvl}
-                class={`hover hover:text-primary-focus ${
-                  curLevel === lvl ? 'bg-base-200 text-primary-focus' : ''
-                }`}
-              >
-                <td class="pl-8">
-                  <Link href={`?lvl=${rmHyphen(lvl)}`}>Band {lvl}</Link>
-                </td>
-                <td class={`float-right pr-8`}>
-                  <span class={`badge bg-warning text-warning-content`}>{val[lvl]}</span>
-                </td>
-              </tr>
-            ))}
+            {levels.map((lvl) => {
+              const href = `?lvl=${rmHyphen(lvl)}&pg=0`;
+              return (
+                <tr
+                  key={lvl}
+                  class={`hover hover:text-primary-focus cursor-pointer ${
+                    curLevel === lvl ? 'bg-base-200 text-primary-focus' : ''
+                  }`}
+                  onClick$={() => nav(href)}
+                >
+                  <td class="pl-8">Band {lvl}</td>
+                  <td class={`float-right pr-8`}>
+                    <span class={`badge bg-warning text-warning-content`}>{val[lvl]}</span>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
