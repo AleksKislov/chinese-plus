@@ -19,6 +19,8 @@ import { CommentsFullBlock } from '../common/comments/comments-full-block';
 import { TextHeadBtns } from '../common/read/text-head-btns';
 import { BannerAds } from '../common/ads/sidebar-ads';
 import YANDEX_ADS from '~/misc/consts/ads';
+import { OurAds } from '../common/ads/our-ads';
+import OUR_ADS from '~/misc/consts/our-ads';
 
 type TextMainContentProps = {
   text: TextFromDB & { curPage: number };
@@ -54,6 +56,7 @@ export const TextMainContent = component$(
     } = text;
 
     const yandexAds = configState.find((x) => x.type === YANDEX_ADS.banner);
+    const mainContentAds = configState.filter((x) => x.type === OUR_ADS.main_content)[0];
 
     const isLongTxt = Boolean(pages && pages.length);
     const currentWord = useSignal<DictWord | null>(null);
@@ -84,6 +87,7 @@ export const TextMainContent = component$(
           />
         ))}
         <div>{restLoading && <Loader />}</div>
+        <div class="my-2"></div>
 
         {isAdmin && (
           <label for={editChineseArrModalId} class={`btn btn-sm btn-outline btn-warning mt-2`}>
@@ -91,6 +95,7 @@ export const TextMainContent = component$(
           </label>
         )}
 
+        {mainContentAds?.isActive && <OurAds adsInfo={mainContentAds} />}
         {yandexAds?.isActive && <BannerAds />}
 
         {isApproved && similarTexts ? (

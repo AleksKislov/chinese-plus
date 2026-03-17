@@ -10,6 +10,8 @@ import { configContext } from '~/root';
 import YANDEX_ADS from '~/misc/consts/ads';
 import { LentaAds } from '~/components/common/ads/lenta-ads';
 import { BannerAds } from '~/components/common/ads/sidebar-ads';
+import OUR_ADS from '~/misc/consts/our-ads';
+import { OurAds } from '~/components/common/ads/our-ads';
 
 export const initHiglights = () => {
   const tbody = document.querySelector('tbody') as HTMLTableSectionElement;
@@ -51,6 +53,7 @@ export default component$(() => {
 
   const lentaAds = configState.find((x) => x.type === YANDEX_ADS.lenta);
   const bannerAds = configState.find((x) => x.type === YANDEX_ADS.banner);
+  const wideBannerAds = configState.filter((x) => x.type === OUR_ADS.wide_banner)[0];
 
   const consonansts = Object.keys(tableMap);
 
@@ -69,6 +72,7 @@ export default component$(() => {
 
       <PhoneticsLinkCard />
 
+      {wideBannerAds?.isActive && <OurAds adsInfo={wideBannerAds} />}
       {bannerAds?.isActive && <BannerAds />}
 
       <div class="overflow-x-auto">

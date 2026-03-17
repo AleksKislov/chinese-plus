@@ -15,6 +15,8 @@ import { CsvCard } from '~/components/hsk/csv-card';
 import { configContext } from '~/root';
 import YANDEX_ADS from '~/misc/consts/ads';
 import { BannerAds } from '~/components/common/ads/sidebar-ads';
+import OUR_ADS from '~/misc/consts/our-ads';
+import { OurAds } from '~/components/common/ads/our-ads';
 
 export type NewHskWordType = {
   _id: ObjectId;
@@ -34,6 +36,7 @@ export const getHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]> =>
 export default component$(() => {
   const configState = useContext(configContext);
   const bannerAds = configState.find((x) => x.type === YANDEX_ADS.banner);
+  const mainContentAds = configState.filter((x) => x.type === OUR_ADS.main_content)[0];
 
   const loc = useLocation();
   const hskWords = getHskWords();
@@ -59,6 +62,7 @@ export default component$(() => {
         </Sidebar>
 
         <MainContent>
+          {mainContentAds?.isActive && <OurAds adsInfo={mainContentAds} />}
           {bannerAds?.isActive && <BannerAds />}
 
           <Pagination
