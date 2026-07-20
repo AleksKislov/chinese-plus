@@ -6,7 +6,6 @@ import {
   noSerialize,
   useSignal,
   useStore,
-  useTask$,
   useVisibleTask$,
 } from '@builder.io/qwik';
 import HanziWriter from 'hanzi-writer';
@@ -65,7 +64,7 @@ export const CalligraphyGame = component$(({ words, level }: TypingGameProps) =>
     setNewQuestion();
   });
 
-  useTask$(({ track }) => {
+  useVisibleTask$(({ track, cleanup }) => {
     track(() => question.value);
 
     if (questionNum.value > QUEST_NUM) {
@@ -79,10 +78,10 @@ export const CalligraphyGame = component$(({ words, level }: TypingGameProps) =>
       progress.value += 0.5;
       if (progress.value >= 100) skipQuestion();
     }, 100);
-    return () => {
+    cleanup(() => {
       progress.value = 0;
       clearInterval(id);
-    };
+    });
   });
 
   useVisibleTask$(async ({ track }) => {

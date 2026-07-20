@@ -1,4 +1,4 @@
-import { $, component$, noSerialize, useSignal, useTask$, useVisibleTask$ } from '@builder.io/qwik';
+import { $, component$, noSerialize, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 import CONST_URLS from '~/misc/consts/urls';
 import { pauseSvg, playSvg } from '../common/media/svg';
 
@@ -32,7 +32,7 @@ export const AudioPlayer = component$(({ textId }: { textId: ObjectId }) => {
     }, 1000);
   });
 
-  useTask$(({ track, cleanup }) => {
+  useVisibleTask$(({ track, cleanup }) => {
     const audio = track(() => audioPlayer.value);
 
     const id = setInterval(() => {

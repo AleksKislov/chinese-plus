@@ -6,7 +6,7 @@ import {
   component$,
   useSignal,
   useStore,
-  useTask$,
+  useVisibleTask$,
   type QwikKeyboardEvent,
   useStyles$,
 } from '@builder.io/qwik';
@@ -53,7 +53,7 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
     setNewQuestion();
   });
 
-  useTask$(({ track }) => {
+  useVisibleTask$(({ track, cleanup }) => {
     track(() => question.value);
 
     if (questionNum.value > QUEST_NUM) {
@@ -67,10 +67,10 @@ export const TypingGame = component$(({ words, level }: TypingGameProps) => {
       progress.value += 0.5;
       if (progress.value >= 100) skipQuestion();
     }, 100);
-    return () => {
+    cleanup(() => {
       progress.value = 0;
       clearInterval(id);
-    };
+    });
   });
 
   const checkIt = $(() => {
