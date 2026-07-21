@@ -1,0 +1,26 @@
+meta {
+  name: create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{local_server}}/api/blog/create
+  body: json
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}
+
+body:json {
+  {
+    "title": "My first blog post",
+    "desc": "Short description",
+    "text": "Some intro text\n\n![](https://my-bucket.storage.yandexcloud.net/blog/some-user/uuid.webp)\n\nMore text after the picture",
+    "tags": ["hsk", "grammar"],
+    "mainPicUrl": "https://my-bucket.storage.yandexcloud.net/blog/some-user/uuid.webp",
+    "categoryInd": 0
+  }
+}

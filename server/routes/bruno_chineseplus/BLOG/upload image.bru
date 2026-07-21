@@ -1,0 +1,19 @@
+meta {
+  name: upload image
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{local_server}}/api/blog/upload-image
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}
+
+body:multipart-form {
+  image: @file(/absolute/path/to/picture.jpg)
+}

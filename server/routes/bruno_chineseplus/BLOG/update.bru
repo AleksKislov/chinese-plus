@@ -1,0 +1,26 @@
+meta {
+  name: update
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{local_server}}/api/blog/update
+  body: json
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}
+
+body:json {
+  {
+    "postId": "62b4c4e6290a9d79833dc4f6",
+    "title": "Updated title",
+    "desc": "Updated description",
+    "text": "Updated text",
+    "tags": ["hsk"],
+    "categoryInd": 1
+  }
+}

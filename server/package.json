@@ -11,6 +11,7 @@
   "author": "Aleks Kislov",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1090.0",
     "@google-cloud/text-to-speech": "^3.4.0",
     "@google-cloud/translate": "^6.1.0",
     "@json2csv/plainjs": "^7.0.6",
@@ -26,10 +27,12 @@
     "mdbg": "^1.73.0",
     "mongoose": "^5.12.3",
     "morgan": "^1.10.0",
+    "multer": "^2.2.0",
     "nodejieba": "^3.4.4",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "postmark": "^3.1.1",
+    "sharp": "^0.35.3",
     "uuid": "^8.2.0",
     "youtube-captions-scraper": "^2.0.2"
   },

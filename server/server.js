@@ -47,6 +47,7 @@ app.use('/api/userwords', require('./routes/api/userwords'));
 app.use('/api/dictionary', require('./routes/api/dictionary'));
 app.use('/api/comments', require('./routes/api/comments'));
 app.use('/api/texts', require('./routes/api/texts'));
+app.use('/api/blog', require('./routes/api/blog'));
 app.use('/api/books', require('./routes/api/books'));
 app.use('/api/translation', require('./routes/api/translation'));
 app.use('/api/notices', require('./routes/api/notices'));
