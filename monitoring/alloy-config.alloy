@@ -1,0 +1,50 @@
+logging {
+  level = "info"
+}
+
+// --- Logs: ship every container's stdout/stderr to Grafana Cloud Loki ---
+
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+loki.source.docker "default" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.docker.containers.targets
+  forward_to = [loki.write.grafana_cloud.receiver]
+}
+
+loki.write "grafana_cloud" {
+  endpoint {
+    url = env("LOKI_URL")
+    basic_auth {
+      username = env("LOKI_USER")
+      password = env("LOKI_API_KEY")
+    }
+  }
+}
+
+// --- Metrics: VM-level (node-exporter) and per-container (cadvisor) ---
+// 60s interval instead of the 15s default — this is a single-core VM, keep scrape overhead low.
+
+prometheus.scrape "node_exporter" {
+  targets         = [{"__address__" = "node-exporter:9100"}]
+  scrape_interval = "60s"
+  forward_to      = [prometheus.remote_write.grafana_cloud.receiver]
+}
+
+prometheus.scrape "cadvisor" {
+  targets         = [{"__address__" = "cadvisor:8080"}]
+  scrape_interval = "60s"
+  forward_to      = [prometheus.remote_write.grafana_cloud.receiver]
+}
+
+prometheus.remote_write "grafana_cloud" {
+  endpoint {
+    url = env("PROMETHEUS_URL")
+    basic_auth {
+      username = env("PROMETHEUS_USER")
+      password = env("PROMETHEUS_API_KEY")
+    }
+  }
+}

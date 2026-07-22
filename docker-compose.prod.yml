@@ -53,6 +53,60 @@ services:
     networks:
       new_bylh_bylh_net:
 
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    restart: unless-stopped
+    mem_limit: 64m
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      new_bylh_bylh_net:
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    restart: unless-stopped
+    mem_limit: 128m
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    devices:
+      - /dev/kmsg
+    networks:
+      new_bylh_bylh_net:
+
+  grafana-alloy:
+    image: grafana/alloy:latest
+    container_name: grafana_alloy
+    restart: unless-stopped
+    mem_limit: 128m
+    env_file:
+      - ./monitoring/.env
+    volumes:
+      - ./monitoring/alloy-config.alloy:/etc/alloy/config.alloy:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+    depends_on:
+      - node-exporter
+      - cadvisor
+    networks:
+      new_bylh_bylh_net:
+
 volumes:
   new_bylh_mongodata:
     external: true

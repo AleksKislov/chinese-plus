@@ -12,8 +12,20 @@ import qwikCityPlan from '@qwik-city-plan';
 import { manifest } from '@qwik-client-manifest';
 import render from './entry.ssr';
 import express from 'express';
+import pino from 'pino';
+import pinoHttp from 'pino-http';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
+
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  timestamp: pino.stdTimeFunctions.isoTime,
+  transport: isDevelopment
+    ? { target: 'pino-pretty', options: { colorize: true, translateTime: 'SYS:standard' } }
+    : undefined,
+});
 
 declare global {
   interface QwikCityPlatform extends PlatformNode {}
@@ -44,6 +56,23 @@ const { router, notFound } = createQwikCity({
 // Create the express server
 // https://expressjs.com/
 const app = express();
+
+// Log every page/SSR request (with response time), skip noisy static asset requests
+app.use(
+  pinoHttp({
+    logger,
+    autoLogging: {
+      ignore: (req) => !!req.url && (req.url.startsWith('/build') || req.url.startsWith('/assets')),
+    },
+    customLogLevel: (req, res, err) => {
+      if (res.statusCode >= 500 || err) return 'error';
+      if (res.statusCode >= 400) return 'warn';
+      return 'info';
+    },
+    customSuccessMessage: (req, res) => `${req.method} ${req.url} ${res.statusCode}`,
+    customErrorMessage: (req, res, err) => `${req.method} ${req.url} ${res.statusCode} - ${err.message}`,
+  }),
+);
 
 // Enable gzip compression
 // app.use(compression());

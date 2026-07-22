@@ -1,9 +1,10 @@
 const express = require('express');
 const { connectDB } = require('./src/mongo_db/db');
 const bodyParser = require('body-parser');
-const morgan = require('morgan');
+const pinoHttp = require('pino-http');
 const compression = require('compression');
 const cors = require('cors');
+const { logger } = require('./src/logger');
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 module.exports = { isDevelopment };
@@ -18,14 +19,18 @@ const app = express();
 connectDB(MONGO_DB);
 
 // Init Middleware
-if (isDevelopment) {
-  morgan.token('body', (req, res) => JSON.stringify(req.body, null, 2));
-  app.use(
-    morgan(
-      ':method :url :status :response-time ms - :res[content-length] :body - :req[content-length]',
-    ),
-  );
-}
+app.use(
+  pinoHttp({
+    logger,
+    customLogLevel: (req, res, err) => {
+      if (res.statusCode >= 500 || err) return 'error';
+      if (res.statusCode >= 400) return 'warn';
+      return 'info';
+    },
+    customSuccessMessage: (req, res) => `${req.method} ${req.url} ${res.statusCode}`,
+    customErrorMessage: (req, res, err) => `${req.method} ${req.url} ${res.statusCode} - ${err.message}`,
+  }),
+);
 
 app.use(cors({ origin: '*' }));
 app.use(compression());
@@ -61,7 +66,23 @@ app.use('/api/textbooks', require('./routes/api/textbooks'));
 // glcoud services routes
 app.use('/gcloud/youtube', require('./routes/gcloud/youtube'));
 
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  (req.log || logger).error({ err }, `Unhandled error on ${req.method} ${req.url}`);
+  if (res.headersSent) return next(err);
+  res.status(err.status || 500).json({ msg: 'Server error' });
+});
+
+process.on('unhandledRejection', (reason) => {
+  logger.error({ err: reason }, 'Unhandled promise rejection');
+});
+
+process.on('uncaughtException', (err) => {
+  logger.fatal({ err }, 'Uncaught exception - process will exit');
+  process.exit(1);
+});
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log(`Server is up on port ${PORT}. Is development MODE: ${isDevelopment}`);
+  logger.info(`Server is up on port ${PORT}. Is development MODE: ${isDevelopment}`);
 });
