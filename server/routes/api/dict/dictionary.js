@@ -5,7 +5,7 @@ const segmenter = new LongestMatchSegmenter(checkIfWordExists);
 // const nodejieba = require('nodejieba');
 
 /**
- * @description load all chinese words in memory into HANZI_DICT{word: 1}
+ * @description load all chinese words in memory into HANZI_DICT
  * @param {{_id: string}[]} arr
  */
 function fillDict(arr) {
@@ -20,7 +20,14 @@ function fillDict(arr) {
 
 setTimeout(async () => {
   try {
-    fillDict(await Dictionary.aggregate([{ $group: { _id: '$chinese' } }]));
+    fillDict(
+      await Dictionary.aggregate([
+        {
+          $match: { chinese: { $type: 'string' }, $expr: { $lte: [{ $strLenCP: '$chinese' }, 8] } },
+        },
+        { $group: { _id: '$chinese' } },
+      ]),
+    );
   } catch (err) {
     console.log(err);
   }
