@@ -5,6 +5,7 @@ services:
     image: mongo
     container_name: mongo_chin_dev
     restart: unless-stopped
+    command: ["mongod", "--wiredTigerCacheSizeGB", "0.5"]
     ports:
       - "127.0.0.1:27017:27017"
     volumes:

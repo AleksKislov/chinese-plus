@@ -37,8 +37,9 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
   return getContentComments(WHERE.video, params.id);
 });
 
-export const useGetVideo = routeLoader$(async ({ params }): Promise<VideoFromDB & TooltipSubs> => {
+export const useGetVideo = routeLoader$(async ({ params, redirect }): Promise<VideoFromDB & TooltipSubs> => {
   const videoFromDb = await getVideoFromDB(params.id);
+  if (!videoFromDb) throw redirect(302, '/watch/unapproved-videos');
   const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
   return { ...videoFromDb, tooltipSubs };
 });

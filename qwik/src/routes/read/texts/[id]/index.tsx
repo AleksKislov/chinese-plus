@@ -58,9 +58,10 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
 });
 
 export const useGetText = routeLoader$(
-  async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
+  async ({ params, query, redirect }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
     const curPage = getCurrentPageNum(query.get('pg'));
     const textFromDb = await getTextFromDB(params.id, true);
+    if (!textFromDb) throw redirect(302, '/read/texts');
     const chineseArr = getChineseArr(textFromDb, curPage);
     const dbWords = await getWordsForTooltips(chineseArr, true);
     const tooltipTxt = parseTextWords(chineseArr, dbWords);

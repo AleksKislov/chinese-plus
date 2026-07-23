@@ -26,13 +26,13 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
 });
 
 export const useGetText = routeLoader$(
-  async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
+  async ({ params, query, redirect }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
     let curPage = 0;
     const pg = query.get('pg') || '1';
     if (+pg && +pg > 0) curPage = +pg - 1;
 
     const textFromDb = await getTextFromDB(params.id, true);
-    console.log('textFromDb', textFromDb);
+    if (!textFromDb) throw redirect(302, '/read/unapproved-texts');
     let chineseArr = textFromDb.chinese_arr;
     if (textFromDb.pages && textFromDb.pages.length) {
       chineseArr = textFromDb.pages[curPage].chinese_arr;
