@@ -62,6 +62,7 @@ app.use('/api/charactersLessons', require('./routes/api/charactersLessons'));
 app.use('/api/donate', require('./routes/api/donate'));
 app.use('/api/project', require('./routes/api/project'));
 app.use('/api/textbooks', require('./routes/api/textbooks'));
+app.use('/api/ru-dictionary', require('./routes/api/ru-dictionary'));
 
 // glcoud services routes
 app.use('/gcloud/youtube', require('./routes/gcloud/youtube'));

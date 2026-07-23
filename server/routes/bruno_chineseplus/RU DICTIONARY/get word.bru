@@ -1,0 +1,11 @@
+meta {
+  name: get word
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{local_server}}/api/ru-dictionary/привет
+  body: none
+  auth: inherit
+}

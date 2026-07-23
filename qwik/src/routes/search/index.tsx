@@ -25,7 +25,7 @@ import { OwnWordBtn } from '~/components/common/tooltips/own-word-btn';
 import { editWordModalId } from '~/components/common/tooltips/word-tooltip';
 import { DictWordTranslation } from '~/components/common/translation/dict-word-translation';
 import { SearchResutlTable } from '~/components/search/search-result-table';
-import { ApiService, GoApiService } from '~/misc/actions/request';
+import { ApiService } from '~/misc/actions/request';
 import { alertsContext } from '~/root';
 import { getWordsForTooltips } from '~/routes/read/texts/[id]';
 import HanziWriter from 'hanzi-writer';
@@ -74,7 +74,7 @@ export const getChineseWordsArr = async (input: string): Promise<string[]> => {
 export const useGetRuWord = routeLoader$(async (ev): Promise<RuWord | null> => {
   const q = ev.query.get('q') || '';
   if (!isRussian(q)) return null;
-  return GoApiService.get('/api/ru_word/' + q);
+  return ApiService.get('/api/ru-dictionary/' + q);
 });
 
 export const useLoadTranslation = routeLoader$(

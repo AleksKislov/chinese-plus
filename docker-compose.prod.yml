@@ -1,11 +1,18 @@
 version: "3.8"
 
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   mongo_chin_dev:
     image: mongo
     container_name: mongo_chin_dev
     restart: unless-stopped
     command: ["mongod", "--wiredTigerCacheSizeGB", "0.5"]
+    logging: *default-logging
     ports:
       - "127.0.0.1:27017:27017"
     volumes:
@@ -17,6 +24,7 @@ services:
     container_name: chin_plus_be
     image: chin_plus_be:${VERSION}
     restart: unless-stopped
+    logging: *default-logging
     build:
       context: ./server
       dockerfile: Dockerfile.prod
@@ -33,24 +41,11 @@ services:
     container_name: chin_plus_fe
     image: std016039/chin_plus_fe:${VERSION}
     restart: unless-stopped
+    logging: *default-logging
     environment:
       - VERSION=${VERSION}
     ports:
       - 4000:3000
-    networks:
-      new_bylh_bylh_net:
-
-  chin_plus_go_be:
-    container_name: chin_plus_go_be
-    image: std016039/chin_plus_go_be:${VERSION}
-    restart: unless-stopped
-    environment:
-      - VERSION=${VERSION}
-      - MONGO_URI=${MONGO_URI}
-      - DB_NAME=${DB_NAME}
-      - CHECK_WORD_API=${CHECK_WORD_API}
-    ports:
-      - 12000:12000
     networks:
       new_bylh_bylh_net:
 
@@ -59,6 +54,7 @@ services:
     container_name: node_exporter
     restart: unless-stopped
     mem_limit: 64m
+    logging: *default-logging
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -76,6 +72,7 @@ services:
     container_name: cadvisor
     restart: unless-stopped
     mem_limit: 128m
+    logging: *default-logging
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
@@ -91,6 +88,7 @@ services:
     container_name: grafana_alloy
     restart: unless-stopped
     mem_limit: 128m
+    logging: *default-logging
     env_file:
       - ./monitoring/.env
     volumes:

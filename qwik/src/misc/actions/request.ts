@@ -1,5 +1,4 @@
 export const BASE_URL = import.meta.env.PUBLIC_BASE_URL;
-export const GO_BASE_URL = import.meta.env.PUBLIC_GO_BASE_URL;
 
 console.log(import.meta.env.PUBLIC_ENV, import.meta.env.PUBLIC_VERSION);
 
@@ -82,4 +81,3 @@ class ApiServiceFactory {
 }
 
 export const ApiService = new ApiServiceFactory(BASE_URL);
-export const GoApiService = new ApiServiceFactory(GO_BASE_URL);
