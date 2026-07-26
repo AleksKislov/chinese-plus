@@ -1,6 +1,7 @@
 const { LongestMatchSegmenter } = require('./segmenter.js');
 const HANZI_DICT = {};
 const checkIfWordExists = (word) => HANZI_DICT[word];
+const Dictionary = require('../../../src/models/Dictionary');
 const segmenter = new LongestMatchSegmenter(checkIfWordExists);
 // const nodejieba = require('nodejieba');
 

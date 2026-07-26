@@ -8,10 +8,24 @@ discovery.docker "containers" {
   host = "unix:///var/run/docker.sock"
 }
 
+// discovery.docker only exposes Docker metadata as internal __meta_docker_*
+// labels - promote the container name to a real "container" label so it's
+// actually queryable in Loki (e.g. {container="chin_plus_fe"}).
+discovery.relabel "docker_logs" {
+  targets = discovery.docker.containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+}
+
 loki.source.docker "default" {
-  host       = "unix:///var/run/docker.sock"
-  targets    = discovery.docker.containers.targets
-  forward_to = [loki.write.grafana_cloud.receiver]
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.docker.containers.targets
+  relabel_rules = discovery.relabel.docker_logs.rules
+  forward_to    = [loki.write.grafana_cloud.receiver]
 }
 
 loki.write "grafana_cloud" {
