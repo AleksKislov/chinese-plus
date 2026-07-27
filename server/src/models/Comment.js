@@ -9,6 +9,7 @@ const CommentSchema = new Schema({
   post_id: {
     type: Schema.Types.ObjectId,
     ref: 'post',
+    required: true,
   },
   destination: { type: String }, // WHERE a comment sits
   path: { type: String },

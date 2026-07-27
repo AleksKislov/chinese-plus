@@ -31,7 +31,14 @@ app.use(
     customErrorMessage: (req, res, err) =>
       `${req.method} ${req.originalUrl} ${res.statusCode} - ${err.message}`,
     serializers: {
-      req: (req) => ({ method: req.method, url: req.originalUrl }),
+      req: (req) => ({
+        method: req.method,
+        url: req.originalUrl,
+        // matched route pattern (e.g. "/api/texts/:id") instead of the resolved
+        // URL - lets us group "most popular endpoints" without every distinct
+        // id fragmenting the count. Undefined for unmatched routes (404s).
+        route: req.route ? req.baseUrl + req.route.path : undefined,
+      }),
       res: (res) => ({ statusCode: res.statusCode }),
     },
   }),

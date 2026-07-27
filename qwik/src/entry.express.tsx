@@ -22,6 +22,9 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 const logger = pino({
   level: process.env.LOG_LEVEL || 'info',
   timestamp: pino.stdTimeFunctions.isoTime,
+  formatters: {
+    level: (label) => ({ level: label }),
+  },
   transport: isDevelopment
     ? { target: 'pino-pretty', options: { colorize: true, translateTime: 'SYS:standard' } }
     : undefined,
@@ -69,8 +72,13 @@ app.use(
       if (res.statusCode >= 400) return 'warn';
       return 'info';
     },
-    customSuccessMessage: (req, res) => `${req.method} ${req.url} ${res.statusCode}`,
-    customErrorMessage: (req, res, err) => `${req.method} ${req.url} ${res.statusCode} - ${err.message}`,
+    customSuccessMessage: (req, res) => `${req.method} ${req.originalUrl} ${res.statusCode}`,
+    customErrorMessage: (req, res, err) =>
+      `${req.method} ${req.originalUrl} ${res.statusCode} - ${err.message}`,
+    serializers: {
+      req: (req) => ({ method: req.method, url: req.originalUrl }),
+      res: (res) => ({ statusCode: res.statusCode }),
+    },
   }),
 );
 

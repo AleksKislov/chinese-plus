@@ -3,7 +3,6 @@ const HANZI_DICT = {};
 const checkIfWordExists = (word) => HANZI_DICT[word];
 const Dictionary = require('../../../src/models/Dictionary');
 const segmenter = new LongestMatchSegmenter(checkIfWordExists);
-// const nodejieba = require('nodejieba');
 
 /**
  * @description load all chinese words in memory into HANZI_DICT
@@ -13,7 +12,6 @@ function fillDict(arr) {
   for (let i = 0; i < arr.length; i++) {
     const word = arr[i]?._id;
     if (word) {
-      // nodejieba.insertWord(word);
       HANZI_DICT[word] = 1;
     }
   }

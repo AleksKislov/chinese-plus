@@ -53,6 +53,10 @@ router.post('/', [auth, [check('text', 'Нужен текст').not().isEmpty()]
       getCommentDestinationById(where, id),
     ]);
 
+    if (!destination) {
+      return res.status(404).json({ msg: 'Destination not found' });
+    }
+
     const newComment = new Comment({
       text: req.body.text,
       user: req.user.id,
@@ -77,6 +81,10 @@ router.post('/', [auth, [check('text', 'Нужен текст').not().isEmpty()]
 });
 
 async function getCommentDestinationById(where, id) {
+  if (where !== COMMENT_DESTINATION.book && !mongoose.isValidObjectId(id)) {
+    return null;
+  }
+
   if (where === COMMENT_DESTINATION.post) {
     return Post.findById(id);
   }

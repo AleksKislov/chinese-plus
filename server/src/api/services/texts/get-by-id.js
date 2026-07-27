@@ -1,8 +1,13 @@
+const mongoose = require('mongoose');
 const Text = require('../../../models/Text');
 const { shortUserInfoFields } = require('../../consts');
 const { countZnChars, countUniqChars } = require('../_misc');
 
 async function getById(req, res) {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(404).json({ msg: 'Text not found' });
+  }
+
   const withoutOriginTxt = req.query.no_origin === 'true';
   const text = await Text.findByIdAndUpdate(req.params.id, { $inc: { hits: 1 } }, { new: true })
     .populate('user', shortUserInfoFields)

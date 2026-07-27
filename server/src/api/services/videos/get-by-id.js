@@ -1,7 +1,12 @@
+const mongoose = require('mongoose');
 const Video = require('../../../models/Video');
 const { shortUserInfoFields } = require('../../consts');
 
 async function getById(req, res) {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(404).json({ msg: 'Video not found' });
+  }
+
   const video = await Video.findByIdAndUpdate(req.params.id, { $inc: { hits: 1 } }, { new: true })
     .select('-userName')
     .populate('user', shortUserInfoFields);
