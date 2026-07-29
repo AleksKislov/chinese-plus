@@ -105,7 +105,7 @@ router.delete('/delete/:id', adminAuth, async (req, res) => {
 
     if (!post) return res.status(404).json({ msg: 'Post not found' });
 
-    await post.remove();
+    await post.deleteOne();
 
     res.json({ msg: 'Post removed' });
   } catch (err) {
@@ -158,7 +158,7 @@ router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
     post.comments_id = post.comments_id.filter((comment) => comment.id !== req.params.comment_id);
 
     await post.save();
-    await comment.remove();
+    await comment.deleteOne();
 
     res.json(post.comments_id);
   } catch (err) {

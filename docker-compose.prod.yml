@@ -25,7 +25,7 @@ services:
     container_name: chin_plus_be
     image: chin_plus_be:${VERSION}
     restart: unless-stopped
-    mem_limit: 768m
+    mem_limit: 2000m
     logging: *default-logging
     build:
       context: ./server

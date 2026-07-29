@@ -288,7 +288,7 @@ router.post('/mark_mentions_as_seen', auth, async (req, res) => {
  */
 router.get('/liked', auth, async (req, res) => {
   const limit = +req.query.limit || 20;
-  const userId = mongoose.Types.ObjectId(req.user.id);
+  const userId = new mongoose.Types.ObjectId(req.user.id);
   try {
     const ids = await Comment.aggregate([
       { $match: { 'likes.user': userId } },

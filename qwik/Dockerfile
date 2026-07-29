@@ -1,12 +1,12 @@
 # Stage 0: deps stage
-FROM node:20-slim AS deps
+FROM node:24-slim AS deps
 WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN npm ci
 
 # Stage 1: Build stage
-FROM node:20-slim AS build
+FROM node:24-slim AS build
 ARG VERSION
 ARG BE_PORT
 WORKDIR /app
@@ -22,13 +22,11 @@ RUN npm run build.client
 RUN npm run build.server
 
 # Stage 2: Production stage
-FROM node:20-slim
+FROM node:24-slim
 WORKDIR /app
-# COPY --from=build /app .
-# COPY package.json package-lock.json ./
-# RUN npm ci --omit=dev && npm cache clean --force
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
 
-COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/server ./server
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/public ./public
