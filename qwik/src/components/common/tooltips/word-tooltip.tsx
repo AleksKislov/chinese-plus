@@ -58,7 +58,7 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
 
   let isUserWord = false;
   if (typeof word !== 'string') {
-    isUserWord = loggedIn && userState.words.some((w) => w.chinese === word.chinese);
+    isUserWord = loggedIn && Boolean(userState.wordsMap[word.chinese]);
   }
 
   return (

@@ -34,7 +34,8 @@ export interface User {
   email: string;
   finishedTexts: string[];
   seenVideos: string[];
-  words: UserWord[];
+  wordsMap: Record<string, boolean>;
+  wordsCount: number;
   readDailyGoal: number;
   readTodayNum: number;
   readTodayMap: ReadTodayMap;
@@ -77,7 +78,8 @@ export default component$(() => {
     email: '',
     finishedTexts: [],
     seenVideos: [],
-    words: [],
+    wordsMap: {},
+    wordsCount: 0,
     hsk2WordsTotal: 0,
     readDailyGoal: 0,
     readTodayNum: 0,

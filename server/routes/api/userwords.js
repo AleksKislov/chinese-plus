@@ -27,6 +27,26 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+/**
+ * @route     GET api/userwords/light
+ * @desc      Get just the chinese strings for the user's vocabulary (cheap lookup set,
+ *            no wordId join fields beyond chinese) - used app-wide (reader, header count)
+ * @access    Private
+ */
+router.get('/light', auth, async (req, res) => {
+  try {
+    const words = await UserDictWord.find({ user: req.user.id })
+      .populate('wordId', ['chinese'])
+      .select('wordId')
+      .lean();
+
+    res.json(words.map((w) => w.wordId?.chinese).filter(Boolean));
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 function userWordToDTO(word) {
   return {
     _id: word._id,

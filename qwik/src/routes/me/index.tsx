@@ -72,7 +72,7 @@ export default component$(() => {
     readDailyGoal,
     readTodayNum,
     hsk2WordsTotal,
-    words,
+    wordsCount,
     role,
     _id: userId,
   } = useContext(userContext);
@@ -93,7 +93,7 @@ export default component$(() => {
           <PersonalStats
             approvedTextsNum={textsStats.value.approved}
             finishedTextsTotal={finishedTexts.length}
-            userWordsTotal={words.length}
+            userWordsTotal={wordsCount}
             hsk2Total={hsk2WordsTotal}
           />
         </div>

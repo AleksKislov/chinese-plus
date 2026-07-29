@@ -4,13 +4,7 @@ import { routeLoader$ } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
 import { getTokenFromCookie, logout, type UserFromDB } from '~/misc/actions/auth';
 import { Footer } from '~/components/common/layout/footer';
-import {
-  type UserWord,
-  userContext,
-  configContext,
-  type Config,
-  IsLightThemeCookieName,
-} from '~/root';
+import { userContext, configContext, type Config, IsLightThemeCookieName } from '~/root';
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { ThemeTypes } from '~/components/common/layout/header/theme-changer';
 
@@ -37,10 +31,13 @@ export const useGetUserHsk2WordsTotal = routeLoader$(async ({ cookie }): Promise
   return res?.length || 0;
 });
 
-export const useGetUserWords = routeLoader$(async ({ cookie }): Promise<UserWord[]> => {
+// Lightweight - just the chinese strings, used app-wide for the "is this word known"
+// lookup (reader highlighting) and the header word count. The full word list (with
+// pinyin/translation/dictWordId) is fetched separately by the /me/words page only.
+export const useGetUserWords = routeLoader$(async ({ cookie }): Promise<string[]> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return [];
-  return ApiService.get('/api/userwords', token, []);
+  return ApiService.get('/api/userwords/light', token, []);
 });
 
 export const useFeConfigs = routeLoader$((): Promise<Config[]> => {
@@ -90,13 +87,8 @@ export default component$(() => {
   useTask$(({ track }) => {
     track(() => userWords.value);
     if (userWords.value === undefined) return;
-    userState.words = userWords.value;
-  });
-
-  useTask$(({ track }) => {
-    track(() => userWords.value);
-    if (userWords.value === undefined) return;
-    userState.words = userWords.value;
+    userState.wordsMap = Object.fromEntries(userWords.value.map((chinese) => [chinese, true]));
+    userState.wordsCount = userWords.value.length;
   });
 
   useVisibleTask$(({ track }) => {

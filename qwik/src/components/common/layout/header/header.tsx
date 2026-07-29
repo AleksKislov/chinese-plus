@@ -16,7 +16,7 @@ export default component$(() => {
   const userState = useContext(userContext);
   const isMobile = useSignal(false);
   const userHskWordsTotal = userState.hsk2WordsTotal;
-  const userWordsTotal = userState.words.length;
+  const userWordsTotal = userState.wordsCount;
 
   useVisibleTask$(() => {
     isMobile.value = window.innerWidth <= 768;
