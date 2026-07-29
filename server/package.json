@@ -3,6 +3,9 @@
   "version": "3.0.0",
   "description": "",
   "main": "server.js",
+  "engines": {
+    "node": "20"
+  },
   "scripts": {
     "start": "node server.js",
     "container": "MONGO_IN_CONTAINER=true NODE_ENV=development node server.js",
