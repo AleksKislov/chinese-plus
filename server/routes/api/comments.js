@@ -13,6 +13,7 @@ const { shortUserInfoFields } = require('../../src/api/consts');
 const VideoLesson = require('../../src/models/VideoLesson');
 const mongoose = require('mongoose');
 const BookPage = require('../../src/models/BookPage');
+const { cacheRoute, invalidateTag, TTL } = require('../../src/cache');
 
 const COMMENT_DESTINATION = {
   post: 'post',
@@ -71,6 +72,9 @@ router.post('/', [auth, [check('text', 'Нужен текст').not().isEmpty()]
     destination.comments_id.unshift(comment._id);
     await destination.save();
 
+    invalidateTag('comments');
+    invalidateForDestination(where);
+
     Notify.admin(`New comment from ${user.name} in /${where}s: ${req.body.text}`);
 
     res.json(destination.comments_id);
@@ -79,6 +83,16 @@ router.post('/', [auth, [check('text', 'Нужен текст').not().isEmpty()]
     res.status(500).send('Server error');
   }
 });
+
+// The cached list endpoints show comment counts (texts) or the raw
+// comments_id/likes arrays (video lessons), so a new comment on those
+// destinations must drop the matching cache tag.
+function invalidateForDestination(where) {
+  if (where === COMMENT_DESTINATION.text) invalidateTag('texts');
+  if (where === COMMENT_DESTINATION.phoneticsLesson || where === COMMENT_DESTINATION.charactersLesson) {
+    invalidateTag('video-lessons');
+  }
+}
 
 async function getCommentDestinationById(where, id) {
   if (where !== COMMENT_DESTINATION.book && !mongoose.isValidObjectId(id)) {
@@ -109,6 +123,7 @@ router.post('/edit', auth, async (req, res) => {
   try {
     await Comment.findByIdAndUpdate(id, { $set: { text } }, { new: true });
 
+    invalidateTag('comments');
     res.json({ status: 'OK 200' });
   } catch (err) {
     console.error(err);
@@ -230,7 +245,7 @@ router.put('/like/:id', auth, async (req, res) => {
  * @desc      Get last 10 comments
  * @access    Public
  */
-router.get('/last', async (req, res) => {
+router.get('/last', cacheRoute('comments', { ttl: TTL.SHORT }), async (req, res) => {
   try {
     const rawComments = await Comment.find()
       .sort({ date: -1 })

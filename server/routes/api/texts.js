@@ -2,6 +2,7 @@ const router = require('express').Router();
 const auth = require('../../middleware/auth');
 const adminAuth = require('../../middleware/admin-auth');
 const { check } = require('express-validator');
+const { cacheRoute, TTL } = require('../../src/cache');
 
 const {
   createTxt,
@@ -71,7 +72,7 @@ router.get('/marked', auth, getMarkedTexts);
  * @desc      Get ALL approved texts
  * @access    Public
  */
-router.get('/', getAllApprovedTexts);
+router.get('/', cacheRoute('texts', { ttl: TTL.SHORT }), getAllApprovedTexts);
 
 /**
  * @route     GET api/texts/similar
@@ -106,7 +107,20 @@ router.delete('/comment/:id/:comment_id', auth, deleteComment);
  * @desc    Get texts using inifinite scroll and category index
  * @access  Public
  */
-router.get('/infinite', getTextsInChunks);
+router.get(
+  '/infinite',
+  cacheRoute('texts', {
+    ttl: TTL.SHORT,
+    // Only cache the default landing-page request (no filters, first page) -
+    // filtered/paginated combinations have too low a hit rate to be worth caching.
+    shouldCache: (req) =>
+      (!req.query.skip || req.query.skip === '0') &&
+      !req.query.categoryInd &&
+      !req.query.level &&
+      !req.query.audioSrc,
+  }),
+  getTextsInChunks,
+);
 
 router.get('/not_approved', getNotApprovedTexts);
 
@@ -115,7 +129,7 @@ router.get('/not_approved', getNotApprovedTexts);
  *  @desc    Get the number of texts, approved and not
  *  @access  Public
  */
-router.get('/texts_num', getTextsNum);
+router.get('/texts_num', cacheRoute('texts', { ttl: TTL.MEDIUM }), getTextsNum);
 
 /**
  * @method  GET

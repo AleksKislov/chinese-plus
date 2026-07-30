@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const adminAuth = require('../../middleware/admin-auth');
+const { cacheRoute, TTL } = require('../../src/cache');
 
 const Book = require('../../src/models/Book');
 const Bookauthor = require('../../src/models/Bookauthor');
@@ -16,7 +17,7 @@ const {
 /**
  * @route   GET api/books/all
  */
-router.get('/all', async (req, res) => {
+router.get('/all', cacheRoute('books', { ttl: TTL.LONG }), async (req, res) => {
   try {
     const books = await Book.find({ isActive: true }).populate('author', ['name', 'country']);
     res.json(books);

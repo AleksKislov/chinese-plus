@@ -3,6 +3,7 @@ const { Notify } = require('../_misc');
 
 const Text = require('../../../models/Text');
 const { shortUserInfoFields } = require('../../consts');
+const { invalidateTag } = require('../../../cache');
 
 async function updateTxt(req, res) {
   const errors = validationResult(req);
@@ -72,6 +73,7 @@ async function updateTxt(req, res) {
     Notify.socialMedia(updatedTxt);
   }
 
+  invalidateTag('texts');
   return res.json({ status: 'done' });
 }
 

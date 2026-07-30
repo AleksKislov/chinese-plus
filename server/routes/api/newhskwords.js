@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { cacheRoute, TTL } = require('../../src/cache');
 
 const {
   getRandomNewHskByLvl,
@@ -23,7 +24,7 @@ router.get('/all', getRandomNewHskByLvl);
  * @desc      Get new hsk words by hsk level
  * @access    Public
  */
-router.get('/', getNewHskByLvlAndLimit);
+router.get('/', cacheRoute('hsk-new', { ttl: TTL.DAY }), getNewHskByLvlAndLimit);
 
 /**
  * @route     POST api/newhskwords/search

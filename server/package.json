@@ -27,6 +27,7 @@
     "express": "^4.17.1",
     "express-validator": "^6.6.0",
     "jsonwebtoken": "^8.5.1",
+    "lru-cache": "^11.5.2",
     "mdbg": "^1.73.0",
     "mongoose": "^9.8.0",
     "multer": "^2.2.0",

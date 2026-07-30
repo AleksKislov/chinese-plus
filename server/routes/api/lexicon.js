@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { cacheRoute, TTL } = require('../../src/cache');
 const {
   getHskByLvlAndLimit,
   getRandomHskByLvl,
@@ -18,7 +19,7 @@ router.get('/all', getRandomHskByLvl);
  * @desc      Get old hsk words by hsk level with limit
  * @access    Public
  */
-router.get('/', getHskByLvlAndLimit);
+router.get('/', cacheRoute('hsk-old', { ttl: TTL.DAY }), getHskByLvlAndLimit);
 
 /**
  * @route     POST api/lexicon/search
