@@ -30,15 +30,16 @@ app.use(
     customSuccessMessage: (req, res) => `${req.method} ${req.originalUrl} ${res.statusCode}`,
     customErrorMessage: (req, res, err) =>
       `${req.method} ${req.originalUrl} ${res.statusCode} - ${err.message}`,
+    // pino-http serializes `req`/`res` into cached child-logger bindings at request
+    // start, before Express has routed the request - so req.route/req.originalUrl
+    // read inside `serializers.req` are always stale. customProps runs at completion
+    // time with the live req/res, so it's the only place these are actually correct.
+    customProps: (req, res) => ({
+      url: req.originalUrl,
+      route: req.route ? req.baseUrl + req.route.path : undefined,
+    }),
     serializers: {
-      req: (req) => ({
-        method: req.method,
-        url: req.originalUrl,
-        // matched route pattern (e.g. "/api/texts/:id") instead of the resolved
-        // URL - lets us group "most popular endpoints" without every distinct
-        // id fragmenting the count. Undefined for unmatched routes (404s).
-        route: req.route ? req.baseUrl + req.route.path : undefined,
-      }),
+      req: (req) => ({ method: req.method }),
       res: (res) => ({ statusCode: res.statusCode }),
     },
   }),
