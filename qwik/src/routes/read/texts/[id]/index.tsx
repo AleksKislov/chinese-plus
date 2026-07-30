@@ -18,6 +18,7 @@ import { getIdFromParam } from '~/misc/helpers/tools';
 import { getContentPath, withSlug } from '~/misc/helpers/content';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
+import { getOrSetVisitorId } from '~/misc/helpers/visitor-id';
 
 export type TextContent = {
   // origintext?: string[];
@@ -45,8 +46,13 @@ export type SimilarText = {
   matchingTags?: string[];
 };
 
-export const getTextFromDB = (id: ObjectId, noOrigin: boolean): Promise<TextFromDB> => {
-  return ApiService.get(`/api/texts/${id}?no_origin=` + noOrigin, undefined, null);
+export const getTextFromDB = (
+  id: ObjectId,
+  noOrigin: boolean,
+  visitorId?: string,
+): Promise<TextFromDB> => {
+  const vidParam = visitorId ? `&vid=${visitorId}` : '';
+  return ApiService.get(`/api/texts/${id}?no_origin=${noOrigin}${vidParam}`, undefined, null);
 };
 
 export const getWordsForTooltips = (
@@ -62,9 +68,11 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
 });
 
 export const useGetText = routeLoader$(
-  async ({ params, query, redirect }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
+  async (requestEvent): Promise<TextFromDB & TooltipText & { curPage: number }> => {
+    const { params, query, redirect } = requestEvent;
     const curPage = getCurrentPageNum(query.get('pg'));
-    const textFromDb = await getTextFromDB(getIdFromParam(params.id), true);
+    const visitorId = getOrSetVisitorId(requestEvent);
+    const textFromDb = await getTextFromDB(getIdFromParam(params.id), true, visitorId);
     if (!textFromDb) throw redirect(302, '/read/texts');
 
     const canonicalId = withSlug(textFromDb._id, textFromDb.title);

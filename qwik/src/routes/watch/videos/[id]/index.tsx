@@ -33,6 +33,7 @@ import { CommentsFullBlock } from '~/components/common/comments/comments-full-bl
 import { getIdFromParam } from '~/misc/helpers/tools';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
+import { getOrSetVisitorId } from '~/misc/helpers/visitor-id';
 
 export type VideoFromDB = VideoCardInfo & {
   pySubs: string[];
@@ -60,16 +61,18 @@ export type TooltipSubs = {
   tooltipSubs: (DictWord | string)[][];
 };
 
-export const getVideoFromDB = (id: ObjectId): Promise<VideoFromDB> => {
-  return ApiService.get(`/api/videos/${id}`, undefined, null);
+export const getVideoFromDB = (id: ObjectId, visitorId: string): Promise<VideoFromDB> => {
+  return ApiService.get(`/api/videos/${id}?vid=${visitorId}`, undefined, null);
 };
 
 export const getWordsForTooltips = (wordsArr: string[][]) => {
   return ApiService.post('/api/dictionary/allWordsForVideo', wordsArr, undefined, []);
 };
 
-export const useGetVideo = routeLoader$(async ({ params, redirect }): Promise<VideoFromDB & TooltipSubs> => {
-  const videoFromDb = await getVideoFromDB(getIdFromParam(params.id));
+export const useGetVideo = routeLoader$(async (requestEvent): Promise<VideoFromDB & TooltipSubs> => {
+  const { params, redirect } = requestEvent;
+  const visitorId = getOrSetVisitorId(requestEvent);
+  const videoFromDb = await getVideoFromDB(getIdFromParam(params.id), visitorId);
   if (!videoFromDb) throw redirect(302, '/watch/videos');
 
   const canonicalId = withSlug(videoFromDb._id, videoFromDb.title);

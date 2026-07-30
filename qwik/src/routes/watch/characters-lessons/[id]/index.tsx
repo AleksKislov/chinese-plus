@@ -22,14 +22,17 @@ import { type VideoLessonInfo } from '../../phonetics-lessons';
 import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
 import { getIdFromParam } from '~/misc/helpers/tools';
 import { withSlug } from '~/misc/helpers/content';
+import { getOrSetVisitorId } from '~/misc/helpers/visitor-id';
 
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
   return getContentComments(WHERE.charactersLesson, getIdFromParam(params.id));
 });
 
-export const getVideo = routeLoader$(async ({ params, redirect }): Promise<VideoLessonInfo> => {
+export const getVideo = routeLoader$(async (requestEvent): Promise<VideoLessonInfo> => {
+  const { params, redirect } = requestEvent;
+  const visitorId = getOrSetVisitorId(requestEvent);
   const video = await ApiService.get(
-    `/api/videos/video-lessons/${getIdFromParam(params.id)}`,
+    `/api/videos/video-lessons/${getIdFromParam(params.id)}?vid=${visitorId}`,
     undefined,
     null,
   );

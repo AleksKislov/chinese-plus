@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Text = require('../../../models/Text');
 const { shortUserInfoFields } = require('../../consts');
 const { countZnChars, countUniqChars } = require('../_misc');
+const { shouldCountHit } = require('../../../hits');
 
 async function getById(req, res) {
   if (!mongoose.isValidObjectId(req.params.id)) {
@@ -9,9 +10,16 @@ async function getById(req, res) {
   }
 
   const withoutOriginTxt = req.query.no_origin === 'true';
-  const text = await Text.findByIdAndUpdate(req.params.id, { $inc: { hits: 1 } }, { new: true })
-    .populate('user', shortUserInfoFields)
-    .select('-name' + (withoutOriginTxt ? ' -origintext' : ''));
+  const selectFields = '-name' + (withoutOriginTxt ? ' -origintext' : '');
+  const countHit = shouldCountHit('text', req.params.id, req.query.vid);
+
+  const text = countHit
+    ? await Text.findByIdAndUpdate(req.params.id, { $inc: { hits: 1 } }, { new: true })
+        .populate('user', shortUserInfoFields)
+        .select(selectFields)
+    : await Text.findById(req.params.id)
+        .populate('user', shortUserInfoFields)
+        .select(selectFields);
 
   if (!text) return res.status(404).json({ msg: 'Text not found' });
 
