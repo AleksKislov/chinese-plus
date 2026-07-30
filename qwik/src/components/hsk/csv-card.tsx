@@ -64,42 +64,46 @@ export const CsvCard = component$(({ level, isOldHsk, isPrivate }: CsvCardProps)
         {isOldHsk ? (
           <>
             <p>
-              <Link
+              <button
+                type="button"
                 class="badge bg-warning text-warning-content link-hover cursor-pointer"
                 onClick$={downloadCsv(false, false)}
               >
                 Скачать
-              </Link>{' '}
+              </button>{' '}
               обычный CSV
             </p>
             <p>
-              <Link
+              <button
+                type="button"
                 class="badge bg-warning text-warning-content link-hover cursor-pointer"
                 onClick$={downloadCsv(true, false)}
               >
                 Скачать
-              </Link>{' '}
+              </button>{' '}
               CSV с HTML (для ANKI)
             </p>
           </>
         ) : (
           <>
             <p>
-              <Link
+              <button
+                type="button"
                 class="badge bg-warning text-warning-content link-hover cursor-pointer"
                 onClick$={downloadCsv(true, false)}
               >
                 Скачать
-              </Link>{' '}
+              </button>{' '}
               CSV с HTML без примеров (для ANKI)
             </p>
             <p>
-              <Link
+              <button
+                type="button"
                 class="badge bg-warning text-warning-content link-hover cursor-pointer"
                 onClick$={downloadCsv(true, true)}
               >
                 Скачать
-              </Link>{' '}
+              </button>{' '}
               CSV с HTML и примерами (для ANKI)
             </p>
           </>
