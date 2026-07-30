@@ -120,7 +120,7 @@ export default component$(() => {
 
         <RouterHead />
       </head>
-      <body lang="en" class="text-neutral-content">
+      <body class="text-neutral-content">
         <noscript>
           <div>
             <img

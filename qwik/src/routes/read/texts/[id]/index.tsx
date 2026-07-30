@@ -14,6 +14,10 @@ import { ContentPageHead } from '~/components/common/ui/content-page-head';
 import { ReadResultCard } from '~/components/me/read-result-card';
 import { TextMainContent } from '~/components/read/text-main-content';
 import { type TooltipSegment } from '~/misc/helpers/content/parse-text-words';
+import { getIdFromParam } from '~/misc/helpers/tools';
+import { getContentPath } from '~/misc/helpers/content';
+import { JsonLd } from '~/components/common/seo/json-ld';
+import CONST_URLS from '~/misc/consts/urls';
 
 export type TextContent = {
   // origintext?: string[];
@@ -54,13 +58,13 @@ export const getWordsForTooltips = (
 };
 
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
-  return getContentComments(WHERE.text, params.id);
+  return getContentComments(WHERE.text, getIdFromParam(params.id));
 });
 
 export const useGetText = routeLoader$(
   async ({ params, query, redirect }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
     const curPage = getCurrentPageNum(query.get('pg'));
-    const textFromDb = await getTextFromDB(params.id, true);
+    const textFromDb = await getTextFromDB(getIdFromParam(params.id), true);
     if (!textFromDb) throw redirect(302, '/read/texts');
     const chineseArr = getChineseArr(textFromDb, curPage);
     const dbWords = await getWordsForTooltips(chineseArr, true);
@@ -135,11 +139,23 @@ export default component$(() => {
 
   return (
     <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: title,
+          description: desc,
+          image: picUrl,
+          datePublished: date,
+          author: { '@type': 'Person', name: userName },
+        }}
+      />
       <ContentPageHead title={title} hits={hits} path="/read/texts" />
 
       <FlexRow>
         <Sidebar noAds={true}>
           <ContentPageCard
+            title={title}
             desc={desc}
             length={length}
             tags={tags}
@@ -172,13 +188,38 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const textInfo = resolveValue(useGetText);
+  const title = `Chinese+ Китайский c переводом: ${textInfo.title}`;
+  const description = `Текст на китайском языке с переводом: ${textInfo.description}`;
+  const url =
+    CONST_URLS.siteUrl +
+    getContentPath(WHERE.text, textInfo._id, false, undefined, undefined, textInfo.title);
 
   return {
-    title: `Chinese+ Китайский c переводом: ${textInfo.title}`,
+    title,
     meta: [
       {
         name: 'description',
-        content: `Текст на китайском языке с переводом: ${textInfo.description}`,
+        content: description,
+      },
+      {
+        property: 'og:title',
+        content: title,
+      },
+      {
+        property: 'og:description',
+        content: description,
+      },
+      {
+        property: 'og:type',
+        content: 'article',
+      },
+      {
+        property: 'og:url',
+        content: url,
+      },
+      {
+        property: 'og:image',
+        content: textInfo.pic_url,
       },
       {
         name: 'twitter:card',

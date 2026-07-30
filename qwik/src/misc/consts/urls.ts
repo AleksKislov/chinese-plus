@@ -1,4 +1,5 @@
 const CONST_URLS = {
+  siteUrl: 'https://www.chineseplus.club',
   myAudioURL: 'https://storage.yandexcloud.net/buyilehu/audio/',
   textsAudioUrl: 'https://storage.yandexcloud.net/buyilehu/texts/',
   defaultTextPic:

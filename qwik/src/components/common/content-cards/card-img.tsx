@@ -9,23 +9,23 @@ type CardImgProps = {
   contentId: string;
   contentType: WhereType;
   picUrl: string;
+  title: string;
   isUnapproved?: boolean;
   book?: BookCardInfo;
 };
 
 export const CardImg = component$(
-  ({ contentId, contentType, picUrl, isUnapproved, book }: CardImgProps) => {
+  ({ contentId, contentType, picUrl, title, isUnapproved, book }: CardImgProps) => {
     const errorPic = useSignal('');
 
     return (
       <figure class={`lg:w-1/3 max-h-full ${contentType === WHERE.text ? 'max-h-52' : ''}`}>
-        <Link href={getContentPath(contentType, contentId, isUnapproved, undefined, book)}>
+        <Link href={getContentPath(contentType, contentId, isUnapproved, undefined, book, title)}>
           <img
             width="400"
             height="600"
             src={errorPic.value || picUrl}
-            alt="Content pic"
-            // class="w-full h-full lg:object-cover"
+            alt={title}
             style={contentType === WHERE.video ? { transform: 'scale(1.35)' } : {}}
             onError$={() => (errorPic.value = CONST_URLS.defaultTextPic)}
           />

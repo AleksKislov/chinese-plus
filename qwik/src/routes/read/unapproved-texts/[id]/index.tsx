@@ -70,6 +70,7 @@ export default component$(() => {
       <FlexRow>
         <Sidebar>
           <ContentPageCard
+            title={title}
             desc={desc}
             length={length}
             tags={tags}

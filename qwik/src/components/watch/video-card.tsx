@@ -43,6 +43,7 @@ export const VideoCard = component$(({ video, isUnapproved }: VideoCardProps) =>
         contentId={videoId}
         contentType={WHERE.video}
         picUrl={YoutubeService.getVideoPicUrl(source)}
+        title={title}
         isUnapproved={isUnapproved}
       />
 

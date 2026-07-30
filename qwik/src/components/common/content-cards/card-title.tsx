@@ -18,7 +18,7 @@ export const CardTitle = component$(
   ({ contentId, contentType, hits, title, isUnapproved, book }: CardTitleProps) => {
     return (
       <h2 class="card-title hover:text-accent">
-        <Link href={getContentPath(contentType, contentId, isUnapproved, undefined, book)}>
+        <Link href={getContentPath(contentType, contentId, isUnapproved, undefined, book, title)}>
           {title}{' '}
           {hits > 0 && (
             <div

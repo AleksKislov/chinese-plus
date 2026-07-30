@@ -24,12 +24,15 @@ import {
   WHERE,
 } from '~/components/common/comments/comment-form';
 import { Subs } from '~/components/watch/subs';
-import { parseVideoWords } from '~/misc/helpers/content';
+import { getContentPath, parseVideoWords } from '~/misc/helpers/content';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { getContentComments } from '~/misc/actions/get-content-comments';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
 import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
+import { getIdFromParam } from '~/misc/helpers/tools';
+import { JsonLd } from '~/components/common/seo/json-ld';
+import CONST_URLS from '~/misc/consts/urls';
 
 export type VideoFromDB = VideoCardInfo & {
   pySubs: string[];
@@ -66,14 +69,14 @@ export const getWordsForTooltips = (wordsArr: string[][]) => {
 };
 
 export const useGetVideo = routeLoader$(async ({ params, redirect }): Promise<VideoFromDB & TooltipSubs> => {
-  const videoFromDb = await getVideoFromDB(params.id);
+  const videoFromDb = await getVideoFromDB(getIdFromParam(params.id));
   if (!videoFromDb) throw redirect(302, '/watch/videos');
   const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
   return { ...videoFromDb, tooltipSubs };
 });
 
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
-  return getContentComments(WHERE.video, params.id);
+  return getContentComments(WHERE.video, getIdFromParam(params.id));
 });
 
 type YTPlayer = {
@@ -171,12 +174,24 @@ export default component$(() => {
 
   return (
     <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'VideoObject',
+          name: title,
+          description: desc,
+          thumbnailUrl: YoutubeService.getVideoPicUrl(source),
+          uploadDate: date,
+          embedUrl: `https://www.youtube.com/embed/${source}`,
+        }}
+      />
       <ContentPageHead title={title} hits={hits} path="/watch/videos" />
 
       <FlexRow>
         <Sidebar>
           <ContentPageCard
             isApproved={true}
+            title={title}
             desc={desc}
             length={length}
             tags={tags}
@@ -225,13 +240,38 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const videoInfo = resolveValue(useGetVideo);
+  const title = `Chinese+ Китайское видео с переводом: ${videoInfo.title}`;
+  const description = `Видео на китайском языке с переводом и субтитрами: ${videoInfo.desc}`;
+  const url =
+    CONST_URLS.siteUrl +
+    getContentPath(WHERE.video, videoInfo._id, false, undefined, undefined, videoInfo.title);
 
   return {
-    title: `Chinese+ Китайское видео с переводом: ${videoInfo.title}`,
+    title,
     meta: [
       {
         name: 'description',
-        content: `Видео на китайском языке с переводом и субтитрами: ${videoInfo.desc}`,
+        content: description,
+      },
+      {
+        property: 'og:title',
+        content: title,
+      },
+      {
+        property: 'og:description',
+        content: description,
+      },
+      {
+        property: 'og:type',
+        content: 'video.other',
+      },
+      {
+        property: 'og:url',
+        content: url,
+      },
+      {
+        property: 'og:image',
+        content: YoutubeService.getVideoPicUrl(videoInfo.source),
       },
       {
         name: 'twitter:card',

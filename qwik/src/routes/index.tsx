@@ -9,6 +9,7 @@ import { userContext } from '~/root';
 import { type Post } from './(club)/feedback';
 import { PostCard } from '~/components/feedback/post-card';
 import { CommentCard, type CommentType } from '~/components/common/comments/comment-card';
+import CONST_URLS from '~/misc/consts/urls';
 
 export const getPosts = routeLoader$((): Promise<Post[]> => {
   return ApiService.get(`/api/posts/infinite?skip=0&tag=`, undefined, []);
@@ -87,6 +88,23 @@ export const head: DocumentHead = {
       name: 'description',
       content:
         'Изучение китайского языка онлайн: уроки, тексты с переводом, видео с субтитрами, пиньинь, лексика HSK, иероглифы, тесты и пр.',
+    },
+    {
+      property: 'og:title',
+      content: 'Chinese+ Изучать китайский - интересно!',
+    },
+    {
+      property: 'og:description',
+      content:
+        'Изучение китайского языка онлайн: уроки, тексты с переводом, видео с субтитрами, пиньинь, лексика HSK, иероглифы, тесты и пр.',
+    },
+    {
+      property: 'og:type',
+      content: 'website',
+    },
+    {
+      property: 'og:url',
+      content: CONST_URLS.siteUrl,
     },
   ],
 };

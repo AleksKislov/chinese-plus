@@ -124,6 +124,7 @@ export default component$(() => {
         <Sidebar>
           <ContentPageCard
             isApproved={false}
+            title={title}
             desc={desc}
             length={length}
             tags={tags}

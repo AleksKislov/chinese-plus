@@ -20,13 +20,14 @@ import { getContentComments } from '~/misc/actions/get-content-comments';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
 import { VideoLessonCategory } from '~/components/watch/video-lesson-card';
 import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
+import { getIdFromParam } from '~/misc/helpers/tools';
 
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
-  return getContentComments(WHERE.phoneticsLesson, params.id);
+  return getContentComments(WHERE.phoneticsLesson, getIdFromParam(params.id));
 });
 
 export const getVideo = routeLoader$(({ params }): Promise<VideoLessonInfo> => {
-  return ApiService.get(`/api/videos/video-lessons/${params.id}`, undefined, null);
+  return ApiService.get(`/api/videos/video-lessons/${getIdFromParam(params.id)}`, undefined, null);
 });
 
 export default component$(() => {
@@ -62,6 +63,7 @@ export default component$(() => {
         <Sidebar>
           <ContentPageCard
             isApproved={true}
+            title={title}
             desc={desc}
             tags={tags}
             userId={userId}

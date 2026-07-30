@@ -18,6 +18,7 @@ type ContentPageCardProps = {
   contentType: WhereType;
   contentId: ObjectId;
   picUrl: string;
+  title: string;
   tags: string[];
   userId: ObjectId;
   userName: string;
@@ -49,6 +50,7 @@ export const FontSizeMap: { [key: string]: string } = {
 export const ContentPageCard = component$(
   ({
     picUrl,
+    title,
     tags,
     userId,
     userName,
@@ -74,7 +76,7 @@ export const ContentPageCard = component$(
             src={imageSrc.value}
             width="400"
             height="711"
-            alt="Content pic"
+            alt={title}
             onError$={() => (imageSrc.value = CONST_URLS.defaultTextPic)}
           />
         </figure>

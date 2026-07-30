@@ -45,6 +45,7 @@ export const VideoLessonCard = component$(({ video, contentType }: VideoCardProp
         contentId={videoId}
         contentType={contentType}
         picUrl={YoutubeService.getVideoPicUrl(source)}
+        title={title}
       />
 
       <div class="card-body lg:w-2/3">

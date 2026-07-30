@@ -45,6 +45,7 @@ export const TextCard = component$(({ text, isUnapproved }: TextCardProps) => {
         contentId={textId}
         contentType={WHERE.text}
         picUrl={picUrl}
+        title={title}
         isUnapproved={isUnapproved}
       />
 
