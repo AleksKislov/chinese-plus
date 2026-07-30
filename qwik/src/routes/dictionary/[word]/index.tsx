@@ -110,8 +110,13 @@ export default component$(() => {
   const getTranslation = $(() => {
     clearCharDiv();
 
-    const inputStr = input.value.trim();
+    let inputStr = input.value.trim();
     if (!inputStr) return (input.value = '');
+
+    if (isRussian(inputStr)) {
+      inputStr = inputStr.toLowerCase();
+      input.value = inputStr;
+    }
 
     if (isChinese(inputStr) || isRussian(inputStr)) {
       nav('/dictionary/' + encodeURIComponent(inputStr));
