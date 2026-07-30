@@ -1,7 +1,7 @@
 import { component$ } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
 import { markUpRuText } from '~/misc/helpers/translation';
-import { type RuWord } from '~/routes/search';
+import { type RuWord } from '~/routes/dictionary';
 
 type SearchRuResultType = {
   ruWord: RuWord;
@@ -22,7 +22,7 @@ export const SearchRuResult = component$(({ ruWord, showExamples }: SearchRuResu
               <li key={ind}>
                 {x.canBeFound ? (
                   <Link
-                    href={'/search?q=' + x.value}
+                    href={'/dictionary/' + encodeURIComponent(x.value)}
                     class="link link-hover link-secondary font-bold"
                   >
                     {x.value}

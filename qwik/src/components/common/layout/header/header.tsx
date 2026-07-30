@@ -67,7 +67,7 @@ export default component$(() => {
                     </ul>
                   </details>
                 </li>
-                <MenuLink href="/search" text="Словарь" />
+                <MenuLink href="/dictionary" text="Словарь" />
                 <MenuLink href="/feedback" text="Форум" />
                 {/* <MenuLink href="/heroes" text="Герои клуба" /> */}
                 {/* <MenuLink href="/donate" text="Донат и цели" /> */}
@@ -120,7 +120,7 @@ export default component$(() => {
                   </ul>
                 </li>
 
-                <MenuLink href="/search" text="Словарь" />
+                <MenuLink href="/dictionary" text="Словарь" />
                 {/* <MenuItem name={ourClub.name} links={ourClub.links} /> */}
                 <MenuLink href="/feedback" text="Форум" />
 

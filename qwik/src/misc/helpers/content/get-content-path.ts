@@ -5,7 +5,7 @@ import { getBookUrl } from './get-book-url';
 import { type BookCardInfo } from '~/routes/read/books';
 
 // SEO-friendly slug prefix; the id itself (last "-" segment) remains the source of truth for lookups.
-const withSlug = (contentId: string, title?: string): string =>
+export const withSlug = (contentId: string, title?: string): string =>
   title ? `${slugify(title)}-${contentId}` : contentId;
 
 export const getContentPath = (

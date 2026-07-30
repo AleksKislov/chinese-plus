@@ -3,7 +3,7 @@ import { parseRussian } from '~/misc/helpers/translation';
 import { moreInfoSvg } from '../common/media/svg';
 import { moreInfoModalId } from '../common/tooltips/word-tooltip';
 import { HideBtnsEnum } from '../hsk/hide-buttons';
-import { useNavigate } from '@builder.io/qwik-city';
+import { Link } from '@builder.io/qwik-city';
 import { OwnWordBtn } from '../common/tooltips/own-word-btn';
 
 type SearchResultRowType = {
@@ -14,19 +14,16 @@ type SearchResultRowType = {
 
 export const SearchResultRow = component$(
   ({ word, hideBtnsSig, currentWord }: SearchResultRowType) => {
-    const nav = useNavigate();
+    const chinese = typeof word === 'string' ? word : word.chinese;
 
     return (
       <>
         <tr class={'hover'}>
           {!hideBtnsSig.value.includes(HideBtnsEnum.cn) && (
-            <td
-              class="prose cursor-pointer"
-              onClick$={() => {
-                nav('/search?q=' + (typeof word === 'string' ? word : word.chinese));
-              }}
-            >
-              <h2 class="w-24">{typeof word === 'string' ? word : word.chinese}</h2>
+            <td class="prose">
+              <Link href={'/dictionary/' + encodeURIComponent(chinese)}>
+                <h2 class="w-24">{chinese}</h2>
+              </Link>
             </td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.py) && (

@@ -1,7 +1,7 @@
 import { component$, useVisibleTask$ } from '@builder.io/qwik';
 import { featuresArr } from './features';
 import HanziWriter from 'hanzi-writer';
-import { HanziWriterSettings } from '~/routes/search';
+import { HanziWriterSettings } from '~/routes/dictionary';
 
 type FeatureCardProps = {
   title: string;

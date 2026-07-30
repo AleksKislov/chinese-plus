@@ -21,13 +21,26 @@ import { ContentPageHead } from '~/components/common/ui/content-page-head';
 import { VideoLessonCategory } from '~/components/watch/video-lesson-card';
 import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
 import { getIdFromParam } from '~/misc/helpers/tools';
+import { withSlug } from '~/misc/helpers/content';
 
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
   return getContentComments(WHERE.phoneticsLesson, getIdFromParam(params.id));
 });
 
-export const getVideo = routeLoader$(({ params }): Promise<VideoLessonInfo> => {
-  return ApiService.get(`/api/videos/video-lessons/${getIdFromParam(params.id)}`, undefined, null);
+export const getVideo = routeLoader$(async ({ params, redirect }): Promise<VideoLessonInfo> => {
+  const video = await ApiService.get(
+    `/api/videos/video-lessons/${getIdFromParam(params.id)}`,
+    undefined,
+    null,
+  );
+  if (!video) throw redirect(302, '/watch/phonetics-lessons');
+
+  const canonicalId = withSlug(video._id, video.title);
+  if (params.id !== canonicalId) {
+    throw redirect(301, `/watch/phonetics-lessons/${canonicalId}`);
+  }
+
+  return video;
 });
 
 export default component$(() => {

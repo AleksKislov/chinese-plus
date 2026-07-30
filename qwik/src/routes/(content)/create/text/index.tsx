@@ -13,7 +13,7 @@ import { OtherTextFields } from '~/components/create-edit/other-text-fields';
 import { TextPreprocessForm } from '~/components/create-edit/text-preprocess-form';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { getWordsForTooltips, type TextFromDB } from '~/routes/read/texts/[id]';
-import { segmenter, type SEGMENTER_VERSION } from '~/routes/search';
+import { segmenter, type SEGMENTER_VERSION } from '~/routes/dictionary';
 import { parseTextWords } from '~/misc/helpers/content';
 
 export type ThemePicType = {

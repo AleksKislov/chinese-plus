@@ -15,7 +15,7 @@ import { ReadResultCard } from '~/components/me/read-result-card';
 import { TextMainContent } from '~/components/read/text-main-content';
 import { type TooltipSegment } from '~/misc/helpers/content/parse-text-words';
 import { getIdFromParam } from '~/misc/helpers/tools';
-import { getContentPath } from '~/misc/helpers/content';
+import { getContentPath, withSlug } from '~/misc/helpers/content';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
 
@@ -66,6 +66,13 @@ export const useGetText = routeLoader$(
     const curPage = getCurrentPageNum(query.get('pg'));
     const textFromDb = await getTextFromDB(getIdFromParam(params.id), true);
     if (!textFromDb) throw redirect(302, '/read/texts');
+
+    const canonicalId = withSlug(textFromDb._id, textFromDb.title);
+    if (params.id !== canonicalId) {
+      const pg = query.get('pg');
+      throw redirect(301, `/read/texts/${canonicalId}${pg ? `?pg=${pg}` : ''}`);
+    }
+
     const chineseArr = getChineseArr(textFromDb, curPage);
     const dbWords = await getWordsForTooltips(chineseArr, true);
     const tooltipTxt = parseTextWords(chineseArr, dbWords);

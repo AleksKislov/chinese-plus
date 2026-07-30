@@ -6,7 +6,7 @@ import { FontSizeBtns } from '../common/content-cards/content-page-card';
 import { useNavigate } from '@builder.io/qwik-city';
 import { useSegmentAndGetTooltips } from '~/routes/(content)/create/text';
 import { useEditPageText } from '~/routes/(content)/edit/book-page/[id]';
-import { SEGMENTER_ENUM } from '~/routes/search';
+import { SEGMENTER_ENUM } from '~/routes/dictionary';
 
 export type BookOrigPageContent = {
   _id: ObjectId;

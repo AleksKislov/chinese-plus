@@ -13,7 +13,7 @@ import {
 } from '~/components/common/tooltips/word-tooltip';
 import { EditWordModal } from '~/components/common/modals/edit-word-modal';
 import { MoreInfoModal } from '~/components/common/modals/more-info-modal';
-import { SEGMENTER_ENUM, type SEGMENTER_VERSION } from '../search';
+import { SEGMENTER_ENUM, type SEGMENTER_VERSION } from '../dictionary';
 
 export default component$(() => {
   const segmentAction = useSegmentAndGetTooltips();

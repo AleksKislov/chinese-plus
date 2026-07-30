@@ -24,7 +24,7 @@ import {
   WHERE,
 } from '~/components/common/comments/comment-form';
 import { Subs } from '~/components/watch/subs';
-import { getContentPath, parseVideoWords } from '~/misc/helpers/content';
+import { getContentPath, parseVideoWords, withSlug } from '~/misc/helpers/content';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { getContentComments } from '~/misc/actions/get-content-comments';
@@ -71,6 +71,12 @@ export const getWordsForTooltips = (wordsArr: string[][]) => {
 export const useGetVideo = routeLoader$(async ({ params, redirect }): Promise<VideoFromDB & TooltipSubs> => {
   const videoFromDb = await getVideoFromDB(getIdFromParam(params.id));
   if (!videoFromDb) throw redirect(302, '/watch/videos');
+
+  const canonicalId = withSlug(videoFromDb._id, videoFromDb.title);
+  if (params.id !== canonicalId) {
+    throw redirect(301, `/watch/videos/${canonicalId}`);
+  }
+
   const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
   return { ...videoFromDb, tooltipSubs };
 });
