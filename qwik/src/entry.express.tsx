@@ -30,6 +30,15 @@ const logger = pino({
     : undefined,
 });
 
+process.on('unhandledRejection', (reason) => {
+  logger.error({ err: reason }, 'Unhandled promise rejection');
+});
+
+process.on('uncaughtException', (err) => {
+  logger.fatal({ err }, 'Uncaught exception - process will exit');
+  process.exit(1);
+});
+
 declare global {
   interface QwikCityPlatform extends PlatformNode {}
 }
