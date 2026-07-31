@@ -8,7 +8,12 @@ const auth = require('../../middleware/auth');
 
 const Dictionary = require('../../src/models/Dictionary');
 
-const { updateWord, rollbackUpdate, getEditedWords } = require('../../src/api/services/dictionary');
+const {
+  updateWord,
+  rollbackUpdate,
+  getEditedWords,
+  wildcardSearch,
+} = require('../../src/api/services/dictionary');
 
 /**
  * @route     GET api/dictionary?word=...
@@ -101,6 +106,13 @@ router.post('/allwords', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+/**
+ * @route     POST api/dictionary/wildcardSearch
+ * @desc      Find chinese words of a fixed length matching a pattern, "?" as a single-char wildcard
+ * @access    Public
+ */
+router.post('/wildcardSearch', wildcardSearch);
 
 router.post('/wordsForParag', auth, async (req, res) => {
   const userId = req.user?.id;

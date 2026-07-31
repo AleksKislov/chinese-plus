@@ -31,12 +31,17 @@ import { getWordsForTooltips } from '~/routes/read/texts/[id]';
 import HanziWriter from 'hanzi-writer';
 import { stripRuMarkup } from '~/misc/helpers/translation';
 import { Sidebar } from '~/components/common/layout/sidebar';
+import { Loader } from '~/components/common/ui/loader';
 import { SearchRuResult } from '~/components/search/search-ru-result';
 import {
   getChineseWordsArr,
   HanziWriterSettings,
   isChinese,
   isRussian,
+  isValidWildcardPattern,
+  isWildcardPattern,
+  WILDCARD_MAX_LENGTH,
+  WILDCARD_CHAR,
   type RuWord,
 } from '~/routes/dictionary';
 import { JsonLd } from '~/components/common/seo/json-ld';
@@ -47,9 +52,14 @@ export const useGetRuWord = routeLoader$(async ({ params }): Promise<RuWord | nu
   return ApiService.get('/api/ru-dictionary/' + params.word);
 });
 
+export const useGetWildcardWords = routeLoader$(async ({ params }): Promise<DictWord[] | null> => {
+  if (!isWildcardPattern(params.word) || !isValidWildcardPattern(params.word)) return null;
+  return ApiService.post('/api/dictionary/wildcardSearch', { pattern: params.word });
+});
+
 export const useLoadTranslation = routeLoader$(
   async ({ params }): Promise<(string | DictWord)[] | null> => {
-    if (!isChinese(params.word)) return null;
+    if (isWildcardPattern(params.word) || !isChinese(params.word)) return null;
     const segmentedWords = await getChineseWordsArr(params.word);
     const wordsWithInfo = await getWordsForTooltips(segmentedWords);
 
@@ -70,6 +80,7 @@ export default component$(() => {
   const nav = useNavigate();
   const loadTranslation = useLoadTranslation();
   const ruWord = useGetRuWord();
+  const wildcardWords = useGetWildcardWords();
   const words = useSignal<(string | DictWord)[] | null>(null);
   const input = useSignal(loc.params.word || '');
 
@@ -118,7 +129,16 @@ export default component$(() => {
       input.value = inputStr;
     }
 
-    if (isChinese(inputStr) || isRussian(inputStr)) {
+    if (isWildcardPattern(inputStr)) {
+      if (!isValidWildcardPattern(inputStr)) {
+        alertsState.push({
+          bg: 'alert-error',
+          text: `Шаблон должен содержать от 1 до ${WILDCARD_MAX_LENGTH} китайских иероглифов, "${WILDCARD_CHAR}" заменяет один неизвестный символ`,
+        });
+        return;
+      }
+      nav('/dictionary/' + encodeURIComponent(inputStr));
+    } else if (isChinese(inputStr) || isRussian(inputStr)) {
       nav('/dictionary/' + encodeURIComponent(inputStr));
     } else {
       alertsState.push({
@@ -177,10 +197,14 @@ export default component$(() => {
                   value={input.value}
                   onInput$={(e) => (input.value = (e.target as HTMLInputElement)?.value || '')}
                 />
-                <button class="btn btn-square" onClick$={getTranslation}>
-                  {searchSvg}
+                <button class="btn btn-square" onClick$={getTranslation} disabled={loc.isNavigating}>
+                  {loc.isNavigating ? <Loader size="sm" /> : searchSvg}
                 </button>
               </div>
+              <span class="text-sm opacity-60 mt-1">
+                Не знаете все иероглифы? Используйте "{WILDCARD_CHAR}" вместо неизвестного, например
+                "爱{WILDCARD_CHAR}" (до {WILDCARD_MAX_LENGTH} символов)
+              </span>
             </div>
 
             <div id={CHAR_SVG_DIV_ID} class="flex mt-3"></div>
@@ -214,6 +238,14 @@ export default component$(() => {
                 <SearchResutlTable words={words.value || []} />
               )}
 
+              {wildcardWords.value && wildcardWords.value.length > 0 && (
+                <SearchResutlTable words={wildcardWords.value} />
+              )}
+
+              {wildcardWords.value && wildcardWords.value.length === 0 && (
+                <div class="mt-3">Слов по шаблону не найдено</div>
+              )}
+
               {ruWord.value && (
                 <>
                   {ruWord.value.word?.ru && (
@@ -241,6 +273,22 @@ export const head: DocumentHead = ({ resolveValue, params }) => {
   const ruWord = resolveValue(useGetRuWord);
   const word = params.word;
   const url = `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(word)}`;
+
+  if (isWildcardPattern(word)) {
+    const title = `Chinese+ поиск по шаблону ${word}`;
+    const description = `Поиск китайских слов по шаблону "${word}" в китайско-русском словаре Chinese+.`;
+
+    return {
+      title,
+      meta: [
+        { name: 'description', content: description },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: url },
+      ],
+    };
+  }
 
   if (cnTranslation && cnTranslation.length === 1 && typeof cnTranslation[0] !== 'string') {
     const wordObj = cnTranslation[0];

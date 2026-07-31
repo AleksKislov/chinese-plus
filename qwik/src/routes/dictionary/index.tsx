@@ -1,5 +1,5 @@
 import { $, component$, useContext, useOnDocument, useSignal } from '@builder.io/qwik';
-import { type DocumentHead, Link, useNavigate } from '@builder.io/qwik-city';
+import { type DocumentHead, Link, useLocation, useNavigate } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
@@ -7,6 +7,7 @@ import { searchSvg } from '~/components/common/media/svg';
 import { ApiService } from '~/misc/actions/request';
 import { alertsContext } from '~/root';
 import { Sidebar } from '~/components/common/layout/sidebar';
+import { Loader } from '~/components/common/ui/loader';
 
 export const HanziWriterSettings = {
   width: 60,
@@ -54,9 +55,25 @@ export const isChinese = (str: string): boolean => {
   return /\p{Script=Han}/u.test(str);
 };
 
+export const WILDCARD_CHAR = '*';
+export const WILDCARD_MAX_LENGTH = 6;
+
+export const isWildcardPattern = (str: string): boolean => {
+  return str.includes(WILDCARD_CHAR);
+};
+
+// Assumes isWildcardPattern(str) already returned true.
+export const isValidWildcardPattern = (str: string): boolean => {
+  const chars = [...str];
+  if (chars.length > WILDCARD_MAX_LENGTH) return false;
+  if (!chars.some((char) => char !== WILDCARD_CHAR)) return false;
+  return chars.every((char) => char === WILDCARD_CHAR || isChinese(char));
+};
+
 // Landing page for the dictionary section: just the search box. Individual word entries
 // live at /dictionary/{word}, which is where this redirects to once a word is submitted.
 export default component$(() => {
+  const loc = useLocation();
   const nav = useNavigate();
   const input = useSignal('');
   const alertsState = useContext(alertsContext);
@@ -65,7 +82,16 @@ export default component$(() => {
     const inputStr = input.value.trim();
     if (!inputStr) return;
 
-    if (isChinese(inputStr) || isRussian(inputStr)) {
+    if (isWildcardPattern(inputStr)) {
+      if (!isValidWildcardPattern(inputStr)) {
+        alertsState.push({
+          bg: 'alert-error',
+          text: `Шаблон должен содержать от 1 до ${WILDCARD_MAX_LENGTH} китайских иероглифов, "${WILDCARD_CHAR}" заменяет один неизвестный символ`,
+        });
+        return;
+      }
+      nav('/dictionary/' + encodeURIComponent(inputStr));
+    } else if (isChinese(inputStr) || isRussian(inputStr)) {
       nav('/dictionary/' + encodeURIComponent(inputStr));
     } else {
       alertsState.push({
@@ -114,10 +140,14 @@ export default component$(() => {
                   value={input.value}
                   onInput$={(e) => (input.value = (e.target as HTMLInputElement)?.value || '')}
                 />
-                <button class="btn btn-square" onClick$={goToWord}>
-                  {searchSvg}
+                <button class="btn btn-square" onClick$={goToWord} disabled={loc.isNavigating}>
+                  {loc.isNavigating ? <Loader size="sm" /> : searchSvg}
                 </button>
               </div>
+              <span class="text-sm opacity-60 mt-1">
+                Не знаете все иероглифы? Используйте "{WILDCARD_CHAR}" вместо неизвестного, например
+                "爱{WILDCARD_CHAR}" (до {WILDCARD_MAX_LENGTH} символов)
+              </span>
             </div>
           </div>
         </MainContent>

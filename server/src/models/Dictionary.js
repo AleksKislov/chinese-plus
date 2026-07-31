@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const DictionarySchema = new mongoose.Schema({
-  chinese: { type: String },
+  chinese: { type: String, index: true },
   russian: { type: String },
   pinyin: { type: String },
   edited: {
