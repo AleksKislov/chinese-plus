@@ -1,0 +1,27 @@
+meta {
+  name: get all words
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{local_server}}/api/dictionary/allwords?isShortRu=1
+  body: json
+  auth: inherit
+}
+
+params:query {
+  isShortRu: 1
+}
+
+body:json {
+  [
+    "国内",
+    "并",
+    "不",
+    ",",
+    "\n",
+    "你好",
+     "你好"
+  ]
+}
