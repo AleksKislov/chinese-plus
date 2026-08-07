@@ -13,6 +13,7 @@ const {
   rollbackUpdate,
   getEditedWords,
   wildcardSearch,
+  pinyinSearch,
 } = require('../../src/api/services/dictionary');
 
 /**
@@ -113,6 +114,13 @@ router.post('/allwords', async (req, res) => {
  * @access    Public
  */
 router.post('/wildcardSearch', wildcardSearch);
+
+/**
+ * @route     POST api/dictionary/pinyinSearch
+ * @desc      Find chinese words by (accent-free) pinyin, matched against cleanPinyin
+ * @access    Public
+ */
+router.post('/pinyinSearch', pinyinSearch);
 
 router.post('/wordsForParag', auth, async (req, res) => {
   const userId = req.user?.id;

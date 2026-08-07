@@ -33,7 +33,10 @@ async function wildcardSearch(req, res) {
     throw new Error('pattern must only contain chinese characters or "?"');
   }
 
-  const words = await Dictionary.find({ chinese: { $regex: buildPatternRegex(chars) } })
+  const regex = buildPatternRegex(chars);
+  const words = await Dictionary.find({
+    $or: [{ chinese: { $regex: regex } }, { tradChinese: { $regex: regex } }],
+  })
     .select('-date -edited -previous -updatedAt')
     .limit(RESULTS_LIMIT);
 

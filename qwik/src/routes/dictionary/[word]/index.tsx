@@ -37,6 +37,7 @@ import {
   getChineseWordsArr,
   HanziWriterSettings,
   isChinese,
+  isPinyin,
   isRussian,
   isValidWildcardPattern,
   isWildcardPattern,
@@ -55,6 +56,11 @@ export const useGetRuWord = routeLoader$(async ({ params }): Promise<RuWord | nu
 export const useGetWildcardWords = routeLoader$(async ({ params }): Promise<DictWord[] | null> => {
   if (!isWildcardPattern(params.word) || !isValidWildcardPattern(params.word)) return null;
   return ApiService.post('/api/dictionary/wildcardSearch', { pattern: params.word });
+});
+
+export const useGetPinyinWords = routeLoader$(async ({ params }): Promise<DictWord[] | null> => {
+  if (!isPinyin(params.word)) return null;
+  return ApiService.post('/api/dictionary/pinyinSearch', { pinyin: params.word });
 });
 
 export const useLoadTranslation = routeLoader$(
@@ -81,6 +87,7 @@ export default component$(() => {
   const loadTranslation = useLoadTranslation();
   const ruWord = useGetRuWord();
   const wildcardWords = useGetWildcardWords();
+  const pinyinWords = useGetPinyinWords();
   const words = useSignal<(string | DictWord)[] | null>(null);
   const input = useSignal(loc.params.word || '');
 
@@ -138,12 +145,12 @@ export default component$(() => {
         return;
       }
       nav('/dictionary/' + encodeURIComponent(inputStr));
-    } else if (isChinese(inputStr) || isRussian(inputStr)) {
+    } else if (isChinese(inputStr) || isRussian(inputStr) || isPinyin(inputStr)) {
       nav('/dictionary/' + encodeURIComponent(inputStr));
     } else {
       alertsState.push({
         bg: 'alert-error',
-        text: 'Поиск только по китайским или русским словам',
+        text: 'Поиск только по китайским, русским словам или пиньинь',
       });
     }
   });
@@ -244,6 +251,14 @@ export default component$(() => {
 
               {wildcardWords.value && wildcardWords.value.length === 0 && (
                 <div class="mt-3">Слов по шаблону не найдено</div>
+              )}
+
+              {pinyinWords.value && pinyinWords.value.length > 0 && (
+                <SearchResutlTable words={pinyinWords.value} />
+              )}
+
+              {pinyinWords.value && pinyinWords.value.length === 0 && (
+                <div class="mt-3">Слов с таким пиньинь не найдено</div>
               )}
 
               {ruWord.value && (

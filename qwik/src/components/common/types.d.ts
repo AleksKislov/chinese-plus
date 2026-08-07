@@ -12,7 +12,9 @@ type ContentLike = {
 type DictWord = {
   _id: ObjectId;
   chinese: string; // e.g. "炫";
+  tradChinese?: string; // e.g. "煥", traditional writing, when it differs
   pinyin: string; // e.g. ' xuàn',
+  cleanPinyin?: string; // e.g. 'xuan', accent-free latin pinyin
   russian: string; // e.g. " [m1]1) я; мой[/m]"
 };
 

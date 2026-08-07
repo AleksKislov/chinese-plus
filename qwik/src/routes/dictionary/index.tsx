@@ -55,6 +55,10 @@ export const isChinese = (str: string): boolean => {
   return /\p{Script=Han}/u.test(str);
 };
 
+export const isPinyin = (str: string): boolean => {
+  return /^[a-z]+$/i.test(str);
+};
+
 export const WILDCARD_CHAR = '*';
 export const WILDCARD_MAX_LENGTH = 6;
 
@@ -91,12 +95,12 @@ export default component$(() => {
         return;
       }
       nav('/dictionary/' + encodeURIComponent(inputStr));
-    } else if (isChinese(inputStr) || isRussian(inputStr)) {
+    } else if (isChinese(inputStr) || isRussian(inputStr) || isPinyin(inputStr)) {
       nav('/dictionary/' + encodeURIComponent(inputStr));
     } else {
       alertsState.push({
         bg: 'alert-error',
-        text: 'Поиск только по китайским или русским словам',
+        text: 'Поиск только по китайским, русским словам или пиньинь',
       });
     }
   });
