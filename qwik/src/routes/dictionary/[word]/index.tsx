@@ -26,7 +26,7 @@ import { editWordModalId } from '~/components/common/tooltips/word-tooltip';
 import { DictWordTranslation } from '~/components/common/translation/dict-word-translation';
 import { SearchResutlTable } from '~/components/search/search-result-table';
 import { ApiService } from '~/misc/actions/request';
-import { alertsContext } from '~/root';
+import { alertsContext, userContext } from '~/root';
 import { getWordsForTooltips } from '~/routes/read/texts/[id]';
 import HanziWriter from 'hanzi-writer';
 import { stripRuMarkup } from '~/misc/helpers/translation';
@@ -92,6 +92,7 @@ export default component$(() => {
   const input = useSignal(loc.params.word || '');
 
   const alertsState = useContext(alertsContext);
+  const { isAdmin } = useContext(userContext);
   const showExamples = useSignal(true);
 
   useVisibleTask$(({ track }) => {
@@ -237,7 +238,9 @@ export default component$(() => {
                     showExamples={showExamples.value}
                   />
 
-                  <EditWordModal word={words.value[0] as DictWord} modalId={editWordModalId} />
+                  {isAdmin && (
+                    <EditWordModal word={words.value[0] as DictWord} modalId={editWordModalId} />
+                  )}
                 </>
               )}
 
