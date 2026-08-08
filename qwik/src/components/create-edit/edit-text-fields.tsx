@@ -56,6 +56,19 @@ export const EditTextFields = component$(({ store, isAdmin }: OtherTextFieldsPro
                 </label>
               </div>
             </div>
+            <div class="ml-3">
+              <div class="form-control">
+                <label class="label cursor-pointer">
+                  <span class="label-text mr-2">Обновить дату публикации</span>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(store.updateDate)}
+                    onChange$={() => (store.updateDate = !store.updateDate ? 1 : 0)}
+                    class="checkbox checkbox-primary"
+                  />
+                </label>
+              </div>
+            </div>
           </FlexRow>
         )}
 

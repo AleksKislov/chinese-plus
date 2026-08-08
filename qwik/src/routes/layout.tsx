@@ -34,9 +34,14 @@ export const useGetUserHsk2WordsTotal = routeLoader$(async ({ cookie }): Promise
 // Lightweight - just the chinese strings, used app-wide for the "is this word known"
 // lookup (reader highlighting) and the header word count. The full word list (with
 // pinyin/translation/dictWordId) is fetched separately by the /me/words page only.
-export const useGetUserWords = routeLoader$(async ({ cookie }): Promise<string[]> => {
+// Skipped on create/edit text pages - no tooltip/highlighting there, and it's the
+// slowest loader for users with a big vocabulary.
+export const useGetUserWords = routeLoader$(async ({ cookie, url }): Promise<string[]> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return [];
+  if (/^\/(create\/text|edit\/text\/)/.test(url.pathname)) {
+    return [];
+  }
   return ApiService.get('/api/userwords/light', token, []);
 });
 

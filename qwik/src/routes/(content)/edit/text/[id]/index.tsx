@@ -23,6 +23,7 @@ export type EditTextStore = NewTextStore & {
   textId: ObjectId;
   isApproved?: 0 | 1;
   audioSrc?: 0 | 1;
+  updateDate?: 0 | 1;
   curPage: number;
 };
 
@@ -104,6 +105,7 @@ export default component$(() => {
     length: 0,
     isLongText,
     audioSrc,
+    updateDate: 0,
     curPage,
   });
 

@@ -1,6 +1,7 @@
 const axios = require('axios');
 const qs = require('qs');
 const { isDevelopment } = require('../../../../server');
+const { logger } = require('../../../logger');
 
 const tgUrl = process.env.TELEGRAM_NOTICE_URL;
 const testChatId = process.env.TEST_CHAT_ID;
@@ -12,11 +13,17 @@ class Notify {
   static admin(txt) {
     return axios
       .get(encodeURI(`${tgUrl}&text=${txt.replace(/<[^>]*>?/gm, '')}&chat_id=${testChatId}`))
-      .catch(console.log);
+      .catch((err) =>
+        logger.error({ err: err.response?.data || err.message }, 'Notify.admin failed'),
+      );
   }
 
   static telegramPublic(txt) {
-    axios.get(encodeURI(`${tgUrl}&text=${txt}&chat_id=${tgChannelId}`)).catch(console.log);
+    axios
+      .get(encodeURI(`${tgUrl}&text=${txt}&chat_id=${tgChannelId}`))
+      .catch((err) =>
+        logger.error({ err: err.response?.data || err.message }, 'Notify.telegramPublic failed'),
+      );
   }
 
   static vkPublic(message) {
@@ -34,7 +41,16 @@ class Notify {
       data,
     };
 
-    axios(config).catch(console.log);
+    axios(config)
+      .then((res) => {
+        // VK API returns HTTP 200 even on failure, with the error in the response body
+        if (res.data?.error) {
+          logger.error({ err: res.data.error }, 'Notify.vkPublic failed');
+        }
+      })
+      .catch((err) =>
+        logger.error({ err: err.response?.data || err.message }, 'Notify.vkPublic failed'),
+      );
   }
 
   static socialMedia(content) {
@@ -56,7 +72,7 @@ function getTxt(content, isVk) {
     obj.link = link;
   } else if (content.origintext) {
     const link = `${base}read/texts/${id}`;
-    obj.head = getMsgHeader('text', link, content.level, userName, isVk);
+    obj.head = getMsgHeader('text', link, content.level, userName, isVk, content.audioSrc);
     obj.desc = content.description;
     obj.link = link;
   } else {
@@ -71,7 +87,9 @@ function getTxt(content, isVk) {
   return writeMsg(obj, isVk);
 }
 
-function getMsgHeader(contentType, link, lvl, userName, isVk) {
+function getMsgHeader(contentType, link, lvl, userName, isVk, hasAudio) {
+  const audioSuffix = hasAudio ? ' 🎧 с озвучкой' : '';
+
   if (isVk) {
     switch (contentType) {
       case 'video':
@@ -80,7 +98,7 @@ function getMsgHeader(contentType, link, lvl, userName, isVk) {
         }`;
       case 'text':
         return `📚 Новый текст от пользователя ${userName}! ${
-          lvl ? `Уровень: ${getStars(lvl)}` : ''
+          lvl ? `Уровень: ${getStars(lvl)}${audioSuffix}` : ''
         }`;
       case 'post':
         return `🚀 Новости от админа!`;
@@ -94,7 +112,7 @@ function getMsgHeader(contentType, link, lvl, userName, isVk) {
       }`;
     case 'text':
       return `📚 Новый <a href='${link}'>текст</a> от пользователя ${userName}! ${
-        lvl ? `Уровень: ${getStars(lvl)}` : ''
+        lvl ? `Уровень: ${getStars(lvl)}${audioSuffix}` : ''
       }`;
     case 'post':
       return `🚀 <a href='${link}'>Новости</a> от админа!`;

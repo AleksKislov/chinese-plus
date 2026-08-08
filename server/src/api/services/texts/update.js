@@ -27,6 +27,7 @@ async function updateTxt(req, res) {
     isLongText,
     pageToEdit,
     audioSrc,
+    updateDate,
   } = req.body;
 
   let foundText;
@@ -52,6 +53,7 @@ async function updateTxt(req, res) {
   if (categoryInd) newFields.categoryInd = categoryInd;
   if (source) newFields.source = source;
   if (audioSrc) newFields.audioSrc = audioSrc;
+  if (updateDate) newFields.date = new Date();
   if (isLngTxtEdit) {
     newFields = {
       ...newFields,
