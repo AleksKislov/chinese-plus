@@ -1,5 +1,5 @@
 import { $, component$, useSignal, useStore, useVisibleTask$ } from '@builder.io/qwik';
-import { useNavigate } from '@builder.io/qwik-city';
+import { globalAction$, useNavigate } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
 import { Loader } from '~/components/common/ui/loader';
 
@@ -8,8 +8,19 @@ const FALLBACK_WIDTH = 320;
 
 type Point = { x: number; y: number };
 
+// Runs server-side (unlike a plain client event handler), so it can reach the
+// backend via its internal/private URL - the browser never calls it directly.
+export const useRecognizeHandwriting = globalAction$(
+  async (params): Promise<{ candidates: string[] }> => {
+    return ApiService.post('/api/dictionary/handwritingSearch', params, undefined, {
+      candidates: [],
+    });
+  },
+);
+
 export const HandwritingInput = component$(() => {
   const nav = useNavigate();
+  const recognizeAction = useRecognizeHandwriting();
   const containerRef = useSignal<HTMLDivElement>();
   const canvasRef = useSignal<HTMLCanvasElement>();
   const canvasWidth = useSignal(FALLBACK_WIDTH);
@@ -87,17 +98,12 @@ export const HandwritingInput = component$(() => {
   const recognize = $(async () => {
     if (!strokes.length) return;
     loading.value = true;
-    const res = await ApiService.post(
-      '/api/dictionary/handwritingSearch',
-      {
-        strokes: strokes.map((stroke) => [[...stroke[0]], [...stroke[1]]]),
-        width: canvasWidth.value,
-        height: CANVAS_HEIGHT,
-      },
-      undefined,
-      { candidates: [] },
-    );
-    candidates.value = res.candidates || [];
+    const { value } = await recognizeAction.submit({
+      strokes: strokes.map((stroke) => [[...stroke[0]], [...stroke[1]]]),
+      width: canvasWidth.value,
+      height: CANVAS_HEIGHT,
+    });
+    candidates.value = value?.candidates || [];
     loading.value = false;
   });
 
