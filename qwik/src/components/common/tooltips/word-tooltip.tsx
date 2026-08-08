@@ -11,7 +11,7 @@ import { userContext } from '~/root';
 import { moreInfoSvg } from '../media/svg';
 import { EditWordBtn } from './edit-word-btn';
 import { OwnWordBtn } from './own-word-btn';
-import { globalAction$, Link } from '@builder.io/qwik-city';
+import { globalAction$ } from '@builder.io/qwik-city';
 import { getWordsForTooltips } from '~/routes/read/texts/[id]';
 
 export const editWordModalId = 'editWordModalId';
@@ -109,14 +109,7 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
               dangerouslySetInnerHTML={parseRussian(word.russian, false)}
             ></div>
 
-            <Link
-              href={'/dictionary/' + encodeURIComponent(word.chinese)}
-              class="link link-hover link-secondary text-xs"
-            >
-              Словарная статья
-            </Link>
-
-            <div class={'flex flex-row justify-between mt-1'}>
+            <div class={'flex flex-row justify-between'}>
               <div>
                 <div class="tooltip tooltip-info tooltip-bottom" data-tip={'Больше информации'}>
                   <label

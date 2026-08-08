@@ -25,6 +25,7 @@ import { OwnWordBtn } from '~/components/common/tooltips/own-word-btn';
 import { editWordModalId } from '~/components/common/tooltips/word-tooltip';
 import { DictWordTranslation } from '~/components/common/translation/dict-word-translation';
 import { SearchResutlTable } from '~/components/search/search-result-table';
+import { HandwritingInput } from '~/components/search/handwriting-input';
 import { ApiService } from '~/misc/actions/request';
 import { alertsContext, userContext } from '~/root';
 import { getWordsForTooltips } from '~/routes/read/texts/[id]';
@@ -71,8 +72,9 @@ export const useLoadTranslation = routeLoader$(
 
     return segmentedWords.map((word) => {
       for (let i = 0; i < wordsWithInfo.length; i++) {
-        if ((wordsWithInfo[i] as DictWord).chinese === word) {
-          return wordsWithInfo[i];
+        const info = wordsWithInfo[i] as DictWord;
+        if (info.chinese === word || info.tradChinese === word) {
+          return info;
         }
       }
       return word;
@@ -94,6 +96,7 @@ export default component$(() => {
   const alertsState = useContext(alertsContext);
   const { isAdmin } = useContext(userContext);
   const showExamples = useSignal(true);
+  const showHandwriting = useSignal(false);
 
   useVisibleTask$(({ track }) => {
     const word = track(() => loc.params.word);
@@ -177,25 +180,10 @@ export default component$(() => {
       <PageTitle txt={'Китайско-русский словарь: ' + loc.params.word} />
 
       <FlexRow>
-        <Sidebar>
-          <div class="card card-compact bg-base-200">
-            <div class="card-body">
-              <span>
-                База слов взята с{' '}
-                <Link
-                  class="link link-hover link-secondary font-bold"
-                  href={'https://bkrs.info/'}
-                  target="_blank"
-                >
-                  БКРС
-                </Link>
-              </span>
-            </div>
-          </div>
-        </Sidebar>
+        <Sidebar noAds={true}></Sidebar>
         <Alerts />
         <MainContent>
-          <div class="prose">
+          <div class="prose mb-3">
             <div class="form-control">
               <div class="input-group w-full">
                 <input
@@ -205,14 +193,28 @@ export default component$(() => {
                   value={input.value}
                   onInput$={(e) => (input.value = (e.target as HTMLInputElement)?.value || '')}
                 />
-                <button class="btn btn-square" onClick$={getTranslation} disabled={loc.isNavigating}>
+                <button
+                  class="btn btn-square"
+                  onClick$={getTranslation}
+                  disabled={loc.isNavigating}
+                >
                   {loc.isNavigating ? <Loader size="sm" /> : searchSvg}
                 </button>
               </div>
               <span class="text-sm opacity-60 mt-1">
-                Не знаете все иероглифы? Используйте "{WILDCARD_CHAR}" вместо неизвестного, например
-                "爱{WILDCARD_CHAR}" (до {WILDCARD_MAX_LENGTH} символов)
+                Используйте "{WILDCARD_CHAR}" вместо неизвестного иероглифа, например "爱
+                {WILDCARD_CHAR}"
               </span>
+
+              <button
+                type="button"
+                class="link link-hover link-secondary text-sm my-2 text-left w-fit"
+                onClick$={() => (showHandwriting.value = !showHandwriting.value)}
+              >
+                {showHandwriting.value ? 'Скрыть ручной ввод' : 'Ручной ввод иероглифов'}
+              </button>
+
+              {showHandwriting.value && <HandwritingInput />}
             </div>
 
             <div id={CHAR_SVG_DIV_ID} class="flex mt-3"></div>
@@ -235,6 +237,13 @@ export default component$(() => {
                         : words.value[0].russian
                     }
                     py={(words.value[0] as DictWord).pinyin}
+                    tradChinese={
+                      typeof words.value[0] !== 'string' &&
+                      words.value[0].tradChinese &&
+                      words.value[0].tradChinese !== words.value[0].chinese
+                        ? words.value[0].tradChinese
+                        : undefined
+                    }
                     showExamples={showExamples.value}
                   />
 
@@ -281,6 +290,18 @@ export default component$(() => {
             </div>
           </div>
         </MainContent>
+        <Sidebar>
+          <div class="card card-compact bg-base-200 mt-3">
+            <div class="card-body">
+              <span class="text-sm">
+                Поиск:
+                <br />- традиционные и упрощённые иероглифы,
+                <br />- пиньинь без тонов ("nihao"), <br />- шаблон со звездочкой "*" вместо
+                неизвестного иероглифа, <br />- ручной ввод мышью или на тачпаде.
+              </span>
+            </div>
+          </div>
+        </Sidebar>
       </FlexRow>
     </>
   );
@@ -310,8 +331,14 @@ export const head: DocumentHead = ({ resolveValue, params }) => {
 
   if (cnTranslation && cnTranslation.length === 1 && typeof cnTranslation[0] !== 'string') {
     const wordObj = cnTranslation[0];
-    const title = `Chinese+ ${wordObj.chinese} (${wordObj.pinyin}) — перевод с китайского на русский`;
-    const description = `Значение китайского слова ${wordObj.chinese}: ${stripRuMarkup(
+    const hasTrad = wordObj.tradChinese && wordObj.tradChinese !== wordObj.chinese;
+    const chineseLabel = hasTrad
+      ? `${wordObj.chinese} (традиционное написание: ${wordObj.tradChinese})`
+      : wordObj.chinese;
+    const title = `Chinese+ ${wordObj.chinese}${hasTrad ? ' / ' + wordObj.tradChinese : ''} (${
+      wordObj.pinyin
+    }) — перевод с китайского на русский`;
+    const description = `Значение китайского слова ${chineseLabel}: ${stripRuMarkup(
       wordObj.russian,
     )}`.slice(0, 300);
 

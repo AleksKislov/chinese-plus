@@ -5,9 +5,9 @@ export const ShowHideBtn = component$(({ showExamples }: { showExamples: Signal<
     <div class="flex justify-end">
       <label class="label cursor-pointer right-0">
         {showExamples.value ? (
-          <span class="label-text mr-3">Без примеров</span>
-        ) : (
           <span class="label-text mr-3">С примерами</span>
+        ) : (
+          <span class="label-text mr-3">Без примеров</span>
         )}
         <input
           type="checkbox"

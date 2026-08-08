@@ -14,6 +14,7 @@ const {
   getEditedWords,
   wildcardSearch,
   pinyinSearch,
+  handwritingSearch,
 } = require('../../src/api/services/dictionary');
 
 /**
@@ -121,6 +122,14 @@ router.post('/wildcardSearch', wildcardSearch);
  * @access    Public
  */
 router.post('/pinyinSearch', pinyinSearch);
+
+/**
+ * @route     POST api/dictionary/handwritingSearch
+ * @desc      Recognize hand-drawn strokes into candidate chinese characters
+ *            (proxies Google's unofficial handwriting input API)
+ * @access    Public
+ */
+router.post('/handwritingSearch', handwritingSearch);
 
 router.post('/wordsForParag', auth, async (req, res) => {
   const userId = req.user?.id;

@@ -8,6 +8,7 @@ import { ApiService } from '~/misc/actions/request';
 import { alertsContext } from '~/root';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { Loader } from '~/components/common/ui/loader';
+import { HandwritingInput } from '~/components/search/handwriting-input';
 
 export const HanziWriterSettings = {
   width: 60,
@@ -81,6 +82,7 @@ export default component$(() => {
   const nav = useNavigate();
   const input = useSignal('');
   const alertsState = useContext(alertsContext);
+  const showHandwriting = useSignal(false);
 
   const goToWord = $(() => {
     const inputStr = input.value.trim();
@@ -117,29 +119,15 @@ export default component$(() => {
       <PageTitle txt={'Китайско-русский словарь'} />
 
       <FlexRow>
-        <Sidebar>
-          <div class="card card-compact bg-base-200">
-            <div class="card-body">
-              <span>
-                База слов взята с{' '}
-                <Link
-                  class="link link-hover link-secondary font-bold"
-                  href={'https://bkrs.info/'}
-                  target="_blank"
-                >
-                  БКРС
-                </Link>
-              </span>
-            </div>
-          </div>
-        </Sidebar>
+        <Sidebar noAds={true}></Sidebar>
+
         <MainContent>
           <div class="prose">
             <div class="form-control">
               <div class="input-group w-full">
                 <input
                   type="text"
-                  placeholder="汉字…"
+                  placeholder="汉字 / 漢字 / hanzi / *字"
                   class="input input-bordered w-full"
                   value={input.value}
                   onInput$={(e) => (input.value = (e.target as HTMLInputElement)?.value || '')}
@@ -149,12 +137,34 @@ export default component$(() => {
                 </button>
               </div>
               <span class="text-sm opacity-60 mt-1">
-                Не знаете все иероглифы? Используйте "{WILDCARD_CHAR}" вместо неизвестного, например
-                "爱{WILDCARD_CHAR}" (до {WILDCARD_MAX_LENGTH} символов)
+                Используйте "{WILDCARD_CHAR}" вместо неизвестного иероглифа, например "爱
+                {WILDCARD_CHAR}"
               </span>
+
+              <button
+                type="button"
+                class="link link-hover link-secondary text-sm my-2 text-left w-fit"
+                onClick$={() => (showHandwriting.value = !showHandwriting.value)}
+              >
+                {showHandwriting.value ? 'Скрыть ручной ввод' : 'Ручной ввод иероглифов'}
+              </button>
+
+              {showHandwriting.value && <HandwritingInput />}
             </div>
           </div>
         </MainContent>
+        <Sidebar>
+          <div class="card card-compact bg-base-200 mt-3">
+            <div class="card-body">
+              <span class="text-sm">
+                Поиск:
+                <br />- традиционные и упрощённые иероглифы,
+                <br />- пиньинь без тонов ("nihao"), <br />- шаблон со звездочкой "*" вместо
+                неизвестного иероглифа, <br />- ручной ввод мышью или на тачпаде.
+              </span>
+            </div>
+          </div>
+        </Sidebar>
       </FlexRow>
     </>
   );
@@ -165,7 +175,8 @@ export const head: DocumentHead = {
   meta: [
     {
       name: 'description',
-      content: 'Перевод китайских слов и иероглифов на русский язык с анимацией написания.',
+      content:
+        'Китайско-русский словарь с анимацией написания иероглифов. Поиск по традиционным и упрощённым иероглифам, по пиньинь без тонов, по шаблону, а также ручной ввод иероглифов.',
     },
   ],
 };

@@ -4,10 +4,6 @@ const MAX_PATTERN_LENGTH = 30;
 const RESULTS_LIMIT = 300;
 const LATIN_ONLY = /^[a-z]+$/i;
 
-function escapeRegExp(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
 async function pinyinSearch(req, res) {
   const { pinyin } = req.body;
 
@@ -24,9 +20,7 @@ async function pinyinSearch(req, res) {
     throw new Error('pinyin must only contain latin letters');
   }
 
-  const words = await Dictionary.find({
-    cleanPinyin: { $regex: escapeRegExp(pattern) },
-  })
+  const words = await Dictionary.find({ cleanPinyin: pattern })
     .select('-date -edited -previous -updatedAt')
     .limit(RESULTS_LIMIT);
 

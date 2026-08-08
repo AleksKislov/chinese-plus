@@ -15,6 +15,8 @@ type SearchResultRowType = {
 export const SearchResultRow = component$(
   ({ word, hideBtnsSig, currentWord }: SearchResultRowType) => {
     const chinese = typeof word === 'string' ? word : word.chinese;
+    const tradChinese = typeof word === 'string' ? undefined : word.tradChinese;
+    const showTrad = tradChinese && tradChinese !== chinese;
 
     return (
       <>
@@ -23,6 +25,7 @@ export const SearchResultRow = component$(
             <td class="prose">
               <Link href={'/dictionary/' + encodeURIComponent(chinese)}>
                 <h2 class="w-24">{chinese}</h2>
+                {showTrad && <div class="text-sm opacity-60">{tradChinese}</div>}
               </Link>
             </td>
           )}
