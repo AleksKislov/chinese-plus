@@ -18,7 +18,7 @@ export const OtherTextFields = component$(({ store }: OtherTextFieldsProps) => {
   const STARS_LVL = [1, 2, 3];
   const picTheme = useSignal('');
   const getPics = useGetPics();
-  const alreadyGotPics = useSignal(false);
+  const picsRequestsLeft = useSignal(CONSTANTS.maxThemePicRequests);
 
   return (
     <div
@@ -117,13 +117,13 @@ export const OtherTextFields = component$(({ store }: OtherTextFieldsProps) => {
                 />
                 <button
                   class="btn join-item btn-primary rounded-r"
-                  disabled={alreadyGotPics.value}
+                  disabled={picsRequestsLeft.value <= 0}
                   onClick$={() => {
                     const latinLettersRegex = /^[A-Za-z]*$/;
 
                     if (picTheme.value && latinLettersRegex.test(picTheme.value)) {
                       getPics.submit({ picTheme: picTheme.value });
-                      alreadyGotPics.value = true;
+                      picsRequestsLeft.value--;
                     } else {
                       alertsState.push({
                         bg: 'alert-error',
@@ -133,6 +133,7 @@ export const OtherTextFields = component$(({ store }: OtherTextFieldsProps) => {
                   }}
                 >
                   {arrorUturnDown}
+                  <span class="ml-1">{picsRequestsLeft.value}</span>
                 </button>
               </div>
             </div>

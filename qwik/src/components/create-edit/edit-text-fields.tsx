@@ -20,7 +20,7 @@ export const EditTextFields = component$(({ store, isAdmin }: OtherTextFieldsPro
   const STARS_LVL = [1, 2, 3];
   const picTheme = useSignal('');
   const getPics = useGetPics();
-  const alreadyGotPics = useSignal(false);
+  const picsRequestsLeft = useSignal(CONSTANTS.maxThemePicRequests);
 
   return (
     <div tabIndex={0} class={`collapse collapse-open border border-base-300 bg-base-200`}>
@@ -159,13 +159,13 @@ export const EditTextFields = component$(({ store, isAdmin }: OtherTextFieldsPro
                 />
                 <button
                   class="btn join-item btn-primary rounded-r"
-                  disabled={alreadyGotPics.value}
+                  disabled={picsRequestsLeft.value <= 0}
                   onClick$={() => {
                     const latinLettersRegex = /^[A-Za-z]*$/;
 
                     if (picTheme.value && latinLettersRegex.test(picTheme.value)) {
                       getPics.submit({ picTheme: picTheme.value });
-                      alreadyGotPics.value = true;
+                      picsRequestsLeft.value--;
                     } else {
                       alertsState.push({
                         bg: 'alert-error',
@@ -175,6 +175,7 @@ export const EditTextFields = component$(({ store, isAdmin }: OtherTextFieldsPro
                   }}
                 >
                   {arrorUturnDown}
+                  <span class="ml-1">{picsRequestsLeft.value}</span>
                 </button>
               </div>
             </div>

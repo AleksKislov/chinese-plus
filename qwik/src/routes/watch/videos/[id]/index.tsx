@@ -158,7 +158,10 @@ export default component$(() => {
   useVisibleTask$(() => {
     if (!ytSig.player) {
       YTframeLoader.load((YT) => {
-        const ytPlayer = new YT.Player(YtPlayerId, { videoId: source });
+        const ytPlayer = new YT.Player(YtPlayerId, {
+          videoId: source,
+          playerVars: { origin: CONST_URLS.siteUrl },
+        });
 
         ytSig.player = noSerialize(ytPlayer) || {};
       });

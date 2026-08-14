@@ -13,6 +13,7 @@ const { shortUserInfoFields } = require('../../src/api/consts');
 const VideoLesson = require('../../src/models/VideoLesson');
 const mongoose = require('mongoose');
 const BookPage = require('../../src/models/BookPage');
+const BlogPost = require('../../src/models/BlogPost');
 const { cacheRoute, invalidateTag, TTL } = require('../../src/cache');
 
 const COMMENT_DESTINATION = {
@@ -22,6 +23,7 @@ const COMMENT_DESTINATION = {
   book: 'book_page',
   phoneticsLesson: 'phoneticsLesson',
   charactersLesson: 'charactersLesson',
+  blog: 'blog',
 };
 
 // @route   POST api/comments?where=...&id=
@@ -110,6 +112,9 @@ async function getCommentDestinationById(where, id) {
   }
   if (where === COMMENT_DESTINATION.book) {
     return BookPage.findById(id).populate('book', ['_id', 'title']);
+  }
+  if (where === COMMENT_DESTINATION.blog) {
+    return BlogPost.findById(id);
   }
 
   if ([COMMENT_DESTINATION.phoneticsLesson, COMMENT_DESTINATION.charactersLesson].includes(where)) {

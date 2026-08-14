@@ -1,22 +1,26 @@
-const { validationResult } = require('express-validator');
 const { Notify } = require('../_misc');
+const { hasMeaningfulContent } = require('./_content-helpers');
 
 const BlogPost = require('../../../models/BlogPost');
 const { shortUserInfoFields } = require('../../consts');
 
 async function createPost(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  const { title, content, tags, category, postType } = req.body;
+  const isSimple = postType === 'simple';
 
-  const { title, desc, text, tags, mainPicUrl, categoryInd } = req.body;
+  if (!(title || '').trim()) {
+    return res.status(400).json({ msg: 'Нужен заголовок' });
+  }
+  if (!hasMeaningfulContent(content)) {
+    return res.status(400).json({ msg: 'Нужна хотя бы картинка или текст' });
+  }
 
   const newPost = new BlogPost({
+    postType: isSimple ? 'simple' : 'article',
     title,
-    desc,
-    text,
-    tags,
-    mainPicUrl,
-    categoryInd,
+    content,
+    tags: isSimple ? undefined : tags,
+    category: isSimple ? 'mini_post' : category,
     isApproved: 0,
     user: req.user.id,
   });

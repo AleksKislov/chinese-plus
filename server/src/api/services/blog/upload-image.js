@@ -5,7 +5,8 @@ const { s3 } = require('./s3-client');
 
 const MAX_WIDTH = 1280; // no need for huge images
 const BUCKET = process.env.YA_S3_BUCKET;
-const PUBLIC_URL = process.env.YA_S3_PUBLIC_URL || `https://${BUCKET}.storage.yandexcloud.net`;
+// path-style, matching the bucket already used for texts/audio (see qwik CONST_URLS)
+const PUBLIC_URL = process.env.YA_S3_PUBLIC_URL || `https://storage.yandexcloud.net/${BUCKET}`;
 
 async function uploadImage(req, res) {
   if (!req.file) return res.status(400).json({ msg: 'No image file provided' });

@@ -1,18 +1,27 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const BLOG_CATEGORIES = ['general', 'personal', 'study', 'culture', 'club_news', 'mini_post'];
+const BLOG_POST_TYPES = ['simple', 'article']; // simple: no tags/category, just title + picture(s) + optional text
+
+// content is an ordered array of blocks, each shaped by its `type`:
+//   { type: 'text', text }
+//   { type: 'image', url, caption? }
+//   { type: 'carousel', images: [{ url, caption? }] }
+//   { type: 'video', url }                 // embeddable link (e.g. youtube)
+//   { type: 'chinese', words: string[] }   // segmented tokens, tooltips resolved on read
+// the cover image shown on cards is derived from the first image/carousel block, not stored separately
 const BlogPostSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: 'user' },
+  postType: { type: String, enum: BLOG_POST_TYPES, default: 'article' },
   title: { type: String, required: true },
-  desc: { type: String },
-  text: { type: String },
+  content: [{ type: Schema.Types.Mixed }],
   tags: [{ type: String, lowercase: true }],
+  category: { type: String, enum: BLOG_CATEGORIES, default: 'general' },
 
-  mainPicUrl: { type: String },
   isApproved: { type: Number }, // by admin or moderator, 1 or 0
   hits: { type: Number, default: 1 }, // number of visits
 
-  categoryInd: { type: Number, default: 0 }, // index for textCategories array (on frontend) below
   comments_id: [
     {
       comment: {
@@ -34,3 +43,5 @@ const BlogPostSchema = new Schema({
 });
 
 module.exports = BlogPost = mongoose.model('blogpost', BlogPostSchema);
+module.exports.BLOG_CATEGORIES = BLOG_CATEGORIES;
+module.exports.BLOG_POST_TYPES = BLOG_POST_TYPES;

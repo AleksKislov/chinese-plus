@@ -10,6 +10,7 @@ Disallow: /create
 Disallow: /create/
 Disallow: /edit/
 Disallow: /read/unapproved-texts
+Disallow: /read/unapproved-blog
 Disallow: /watch/unapproved-videos
 
 Sitemap: https://www.chineseplus.club/sitemap.xml

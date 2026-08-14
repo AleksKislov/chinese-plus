@@ -1,5 +1,6 @@
 import { component$ } from '@builder.io/qwik';
 import { AddresseeTag } from './comment-form';
+import { LinkedText } from '../linked-text';
 
 type SafeTextProps = { text: string };
 
@@ -20,7 +21,7 @@ export const SafeText = component$(({ text }: SafeTextProps) => {
               if (x.includes(AddresseeTag.start)) {
                 return <span dangerouslySetInnerHTML={x} key={ind2}></span>;
               } else {
-                return x;
+                return <LinkedText key={ind2} text={x} />;
               }
             })}
           </p>

@@ -22,8 +22,11 @@ export default component$(() => {
             <Link href="/create/text" class="btn btn-primary mr-3">
               Текст
             </Link>
-            <Link href="/create/video" class="btn btn-primary">
+            <Link href="/create/video" class="btn btn-primary mr-3">
               Видео
+            </Link>
+            <Link href="/create/blog" class="btn btn-primary">
+              Блог
             </Link>
           </div>
         </div>

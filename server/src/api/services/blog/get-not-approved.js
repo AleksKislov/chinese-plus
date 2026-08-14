@@ -9,7 +9,6 @@ async function getNotApproved(req, res) {
     limit: 10,
   })
     .sort({ date: -1 })
-    .select('-text')
     .populate('user', shortUserInfoFields);
 
   return res.json(posts);

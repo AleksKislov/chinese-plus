@@ -9,6 +9,7 @@ import { MainContent } from '~/components/common/layout/main-content';
 import YTframeLoader from 'youtube-iframe';
 import { YoutubeService } from '~/misc/actions/youtube-service';
 import CONSTANTS from '~/misc/consts/consts';
+import CONST_URLS from '~/misc/consts/urls';
 import { ContentPageCard } from '~/components/common/content-cards/content-page-card';
 import {
   type Addressee,
@@ -96,7 +97,10 @@ export default component$(() => {
   useVisibleTask$(() => {
     if (!ytSig.player.playerInfo) {
       YTframeLoader.load((YT) => {
-        const ytPlayer = new YT.Player(YtPlayerId, { videoId: source });
+        const ytPlayer = new YT.Player(YtPlayerId, {
+          videoId: source,
+          playerVars: { origin: CONST_URLS.siteUrl },
+        });
         ytSig.player = noSerialize(ytPlayer);
       });
     }

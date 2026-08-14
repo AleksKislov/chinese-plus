@@ -69,6 +69,14 @@ const CONSTANTS = {
     documentary: 'документальное',
     news: 'новости',
   },
+  blogCategories: {
+    general: 'Общее',
+    personal: 'Личный опыт',
+    study: 'Обучение',
+    culture: 'Культура',
+    club_news: 'Новости клуба',
+    mini_post: 'Мини-пост',
+  },
   commentLength: 900,
   commentEmojis: [
     '🔥',
@@ -106,6 +114,7 @@ const CONSTANTS = {
     },
   },
   maxWordsPerPage: 200,
+  maxThemePicRequests: 5,
   users: {
     vocabSize: 300,
   },

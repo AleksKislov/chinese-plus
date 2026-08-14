@@ -13,6 +13,7 @@ export enum WHERE {
   book = 'book_page',
   phoneticsLesson = 'phoneticsLesson',
   charactersLesson = 'charactersLesson',
+  blog = 'blog',
 }
 
 export type WhereType =
@@ -21,7 +22,8 @@ export type WhereType =
   | 'text'
   | 'book_page'
   | 'phoneticsLesson'
-  | 'charactersLesson';
+  | 'charactersLesson'
+  | 'blog';
 
 export const useAddComment = globalAction$(
   (params, ev) => {

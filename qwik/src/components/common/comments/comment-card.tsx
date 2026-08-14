@@ -24,7 +24,7 @@ export type CommentType = {
     name: string;
   };
   path?: string; // only for books, not in quick yet:
-  destination: 'book_page' | 'text' | 'video' | 'post';
+  destination: 'book_page' | 'text' | 'video' | 'post' | 'blog';
   date: ISODate;
   pageInfo?: CommentPageInfo; // for book_page comments
 };

@@ -21,6 +21,8 @@ export const getContentPath = (
   switch (contentType) {
     case WHERE.text:
       return `/read/${s}texts/${withSlug(contentId, isUnapproved ? undefined : title)}`;
+    case WHERE.blog:
+      return `/read/blog/${withSlug(contentId, isUnapproved ? undefined : title)}`;
     case WHERE.video:
       return `/watch/${s}videos/${withSlug(contentId, isUnapproved ? undefined : title)}`;
     case WHERE.phoneticsLesson:

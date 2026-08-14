@@ -8,7 +8,7 @@ async function getByUserId(req, res) {
 
   const posts = await BlogPost.find({ user: req.params.userId })
     .sort({ date: -1 })
-    .select('title categoryInd likes hits _id comments_id date isApproved mainPicUrl');
+    .select('postType title category content likes hits _id comments_id date isApproved');
 
   return res.json(posts);
 }

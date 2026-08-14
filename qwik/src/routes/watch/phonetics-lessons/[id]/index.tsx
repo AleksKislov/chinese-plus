@@ -102,7 +102,7 @@ export default component$(() => {
               class="rounded-lg shadow-lg"
               width="560"
               height="315"
-              src={`https://www.youtube.com/embed/${source}?si=lXAKe7vNBOaFKz6D&amp;controls=0`}
+              src={`https://www.youtube.com/embed/${source}?controls=0`}
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             ></iframe>

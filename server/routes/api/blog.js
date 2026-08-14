@@ -2,7 +2,6 @@ const router = require('express').Router();
 const auth = require('../../middleware/auth');
 const adminAuth = require('../../middleware/admin-auth');
 const upload = require('../../middleware/upload');
-const { check } = require('express-validator');
 
 const {
   createPost,
@@ -13,6 +12,7 @@ const {
   getByUserId,
   getNotApproved,
   uploadImage,
+  likePost,
 } = require('../../src/api/services/blog');
 
 /**
@@ -39,11 +39,7 @@ router.post(
  * @desc      Create a blog post
  * @access    Private
  */
-router.post(
-  '/create',
-  [auth, [check('title', 'Нужен заголовок').not().isEmpty()]],
-  createPost,
-);
+router.post('/create', auth, createPost);
 
 /**
  * @method    POST
@@ -60,6 +56,13 @@ router.post('/update', auth, updatePost);
  * @access    Private
  */
 router.delete('/delete/:id', auth, deletePost);
+
+/**
+ *  @route    PUT api/blog/like/:id
+ *  @desc     Like a blog post
+ *  @access   Private
+ */
+router.put('/like/:id', auth, likePost);
 
 /**
  * @route     GET api/blog/not_approved

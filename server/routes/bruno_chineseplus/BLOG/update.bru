@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{local_server}}/api/blog/update
+  url: {{local_server}}/api/blogs/update
   body: json
   auth: none
 }
@@ -18,9 +18,10 @@ body:json {
   {
     "postId": "62b4c4e6290a9d79833dc4f6",
     "title": "Updated title",
-    "desc": "Updated description",
-    "text": "Updated text",
     "tags": ["hsk"],
-    "categoryInd": 1
+    "category": "study",
+    "content": [
+      { "type": "text", "text": "Updated text" }
+    ]
   }
 }

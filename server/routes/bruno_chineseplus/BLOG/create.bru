@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{local_server}}/api/blog/create
+  url: {{local_server}}/api/blogs/create
   body: json
   auth: none
 }
@@ -16,11 +16,14 @@ headers {
 
 body:json {
   {
+    "postType": "article",
     "title": "My first blog post",
-    "desc": "Short description",
-    "text": "Some intro text\n\n![](https://my-bucket.storage.yandexcloud.net/blog/some-user/uuid.webp)\n\nMore text after the picture",
     "tags": ["hsk", "grammar"],
-    "mainPicUrl": "https://my-bucket.storage.yandexcloud.net/blog/some-user/uuid.webp",
-    "categoryInd": 0
+    "category": "general",
+    "content": [
+      { "type": "text", "text": "Some intro text" },
+      { "type": "image", "url": "https://storage.yandexcloud.net/buyilehu/blog/some-user/uuid.webp", "caption": "" },
+      { "type": "text", "text": "More text after the picture" }
+    ]
   }
 }
