@@ -67,7 +67,7 @@ export const useEditText = routeAction$(async (params, ev): Promise<{ status: 'd
 });
 
 export default component$(() => {
-  const { isAdmin } = useContext(userContext);
+  const { isAdmin, isModerator } = useContext(userContext);
 
   const {
     _id,
@@ -114,7 +114,7 @@ export default component$(() => {
       <PageTitle txt={'Редактировать текст'} />
       <Alerts />
 
-      <EditTextFields store={store} isAdmin={isAdmin} />
+      <EditTextFields store={store} isAdmin={isAdmin} isModerator={isModerator} />
 
       <EditTextPreprocessForm store={store} />
     </>

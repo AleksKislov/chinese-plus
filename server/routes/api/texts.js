@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const auth = require('../../middleware/auth');
 const adminAuth = require('../../middleware/admin-auth');
+const moderatorAuth = require('../../middleware/moderator-auth');
+const audioUpload = require('../../middleware/upload-audio');
 const { check } = require('express-validator');
 const { cacheRoute, TTL } = require('../../src/cache');
 
@@ -22,6 +24,8 @@ const {
   getMarkedTexts,
   editChineseArr,
   getSimilarTexts,
+  uploadAudio,
+  deleteAudio,
 } = require('../../src/api/services/texts');
 
 /**
@@ -50,6 +54,32 @@ router.post(
  * @access    Private
  */
 router.post('/update', auth, updateTxt);
+
+/**
+ * @method    POST
+ * @route     api/texts/upload-audio
+ * @desc      Upload an mp3 for a text (stored in cold storage), sets audioSrc
+ * @access    Private (admin/moderator)
+ */
+router.post(
+  '/upload-audio',
+  moderatorAuth,
+  (req, res, next) => {
+    audioUpload.single('audio')(req, res, (err) => {
+      if (err) return res.status(400).json({ msg: err.message });
+      next();
+    });
+  },
+  uploadAudio,
+);
+
+/**
+ * @method    DELETE
+ * @route     api/texts/delete-audio/:id
+ * @desc      Delete a text's mp3 from storage and unset audioSrc
+ * @access    Private (admin)
+ */
+router.delete('/delete-audio/:id', adminAuth, deleteAudio);
 
 /**
  * @method    PUT

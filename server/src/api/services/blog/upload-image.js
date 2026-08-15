@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const sharp = require('sharp');
 const { PutObjectCommand } = require('@aws-sdk/client-s3');
-const { s3 } = require('./s3-client');
+const { s3 } = require('../_misc/s3-client');
 
 const MAX_WIDTH = 1280; // no need for huge images
 const BUCKET = process.env.YA_S3_BUCKET;

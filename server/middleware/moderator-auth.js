@@ -16,14 +16,16 @@ module.exports = async function (req, res, next) {
     const { user } = jwt.verify(token, process.env.JWT_SECRET);
 
     if (user.id === process.env.ADMIN_ID) {
-      req.user = user;
+      req.user = { id: user.id };
       return next();
     }
 
     const dbUser = await User.findById(user.id).select('role');
-    if (!dbUser || dbUser.role !== 'admin') throw new Error('Not admin!');
+    if (!dbUser || !['admin', 'moderator'].includes(dbUser.role)) {
+      throw new Error('Not authorized');
+    }
 
-    req.user = user;
+    req.user = { id: user.id };
     next();
   } catch (err) {
     res.status(401).json({ msg: 'Token is not valid' });

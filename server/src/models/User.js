@@ -26,6 +26,7 @@ const UserSchema = new mongoose.Schema({
   newAvatar: {
     type: Object,
   },
+  role: { type: String, enum: ['user', 'admin', 'moderator'], default: 'user' },
 });
 
 module.exports = User = mongoose.model('user', UserSchema);
