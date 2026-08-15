@@ -98,7 +98,10 @@ export const EditTextFields = component$(({ store, isAdmin, isModerator }: Other
                           return;
                         }
 
-                        uploadAudio.submit({ audio: file, textId: store.textId });
+                        const formData = new FormData();
+                        formData.append('audio', file);
+                        formData.append('textId', store.textId);
+                        uploadAudio.submit(formData);
                       }}
                     />
                     {uploadAudio.isRunning && (

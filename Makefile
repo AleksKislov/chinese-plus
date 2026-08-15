@@ -29,6 +29,10 @@ up-back:
 	@echo "Compose UP for backend"
 	docker compose -f docker-compose.prod.yml up -d $(BE_IMAGE_NAME)
 
-up-front:
+up-front: pull-front
 	@echo "Compose UP for frontend v${VERSION}"
 	docker compose -f docker-compose.prod.yml up -d $(FE_IMAGE_NAME)
+
+pull-front:
+	@echo "Pull $(FE_IMAGE_NAME) v${VERSION} from Docker Hub"
+	docker compose -f docker-compose.prod.yml pull $(FE_IMAGE_NAME)
