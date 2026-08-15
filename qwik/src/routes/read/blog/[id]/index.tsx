@@ -134,6 +134,7 @@ export default component$(() => {
           commentIdToReply={commentIdToReplyStore}
           addressees={addressees}
           comments={comments.value}
+          author={{ id: userId, name: userName }}
         />
       </div>
     </>

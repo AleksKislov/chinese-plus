@@ -53,6 +53,7 @@ export const TextMainContent = component$(
       curPage,
       audioSrc: hasAudio,
       isApproved,
+      user: textAuthor,
     } = text;
 
     const yandexAds = configState.find((x) => x.type === YANDEX_ADS.banner);
@@ -119,6 +120,7 @@ export const TextMainContent = component$(
           commentIdToReply={commentIdToReplyStore}
           addressees={addressees}
           comments={comments}
+          author={{ id: textAuthor._id, name: textAuthor.name }}
         />
 
         {!currentWord.value ? null : (
