@@ -1,7 +1,20 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const BLOG_CATEGORIES = ['general', 'personal', 'study', 'culture', 'club_news', 'mini_post'];
+const BLOG_CATEGORIES = [
+  'general',
+  'personal',
+  'study',
+  'culture',
+  'club_news',
+  'mini_post',
+  'literature_poetry',
+  'suggestion_bug',
+  'history',
+  'it_stuff',
+  'food',
+  'travel',
+];
 const BLOG_POST_TYPES = ['simple', 'article']; // simple: no tags/category, just title + picture(s) + optional text
 
 // content is an ordered array of blocks, each shaped by its `type`:

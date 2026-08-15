@@ -76,6 +76,12 @@ const CONSTANTS = {
     culture: 'Культура',
     club_news: 'Новости клуба',
     mini_post: 'Мини-пост',
+    literature_poetry: 'Литература и поэзия',
+    suggestion_bug: 'Предложения и баги',
+    history: 'История',
+    it_stuff: 'IT',
+    food: 'Еда',
+    travel: 'Путешествия',
   },
   commentLength: 900,
   commentEmojis: [
