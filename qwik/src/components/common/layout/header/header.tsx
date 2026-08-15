@@ -2,7 +2,7 @@ import { component$, useContext, useSignal, useVisibleTask$ } from '@builder.io/
 import { userContext } from '~/root';
 import { Link } from '@builder.io/qwik-city';
 import { MenuItem, type MenuItemProps } from './menu-item';
-import { dropdownArrowBottom, enterSvg, logoSvg } from '../../media/svg';
+import { collapsedMenuSvg, dropdownArrowBottom, enterSvg, logoSvg } from '../../media/svg';
 import { getNewMentions } from '~/routes/layout';
 import { AvatarImg } from '../../media/avatar-img';
 import MenuLink from './menu-link';
@@ -29,8 +29,8 @@ export default component$(() => {
           <div class="lg:w-full">
             {/* mobile menu */}
             <div class="dropdown">
-              <label tabIndex={0} class="btn btn-ghost mt-2 lg:hidden">
-                {logoSvg}
+              <label tabIndex={0} class="btn btn-ghost mt-2 lg:hidden" aria-label="Меню">
+                {collapsedMenuSvg}
               </label>
               <ul
                 tabIndex={0}
@@ -135,6 +135,7 @@ export default component$(() => {
           <div class="navbar-center lg:hidden">
             <div class="flex">
               <Link class="btn btn-ghost normal-case text-2xl" href="/">
+                <div>{logoSvg}</div>
                 <Brand isMobile={true} />
               </Link>
             </div>
