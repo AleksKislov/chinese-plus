@@ -6,6 +6,7 @@ import CONST_URLS from '~/misc/consts/urls';
 import { PageTitle } from '~/components/common/layout/title';
 import { infoAlertSvg } from '~/components/common/media/svg';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
+import { NextStepsCards } from '~/components/start/next-steps-cards';
 import { configContext } from '~/root';
 import YANDEX_ADS from '~/misc/consts/ads';
 import { LentaAds } from '~/components/common/ads/lenta-ads';
@@ -71,6 +72,7 @@ export default component$(() => {
       </div>
 
       <PhoneticsLinkCard />
+      <NextStepsCards />
 
       {wideBannerAds?.isActive && <OurAds adsInfo={wideBannerAds} />}
       {bannerAds?.isActive && <BannerAds />}

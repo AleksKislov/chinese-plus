@@ -78,7 +78,7 @@ export const featuresArr = [
           текстов
         </Link>{' '}
         или{' '}
-        <Link href="/search" class="link link-secondary">
+        <Link href="/dictionary" class="link link-secondary">
           словаря
         </Link>{' '}
         можно добавить в личный вокабуляр и повторять отдельно
@@ -124,7 +124,7 @@ export const featuresArr = [
     desc: (
       <p>
         Каждый иероглиф в{' '}
-        <Link href="/search" class="link link-secondary">
+        <Link href="/dictionary" class="link link-secondary">
           словаре
         </Link>{' '}
         снабжен анимированным порядком написания черт иероглифа

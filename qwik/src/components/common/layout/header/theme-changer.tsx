@@ -1,4 +1,4 @@
-import { component$, useSignal, useTask$, useVisibleTask$ } from '@builder.io/qwik';
+import { component$, useSignal, useTask$ } from '@builder.io/qwik';
 import { moonSvg, sunSvg } from '../../media/svg';
 import { IsLightThemeCookieName } from '~/root';
 import Cookies from 'js-cookie';
@@ -17,18 +17,17 @@ export const ThemeChanger = component$(() => {
     themeChangedToDark.value = checkTheme.value;
   });
 
-  useVisibleTask$(({ track }) => {
-    const isDark = track(() => themeChangedToDark.value);
-    Cookies.set(IsLightThemeCookieName, isDark ? '0' : '1', { expires: 600 });
-  });
-
   return (
     <li tabIndex={0} class="my-1">
       <label class="swap swap-rotate">
         <input
           type="checkbox"
-          bind:checked={themeChangedToDark}
-          onClick$={() => location.reload()}
+          checked={themeChangedToDark.value}
+          onChange$={(_, target) => {
+            const isDark = target.checked;
+            Cookies.set(IsLightThemeCookieName, isDark ? '0' : '1', { expires: 600 });
+            location.reload();
+          }}
         />
         <div class="swap-on">{moonSvg}</div>
         <div class="swap-off">{sunSvg}</div>

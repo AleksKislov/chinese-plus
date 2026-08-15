@@ -1,6 +1,5 @@
 import { component$, useContext } from '@builder.io/qwik';
 import { Link, type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
-import { GoogleButton } from '~/components/auth/google-btn';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Features } from '~/components/home/features';
 import { LandingVideo } from '~/components/home/landing-video';
@@ -10,6 +9,7 @@ import { type Post } from './(club)/feedback';
 import { PostCard } from '~/components/feedback/post-card';
 import { CommentCard, type CommentType } from '~/components/common/comments/comment-card';
 import CONST_URLS from '~/misc/consts/urls';
+import { JsonLd } from '~/components/common/seo/json-ld';
 
 export const getPosts = routeLoader$((): Promise<Post[]> => {
   return ApiService.get(`/api/posts/infinite?skip=0&tag=`, undefined, []);
@@ -25,6 +25,34 @@ export default component$(() => {
   const posts = getPosts();
   return (
     <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'Organization',
+              name: 'Chinese+',
+              url: CONST_URLS.siteUrl,
+              logo: `${CONST_URLS.siteUrl}/favicon.svg`,
+              sameAs: [
+                'https://t.me/chineseplusnew',
+                'https://www.youtube.com/c/Buyilehuorg',
+                'https://vk.com/buyilehu',
+              ],
+            },
+            {
+              '@type': 'WebSite',
+              name: 'Chinese+',
+              url: CONST_URLS.siteUrl,
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: `${CONST_URLS.siteUrl}/dictionary/{search_term_string}`,
+                'query-input': 'required name=search_term_string',
+              },
+            },
+          ],
+        }}
+      />
       <div class="text-center mt-8">
         <article class={'prose max-w-none'}>
           <h1>
@@ -36,14 +64,20 @@ export default component$(() => {
 
       {!loggedIn && (
         <FlexRow>
-          <div class="flex justify-center w-full mb-3">
-            <Link href="/login" class="btn btn-success btn-sm mr-1">
-              войти
+          <div class="flex flex-col items-center w-full mb-3">
+            <Link href="/read/texts" class="btn btn-accent mb-2">
+              Читать бесплатно
             </Link>
-            <GoogleButton />
-            <Link href="/register" class="btn btn-primary btn-sm ml-1">
-              регистрация
-            </Link>
+            <p class="text-xs opacity-60 mb-3">Регистрация не обязательна — можно начать сразу</p>
+
+            <div class="flex">
+              <Link href="/login" class="btn btn-success btn-sm mr-1">
+                войти
+              </Link>
+              <Link href="/register" class="btn btn-primary btn-sm ml-1">
+                регистрация
+              </Link>
+            </div>
           </div>
         </FlexRow>
       )}

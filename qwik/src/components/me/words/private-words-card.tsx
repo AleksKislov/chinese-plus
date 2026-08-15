@@ -17,7 +17,7 @@ export const PrivateWordsCard = component$(({ wordsTotal }: TabelCardProps) => {
             текстов
           </Link>{' '}
           или{' '}
-          <Link class="link link-hover bg-secondary" href="/search">
+          <Link class="link link-hover bg-secondary" href="/dictionary">
             словаря
           </Link>
           , чтобы повторить их отдельно.
