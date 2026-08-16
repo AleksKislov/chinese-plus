@@ -1,5 +1,5 @@
 import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
-import { type DocumentHead, type RequestEvent, routeAction$ } from '@builder.io/qwik-city';
+import { type DocumentHead, routeAction$ } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
 
 import { FlexRow } from '~/components/common/layout/flex-row';
@@ -9,16 +9,9 @@ import { PageTitle } from '~/components/common/layout/title';
 import { BlogCard } from '~/components/read/blog-card';
 import { type BlogCardInfo } from '../blog';
 import { MoreBtnAndLoader } from '~/components/common/ui/more-btn-and-loader';
-import { getTokenFromCookie } from '~/misc/actions/auth';
 
-export const onGet = async ({ cookie, redirect }: RequestEvent) => {
-  const token = getTokenFromCookie(cookie);
-  if (!token) throw redirect(302, '/login');
-};
-
-export const getPostsWithSkip = routeAction$((params, ev): Promise<BlogCardInfo[]> => {
-  const token = getTokenFromCookie(ev.cookie);
-  return ApiService.get(`/api/blogs/not_approved?skip=${params.skip}`, token, []);
+export const getPostsWithSkip = routeAction$((params): Promise<BlogCardInfo[]> => {
+  return ApiService.get(`/api/blogs/not_approved?skip=${params.skip}`, undefined, []);
 });
 
 export default component$(() => {

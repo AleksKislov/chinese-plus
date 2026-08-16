@@ -4,6 +4,7 @@ import { useGetPics, type ThemePicType } from '~/routes/(content)/create/text';
 import CONSTANTS from '~/misc/consts/consts';
 import { arrorUturnDown } from '../common/media/svg';
 import { alertsContext } from '~/root';
+import { resizeImageFile } from '~/misc/helpers/tools';
 
 type BlogImagePickerProps = {
   label?: string;
@@ -23,7 +24,16 @@ export const BlogImagePicker = component$(
 
     useTask$(({ track }) => {
       const res = track(() => uploadImage.value);
-      if (res?.url) onChange$(res.url);
+      if (res === undefined) return;
+
+      if (res?.url) {
+        onChange$(res.url);
+      } else {
+        alertsState.push({
+          bg: 'alert-error',
+          text: 'Не удалось загрузить картинку. Попробуйте другое фото.',
+        });
+      }
     });
 
     return (
@@ -64,11 +74,13 @@ export const BlogImagePicker = component$(
             accept="image/*"
             class="file-input file-input-bordered file-input-sm w-full"
             disabled={uploadImage.isRunning}
-            onChange$={(_, el) => {
+            onChange$={async (_, el) => {
               const file = el.files?.[0];
               if (!file) return;
+
+              const resized = await resizeImageFile(file);
               const formData = new FormData();
-              formData.append('image', file);
+              formData.append('image', resized, 'photo.jpg');
               uploadImage.submit(formData);
             }}
           />

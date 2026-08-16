@@ -68,7 +68,7 @@ type CommentFormProps = {
   path?: string; // only for texts and books
   commentIdToReply: CommentIdToReply;
   addressees: Signal<Addressee[]>;
-  mentionCandidates: Addressee[];
+  mentionCandidates?: Addressee[];
 };
 
 export type CommentIdToReply = {
@@ -83,8 +83,12 @@ export type Addressee = {
 };
 
 export const getAddresseeStr = (add: Addressee): string => {
-  return `@@[${add.id}]{${add.name}}@@`;
+  return `@[${add.id}]{${add.name}}@`;
 };
+
+// accepts both the current single-@ token (@[id]{name}@) and the old
+// double-@ one (@@[id]{name}@@) so previously-typed drafts/links still work
+export const ADDRESSEE_TOKEN_REGEX = /@@\[([^\]]+)\]\{([^}]+)\}@@|@\[([^\]]+)\]\{([^}]+)\}@/g;
 
 export const AddresseeTag = {
   start: `<strong class='text-info'>`,
@@ -92,7 +96,14 @@ export const AddresseeTag = {
 };
 
 export const CommentForm = component$(
-  ({ contentId, where, path, commentIdToReply, addressees, mentionCandidates }: CommentFormProps) => {
+  ({
+    contentId,
+    where,
+    path,
+    commentIdToReply,
+    addressees,
+    mentionCandidates = [],
+  }: CommentFormProps) => {
     const userState = useContext(userContext);
     const addComment = useAddComment();
     const emoji = useSignal('');
@@ -109,16 +120,13 @@ export const CommentForm = component$(
     const submitPost = $(async () => {
       alreadySubmitted.value = true;
 
-      let text = newText.value;
-      const foundUsers = parseForAddressees(newText.value);
-      if (foundUsers.length) {
-        foundUsers.forEach((user) => {
-          text = text.replace(
-            getAddresseeStr(user),
-            `${AddresseeTag.start}${user.name}${AddresseeTag.end}`,
-          );
-        });
-      }
+      // replaces every mention token (old @@..@@ or new @..@ form) with its
+      // display HTML in one pass, so repeated mentions of the same person
+      // and mixed old/new tokens in the same draft both resolve correctly
+      const text = newText.value.replace(ADDRESSEE_TOKEN_REGEX, (_match, _id1, name1, _id2, name2) => {
+        const name = name1 ?? name2;
+        return `${AddresseeTag.start}${name}${AddresseeTag.end}`;
+      });
 
       await addComment.submit({
         id: contentId,
@@ -177,14 +185,21 @@ export const CommentForm = component$(
 );
 
 export const parseForAddressees = (txt: string): Addressee[] => {
-  const resArr = txt.split('@@');
-  const onlyNames = resArr.filter((x) => x[0] === '[' && x[x.length - 1] === '}');
-  const userSet = Array.from(new Set(onlyNames));
-  return userSet.map((x) => {
-    const id = x.slice(1, x.indexOf(']'));
-    const name = x.slice(x.indexOf('{') + 1, x.length - 1);
-    return { id, name };
-  });
+  const found: Addressee[] = [];
+  const seen = new Set<string>();
+
+  let match: RegExpExecArray | null;
+  ADDRESSEE_TOKEN_REGEX.lastIndex = 0;
+  while ((match = ADDRESSEE_TOKEN_REGEX.exec(txt))) {
+    const id = match[1] ?? match[3];
+    const name = match[2] ?? match[4];
+    const key = `${id}:${name}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    found.push({ id, name });
+  }
+
+  return found;
 };
 
 type CommentTextAreaProps = {
@@ -193,15 +208,22 @@ type CommentTextAreaProps = {
   loggedIn: boolean;
   newText: Signal<string>;
   emoji: Signal<string>;
-  mentionCandidates: Addressee[];
+  mentionCandidates?: Addressee[];
 };
 
 // an "@" preceded by start-of-text/whitespace (not another "@", so it doesn't
-// re-trigger inside an already-inserted @@[id]{name}@@ token), followed by the query
+// re-trigger inside an already-inserted @[id]{name}@ token), followed by the query
 const MENTION_TRIGGER_REGEX = /(?:^|\s)@([^\s@]{0,30})$/;
 
 export const CommentTextArea = component$(
-  ({ addressees, commentIdToReply, newText, loggedIn, emoji, mentionCandidates }: CommentTextAreaProps) => {
+  ({
+    addressees,
+    commentIdToReply,
+    newText,
+    loggedIn,
+    emoji,
+    mentionCandidates = [],
+  }: CommentTextAreaProps) => {
     const userState = useContext(userContext);
     const textareaRef = useSignal<HTMLTextAreaElement>();
     const mentionQuery = useSignal<string | null>(null);
@@ -255,7 +277,7 @@ export const CommentTextArea = component$(
 
     useTask$(({ track }) => {
       track(() => newText.value);
-      if (!newText.value.includes('@@')) return;
+      if (!newText.value.includes('@[')) return;
       const found = parseForAddressees(newText.value);
       if (!found.length) return;
 
@@ -323,7 +345,7 @@ export const CommentTextArea = component$(
           ></textarea>
 
           {mentionQuery.value !== null && mentionOptions.length > 0 && (
-            <ul class="menu bg-base-100 rounded-box shadow-md absolute z-10 top-full mt-1 w-56 p-1">
+            <ul class="menu bg-neutral text-neutral-content rounded-box shadow-lg border border-base-content/10 absolute z-10 top-full mt-1 w-56 p-1">
               {mentionOptions.map((c) => (
                 <li key={c.id}>
                   <button

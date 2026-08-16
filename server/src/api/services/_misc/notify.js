@@ -75,6 +75,11 @@ function getTxt(content, isVk) {
     obj.head = getMsgHeader('text', link, content.level, userName, isVk, content.audioSrc);
     obj.desc = content.description;
     obj.link = link;
+  } else if (content.postType) {
+    const link = `${base}read/blog/${id}`;
+    obj.head = getMsgHeader('blog', link, null, userName, isVk);
+    obj.desc = getBlogDesc(content.content);
+    obj.link = link;
   } else {
     const link = `${base}feedback/${id}`;
     obj.head = getMsgHeader('post', link, null, null, isVk);
@@ -100,6 +105,8 @@ function getMsgHeader(contentType, link, lvl, userName, isVk, hasAudio) {
         return `📚 Новый текст от пользователя ${userName}! ${
           lvl ? `Уровень: ${getStars(lvl)}${audioSuffix}` : ''
         }`;
+      case 'blog':
+        return `📝 Новый пост в блоге от пользователя ${userName}!`;
       case 'post':
         return `🚀 Новости от админа!`;
     }
@@ -114,9 +121,25 @@ function getMsgHeader(contentType, link, lvl, userName, isVk, hasAudio) {
       return `📚 Новый <a href='${link}'>текст</a> от пользователя ${userName}! ${
         lvl ? `Уровень: ${getStars(lvl)}${audioSuffix}` : ''
       }`;
+    case 'blog':
+      return `📝 Новый <a href='${link}'>пост в блоге</a> от пользователя ${userName}!`;
     case 'post':
       return `🚀 <a href='${link}'>Новости</a> от админа!`;
   }
+}
+
+const BLOG_DESC_MAX_LEN = 300;
+
+function getBlogDesc(blocks) {
+  if (!Array.isArray(blocks)) return '';
+  const textBlock = blocks.find((block) => block?.type === 'text' && (block.text || '').trim());
+  if (!textBlock) return '';
+
+  const firstParagraph = textBlock.text.trim().split('\n')[0].trim();
+
+  return firstParagraph.length > BLOG_DESC_MAX_LEN
+    ? firstParagraph.slice(0, BLOG_DESC_MAX_LEN).trimEnd() + '…'
+    : firstParagraph;
 }
 
 function writeMsg({ head, title, desc, link }, isVk) {

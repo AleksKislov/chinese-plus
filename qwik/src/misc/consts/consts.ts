@@ -124,6 +124,10 @@ const CONSTANTS = {
   users: {
     vocabSize: 300,
   },
+  admin: {
+    id: '5f301a8f0aa547478da68c18',
+    name: 'admin',
+  },
   CONTENT: {
     video: 'video',
     text: 'text',

@@ -7,8 +7,7 @@ import {
   CommentTextArea,
   WHERE,
   type WhereType,
-  parseForAddressees,
-  getAddresseeStr,
+  ADDRESSEE_TOKEN_REGEX,
   AddresseeTag,
 } from './comment-form';
 
@@ -44,16 +43,10 @@ export const EditCommentModal = component$(({ modalId, comment }: EditCommentPro
   const addressees = useSignal<Addressee[]>([]);
 
   const submitPost = $(async () => {
-    let text = newText.value;
-    const foundUsers = parseForAddressees(newText.value);
-    if (foundUsers.length) {
-      foundUsers.forEach((user) => {
-        text = text.replace(
-          getAddresseeStr(user),
-          `${AddresseeTag.start}${user.name}${AddresseeTag.end}`,
-        );
-      });
-    }
+    const text = newText.value.replace(ADDRESSEE_TOKEN_REGEX, (_match, _id1, name1, _id2, name2) => {
+      const name = name1 ?? name2;
+      return `${AddresseeTag.start}${name}${AddresseeTag.end}`;
+    });
 
     await editComment.submit({ id: commentId, text });
 

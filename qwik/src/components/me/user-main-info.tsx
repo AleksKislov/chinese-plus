@@ -60,7 +60,7 @@ export const UserMainInfo = component$(
                   <button
                     class="btn btn-xs btn-warning"
                     onClick$={() => {
-                      navigator.clipboard.writeText(` @@[${id}]{${name}}@@, `);
+                      navigator.clipboard.writeText(` @[${id}]{${name}}@, `);
                       alertsState.push({
                         bg: 'alert-info',
                         text: 'ID скопировано',

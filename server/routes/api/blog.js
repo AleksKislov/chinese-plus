@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const auth = require('../../middleware/auth');
-const adminAuth = require('../../middleware/admin-auth');
 const upload = require('../../middleware/upload');
 
 const {
@@ -67,9 +66,9 @@ router.put('/like/:id', auth, likePost);
 /**
  * @route     GET api/blog/not_approved
  * @desc      Get all blog posts pending moderation
- * @access    Private (admin)
+ * @access    Public
  */
-router.get('/not_approved', adminAuth, getNotApproved);
+router.get('/not_approved', getNotApproved);
 
 /**
  * @route     GET api/blog/user/:userId

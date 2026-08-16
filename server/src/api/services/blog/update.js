@@ -1,3 +1,4 @@
+const { Notify, getUserPrivileges } = require('../_misc');
 const { hasMeaningfulContent } = require('./_content-helpers');
 
 const BlogPost = require('../../../models/BlogPost');
@@ -13,22 +14,27 @@ async function updatePost(req, res) {
   const post = await BlogPost.findById(postId);
   if (!post) return res.status(404).json({ msg: 'Blog post not found' });
 
-  const isAdmin = req.user.id === process.env.ADMIN_ID;
+  const { isAdmin, isModerator } = await getUserPrivileges(req.user.id);
+  const canModerate = isAdmin || isModerator;
   const isOwner = post.user.toString() === req.user.id;
-  if (!isOwner && !isAdmin) return res.status(403).json({ msg: 'Not authorized' });
+  if (!isOwner && !canModerate) return res.status(403).json({ msg: 'Not authorized' });
 
   const newFields = {};
   if (title) newFields.title = title;
   if (content !== undefined) newFields.content = content;
   if (tags) newFields.tags = tags;
   if (category) newFields.category = category;
-  if (isAdmin && [0, 1].includes(isApproved)) newFields.isApproved = isApproved;
+  if (canModerate && [0, 1].includes(isApproved)) newFields.isApproved = isApproved;
 
   const updatedPost = await BlogPost.findByIdAndUpdate(
     postId,
     { $set: newFields },
     { new: true },
   ).populate('user', shortUserInfoFields);
+
+  if (!post.isApproved && newFields.isApproved) {
+    Notify.socialMedia(updatedPost);
+  }
 
   return res.json(updatedPost);
 }
