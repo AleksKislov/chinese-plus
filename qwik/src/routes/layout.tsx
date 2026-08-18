@@ -7,6 +7,7 @@ import { Footer } from '~/components/common/layout/footer';
 import { userContext, configContext, type Config, IsLightThemeCookieName } from '~/root';
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { ThemeTypes } from '~/components/common/layout/header/theme-changer';
+import { ChineseSelectionPopup } from '~/components/common/selection/chinese-selection-popup';
 
 export const getNewMentions = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
   const token = getTokenFromCookie(cookie);
@@ -126,6 +127,7 @@ export default component$(() => {
           <Footer beVersion={beVersion.value?.v || '2.0.3'} />
         </section>
       </main>
+      <ChineseSelectionPopup />
     </>
   );
 });

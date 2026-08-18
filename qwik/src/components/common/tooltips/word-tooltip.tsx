@@ -63,7 +63,7 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
 
   return (
     <div
-      class={`dropdown dropdown-bottom ${
+      class={`dropdown dropdown-bottom no-selection-popup ${
         isRightSide.value && !isScreenCenter.value ? 'dropdown-end' : ''
       }`}
     >
