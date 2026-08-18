@@ -13,7 +13,7 @@ export const LentaAds = component$(() => {
         });
       });
     },
-    { strategy: 'document-ready' },
+    { strategy: 'document-idle' },
   );
 
   return (

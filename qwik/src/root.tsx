@@ -97,7 +97,7 @@ export default component$(() => {
   return (
     <QwikCityProvider>
       <head>
-        <meta charSet="utf-8" />
+        <meta charset="utf-8" />
         <meta name="yandex-verification" content="d38c47d88e5dda70" />
         {/* <link rel='manifest' href='/manifest.json' /> */}
         <script

@@ -1,11 +1,4 @@
-import {
-  component$,
-  type Signal,
-  useContext,
-  useSignal,
-  useVisibleTask$,
-  $,
-} from '@builder.io/qwik';
+import { component$, type Signal, useContext, useSignal, useTask$, $ } from '@builder.io/qwik';
 import { parseRussian } from '~/misc/helpers/translation';
 import { userContext } from '~/root';
 import { moreInfoSvg } from '../media/svg';
@@ -35,7 +28,7 @@ export const WordTooltip = component$(({ word, hasReddened, currentWord }: WordT
   const { loggedIn } = userState;
   const showTooltip = useSignal(false);
 
-  useVisibleTask$(({ track }) => {
+  useTask$(({ track }) => {
     const val = track(() => getFullTranslation.value);
     const translation = (val?.[0] as DictWord)?.russian;
     if (translation && currentWord) {

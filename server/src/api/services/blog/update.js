@@ -32,7 +32,7 @@ async function updatePost(req, res) {
     { new: true },
   ).populate('user', shortUserInfoFields);
 
-  if (!post.isApproved && newFields.isApproved) {
+  if (!post.isApproved && newFields.isApproved && updatedPost.category !== 'suggestion_bug') {
     Notify.socialMedia(updatedPost);
   }
 

@@ -12,7 +12,7 @@ export const BannerAds = component$(() => {
         });
       });
     },
-    { strategy: 'document-ready' },
+    { strategy: 'document-idle' },
   );
 
   return (
