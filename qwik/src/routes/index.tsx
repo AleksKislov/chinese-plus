@@ -5,14 +5,14 @@ import { Features } from '~/components/home/features';
 import { LandingVideo } from '~/components/home/landing-video';
 import { ApiService } from '~/misc/actions/request';
 import { userContext } from '~/root';
-import { type Post } from './(club)/feedback';
-import { PostCard } from '~/components/feedback/post-card';
+import { type BlogCardInfo } from './read/blog';
+import { BlogCard } from '~/components/read/blog-card';
 import { CommentCard, type CommentType } from '~/components/common/comments/comment-card';
 import CONST_URLS from '~/misc/consts/urls';
 import { JsonLd } from '~/components/common/seo/json-ld';
 
-export const getPosts = routeLoader$((): Promise<Post[]> => {
-  return ApiService.get(`/api/posts/infinite?skip=0&tag=`, undefined, []);
+export const getLatestBlogPosts = routeLoader$((): Promise<BlogCardInfo[]> => {
+  return ApiService.get(`/api/blogs?skip=0&limit=5`, undefined, []);
 });
 
 export const getComments = routeLoader$((): Promise<CommentType[]> => {
@@ -22,7 +22,7 @@ export const getComments = routeLoader$((): Promise<CommentType[]> => {
 export default component$(() => {
   const { loggedIn } = useContext(userContext);
   const comments = getComments();
-  const posts = getPosts();
+  const blogPosts = getLatestBlogPosts();
   return (
     <>
       <JsonLd
@@ -104,10 +104,10 @@ export default component$(() => {
 
         <div class="w-full md:w-1/2">
           <div class="prose mb-2">
-            <h3>Свежий фидбэк</h3>
+            <h3>Свежее в блоге</h3>
           </div>
-          {posts.value?.map((post, ind) => (
-            <PostCard post={post} isPostPage={false} key={ind} addressees={null} />
+          {blogPosts.value?.map((post, ind) => (
+            <BlogCard post={post} key={ind} />
           ))}
         </div>
       </FlexRow>

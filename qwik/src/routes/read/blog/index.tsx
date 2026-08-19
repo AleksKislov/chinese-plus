@@ -78,4 +78,12 @@ export const head: DocumentHead = {
       content: 'Блог сообщества Chinese+: истории, заметки и мысли об изучении китайского языка.',
     },
   ],
+  links: [
+    {
+      rel: 'alternate',
+      type: 'application/rss+xml',
+      title: 'Chinese+ Блог RSS',
+      href: '/read/blog/rss.xml',
+    },
+  ],
 };
