@@ -6,12 +6,16 @@ import { TagsLine } from '../common/content-cards/tags-line';
 import { WHERE } from '../common/comments/comment-form';
 import { EditBtn } from '../common/content-cards/edit-btn';
 import { DeleteContentBtn } from '../common/content-cards/delete-content-btn';
+import { LinkedText } from '../common/linked-text';
+
+const NO_BIO_TEXT = 'Автор ничего не написал о себе, но он/она точно хороший человек :)';
 
 type BlogPostCardProps = {
   postId: ObjectId;
   tags: string[];
   userId: ObjectId;
   userName: string;
+  userBio?: string;
   date: ISODate;
   category: string;
   likes: ContentLike[];
@@ -19,7 +23,17 @@ type BlogPostCardProps = {
 };
 
 export const BlogPostCard = component$(
-  ({ postId, tags, userId, userName, date, category, likes, isApproved }: BlogPostCardProps) => {
+  ({
+    postId,
+    tags,
+    userId,
+    userName,
+    userBio,
+    date,
+    category,
+    likes,
+    isApproved,
+  }: BlogPostCardProps) => {
     const likesSignal = useSignal(likes);
 
     return (
@@ -39,6 +53,13 @@ export const BlogPostCard = component$(
               />
             </div>
             <ContentCat txt={category} />
+          </div>
+
+          <div class="mt-1">
+            <span class="font-bold">Об авторе: </span>
+            <span class="whitespace-pre-wrap">
+              {userBio ? <LinkedText text={userBio} /> : NO_BIO_TEXT}
+            </span>
           </div>
 
           <EditBtn

@@ -12,7 +12,6 @@ export const AuthMenu = component$(({ hskWordsTotal, wordsTotal }: AuthMenuProps
   return (
     <>
       <MenuLink href="/me" text="Личный кабинет" />
-      <MenuLink href="/me/avatar" text={`Сменить аватар`} />
       <MenuLink href="/me/hsk/2" text={`Мой словарик HSK`} curVocabSize={hskWordsTotal} />
       <MenuLink href="/me/words" text={`Мой словарик`} curVocabSize={wordsTotal} />
       <MenuLink href="/me/marked" text={`Закладки`} />

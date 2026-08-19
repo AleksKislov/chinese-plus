@@ -1,4 +1,10 @@
-import { component$, useContext } from '@builder.io/qwik';
+import {
+  component$,
+  useContext,
+  useSignal,
+  useTask$,
+  useVisibleTask$,
+} from '@builder.io/qwik';
 import {
   routeLoader$,
   type RequestEvent,
@@ -45,6 +51,12 @@ export const markMentionsAsOld = routeAction$((_param, ev) => {
   return ApiService.post('/api/comments/mark_mentions_as_seen', {}, token);
 });
 
+export const useSetBio = routeAction$(async (params, ev): Promise<{ bio: string } | null> => {
+  const token = getTokenFromCookie(ev.cookie);
+  if (!token) return null;
+  return ApiService.post('/api/users/set_my_bio', params, token, null);
+});
+
 export const getReadStats = routeLoader$(async ({ cookie }): Promise<ReadStatType[]> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return [];
@@ -65,6 +77,7 @@ export default component$(() => {
   const newMentions = getNewMentions();
   const textsStats = getTextsStats();
   const readStats = getReadStats();
+  const userState = useContext(userContext);
   const {
     newAvatar,
     name,
@@ -74,8 +87,21 @@ export default component$(() => {
     hsk2WordsTotal,
     wordsCount,
     role,
+    bio,
     _id: userId,
-  } = useContext(userContext);
+  } = userState;
+
+  const setBio = useSetBio();
+  const bioSignal = useSignal(bio);
+
+  useVisibleTask$(({ track }) => {
+    bioSignal.value = track(() => userState.bio);
+  });
+
+  useTask$(({ track }) => {
+    const result = track(() => setBio.value);
+    if (result) userState.bio = result.bio;
+  });
 
   return (
     <>
@@ -100,6 +126,29 @@ export default component$(() => {
 
         <div class="w-full basis-1/2">
           <ReadResultCard />
+        </div>
+      </FlexRow>
+
+      <FlexRow>
+        <div class="form-control text-base-content w-full">
+          <label class="label">
+            <span class="label-text">
+              Об авторе (показывается под вашими постами в блоге)
+            </span>
+          </label>
+          <textarea
+            maxLength={600}
+            bind:value={bioSignal}
+            placeholder="Расскажите немного о себе..."
+            class="textarea textarea-bordered"
+            rows={4}
+          />
+          <button
+            class="btn btn-sm btn-primary mt-2 self-start"
+            onClick$={() => setBio.submit({ bio: bioSignal.value })}
+          >
+            Сохранить
+          </button>
         </div>
       </FlexRow>
 

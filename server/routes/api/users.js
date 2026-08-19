@@ -226,6 +226,31 @@ router.post('/set_my_avatar', auth, async (req, res) => {
 });
 
 /**
+ * set bio
+ * @route     POST api/users/set_my_bio
+ * @desc      Change "about the author" text shown on the user's blog posts
+ * @access    Private
+ */
+router.post('/set_my_bio', auth, async (req, res) => {
+  const userId = req.user.id;
+  let bio = (req.body.bio || '').trim();
+
+  if (bio.length > 600) {
+    return res.status(400).json({ errors: [{ msg: 'Слишком длинный текст' }] });
+  }
+  if (bio) bio = bio[0].toUpperCase() + bio.slice(1);
+
+  try {
+    await User.findByIdAndUpdate(userId, { $set: { bio } }, { new: true });
+
+    res.json({ bio });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+/**
  * @route     GET api/users/:userId
  * @desc      Get one user info
  * @access    Public

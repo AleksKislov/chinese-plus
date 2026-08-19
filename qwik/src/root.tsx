@@ -42,6 +42,7 @@ export interface User {
   hsk2WordsTotal: number;
   role?: 'admin' | 'moderator';
   newAvatar?: NewAvatar;
+  bio: string;
 }
 
 export interface Config {
@@ -86,6 +87,7 @@ export default component$(() => {
     readTodayMap: {},
     role: undefined,
     newAvatar: undefined,
+    bio: '',
   });
   const alertsState = useStore<Alert[]>([]);
   const configState = useStore<Config[]>([]);

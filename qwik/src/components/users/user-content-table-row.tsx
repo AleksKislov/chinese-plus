@@ -1,5 +1,6 @@
 import { component$ } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
+import { WHERE } from '~/components/common/comments/comment-form';
 
 type MarkedTableRowProps = {
   contentId: ObjectId;
@@ -8,7 +9,13 @@ type MarkedTableRowProps = {
   commentsTotal: number;
   likesTotal: number;
   hitsTotal: number;
-  isVideo: boolean;
+  contentType: WHERE.text | WHERE.video | WHERE.blog;
+};
+
+const CONTENT_PATH: Record<MarkedTableRowProps['contentType'], string> = {
+  [WHERE.video]: '/watch/videos/',
+  [WHERE.text]: '/read/texts/',
+  [WHERE.blog]: '/read/blog/',
 };
 
 export const UserTableTableRow = component$(
@@ -19,9 +26,9 @@ export const UserTableTableRow = component$(
     commentsTotal,
     likesTotal,
     hitsTotal,
-    isVideo,
+    contentType,
   }: MarkedTableRowProps) => {
-    const contentHref = (isVideo ? '/watch/videos/' : '/read/texts/') + contentId;
+    const contentHref = CONTENT_PATH[contentType] + contentId;
 
     return (
       <tr>

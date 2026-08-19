@@ -28,4 +28,5 @@ type ShortUserInfo = {
   _id: ObjectId;
   name: string;
   newAvatar?: NewAvatar;
+  bio?: string;
 };

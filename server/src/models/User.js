@@ -26,6 +26,7 @@ const UserSchema = new mongoose.Schema({
   newAvatar: {
     type: Object,
   },
+  bio: { type: String, default: '', maxlength: 600 }, // "about the author" text shown on blog posts
   role: { type: String, enum: ['user', 'admin', 'moderator'], default: 'user' },
 });
 

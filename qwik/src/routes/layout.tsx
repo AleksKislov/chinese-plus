@@ -82,6 +82,7 @@ export default component$(() => {
     userState.readTodayNum = user.value.read_today_num || 0;
     userState.readTodayMap = user.value.read_today_arr || {};
     userState.newAvatar = user.value.newAvatar ? user.value.newAvatar : undefined;
+    userState.bio = user.value.bio || '';
   });
 
   useTask$(({ track }) => {
