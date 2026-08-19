@@ -17,7 +17,6 @@ type EditCommentProps = {
 };
 
 export const pathWhereMap: { [key: string]: WhereType } = {
-  feedback: WHERE.post,
   texts: WHERE.text,
   books: WHERE.book,
   videos: WHERE.video,

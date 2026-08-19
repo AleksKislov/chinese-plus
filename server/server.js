@@ -57,7 +57,6 @@ app.use(passport.session());
 // api routes
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/posts', require('./routes/api/posts'));
 app.use('/api/lexicon', require('./routes/api/lexicon'));
 app.use('/api/newhskwords', require('./routes/api/newhskwords'));
 app.use('/api/words', require('./routes/api/words'));

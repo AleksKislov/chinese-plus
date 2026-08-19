@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const adminAuth = require('../../middleware/admin-auth');
 const Comment = require('../../src/models/Comment');
-const Post = require('../../src/models/Post');
 const Text = require('../../src/models/Text');
 const Video = require('../../src/models/Video');
 const Donate = require('../../src/models/Donate');
@@ -23,9 +22,8 @@ router.get('/pulse', async (req, res) => {
   const searchCond = { date: { $gte: last2MonthsStartDate } };
 
   try {
-    const [comments, posts, texts, videos, donates, users] = await Promise.all([
+    const [comments, texts, videos, donates, users] = await Promise.all([
       Comment.find(searchCond).select('date user'),
-      Post.find(searchCond).select('date user'),
       Text.find({ ...searchCond, isApproved: 1 }).select('date user'),
       Video.find({ ...searchCond, isApproved: 1 }).select('date user'),
       Donate.find({
@@ -36,7 +34,6 @@ router.get('/pulse', async (req, res) => {
 
     res.json({
       comment: getMetricsFor2Months(comments, 'date', currentDate, last1MonthStartDate),
-      post: getMetricsFor2Months(posts, 'date', currentDate, last1MonthStartDate),
       text: getMetricsFor2Months(texts, 'date', currentDate, last1MonthStartDate),
       video: getMetricsFor2Months(videos, 'date', currentDate, last1MonthStartDate),
       donate: getMetricsFor2Months(donates, 'createdAt', currentDate, last1MonthStartDate),

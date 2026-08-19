@@ -90,7 +90,6 @@ export default component$(() => {
                     </details>
                   </li>
                   <MenuLink href="/dictionary" text="Словарь" />
-                  <MenuLink href="/feedback" text="Форум" />
                   <MenuItemNew name={blog.name} links={blog.links} />
                   {/* <MenuLink href="/heroes" text="Герои клуба" /> */}
                   {/* <MenuLink href="/donate" text="Донат и цели" /> */}
@@ -128,7 +127,6 @@ export default component$(() => {
 
                 <MenuLink href="/dictionary" text="Словарь" />
                 {/* <MenuItem name={ourClub.name} links={ourClub.links} /> */}
-                <MenuLink href="/feedback" text="Форум" />
                 <MenuItem name={blog.name} links={blog.links} />
 
                 <ThemeChanger />

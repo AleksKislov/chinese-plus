@@ -14,10 +14,6 @@ export const Footer = component$(({ beVersion }: { beVersion: string }) => {
         {/* <Link class="link link-hover" href="/donate">
           Донат и цели
         </Link> */}
-
-        <Link class="link link-hover" href="/feedback">
-          Форум
-        </Link>
       </div>
       <div>
         <div class="grid grid-flow-col gap-2">

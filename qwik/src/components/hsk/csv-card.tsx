@@ -1,5 +1,4 @@
 import { $, component$ } from '@builder.io/qwik';
-import { Link } from '@builder.io/qwik-city';
 import Cookies from 'js-cookie';
 
 type CsvCardProps = {
@@ -108,12 +107,6 @@ export const CsvCard = component$(({ level, isOldHsk, isPrivate }: CsvCardProps)
             </p>
           </>
         )}
-        <div class="card-actions justify-end text-sm">
-          Зачем это{' '}
-          <Link class="link link-hover font-bold " href="/feedback/67ef7991872a080013634967">
-            нужно
-          </Link>
-        </div>
       </div>
     </div>
   );

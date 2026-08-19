@@ -42,7 +42,6 @@ const STATIC_PATHS = [
   '/contacts',
   '/donate',
   '/heroes',
-  '/feedback',
 ];
 
 // getAllApprovedTexts formats the date as a ru-RU "dd.mm.yyyy" string; every other list endpoint

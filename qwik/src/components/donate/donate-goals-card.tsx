@@ -1,5 +1,4 @@
 import { component$ } from '@builder.io/qwik';
-import { Link } from '@builder.io/qwik-city';
 
 export const DonateGoalsCard = component$(() => {
   return (
@@ -17,13 +16,6 @@ export const DonateGoalsCard = component$(() => {
           <br />
           <span class="badge badge-info badge-xs"></span> разработка (новый функционал и мотивация
           разработчика)
-        </p>
-        <p>
-          Детальнее по целям читайте на{' '}
-          <Link href="/feedback" class="link hover:link-success">
-            форуме
-          </Link>
-          , вкладка <span class="badge badge-outline">цели</span>
         </p>
       </div>
     </div>

@@ -5,7 +5,6 @@ const { check, validationResult } = require('express-validator');
 
 const User = require('../../src/models/User');
 const Comment = require('../../src/models/Comment');
-const Post = require('../../src/models/Post');
 const Text = require('../../src/models/Text');
 const Video = require('../../src/models/Video');
 const { Notify } = require('../../src/api/services/_misc');
@@ -17,7 +16,6 @@ const BlogPost = require('../../src/models/BlogPost');
 const { cacheRoute, invalidateTag, TTL } = require('../../src/cache');
 
 const COMMENT_DESTINATION = {
-  post: 'post',
   video: 'video',
   text: 'text',
   book: 'book_page',
@@ -101,9 +99,6 @@ async function getCommentDestinationById(where, id) {
     return null;
   }
 
-  if (where === COMMENT_DESTINATION.post) {
-    return Post.findById(id);
-  }
   if (where === COMMENT_DESTINATION.text) {
     return Text.findById(id);
   }

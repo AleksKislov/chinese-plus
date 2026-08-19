@@ -29,8 +29,6 @@ export const getContentPath = (
       return `/watch/phonetics-lessons/${withSlug(contentId, title)}`;
     case WHERE.charactersLesson:
       return `/watch/characters-lessons/${withSlug(contentId, title)}`;
-    case WHERE.post:
-      return `/feedback/${contentId}`;
     case WHERE.book:
       if (pageInfo) {
         return `${getBookUrl(pageInfo?.book as BookCardInfo)}/${pageInfo?.belongsTo}/?page=${

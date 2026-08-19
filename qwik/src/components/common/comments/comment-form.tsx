@@ -7,7 +7,6 @@ import { xMarkSvg } from '../media/svg';
 import { EmojiSelect } from './emoji-select';
 
 export enum WHERE {
-  post = 'post',
   video = 'video',
   text = 'text',
   book = 'book_page',
@@ -17,7 +16,6 @@ export enum WHERE {
 }
 
 export type WhereType =
-  | 'post'
   | 'video'
   | 'text'
   | 'book_page'
