@@ -108,11 +108,18 @@ export default component$(() => {
                 k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
                 (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
-                ym(48737867, "init", {
-                      clickmap:true,
-                      trackLinks:true,
-                      accurateTrackBounce:true
-                });            
+                function initYm() {
+                  ym(48737867, "init", {
+                        clickmap:true,
+                        trackLinks:true,
+                        accurateTrackBounce:true
+                  });
+                }
+                if (window.requestIdleCallback) {
+                  window.requestIdleCallback(initYm);
+                } else {
+                  setTimeout(initYm, 1);
+                }
             `}
         />
         {/* <script>window.yaContextCb=window.yaContextCb||[]</script> */}
