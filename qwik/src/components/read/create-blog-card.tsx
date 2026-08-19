@@ -9,7 +9,8 @@ export const CreateBlogCard = component$(() => {
       <div class="card-body">
         <h2 class="card-title">Напишите пост ✍️</h2>
         <p>
-          Есть что рассказать или показать про Китай, кит. язык или наш сайт? Поделитесь с нами!
+          Есть что рассказать или показать про Китай, кит. язык или наш сайт (баг или пожелание)?
+          Делитесь тут
         </p>
         <div class="card-actions justify-end">
           <div class={loggedIn ? '' : 'tooltip tooltip-info tooltip-bottom'} data-tip="Нужно войти">

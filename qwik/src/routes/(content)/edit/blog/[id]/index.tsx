@@ -63,13 +63,17 @@ export default component$(() => {
       <PageTitle txt={'Редактировать пост'} />
       <Alerts />
 
-      {store.postType === 'article' && <EditBlogFields store={store} isAdmin={isAdmin} />}
+      <div class="card bg-base-200 border border-base-300 mb-3">
+        <div class="card-body">
+          {store.postType === 'article' && <EditBlogFields store={store} isAdmin={isAdmin} />}
 
-      {store.postType === 'simple' ? (
-        <EditSimplePostEditor store={store} />
-      ) : (
-        <EditBlogTextEditor store={store} />
-      )}
+          {store.postType === 'simple' ? (
+            <EditSimplePostEditor store={store} />
+          ) : (
+            <EditBlogTextEditor store={store} />
+          )}
+        </div>
+      </div>
     </>
   );
 });

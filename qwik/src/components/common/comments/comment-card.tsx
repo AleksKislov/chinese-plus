@@ -1,4 +1,4 @@
-import { component$, type Signal, useContext, $ } from '@builder.io/qwik';
+import { component$, type Signal, useContext, useSignal, $ } from '@builder.io/qwik';
 import { arrorUturnDown, editSvg, thumbUpSvg } from '../media/svg';
 import { UserDateDiv } from './user-with-date';
 import { userContext } from '~/root';
@@ -71,7 +71,8 @@ export const CommentCard = component$(
     } = comment;
     const ownsComment = userState._id === userId;
     const canEdit = ownsComment || isAdmin;
-    const isLiked = loggedIn && likes.some((like) => like.user === userState._id);
+    const likesSignal = useSignal(likes);
+    const isLiked = loggedIn && likesSignal.value.some((like) => like.user === userState._id);
 
     const modalId = `edit-modal-${_id}`;
     const href = getContentPath(contentType, contentId, false, comment.pageInfo);
@@ -148,7 +149,7 @@ export const CommentCard = component$(
                 )}
                 <div
                   class="tooltip tooltip-info"
-                  data-tip={getLikeBtnTooltipTxt(likes, 'Никто не лайкал')}
+                  data-tip={getLikeBtnTooltipTxt(likesSignal.value, 'Никто не лайкал')}
                 >
                   <button
                     class={`btn btn-sm lowercase btn-info ${isLiked ? '' : 'btn-outline'} mx-1`}
@@ -156,9 +157,19 @@ export const CommentCard = component$(
                     onClick$={() => {
                       if (!loggedIn || ownsComment) return;
                       addDelLike.submit({ _id });
+                      if (isLiked) {
+                        likesSignal.value = likesSignal.value.filter(
+                          (x) => x.user !== userState._id,
+                        );
+                      } else {
+                        likesSignal.value = [
+                          ...likesSignal.value,
+                          { _id: 'new', user: userState._id, name: userState.name },
+                        ];
+                      }
                     }}
                   >
-                    {thumbUpSvg} {likes.length > 0 && <span>{likes.length}</span>}
+                    {thumbUpSvg} {likesSignal.value.length > 0 && <span>{likesSignal.value.length}</span>}
                   </button>
                 </div>
                 {!ownsComment && !notForReply && (

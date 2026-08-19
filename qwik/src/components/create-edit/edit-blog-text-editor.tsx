@@ -44,7 +44,7 @@ export const EditBlogTextEditor = component$(({ store }: EditBlogTextEditorProps
   return (
     <div class="text-base-content">
       <FlexRow>
-        <div class="w-full mx-3">
+        <div class="w-full">
           <div class="label">
             <span class="label-text">Текст поста</span>
           </div>
@@ -53,7 +53,7 @@ export const EditBlogTextEditor = component$(({ store }: EditBlogTextEditorProps
       </FlexRow>
 
       <FlexRow>
-        <div class="mt-3 ml-3">
+        <div class="mt-3">
           <button class="btn btn-primary w-48" disabled={editAction.isRunning} onClick$={save}>
             Сохранить
           </button>

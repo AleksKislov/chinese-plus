@@ -62,13 +62,17 @@ export default component$(() => {
         </button>
       </div>
 
-      {store.postType === 'article' && <OtherBlogFields store={store} />}
+      <div class="card bg-base-200 border border-base-300 mb-3">
+        <div class="card-body">
+          {store.postType === 'article' && <OtherBlogFields store={store} />}
 
-      {store.postType === 'simple' ? (
-        <SimplePostEditor store={store} />
-      ) : (
-        <BlogTextEditor store={store} />
-      )}
+          {store.postType === 'simple' ? (
+            <SimplePostEditor store={store} />
+          ) : (
+            <BlogTextEditor store={store} />
+          )}
+        </div>
+      </div>
     </>
   );
 });

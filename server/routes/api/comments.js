@@ -233,6 +233,7 @@ router.put('/like/:id', auth, async (req, res) => {
 
     await post.save();
 
+    invalidateTag('comments');
     res.json(post.likes);
   } catch (err) {
     console.error(err);

@@ -63,28 +63,43 @@ export const EditSimplePostEditor = component$(({ store }: EditSimplePostEditorP
   return (
     <div class="text-base-content">
       <FlexRow>
-        <div class="w-full mx-3">
-          <input
-            type="text"
-            placeholder="Заголовок"
-            class="input input-bordered w-full mb-3"
-            value={store.title}
-            onChange$={(e) => (store.title = (e.target as HTMLInputElement).value)}
-          />
+        <div class="w-full">
+          <div class="form-control w-full mb-3">
+            <label class="label">
+              <span class="label-text">Заголовок</span>
+            </label>
+            <input
+              type="text"
+              placeholder="Заголовок"
+              class="input input-bordered w-full"
+              value={store.title}
+              onChange$={(e) => (store.title = (e.target as HTMLInputElement).value)}
+            />
+          </div>
 
-          <CarouselImagesPicker images={images} />
+          <div class="form-control w-full mb-3">
+            <label class="label">
+              <span class="label-text">Фото (не обязательно)</span>
+            </label>
+            <CarouselImagesPicker images={images} />
+          </div>
 
-          <textarea
-            class="textarea textarea-bordered w-full mt-3"
-            placeholder="Текст (не обязательно)"
-            value={text.value}
-            onChange$={(e) => (text.value = (e.target as HTMLTextAreaElement).value)}
-          ></textarea>
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">Текст (не обязательно)</span>
+            </label>
+            <textarea
+              class="textarea textarea-bordered w-full"
+              placeholder="Текст (не обязательно)"
+              value={text.value}
+              onChange$={(e) => (text.value = (e.target as HTMLTextAreaElement).value)}
+            ></textarea>
+          </div>
         </div>
       </FlexRow>
 
       <FlexRow>
-        <div class="mt-3 ml-3">
+        <div class="mt-3">
           <button class="btn btn-primary w-48" disabled={editAction.isRunning} onClick$={save}>
             Сохранить
           </button>
