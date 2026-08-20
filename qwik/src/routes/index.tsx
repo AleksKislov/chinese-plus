@@ -66,18 +66,11 @@ export default component$(() => {
         <FlexRow>
           <div class="flex flex-col items-center w-full mb-3">
             <Link href="/read/texts" class="btn btn-accent mb-2">
-              Читать бесплатно
+              Учиться бесплатно
             </Link>
-            <p class="text-xs opacity-60 mb-3">Регистрация не обязательна — можно начать сразу</p>
-
-            <div class="flex">
-              <Link href="/login" class="btn btn-success btn-sm mr-1">
-                войти
-              </Link>
-              <Link href="/register" class="btn btn-primary btn-sm ml-1">
-                регистрация
-              </Link>
-            </div>
+            <p class="text-xs opacity-60 mb-3">
+              Сайт бесплатный — зарегистрированным пользователям доступно больше возможностей
+            </p>
           </div>
         </FlexRow>
       )}

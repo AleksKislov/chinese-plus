@@ -1,5 +1,6 @@
 const BookPage = require('../../../models/BookPage');
-const { countZnChars, CHARS_PER_PAGE, getBookChineseArr } = require('../_misc');
+const Book = require('../../../models/Book');
+const { countZnChars, CHARS_PER_PAGE, getBookChineseArr, Notify } = require('../_misc');
 
 const createPages = async (req, res) => {
   // origintext is array of paragraphs
@@ -9,6 +10,7 @@ const createPages = async (req, res) => {
   const origTxtStr = origintext.join('\n');
   const chapterLength = countZnChars(origTxtStr);
 
+  let pages;
   if (chapterLength <= CHARS_PER_PAGE) {
     const page = new BookPage({
       belongsTo,
@@ -21,12 +23,16 @@ const createPages = async (req, res) => {
     });
 
     await page.save();
-    res.json([page]);
+    pages = [page];
   } else {
     // split into pages
-    const pages = await BookPage.insertMany(getPages(origintext, belongsTo, bookId));
-    res.json(pages);
+    pages = await BookPage.insertMany(getPages(origintext, belongsTo, bookId));
   }
+
+  const book = await Book.findById(bookId).select('title');
+  Notify.admin(`📄 Добавлена страница(ы) (${pages.length}) для книги "${book?.title?.cn || bookId}"`);
+
+  res.json(pages);
 };
 
 /**

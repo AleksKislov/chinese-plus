@@ -6,6 +6,7 @@ import { Alerts } from '~/components/common/alerts/alerts';
 import { ApiService } from '~/misc/actions/request';
 import { userContext } from '~/root';
 import { EditBlogFields } from '~/components/create-edit/edit-blog-fields';
+import { BlogPublishCheckbox } from '~/components/create-edit/blog-publish-checkbox';
 import { EditBlogTextEditor } from '~/components/create-edit/edit-blog-text-editor';
 import { EditSimplePostEditor } from '~/components/create-edit/edit-simple-post-editor';
 import { getBlogPostFromDB, type BlogPostFromDB } from '~/routes/read/blog/[id]';
@@ -65,7 +66,9 @@ export default component$(() => {
 
       <div class="card bg-base-200 border border-base-300 mb-3">
         <div class="card-body">
-          {store.postType === 'article' && <EditBlogFields store={store} isAdmin={isAdmin} />}
+          {isAdmin && <BlogPublishCheckbox store={store} />}
+
+          {store.postType === 'article' && <EditBlogFields store={store} />}
 
           {store.postType === 'simple' ? (
             <EditSimplePostEditor store={store} />

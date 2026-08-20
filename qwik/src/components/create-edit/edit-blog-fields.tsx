@@ -5,30 +5,11 @@ import { type EditBlogStore } from '~/routes/(content)/edit/blog/[id]';
 
 type EditBlogFieldsProps = {
   store: EditBlogStore;
-  isAdmin: boolean;
 };
 
-export const EditBlogFields = component$(({ store, isAdmin }: EditBlogFieldsProps) => {
+export const EditBlogFields = component$(({ store }: EditBlogFieldsProps) => {
   return (
     <>
-      {isAdmin && (
-        <FlexRow>
-          <div>
-            <div class="form-control">
-              <label class="label cursor-pointer">
-                <span class="label-text mr-2">Опубликован</span>
-                <input
-                  type="checkbox"
-                  checked={Boolean(store.isApproved)}
-                  class="checkbox checkbox-primary"
-                  onChange$={() => (store.isApproved = store.isApproved ? 0 : 1)}
-                />
-              </label>
-            </div>
-          </div>
-        </FlexRow>
-      )}
-
       <FlexRow>
         <div class="w-full basis-1/2">
           <div class="form-control w-full">

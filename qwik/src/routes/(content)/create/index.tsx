@@ -1,8 +1,9 @@
-import { component$ } from '@builder.io/qwik';
+import { component$, useContext } from '@builder.io/qwik';
 import { type DocumentHead, Link, type RequestEvent } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { PageTitle } from '~/components/common/layout/title';
 import { getTokenFromCookie } from '~/misc/actions/auth';
+import { userContext } from '~/root';
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
@@ -10,6 +11,8 @@ export const onGet = async ({ cookie, redirect }: RequestEvent) => {
 };
 
 export default component$(() => {
+  const { isAdmin, isModerator } = useContext(userContext);
+
   return (
     <>
       <PageTitle txt={'Поделиться контентом'} />
@@ -28,6 +31,11 @@ export default component$(() => {
             <Link href="/create/blog" class="btn btn-primary">
               Блог
             </Link>
+            {(isAdmin || isModerator) && (
+              <Link href="/edit/books" class="btn btn-secondary ml-3">
+                Книга
+              </Link>
+            )}
           </div>
         </div>
       </FlexRow>

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const adminAuth = require('../../middleware/admin-auth');
+const moderatorAuth = require('../../middleware/moderator-auth');
 const { cacheRoute, TTL } = require('../../src/cache');
 
 const Book = require('../../src/models/Book');
@@ -12,7 +12,10 @@ const {
   getPage,
   updateBookPage,
   getBookPageById,
+  createBook,
+  createAuthor,
 } = require('../../src/api/services/books');
+const { Notify } = require('../../src/api/services/_misc');
 
 /**
  * @route   GET api/books/all
@@ -39,6 +42,13 @@ router.get('/authors', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+router.post('/authors', moderatorAuth, createAuthor);
+
+/**
+ * @route   POST api/books/create
+ */
+router.post('/create', moderatorAuth, createBook);
 
 /**
  * @route   GET api/books/:id
@@ -82,12 +92,12 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/page', adminAuth, createPages);
+router.post('/page', moderatorAuth, createPages);
 router.get('/page/:page_id', getBookPageById);
 
-router.put('/page/:page_id', adminAuth, updateBookPage);
+router.put('/page/:page_id', moderatorAuth, updateBookPage);
 
-router.post('/chapter', adminAuth, async (req, res) => {
+router.post('/chapter', moderatorAuth, async (req, res) => {
   const { bookId, chapters } = req.body;
 
   try {
@@ -99,6 +109,13 @@ router.post('/chapter', adminAuth, async (req, res) => {
     });
 
     const savedChapters = await BookContent.insertMany(toSave);
+
+    const book = await Book.findById(bookId).select('title');
+    const chapterTitles = savedChapters
+      .map((c) => c.title?.cn || c.title?.ru)
+      .filter(Boolean)
+      .join(', ');
+    Notify.admin(`📖 Добавлена глава для книги "${book?.title?.cn || bookId}": ${chapterTitles}`);
 
     res.json(savedChapters);
   } catch (err) {
