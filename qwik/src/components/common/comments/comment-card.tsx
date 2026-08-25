@@ -101,6 +101,7 @@ export const CommentCard = component$(
                 href={`${href}#${getAnchor(replyInfo.commentId)}`}
                 scroll={true}
                 class="ml-1 mt-1 badge badge-xs hover:badge-info"
+                prefetch={false}
               >
                 {`#${getAnchor(replyInfo.commentId)}`}
               </Link>
@@ -111,6 +112,7 @@ export const CommentCard = component$(
               href={`${href}#${anchor}`}
               scroll={true}
               class="float-right mr-2 mt-1 badge badge-xs hover:badge-info"
+              prefetch={false}
             >
               {`#${anchor}`}
             </Link>

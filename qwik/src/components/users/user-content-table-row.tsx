@@ -33,7 +33,9 @@ export const UserTableTableRow = component$(
     return (
       <tr>
         <td>
-          <Link href={contentHref}>{title}</Link>
+          <Link href={contentHref} prefetch="js">
+            {title}
+          </Link>
           <br />
           <span class="badge badge-ghost badge-sm">{category}</span>
         </td>

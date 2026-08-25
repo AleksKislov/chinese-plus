@@ -23,7 +23,7 @@ export const SearchResultRow = component$(
         <tr class={'hover'}>
           {!hideBtnsSig.value.includes(HideBtnsEnum.cn) && (
             <td class="prose">
-              <Link href={'/dictionary/' + encodeURIComponent(chinese)}>
+              <Link href={'/dictionary/' + encodeURIComponent(chinese)} prefetch="js">
                 <h2 class="w-24">{chinese}</h2>
                 {showTrad && <div class="text-sm opacity-60">{tradChinese}</div>}
               </Link>

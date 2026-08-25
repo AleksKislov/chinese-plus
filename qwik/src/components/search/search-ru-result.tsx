@@ -24,6 +24,7 @@ export const SearchRuResult = component$(({ ruWord, showExamples }: SearchRuResu
                   <Link
                     href={'/dictionary/' + encodeURIComponent(x.value)}
                     class="link link-hover link-secondary font-bold"
+                    prefetch="js"
                   >
                     {x.value}
                   </Link>

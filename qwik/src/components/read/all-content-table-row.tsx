@@ -52,7 +52,7 @@ export const AllContentTableRow = component$(
           </div>
         </td> */}
         <td>
-          <Link href={contentHref} class="text-lg link link-hover">
+          <Link href={contentHref} class="text-lg link link-hover" prefetch="js">
             {title}
           </Link>
           <br />

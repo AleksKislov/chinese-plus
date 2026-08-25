@@ -36,7 +36,7 @@ export const MarkedTableRow = component$(
             class="tooltip tooltip-info before:z-50 before:content-[attr(data-tip)]"
             data-tip={user.name}
           >
-            <Link href={'/users/' + user._id}>
+            <Link href={'/users/' + user._id} prefetch="js">
               <div class="avatar">
                 <div class="mask mask-squircle w-10 h-10">
                   <AvatarImg userName={user.name} newAvatar={user.newAvatar} size={48} />
@@ -46,7 +46,9 @@ export const MarkedTableRow = component$(
           </div>
         </td>
         <td>
-          <Link href={contentHref}>{title}</Link>
+          <Link href={contentHref} prefetch="js">
+            {title}
+          </Link>
           <br />
           <CategoryBadge txt={category} size="badge-xs" />
         </td>
