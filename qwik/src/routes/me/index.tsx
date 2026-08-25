@@ -15,7 +15,8 @@ import { FlexRow } from '~/components/common/layout/flex-row';
 import { PageTitle } from '~/components/common/layout/title';
 import { ReadResultCard } from '~/components/me/read-result-card';
 import { ApiService } from '~/misc/actions/request';
-import { userContext } from '~/root';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { AlertColorEnum, alertsContext, userContext } from '~/root';
 import { type TextsNumInfo } from '../read/texts';
 import { type ReadStatType, ReadingDiagram } from '~/components/me/reading-diagram';
 import { PersonalStats } from '~/components/me/personal-stats';
@@ -91,6 +92,7 @@ export default component$(() => {
     _id: userId,
   } = userState;
 
+  const alertsState = useContext(alertsContext);
   const setBio = useSetBio();
   const bioSignal = useSignal(bio);
 
@@ -100,12 +102,24 @@ export default component$(() => {
 
   useTask$(({ track }) => {
     const result = track(() => setBio.value);
-    if (result) userState.bio = result.bio;
+    if (result === undefined) return;
+
+    if (!result) {
+      alertsState.push({
+        bg: AlertColorEnum.error,
+        text: 'Не удалось сохранить. Попробуйте снова.',
+      });
+      return;
+    }
+
+    userState.bio = result.bio;
+    alertsState.push({ bg: AlertColorEnum.success, text: 'Сохранено!' });
   });
 
   return (
     <>
       <PageTitle txt={'Личный кабинет'} />
+      <Alerts />
 
       <FlexRow>
         <div class="w-full basis-1/2  mt-3">
@@ -145,8 +159,10 @@ export default component$(() => {
           />
           <button
             class="btn btn-sm btn-primary mt-2 self-start"
+            disabled={setBio.isRunning}
             onClick$={() => setBio.submit({ bio: bioSignal.value })}
           >
+            {setBio.isRunning && <span class="loading loading-spinner loading-xs mr-1" />}
             Сохранить
           </button>
         </div>

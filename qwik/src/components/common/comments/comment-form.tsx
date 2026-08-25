@@ -244,7 +244,7 @@ export const CommentTextArea = component$(
 
       const replacedBefore = before.replace(MENTION_TRIGGER_REGEX, (match) => {
         const leadingChar = match.startsWith('@') ? '' : match[0];
-        return `${leadingChar}${getAddresseeStr(candidate)} `;
+        return `${leadingChar}${getAddresseeStr(candidate)}, `;
       });
 
       newText.value = replacedBefore + after;
@@ -322,41 +322,43 @@ export const CommentTextArea = component$(
             </label>
           )}
 
-          <textarea
-            ref={textareaRef}
-            class={`textarea textarea-bordered`}
-            placeholder="Ваше сообщение, @ чтобы обратиться к кому-то"
-            disabled={!loggedIn}
-            value={newText.value}
-            onKeyUp$={(e) => {
-              const el = e.target as HTMLTextAreaElement;
-              newText.value = el.value;
+          <div class="relative">
+            <textarea
+              ref={textareaRef}
+              class={`textarea textarea-bordered w-full`}
+              placeholder="Ваше сообщение, @ чтобы обратиться к кому-то"
+              disabled={!loggedIn}
+              value={newText.value}
+              onKeyUp$={(e) => {
+                const el = e.target as HTMLTextAreaElement;
+                newText.value = el.value;
 
-              const beforeCaret = el.value.slice(0, el.selectionStart);
-              const match = beforeCaret.match(MENTION_TRIGGER_REGEX);
-              mentionQuery.value = match ? match[1] : null;
-            }}
-            onBlur$={() => {
-              // delay so a click on a dropdown option still registers before it closes
-              setTimeout(() => (mentionQuery.value = null), 150);
-            }}
-          ></textarea>
+                const beforeCaret = el.value.slice(0, el.selectionStart);
+                const match = beforeCaret.match(MENTION_TRIGGER_REGEX);
+                mentionQuery.value = match ? match[1] : null;
+              }}
+              onBlur$={() => {
+                // delay so a click on a dropdown option still registers before it closes
+                setTimeout(() => (mentionQuery.value = null), 150);
+              }}
+            ></textarea>
 
-          {mentionQuery.value !== null && mentionOptions.length > 0 && (
-            <ul class="menu bg-neutral text-neutral-content rounded-box shadow-lg border border-base-content/10 absolute z-10 top-full mt-1 w-56 p-1">
-              {mentionOptions.map((c) => (
-                <li key={c.id}>
-                  <button
-                    type="button"
-                    onMouseDown$={(e) => e.preventDefault()}
-                    onClick$={() => selectMention(c)}
-                  >
-                    {c.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+            {mentionQuery.value !== null && mentionOptions.length > 0 && (
+              <ul class="menu bg-neutral text-neutral-content rounded-box shadow-lg border border-base-content/10 absolute z-10 bottom-full mb-1 w-56 p-1">
+                {mentionOptions.map((c) => (
+                  <li key={c.id}>
+                    <button
+                      type="button"
+                      onMouseDown$={(e) => e.preventDefault()}
+                      onClick$={() => selectMention(c)}
+                    >
+                      {c.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           <div class="flex justify-between">
             <label class="label">

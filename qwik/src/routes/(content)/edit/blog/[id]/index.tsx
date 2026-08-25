@@ -45,7 +45,7 @@ export const useEditBlogPost = routeAction$(
 );
 
 export default component$(() => {
-  const { isAdmin } = useContext(userContext);
+  const { isAdmin, isModerator } = useContext(userContext);
 
   const { _id, postType, title, content, tags, category, isApproved } = useGetBlogPost().value;
 
@@ -66,7 +66,7 @@ export default component$(() => {
 
       <div class="card bg-base-200 border border-base-300 mb-3">
         <div class="card-body">
-          {isAdmin && <BlogPublishCheckbox store={store} />}
+          {(isAdmin || isModerator) && <BlogPublishCheckbox store={store} />}
 
           {store.postType === 'article' && <EditBlogFields store={store} />}
 
