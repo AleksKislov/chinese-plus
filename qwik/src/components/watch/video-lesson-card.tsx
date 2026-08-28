@@ -68,6 +68,7 @@ export const VideoLessonCard = component$(({ video, contentType }: VideoCardProp
           likes={likesSignal}
           commentIdsLen={commentIds.length}
           withAudio={false}
+          title={title}
         />
       </div>
     </div>

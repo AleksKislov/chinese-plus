@@ -13,6 +13,7 @@ type CardBtnsProps = {
   commentIdsLen: number;
   withAudio: boolean;
   isUnapproved?: boolean;
+  title?: string;
 };
 
 export const CardBtns = component$(
@@ -24,6 +25,7 @@ export const CardBtns = component$(
     commentIdsLen,
     withAudio,
     isUnapproved,
+    title,
   }: CardBtnsProps) => {
     return (
       <div class="flex justify-end">
@@ -45,6 +47,7 @@ export const CardBtns = component$(
           contentId={contentId}
           contentType={contentType}
           commentIdsLen={commentIdsLen}
+          title={title}
         />
       </div>
     );

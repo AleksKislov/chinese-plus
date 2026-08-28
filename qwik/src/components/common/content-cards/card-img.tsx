@@ -31,6 +31,7 @@ export const CardImg = component$(
         <Link
           href={getContentPath(contentType, contentId, isUnapproved, undefined, book, title)}
           class={isTop ? 'block w-full h-full' : ''}
+          prefetch="js"
         >
           <img
             width="400"

@@ -75,6 +75,7 @@ export const VideoCard = component$(({ video, isUnapproved }: VideoCardProps) =>
           commentIdsLen={commentIds.length}
           withAudio={false}
           isUnapproved={isUnapproved}
+          title={title}
         />
       </div>
     </div>

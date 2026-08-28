@@ -72,6 +72,7 @@ export const BlogCard = component$(({ post, isUnapproved }: BlogCardProps) => {
             commentIdsLen={commentIds.length}
             withAudio={false}
             isUnapproved={isUnapproved}
+            title={title}
           />
         </div>
       </div>

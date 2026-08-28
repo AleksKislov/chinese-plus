@@ -9,7 +9,7 @@ export const UserLink = component$(({ userId, userName, isAnon }: UserLinkProps)
       {isAnon ? (
         <small>{userName}</small>
       ) : (
-        <Link href={`/users/${userId}`} class="cursor-pointer">
+        <Link href={`/users/${userId}`} class="cursor-pointer" prefetch="js">
           <small
             class={`${userName === 'admin' ? 'text-error' : 'text-secondary'} hover:text-success`}
           >
