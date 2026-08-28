@@ -11,8 +11,8 @@ services:
     image: mongo:8.0
     container_name: mongo_chin_dev
     restart: unless-stopped
-    command: ["mongod", "--wiredTigerCacheSizeGB", "0.5"]
-    mem_limit: 1200m
+    command: ["mongod", "--wiredTigerCacheSizeGB", "1"]
+    mem_limit: 1500m
     logging: *default-logging
     ports:
       - "127.0.0.1:27017:27017"
@@ -43,7 +43,7 @@ services:
     container_name: chin_plus_fe
     image: std016039/chin_plus_fe:${VERSION}
     restart: unless-stopped
-    mem_limit: 1200m
+    mem_limit: 1500m
     logging: *default-logging
     environment:
       - VERSION=${VERSION}

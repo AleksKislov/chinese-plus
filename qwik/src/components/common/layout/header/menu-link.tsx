@@ -16,6 +16,7 @@ export default component$(({ href, text, curVocabSize }: MenuLinkProps) => {
       <Link
         href={href}
         class="my-1 hover:text-secondary active:text-secondary focus:text-secondary"
+        prefetch="js"
       >
         {typeof curVocabSize === 'number' ? (
           <>

@@ -25,7 +25,7 @@ RUN npm run build.server
 FROM node:24-slim
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force && npm install -g pm2
 
 COPY --from=build /app/server ./server
 COPY --from=build /app/dist ./dist
@@ -33,4 +33,4 @@ COPY --from=build /app/public ./public
 COPY --from=build /app/.env ./.env
 
 EXPOSE 3000
-ENTRYPOINT ["node", "server/entry.express.js"]
+ENTRYPOINT ["pm2-runtime", "start", "server/entry.express.js", "-i", "2"]
