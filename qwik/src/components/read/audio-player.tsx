@@ -34,16 +34,20 @@ export const AudioPlayer = component$(({ textId }: { textId: ObjectId }) => {
 
   useVisibleTask$(({ track, cleanup }) => {
     const audio = track(() => audioPlayer.value);
+    if (!audio) return;
 
     const id = setInterval(() => {
-      const curTime = audio?.currentTime;
+      const curTime = audio.currentTime;
       currentTime.value = getTrackTime(curTime);
-      progress.value = Math.ceil(((curTime || 0) / (audio?.duration || 1)) * 100);
-      if (progress.value >= 100) stopAudio();
+      progress.value = Math.min(100, Math.ceil((curTime / (audio.duration || 1)) * 100));
     }, 200);
+
+    const onEnded = () => stopAudio();
+    audio.addEventListener('ended', onEnded);
 
     cleanup(() => {
       clearInterval(id);
+      audio.removeEventListener('ended', onEnded);
       stopAudio();
     });
   });
