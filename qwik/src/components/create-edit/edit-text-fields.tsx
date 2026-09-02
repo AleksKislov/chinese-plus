@@ -66,7 +66,7 @@ export const EditTextFields = component$(({ store, isAdmin, isModerator }: Other
                 {store.audioSrc ? (
                   <div class="flex items-center gap-2">
                     <span class="label-text">Аудио загружено</span>
-                    {isAdmin && (
+                    {canModerate && (
                       <button
                         type="button"
                         class="btn btn-xs btn-outline btn-error"

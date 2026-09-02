@@ -77,9 +77,9 @@ router.post(
  * @method    DELETE
  * @route     api/texts/delete-audio/:id
  * @desc      Delete a text's mp3 from storage and unset audioSrc
- * @access    Private (admin)
+ * @access    Private (admin/moderator)
  */
-router.delete('/delete-audio/:id', adminAuth, deleteAudio);
+router.delete('/delete-audio/:id', moderatorAuth, deleteAudio);
 
 /**
  * @method    PUT
