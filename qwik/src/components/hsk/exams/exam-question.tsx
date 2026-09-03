@@ -29,6 +29,9 @@ export const ExamQuestionCard = component$<Props>(
     const correct = isCorrect(q, answer);
     const choices = getChoices(q, part);
     const ungraded = isUngraded(q.questionType);
+    // HSK 1 listening part 2 gives three pictures per question rather than a
+    // bank shared across the part - lay those out in a row, not a column.
+    const hasPictureOptions = choices.some((c) => c.imageUrl);
 
     const stateClass = !isChecked
       ? 'border-base-300'
@@ -98,7 +101,11 @@ export const ExamQuestionCard = component$<Props>(
                 )
               ) : (
                 <div
-                  class={usesBank(q.questionType) ? 'flex flex-wrap gap-2' : 'flex flex-col gap-2'}
+                  class={
+                    usesBank(q.questionType) || hasPictureOptions
+                      ? 'flex flex-wrap gap-2'
+                      : 'flex flex-col gap-2'
+                  }
                 >
                   {choices.map((choice) => {
                     const selected = answer === choice.label;
@@ -113,6 +120,33 @@ export const ExamQuestionCard = component$<Props>(
                       : selected
                       ? 'btn-primary'
                       : 'btn-outline';
+
+                    // A picture option carries its answer in the image, so it
+                    // shows the letter plus the picture and no gloss.
+                    if (choice.imageUrl) {
+                      return (
+                        <button
+                          type="button"
+                          key={choice.label}
+                          class={`btn ${btnClass} h-auto flex-col p-2`}
+                          disabled={isChecked}
+                          onClick$={() => onAnswer$(choice.label)}
+                        >
+                          <span class="font-bold">{choice.label}</span>
+                          <img
+                            src={choice.imageUrl}
+                            alt={`Вариант ${choice.label}`}
+                            width={120}
+                            height={120}
+                            loading="lazy"
+                            class="rounded w-[120px] h-auto"
+                            onError$={(_, el) => {
+                              el.style.display = 'none';
+                            }}
+                          />
+                        </button>
+                      );
+                    }
 
                     return (
                       <button

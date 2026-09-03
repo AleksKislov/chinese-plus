@@ -12,8 +12,14 @@ content/hsk-exams/{version}/{level}/{slug}.json
         └─────────────────────────────── scanned recursively by the import script
 ```
 
-`new/1/new-1-exam-1.json` is a complete worked example covering every question
-type — copy it as the starting point for a new exam.
+`old/1/old-1-exam-1.json` is a complete HSK 1 paper — 20 listening + 20 reading
+questions across the eight parts of the real exam — and is the starting point to
+copy for a new exam.
+
+> **Scope note.** That paper was written from knowledge of the HSK 1 format, not
+> transcribed from an official 模拟题. Its vocabulary was checked to stay inside
+> the HSK 1 150-word list, but the item quality has not been reviewed by a
+> teacher. Treat it as a solid draft, not as an authoritative exam.
 
 ## Workflow
 
@@ -69,9 +75,9 @@ Nesting mirrors a real exam paper: `exam → section → part → question`.
 
 ```jsonc
 {
-  "version": "new",              // "old" | "new"
+  "version": "old",              // "old" | "new"
   "level": "1",
-  "slug": "new-1-exam-1",        // unique, lowercase/digits/dashes — the upsert key
+  "slug": "old-1-exam-1",        // unique, lowercase/digits/dashes — the upsert key
   "ind": 0,                      // ordering within the level
   "durationMinutes": 40,
   "title": { "cn": "…", "ru": "…" },
@@ -128,9 +134,10 @@ each section, as on the paper.
 
 | `questionType` | Answered from | Needs |
 | --- | --- | --- |
-| `listening-true-false` | `options` (对/错) | `ttsText`, usually a picture |
+| `listening-true-false` | `options` (✓/✗) | `ttsText`, usually a picture |
 | `listening-picture-match` | part `bank` | `ttsText`, bank pictures |
 | `listening-choice` | `options` | `ttsText` with dialogue + 问 |
+| `reading-true-false` | `options` (✓/✗) | `promptCn`, a picture |
 | `reading-picture-match` | part `bank` | `promptCn`, bank pictures |
 | `reading-sentence-match` | part `bank` | `promptCn` |
 | `reading-fill-blank` | part `bank` | `promptCn` with `（ ）` |
@@ -142,6 +149,11 @@ each section, as on the paper.
 The validator enforces this table: a bank-answered question with no bank, an
 option-answered question with no options, or a `correctAnswer` that matches no
 label are all hard errors that abort the whole import.
+
+Options may carry pictures instead of text (`hasImage` + `imagePrompt` on each
+option) — that is HSK 1 listening part 2, where the three choices are pictures
+belonging to the question rather than to a bank shared across the part.
+
 
 ## Generating the text content
 
@@ -215,6 +227,26 @@ question at the end:
 
 `ttsText` is stored in the DB as well as the JSON, so transcripts can be revealed
 after grading and audio can be regenerated later without the source file.
+
+**Do not feed `ttsText` to TTS verbatim for dialogues.** The 男/女/问 markers are
+transcript convention and would be read aloud. The media manifest splits them for
+you into `ttsLines`:
+
+```jsonc
+{
+  "kind": "audio",
+  "key": "hsk-exams/old/1/old-1-exam-1/listening/p2/q0.mp3",
+  "ttsText": "女：你好，你是医生吗？ 男：是，我是医生。",
+  "ttsLines": [
+    { "speaker": "female", "text": "你好，你是医生吗？" },
+    { "speaker": "male", "text": "是，我是医生。" }
+  ]
+}
+```
+
+Render each line with its own voice and concatenate into one MP3. `ttsLines` is
+`null` when the script has no markers — then `ttsText` is a single narrator line
+and can be synthesised directly.
 
 The project already has a Google Cloud TTS setup for HSK word audio at
 `src/api/services/newhskwords/write-mp3.js` — the same client and voice config

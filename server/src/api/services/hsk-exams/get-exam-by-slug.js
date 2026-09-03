@@ -4,6 +4,7 @@ const {
   getQuestionAudioKey,
   getQuestionImageKey,
   getBankImageKey,
+  getOptionImageKey,
 } = require('./media-paths');
 
 /**
@@ -45,6 +46,10 @@ const getExamBySlug = async (req, res) => {
           ...q,
           audioUrl: q.hasAudio ? toPublicUrl(getQuestionAudioKey(ctx, q.ind)) : null,
           imageUrl: q.hasImage ? toPublicUrl(getQuestionImageKey(ctx, q.ind)) : null,
+          options: q.options.map((o) => ({
+            ...o,
+            imageUrl: o.hasImage ? toPublicUrl(getOptionImageKey(ctx, q.ind, o.label)) : null,
+          })),
         })),
       };
     }),

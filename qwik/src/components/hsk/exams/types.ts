@@ -17,6 +17,7 @@ export type ExamQuestionType =
   | 'listening-true-false'
   | 'listening-picture-match'
   | 'listening-choice'
+  | 'reading-true-false'
   | 'reading-picture-match'
   | 'reading-sentence-match'
   | 'reading-fill-blank'

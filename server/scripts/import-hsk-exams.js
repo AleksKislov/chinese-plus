@@ -44,6 +44,7 @@ const {
   getQuestionAudioKey,
   getQuestionImageKey,
   getBankImageKey,
+  getOptionImageKey,
 } = require('../src/api/services/hsk-exams/media-paths');
 
 const DEFAULT_DIR = path.join(__dirname, '..', 'content', 'hsk-exams');
@@ -134,6 +135,12 @@ function validateExam(exam, file) {
           return;
         }
 
+        (q.options || []).forEach((o, oInd) => {
+          if (!o.label) errors.push(at(`${qLoc}.options[${oInd}].label: required`));
+          if (o.hasImage && !o.imagePrompt)
+            errors.push(at(`${qLoc}.options[${oInd}].imagePrompt: required when hasImage is true`));
+        });
+
         const optionLabels = (q.options || []).map((o) => o.label);
         const usesBank = BANK_ANSWER_TYPES.includes(q.questionType);
         const validLabels = usesBank ? bankLabels : optionLabels;
@@ -216,6 +223,7 @@ function toDocument(exam) {
             textRu: o.textRu ?? null,
             pinyin: o.pinyin ?? null,
             hasImage: Boolean(o.hasImage),
+            imagePrompt: o.imagePrompt ?? null,
           })),
           correctAnswer: q.correctAnswer ?? null,
           explanationRu: q.explanationRu ?? null,
@@ -235,6 +243,32 @@ function toDocument(exam) {
     sections,
     updatedAt: new Date(),
   };
+}
+
+// Speaker markers used in listening transcripts, as printed on a real paper.
+const SPEAKERS = { '\u7537': 'male', '\u5973': 'female', '\u95ee': 'narrator' };
+
+/**
+ * Splits a listening transcript into per-speaker lines.
+ *
+ * A dialogue script reads "\u5973\uff1a\u4f60\u597d \u7537\uff1a\u6211\u53eb\u738b\u660e\u3002 \u95ee\uff1a..." - those \u7537/\u5973/\u95ee markers are
+ * transcript convention and must NOT be spoken. Feeding ttsText to TTS verbatim
+ * would read them out; render these lines with the matching voice instead and
+ * concatenate. Returns null when the script has no markers (single narrator).
+ */
+function splitTtsLines(text) {
+  if (!text) return null;
+  const parts = text
+    .split(/(?=[\u7537\u5973\u95ee]\uff1a)/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (!parts.some((p) => /^[\u7537\u5973\u95ee]\uff1a/.test(p))) return null;
+  return parts.map((p) => {
+    const m = p.match(/^([\u7537\u5973\u95ee])\uff1a\s*([\s\S]*)$/);
+    return m
+      ? { speaker: SPEAKERS[m[1]], text: m[2].trim() }
+      : { speaker: 'narrator', text: p };
+  });
 }
 
 /**
@@ -270,6 +304,9 @@ function collectMedia(exam) {
             kind: 'audio',
             key: getQuestionAudioKey(ctx, ind),
             ttsText: q.ttsText ?? null,
+            // Present only for dialogues: render each line with its own voice
+            // rather than speaking the 男/女/问 markers out loud.
+            ttsLines: splitTtsLines(q.ttsText),
             note: `${section.type} part ${ctx.partInd} question ${ind}`,
           });
         }
@@ -281,6 +318,15 @@ function collectMedia(exam) {
             note: `${section.type} part ${ctx.partInd} question ${ind}`,
           });
         }
+        (q.options || []).forEach((o) => {
+          if (!o.hasImage) return;
+          items.push({
+            kind: 'image',
+            key: getOptionImageKey(ctx, ind, o.label),
+            prompt: o.imagePrompt ?? null,
+            note: `${section.type} part ${ctx.partInd} question ${ind} option ${o.label}`,
+          });
+        });
       });
     });
   });

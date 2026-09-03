@@ -47,6 +47,7 @@ const QuestionSchema = new Schema(
         'listening-picture-match', // hear it, pick the picture from the part bank
         'listening-choice', // hear a dialogue + question, pick a text option
         // reading
+        'reading-true-false', // read a word, judge the picture: 对 / 错
         'reading-picture-match', // match word/sentence to a picture in the bank
         'reading-sentence-match', // match a sentence to its pair in the bank
         'reading-fill-blank', // fill the gap from a shared word bank

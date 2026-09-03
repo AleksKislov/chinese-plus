@@ -1,0 +1,829 @@
+{
+  "version": "old",
+  "level": "1",
+  "slug": "old-1-exam-1",
+  "ind": 0,
+  "durationMinutes": 40,
+  "title": {
+    "cn": "HSK（一级）模拟考试（一）",
+    "ru": "HSK 1 — пробный экзамен №1"
+  },
+  "descriptionRu": "Пробный экзамен HSK 1 (HSK 2.0): 20 заданий на аудирование и 20 на чтение, 40 минут. Лексика не выходит за пределы 150 слов первого уровня.",
+  "sections": [
+    {
+      "type": "listening",
+      "titleCn": "一、听力",
+      "titleRu": "Аудирование",
+      "durationMinutes": 15,
+      "parts": [
+        {
+          "ind": 0,
+          "instructionCn": "第一部分：听句子，看图片，判断对错。",
+          "instructionRu": "Прослушайте фразу и посмотрите на картинку. Если картинка ей соответствует — выберите «верно», если нет — «неверно».",
+          "exampleRu": "Например: вы слышите «我喝茶» и видите человека, который пьёт чай — ответ «верно».",
+          "questions": [
+            {
+              "questionType": "listening-true-false",
+              "ttsText": "我喝水。",
+              "hasAudio": true,
+              "hasImage": true,
+              "imagePrompt": "A woman drinking a glass of water. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "На картинке человек пьёт воду — совпадает с 我喝水."
+            },
+            {
+              "questionType": "listening-true-false",
+              "ttsText": "他是老师。",
+              "hasAudio": true,
+              "hasImage": true,
+              "imagePrompt": "A male doctor in a white coat with a stethoscope, standing in a clinic. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "На картинке врач (医生), а в аудио — 老师 (учитель)."
+            },
+            {
+              "questionType": "listening-true-false",
+              "ttsText": "这是我的猫。",
+              "hasAudio": true,
+              "hasImage": true,
+              "imagePrompt": "A small orange cat sitting and facing the viewer. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "На картинке кошка (猫)."
+            },
+            {
+              "questionType": "listening-true-false",
+              "ttsText": "我们看电视。",
+              "hasAudio": true,
+              "hasImage": true,
+              "imagePrompt": "Two people sitting on a sofa watching a television. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "На картинке люди смотрят телевизор (看电视)."
+            },
+            {
+              "questionType": "listening-true-false",
+              "ttsText": "今天下雨。",
+              "hasAudio": true,
+              "hasImage": true,
+              "imagePrompt": "A bright sunny day with a big sun and clear blue sky. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "На картинке солнечно, а в аудио — 下雨 (идёт дождь)."
+            }
+          ]
+        },
+        {
+          "ind": 1,
+          "instructionCn": "第二部分：听句子，选择对应的图片。",
+          "instructionRu": "Прослушайте предложение и выберите подходящую картинку из трёх.",
+          "questions": [
+            {
+              "questionType": "listening-choice",
+              "ttsText": "我吃米饭。",
+              "hasAudio": true,
+              "options": [
+                {
+                  "label": "A",
+                  "hasImage": true,
+                  "imagePrompt": "A man eating a bowl of white rice with chopsticks. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                },
+                {
+                  "label": "B",
+                  "hasImage": true,
+                  "imagePrompt": "A woman drinking a cup of hot tea. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                },
+                {
+                  "label": "C",
+                  "hasImage": true,
+                  "imagePrompt": "A person reading an open book. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "吃米饭 — есть рис."
+            },
+            {
+              "questionType": "listening-choice",
+              "ttsText": "她在睡觉。",
+              "hasAudio": true,
+              "options": [
+                {
+                  "label": "A",
+                  "hasImage": true,
+                  "imagePrompt": "A woman working at a desk with a computer. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                },
+                {
+                  "label": "B",
+                  "hasImage": true,
+                  "imagePrompt": "A woman sleeping in bed under a blanket. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                },
+                {
+                  "label": "C",
+                  "hasImage": true,
+                  "imagePrompt": "A woman eating at a table. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "睡觉 — спать."
+            },
+            {
+              "questionType": "listening-choice",
+              "ttsText": "爸爸打电话。",
+              "hasAudio": true,
+              "options": [
+                {
+                  "label": "A",
+                  "hasImage": true,
+                  "imagePrompt": "A middle-aged man talking on a mobile phone. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                },
+                {
+                  "label": "B",
+                  "hasImage": true,
+                  "imagePrompt": "A man watching television on a sofa. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                },
+                {
+                  "label": "C",
+                  "hasImage": true,
+                  "imagePrompt": "A man reading a newspaper. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "打电话 — говорить по телефону."
+            },
+            {
+              "questionType": "listening-choice",
+              "ttsText": "我买苹果。",
+              "hasAudio": true,
+              "options": [
+                {
+                  "label": "A",
+                  "hasImage": true,
+                  "imagePrompt": "A person buying clothes in a shop. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                },
+                {
+                  "label": "B",
+                  "hasImage": true,
+                  "imagePrompt": "A person buying red apples at a fruit stall. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                },
+                {
+                  "label": "C",
+                  "hasImage": true,
+                  "imagePrompt": "A person buying a book. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "买苹果 — покупать яблоки."
+            },
+            {
+              "questionType": "listening-choice",
+              "ttsText": "我坐飞机。",
+              "hasAudio": true,
+              "options": [
+                {
+                  "label": "A",
+                  "hasImage": true,
+                  "imagePrompt": "A yellow taxi car on a street. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                },
+                {
+                  "label": "B",
+                  "hasImage": true,
+                  "imagePrompt": "A white passenger airplane flying in the sky. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                },
+                {
+                  "label": "C",
+                  "hasImage": true,
+                  "imagePrompt": "A wooden chair standing alone. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "坐飞机 — лететь на самолёте."
+            }
+          ]
+        },
+        {
+          "ind": 2,
+          "instructionCn": "第三部分：听对话，选择对应的图片。",
+          "instructionRu": "Прослушайте диалог и выберите подходящую картинку. Одна картинка лишняя.",
+          "bank": [
+            {
+              "label": "A",
+              "textRu": "Врач в больнице",
+              "hasImage": true,
+              "imagePrompt": "A doctor in a white coat standing in a hospital room. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            },
+            {
+              "label": "B",
+              "textRu": "Ученики в школе",
+              "hasImage": true,
+              "imagePrompt": "Two students sitting at desks in a school classroom. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            },
+            {
+              "label": "C",
+              "textRu": "Женщина с чашкой чая",
+              "hasImage": true,
+              "imagePrompt": "A woman holding a cup of hot tea with both hands. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            },
+            {
+              "label": "D",
+              "textRu": "Мужчина с собакой",
+              "hasImage": true,
+              "imagePrompt": "A man standing next to a friendly brown dog on a lead. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            },
+            {
+              "label": "E",
+              "textRu": "Семья ужинает",
+              "hasImage": true,
+              "imagePrompt": "A family of three sitting at a table eating dinner together. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            },
+            {
+              "label": "F",
+              "textRu": "Человек читает книгу",
+              "hasImage": true,
+              "imagePrompt": "A person sitting in an armchair reading an open book. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            }
+          ],
+          "questions": [
+            {
+              "questionType": "listening-picture-match",
+              "ttsText": "女：你好，你是医生吗？ 男：是，我是医生。",
+              "hasAudio": true,
+              "correctAnswer": "A"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "ttsText": "男：你喝茶吗？ 女：谢谢，我喝茶。",
+              "hasAudio": true,
+              "correctAnswer": "C"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "ttsText": "女：这是你的狗吗？ 男：是，是我的狗。",
+              "hasAudio": true,
+              "correctAnswer": "D"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "ttsText": "男：你在学校吗？ 女：是，我在学校学习。",
+              "hasAudio": true,
+              "correctAnswer": "B"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "ttsText": "女：你们在做什么？ 男：我们在吃饭。",
+              "hasAudio": true,
+              "correctAnswer": "E"
+            }
+          ]
+        },
+        {
+          "ind": 3,
+          "instructionCn": "第四部分：听对话和问题，选择正确答案。",
+          "instructionRu": "Прослушайте диалог и вопрос, затем выберите правильный ответ.",
+          "questions": [
+            {
+              "questionType": "listening-choice",
+              "ttsText": "男：现在几点？ 女：现在三点。 问：现在几点？",
+              "hasAudio": true,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "一点",
+                  "pinyin": "yī diǎn",
+                  "textRu": "час"
+                },
+                {
+                  "label": "B",
+                  "textCn": "三点",
+                  "pinyin": "sān diǎn",
+                  "textRu": "три часа"
+                },
+                {
+                  "label": "C",
+                  "textCn": "九点",
+                  "pinyin": "jiǔ diǎn",
+                  "textRu": "девять часов"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "Женщина отвечает 现在三点."
+            },
+            {
+              "questionType": "listening-choice",
+              "ttsText": "女：你有几个朋友？ 男：我有三个朋友。 问：男的有几个朋友？",
+              "hasAudio": true,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "三个",
+                  "pinyin": "sān gè",
+                  "textRu": "три"
+                },
+                {
+                  "label": "B",
+                  "textCn": "五个",
+                  "pinyin": "wǔ gè",
+                  "textRu": "пять"
+                },
+                {
+                  "label": "C",
+                  "textCn": "八个",
+                  "pinyin": "bā gè",
+                  "textRu": "восемь"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "Мужчина отвечает 我有三个朋友."
+            },
+            {
+              "questionType": "listening-choice",
+              "ttsText": "男：这个多少钱？ 女：十块。 问：这个多少钱？",
+              "hasAudio": true,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "四块",
+                  "pinyin": "sì kuài",
+                  "textRu": "четыре юаня"
+                },
+                {
+                  "label": "B",
+                  "textCn": "十块",
+                  "pinyin": "shí kuài",
+                  "textRu": "десять юаней"
+                },
+                {
+                  "label": "C",
+                  "textCn": "七块",
+                  "pinyin": "qī kuài",
+                  "textRu": "семь юаней"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "Женщина отвечает 十块."
+            },
+            {
+              "questionType": "listening-choice",
+              "ttsText": "女：明天你去哪儿？ 男：我去商店。 问：男的明天去哪儿？",
+              "hasAudio": true,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "学校",
+                  "pinyin": "xuéxiào",
+                  "textRu": "школа"
+                },
+                {
+                  "label": "B",
+                  "textCn": "医院",
+                  "pinyin": "yīyuàn",
+                  "textRu": "больница"
+                },
+                {
+                  "label": "C",
+                  "textCn": "商店",
+                  "pinyin": "shāngdiàn",
+                  "textRu": "магазин"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "Мужчина отвечает 我去商店."
+            },
+            {
+              "questionType": "listening-choice",
+              "ttsText": "男：你妈妈做什么工作？ 女：她是老师。 问：女的妈妈做什么工作？",
+              "hasAudio": true,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "医生",
+                  "pinyin": "yīshēng",
+                  "textRu": "врач"
+                },
+                {
+                  "label": "B",
+                  "textCn": "老师",
+                  "pinyin": "lǎoshī",
+                  "textRu": "учитель"
+                },
+                {
+                  "label": "C",
+                  "textCn": "学生",
+                  "pinyin": "xuésheng",
+                  "textRu": "ученик"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "Женщина отвечает 她是老师."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "reading",
+      "titleCn": "二、阅读",
+      "titleRu": "Чтение",
+      "durationMinutes": 17,
+      "parts": [
+        {
+          "ind": 0,
+          "instructionCn": "第一部分：看词语和图片，判断对错。",
+          "instructionRu": "Прочитайте слово и посмотрите на картинку. Соответствует ли картинка слову?",
+          "questions": [
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "电脑",
+              "pinyin": "diànnǎo",
+              "hasImage": true,
+              "imagePrompt": "An open laptop computer on a desk. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "На картинке компьютер — совпадает со словом 电脑."
+            },
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "苹果",
+              "pinyin": "píngguǒ",
+              "hasImage": true,
+              "imagePrompt": "A clear glass filled with water. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "На картинке вода (水), а слово — 苹果 (яблоко)."
+            },
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "桌子",
+              "pinyin": "zhuōzi",
+              "hasImage": true,
+              "imagePrompt": "A simple wooden table. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "На картинке стол — 桌子."
+            },
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "下雨",
+              "pinyin": "xià yǔ",
+              "hasImage": true,
+              "imagePrompt": "Rain falling from grey clouds onto a street with a puddle. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "На картинке дождь — 下雨."
+            },
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "飞机",
+              "pinyin": "fēijī",
+              "hasImage": true,
+              "imagePrompt": "A yellow taxi car on a city street. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "На картинке такси (出租车), а слово — 飞机 (самолёт)."
+            }
+          ]
+        },
+        {
+          "ind": 1,
+          "instructionCn": "第二部分：看句子，选择对应的图片。",
+          "instructionRu": "Прочитайте предложение и выберите подходящую картинку. Одна картинка лишняя.",
+          "bank": [
+            {
+              "label": "A",
+              "textRu": "Женщина читает книгу",
+              "hasImage": true,
+              "imagePrompt": "A woman sitting and reading an open book. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            },
+            {
+              "label": "B",
+              "textRu": "Мужчина спит",
+              "hasImage": true,
+              "imagePrompt": "A man sleeping peacefully in a bed. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            },
+            {
+              "label": "C",
+              "textRu": "Ребёнок ест яблоко",
+              "hasImage": true,
+              "imagePrompt": "A child eating a red apple. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            },
+            {
+              "label": "D",
+              "textRu": "Люди смотрят фильм",
+              "hasImage": true,
+              "imagePrompt": "People sitting in a cinema watching a film on a big screen. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            },
+            {
+              "label": "E",
+              "textRu": "Врач и пациент",
+              "hasImage": true,
+              "imagePrompt": "A doctor examining a patient in a hospital. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            },
+            {
+              "label": "F",
+              "textRu": "Дождливая погода",
+              "hasImage": true,
+              "imagePrompt": "Heavy rain falling on a cold grey street. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+            }
+          ],
+          "questions": [
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "她在看书。",
+              "promptRu": "Она читает книгу.",
+              "correctAnswer": "A"
+            },
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "今天下雨，很冷。",
+              "promptRu": "Сегодня дождь, очень холодно.",
+              "correctAnswer": "F"
+            },
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "他在睡觉。",
+              "promptRu": "Он спит.",
+              "correctAnswer": "B"
+            },
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "我们去看电影。",
+              "promptRu": "Мы идём смотреть фильм.",
+              "correctAnswer": "D"
+            },
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "儿子吃苹果。",
+              "promptRu": "Сын ест яблоко.",
+              "correctAnswer": "C"
+            }
+          ]
+        },
+        {
+          "ind": 2,
+          "instructionCn": "第三部分：给问题选择对应的答句。",
+          "instructionRu": "Подберите к каждому вопросу подходящий ответ. Один ответ лишний.",
+          "bank": [
+            {
+              "label": "A",
+              "textCn": "我是学生。",
+              "pinyin": "Wǒ shì xuésheng.",
+              "textRu": "Я студент."
+            },
+            {
+              "label": "B",
+              "textCn": "谢谢！",
+              "pinyin": "Xièxie!",
+              "textRu": "Спасибо!"
+            },
+            {
+              "label": "C",
+              "textCn": "他在医院。",
+              "pinyin": "Tā zài yīyuàn.",
+              "textRu": "Он в больнице."
+            },
+            {
+              "label": "D",
+              "textCn": "九月八号。",
+              "pinyin": "Jiǔ yuè bā hào.",
+              "textRu": "8 сентября."
+            },
+            {
+              "label": "E",
+              "textCn": "我很好。",
+              "pinyin": "Wǒ hěn hǎo.",
+              "textRu": "У меня всё хорошо."
+            },
+            {
+              "label": "F",
+              "textCn": "五块钱。",
+              "pinyin": "Wǔ kuài qián.",
+              "textRu": "Пять юаней."
+            }
+          ],
+          "questions": [
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "你是老师吗？",
+              "promptRu": "Вы учитель?",
+              "correctAnswer": "A"
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "你爸爸在哪儿？",
+              "promptRu": "Где твой папа?",
+              "correctAnswer": "C"
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "今天几月几号？",
+              "promptRu": "Какое сегодня число?",
+              "correctAnswer": "D"
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "这个多少钱？",
+              "promptRu": "Сколько это стоит?",
+              "correctAnswer": "F"
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "你好吗？",
+              "promptRu": "Как дела?",
+              "correctAnswer": "E"
+            }
+          ]
+        },
+        {
+          "ind": 3,
+          "instructionCn": "第四部分：选词填空。",
+          "instructionRu": "Выберите подходящее слово и вставьте его в пропуск. Одно слово лишнее.",
+          "bank": [
+            {
+              "label": "A",
+              "textCn": "喝",
+              "pinyin": "hē",
+              "textRu": "пить"
+            },
+            {
+              "label": "B",
+              "textCn": "在",
+              "pinyin": "zài",
+              "textRu": "находиться в"
+            },
+            {
+              "label": "C",
+              "textCn": "很",
+              "pinyin": "hěn",
+              "textRu": "очень"
+            },
+            {
+              "label": "D",
+              "textCn": "会",
+              "pinyin": "huì",
+              "textRu": "уметь"
+            },
+            {
+              "label": "E",
+              "textCn": "多少",
+              "pinyin": "duōshao",
+              "textRu": "сколько"
+            },
+            {
+              "label": "F",
+              "textCn": "的",
+              "pinyin": "de",
+              "textRu": "частица принадлежности"
+            }
+          ],
+          "questions": [
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "我（ ）茶。",
+              "promptRu": "Я ( ) чай.",
+              "correctAnswer": "A",
+              "explanationRu": "喝茶 — пить чай."
+            },
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "今天（ ）热。",
+              "promptRu": "Сегодня ( ) жарко.",
+              "correctAnswer": "C",
+              "explanationRu": "Перед прилагательным ставится наречие степени 很."
+            },
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "我妈妈（ ）家。",
+              "promptRu": "Моя мама ( ) дома.",
+              "correctAnswer": "B",
+              "explanationRu": "在家 — быть дома."
+            },
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "你（ ）说汉语吗？",
+              "promptRu": "Ты ( ) говорить по-китайски?",
+              "correctAnswer": "D",
+              "explanationRu": "会 выражает приобретённое умение: 会说汉语."
+            },
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "这本书（ ）钱？",
+              "promptRu": "Сколько стоит эта книга?",
+              "correctAnswer": "E",
+              "explanationRu": "多少钱 — «сколько стоит»."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

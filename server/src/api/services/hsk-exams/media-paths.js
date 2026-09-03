@@ -8,9 +8,9 @@
  * rebuilding a playback URL go through here, so the two can never drift.
  *
  * Layout in the bucket:
- *   hsk-exams/new/1/new-1-exam-1/listening/p0/q0.mp3
- *   hsk-exams/new/1/new-1-exam-1/listening/p1/bank-A.webp
- *   hsk-exams/new/1/new-1-exam-1/reading/p0/q2.webp
+ *   hsk-exams/old/1/old-1-exam-1/listening/p0/q0.mp3
+ *   hsk-exams/old/1/old-1-exam-1/listening/p2/bank-A.webp
+ *   hsk-exams/old/1/old-1-exam-1/listening/p1/q0-opt-A.webp
  */
 
 const MEDIA_ROOT = 'hsk-exams';
@@ -28,15 +28,21 @@ const partDir = ({ version, level, slug, sectionType, partInd }) =>
   `${MEDIA_ROOT}/${version}/${level}/${slug}/${sectionType}/p${partInd}`;
 
 /** Audio for a single question (the TTS render of question.ttsText). */
-const getQuestionAudioKey = (ctx, questionInd) =>
-  `${partDir(ctx)}/q${questionInd}.${AUDIO_EXT}`;
+const getQuestionAudioKey = (ctx, questionInd) => `${partDir(ctx)}/q${questionInd}.${AUDIO_EXT}`;
 
 /** Picture attached to a single question. */
-const getQuestionImageKey = (ctx, questionInd) =>
-  `${partDir(ctx)}/q${questionInd}.${IMAGE_EXT}`;
+const getQuestionImageKey = (ctx, questionInd) => `${partDir(ctx)}/q${questionInd}.${IMAGE_EXT}`;
 
 /** Picture for one lettered entry in a part's shared bank (the A-F strip). */
 const getBankImageKey = (ctx, label) => `${partDir(ctx)}/bank-${label}.${IMAGE_EXT}`;
+
+/**
+ * Picture for one lettered option of a single question - the A/B/C picture
+ * choice used by HSK 1 listening part 2, where the pictures belong to the
+ * question rather than to a bank shared across the part.
+ */
+const getOptionImageKey = (ctx, questionInd, label) =>
+  `${partDir(ctx)}/q${questionInd}-opt-${label}.${IMAGE_EXT}`;
 
 module.exports = {
   MEDIA_ROOT,
@@ -47,4 +53,5 @@ module.exports = {
   getQuestionAudioKey,
   getQuestionImageKey,
   getBankImageKey,
+  getOptionImageKey,
 };
