@@ -1,11 +1,15 @@
-import { component$, useStore, useSignal, $ } from '@builder.io/qwik';
+import { component$, useContext, useStore, useSignal, $ } from '@builder.io/qwik';
 import { type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
 import { BackBtn } from '~/components/common/ui/back-btn';
 import { ApiService } from '~/misc/actions/request';
+import { getTokenFromCookie } from '~/misc/actions/auth';
+import { userContext } from '~/root';
 import { ExamQuestionCard } from '~/components/hsk/exams/exam-question';
+import { AdminImageSlot } from '~/components/hsk/exams/admin-image-slot';
+import { useSetExamApproved } from '~/misc/actions/hsk-exams/set-approved';
 import {
   type HskExamType,
   SECTION_TITLES_RU,
@@ -14,14 +18,22 @@ import {
   questionKey,
 } from '~/components/hsk/exams/types';
 
-export const useGetExam = routeLoader$(async ({ params, redirect }): Promise<HskExamType> => {
-  const exam = await ApiService.get(`/api/hsk-exams/${params.slug}`, undefined, null);
-  if (!exam) throw redirect(302, '/hsk/exams/');
-  return exam;
-});
+export const useGetExam = routeLoader$(
+  async ({ params, cookie, redirect }): Promise<HskExamType> => {
+    // Sent whether or not the visitor is an admin - optional-admin-auth.js on the
+    // backend decides what a missing/non-admin token is worth (nothing: only an
+    // approved exam resolves either way).
+    const token = getTokenFromCookie(cookie);
+    const exam = await ApiService.get(`/api/hsk-exams/${params.slug}`, token, null);
+    if (!exam) throw redirect(302, '/hsk/exams/');
+    return exam;
+  },
+);
 
 export default component$(() => {
   const exam = useGetExam();
+  const { isAdmin } = useContext(userContext);
+  const setApproved = useSetExamApproved();
   // questionKey() -> chosen label or typed text
   const answers = useStore<Record<string, string>>({});
   const isChecked = useSignal(false);
@@ -58,7 +70,32 @@ export default component$(() => {
               <span class="badge badge-ghost badge-sm">{exam.value.durationMinutes} мин</span>
             )}
             <span class="badge badge-ghost badge-sm">{gradeable.length} заданий с проверкой</span>
+            {isAdmin && (
+              <span
+                class={`badge badge-sm ${
+                  exam.value.isApproved ? 'badge-success' : 'badge-warning'
+                }`}
+              >
+                {exam.value.isApproved ? 'одобрен' : 'не одобрен'}
+              </span>
+            )}
           </div>
+
+          {isAdmin && (
+            <button
+              type="button"
+              class="btn btn-sm btn-outline mb-4"
+              onClick$={async () => {
+                await setApproved.submit({
+                  slug: exam.value.slug,
+                  isApproved: !exam.value.isApproved,
+                });
+                window.location.reload();
+              }}
+            >
+              {exam.value.isApproved ? 'Снять с публикации' : 'Одобрить и опубликовать'}
+            </button>
+          )}
 
           {exam.value.descriptionRu && (
             <div class="prose mb-4">
@@ -91,6 +128,25 @@ export default component$(() => {
                 )}
               </div>
 
+              {/* One continuous recording played straight through, the way the
+                  real exam is sat - the spoken instructions, examples and timed
+                  pauses are all inside the track. */}
+              {section.audioUrl && (
+                <div class="bg-base-200 rounded-lg p-3 mb-4">
+                  <p class="text-sm mb-2">
+                    Запись раздела целиком — как на настоящем экзамене: инструкции, примеры и паузы
+                    уже внутри. Включите её один раз и отвечайте по ходу.
+                  </p>
+                  <audio
+                    id={`section-audio-${section.type}`}
+                    src={section.audioUrl}
+                    controls
+                    preload="none"
+                    class="w-full"
+                  />
+                </div>
+              )}
+
               {section.parts.map((part, pInd) => (
                 <div key={part.ind} class="mb-6">
                   {(part.instructionCn || part.instructionRu) && (
@@ -99,50 +155,112 @@ export default component$(() => {
                       {part.instructionRu && (
                         <p class="text-sm opacity-80 mb-0">{part.instructionRu}</p>
                       )}
-                      {part.exampleRu && (
-                        <p class="text-sm opacity-70 mt-1 mb-0">{part.exampleRu}</p>
-                      )}
                     </div>
                   )}
 
                   {/* Shared answer set: the A-F picture strip or word bank the
                       questions in this part are answered from. */}
-                  {!!part.bank.length && (
-                    <div class="flex flex-wrap gap-3 mb-3">
-                      {part.bank.map((choice) => (
-                        <div
-                          key={choice.label}
-                          class="flex flex-col items-center border border-base-300 rounded-lg p-2 bg-base-100"
-                        >
-                          <span class="badge badge-neutral badge-sm mb-1">{choice.label}</span>
-                          {choice.imageUrl && (
-                            <img
-                              src={choice.imageUrl}
-                              // A descriptive alt would hand over the answer on
-                              // picture-match questions - label it, don't describe it.
-                              alt={`Вариант ${choice.label}`}
-                              width={140}
-                              height={140}
-                              loading="lazy"
-                              class="rounded w-[140px] h-auto"
-                              // Pictures are uploaded separately; until this one
-                              // exists, fall back to the bank entry's Russian gloss.
-                              onError$={(_, el) => {
-                                el.style.display = 'none';
-                              }}
-                            />
-                          )}
-                          {choice.textCn && <span class="mt-1">{choice.textCn}</span>}
-                          {choice.pinyin && (
-                            <span class="text-xs opacity-70 lowercase">{choice.pinyin}</span>
-                          )}
-                          {choice.textRu && !choice.imageUrl && (
-                            <span class="text-xs opacity-70">{choice.textRu}</span>
-                          )}
-                        </div>
-                      ))}
+                  {part.bankHasImage ? (
+                    // ONE combined picture for the whole bank (all letters together) -
+                    // one file to generate/upload instead of one per letter, the same
+                    // idea as a listening-choice question's single 3-in-1 picture.
+                    // No reference row of letters here - the picture itself carries
+                    // them, and the real per-question answer buttons render inside
+                    // each question card.
+                    <div class="mb-3">
+                      {part.bankImageUrl && (
+                        <img
+                          src={part.bankImageUrl}
+                          alt="Варианты A-F"
+                          width={440}
+                          height={440}
+                          loading="lazy"
+                          class="rounded-lg border border-base-300 h-auto"
+                          style={{ width: '440px' }}
+                          // Pictures are uploaded separately; until this one exists,
+                          // hide rather than show a broken-image box.
+                          onError$={(_, el) => {
+                            el.style.display = 'none';
+                          }}
+                        />
+                      )}
+                      {isAdmin && (
+                        <AdminImageSlot
+                          slug={exam.value.slug}
+                          sectionType={section.type}
+                          partInd={part.ind}
+                          target="bank-combined"
+                          hasImage={part.bankHasImage}
+                          size={440}
+                        />
+                      )}
                     </div>
+                  ) : (
+                    !!part.bank.length && (
+                      <div class="flex flex-wrap gap-3 mb-3">
+                        {part.bank.map((choice) => (
+                          <div
+                            key={choice.label}
+                            class="flex flex-col items-center border border-base-300 rounded-lg p-2 bg-base-100"
+                          >
+                            <span class="badge badge-neutral badge-sm mb-1">{choice.label}</span>
+                            {choice.imageUrl && (
+                              <img
+                                src={choice.imageUrl}
+                                // A descriptive alt would hand over the answer on
+                                // picture-match questions - label it, don't describe it.
+                                alt={`Вариант ${choice.label}`}
+                                width={140}
+                                height={140}
+                                loading="lazy"
+                                class="rounded w-[140px] h-auto"
+                                // Pictures are uploaded separately; until this one
+                                // exists, hide rather than show a broken-image box.
+                                onError$={(_, el) => {
+                                  el.style.display = 'none';
+                                }}
+                              />
+                            )}
+                            {choice.textCn && <span class="mt-1">{choice.textCn}</span>}
+                            {choice.pinyin && (
+                              <span class="text-xs opacity-70 lowercase">{choice.pinyin}</span>
+                            )}
+                            {isAdmin && (
+                              <AdminImageSlot
+                                slug={exam.value.slug}
+                                sectionType={section.type}
+                                partInd={part.ind}
+                                target="bank"
+                                label={choice.label}
+                                hasImage={choice.hasImage}
+                                size={140}
+                              />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )
                   )}
+
+                  {/* Worked example(s) - 例如 - shown pre-answered with the
+                      real picture the example describes, not a text caption:
+                      that's what the audio actually references. */}
+                  {part.examples.map((ex, exInd) => (
+                    <ExamQuestionCard
+                      key={`example-${exInd}`}
+                      question={ex}
+                      part={part}
+                      answer={ex.correctAnswer ?? undefined}
+                      isChecked={true}
+                      exampleLabel={part.examples.length > 1 ? `Пример ${exInd + 1}` : 'Пример'}
+                      admin={
+                        isAdmin
+                          ? { slug: exam.value.slug, sectionType: section.type, isExample: true }
+                          : undefined
+                      }
+                      onAnswer$={$(() => {})}
+                    />
+                  ))}
 
                   {part.questions.map((q) => {
                     const key = questionKey(sInd, pInd, q.ind);
@@ -153,6 +271,12 @@ export default component$(() => {
                         part={part}
                         answer={answers[key]}
                         isChecked={isChecked.value}
+                        sectionAudioId={
+                          section.audioUrl ? `section-audio-${section.type}` : undefined
+                        }
+                        admin={
+                          isAdmin ? { slug: exam.value.slug, sectionType: section.type } : undefined
+                        }
                         onAnswer$={$((value: string) => {
                           answers[key] = value;
                         })}

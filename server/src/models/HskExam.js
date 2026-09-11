@@ -71,7 +71,11 @@ const QuestionSchema = new Schema(
     ttsText: { type: String, default: null },
 
     // Media generated separately; flags flip to true once the files are uploaded.
+    // Leave false when the whole section plays from one recording (Section.hasAudio).
     hasAudio: { type: Boolean, default: false },
+    // Offset of this question inside the section recording, for replaying a
+    // single item after grading. Optional; the exam itself plays straight through.
+    audioStartSec: { type: Number, default: null },
     hasImage: { type: Boolean, default: false },
     // Kept for regeneration/auditing of the picture - never shown to users.
     imagePrompt: { type: String, default: null },
@@ -92,12 +96,29 @@ const PartSchema = new Schema(
     ind: { type: Number, required: true }, // 0-based; 第一部分 is ind 0
     instructionCn: { type: String, default: null },
     instructionRu: { type: String, default: null },
-    // Example item shown before the real questions (例如), as on the real paper.
-    exampleRu: { type: String, default: null },
 
     // Shared answer set for match-type parts: the A-F picture strip, or the word
     // bank of a fill-in-the-blank part. Questions in the part answer with a label.
+    // Each entry's own hasImage/imagePrompt is used when every letter is its own
+    // separate picture (reading's picture-match parts).
     bank: { type: [ChoiceSchema], default: [] },
+
+    // Alternative to per-entry bank pictures: ONE combined picture showing all
+    // the bank's letters together (e.g. HSK 1 listening part 3's A-F strip),
+    // the same idea as a listening-choice question's single 3-in-1 picture -
+    // one file to generate/upload instead of one per letter. When set, this
+    // takes over the bank's picture display entirely; per-entry bank images are
+    // not used alongside it.
+    bankHasImage: { type: Boolean, default: false },
+    bankImagePrompt: { type: String, default: null },
+
+    // Worked example(s) shown before the real questions (例如), as on the real
+    // paper - e.g. a real listening part shows the actual picture the example
+    // sentence describes, not just a caption. Reuses QuestionSchema as-is: an
+    // example is structurally a question (same image/audio/options), just
+    // rendered pre-answered and excluded from scoring. `number` stays null.
+    // Most parts have one; the true/false parts show two (a ✓ case, a ✗ case).
+    examples: { type: [QuestionSchema], default: [] },
 
     questions: { type: [QuestionSchema], default: [] },
   },
@@ -110,6 +131,9 @@ const SectionSchema = new Schema(
     titleCn: { type: String, default: null },
     titleRu: { type: String, default: null },
     durationMinutes: { type: Number, default: null },
+    // One continuous recording for the entire section, as on a real exam paper -
+    // the alternative to per-question audio, not an addition to it.
+    hasAudio: { type: Boolean, default: false },
     parts: { type: [PartSchema], default: [] },
   },
   { _id: false }

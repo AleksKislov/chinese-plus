@@ -41,10 +41,15 @@ const mongoose = require('mongoose');
 const { connectDB } = require('../src/mongo_db/db');
 const HskExam = require('../src/models/HskExam');
 const {
+  getSectionAudioKey,
   getQuestionAudioKey,
   getQuestionImageKey,
   getBankImageKey,
+  getPartBankImageKey,
   getOptionImageKey,
+  getExampleAudioKey,
+  getExampleImageKey,
+  getExampleOptionImageKey,
 } = require('../src/api/services/hsk-exams/media-paths');
 
 const DEFAULT_DIR = path.join(__dirname, '..', 'content', 'hsk-exams');
@@ -87,15 +92,76 @@ function findJsonFiles(dir) {
 }
 
 /**
- * Validates one parsed exam. Returns a list of human-readable problems - an
- * empty list means the exam is importable. Everything is checked in one pass so
- * a bad file reports all of its problems at once instead of one per re-run.
+ * Checks one question-shaped item - a real question or a worked example
+ * (part.examples reuses the exact same shape, see HskExam.js) - against its
+ * questionType's answer rules. Shared so an example is held to the same bar
+ * as the real question it demonstrates: a bad example is just as broken as a
+ * bad question.
+ */
+function validateQuestionLike(q, qLoc, { bankLabels, sectionType, at, errors, warnings }) {
+  if (!q.questionType) {
+    errors.push(at(`${qLoc}.questionType: required`));
+    return;
+  }
+
+  (q.options || []).forEach((o, oInd) => {
+    if (!o.label) errors.push(at(`${qLoc}.options[${oInd}].label: required`));
+    if (o.hasImage && !o.imagePrompt)
+      errors.push(at(`${qLoc}.options[${oInd}].imagePrompt: required when hasImage is true`));
+  });
+
+  const optionLabels = (q.options || []).map((o) => o.label);
+  const usesBank = BANK_ANSWER_TYPES.includes(q.questionType);
+  const validLabels = usesBank ? bankLabels : optionLabels;
+
+  if (UNGRADED_TYPES.includes(q.questionType)) {
+    // essays have no key - nothing to check
+  } else if (FREE_TEXT_TYPES.includes(q.questionType)) {
+    if (!q.correctAnswer) errors.push(at(`${qLoc}.correctAnswer: required`));
+  } else if (!q.correctAnswer) {
+    errors.push(at(`${qLoc}.correctAnswer: required`));
+  } else if (!validLabels.includes(q.correctAnswer)) {
+    errors.push(
+      at(
+        `${qLoc}.correctAnswer "${q.correctAnswer}" is not one of the ` +
+          `${usesBank ? 'part bank' : 'question option'} labels ` +
+          `[${validLabels.join(', ') || 'none'}]`
+      )
+    );
+  }
+
+  if (usesBank && !bankLabels.length)
+    errors.push(at(`${qLoc}: type "${q.questionType}" needs a non-empty bank on this part`));
+  if (
+    !usesBank &&
+    !optionLabels.length &&
+    !FREE_TEXT_TYPES.includes(q.questionType) &&
+    !UNGRADED_TYPES.includes(q.questionType)
+  )
+    errors.push(at(`${qLoc}.options: required for type "${q.questionType}"`));
+
+  // A transcript is only needed to synthesise the audio and to reveal the
+  // script after grading. An exam whose audio already exists (a real paper's
+  // recording, rather than TTS) is perfectly importable without one, so this
+  // is a warning rather than a hard error.
+  if (sectionType === 'listening' && q.hasAudio && !q.ttsText)
+    warnings.push(at(`${qLoc}.ttsText: missing - cannot generate TTS or show the transcript`));
+  if (q.hasImage && !q.imagePrompt)
+    errors.push(at(`${qLoc}.imagePrompt: required when hasImage is true`));
+}
+
+/**
+ * Validates one parsed exam. Returns { errors, warnings }: errors abort the
+ * import, warnings are printed and imported anyway. Everything is checked in one
+ * pass so a bad file reports all of its problems at once instead of one per re-run.
  */
 function validateExam(exam, file) {
   const errors = [];
+  const warnings = [];
   const at = (loc) => `${path.basename(file)} ${loc}`;
 
-  if (!exam || typeof exam !== 'object') return [`${path.basename(file)}: not a JSON object`];
+  if (!exam || typeof exam !== 'object')
+    return { errors: [`${path.basename(file)}: not a JSON object`], warnings: [] };
   if (!['old', 'new'].includes(exam.version))
     errors.push(at(`version: expected "old" or "new", got ${JSON.stringify(exam.version)}`));
   if (!exam.level) errors.push(at('level: required'));
@@ -112,6 +178,13 @@ function validateExam(exam, file) {
     if (!Array.isArray(section.parts) || !section.parts.length)
       errors.push(at(`${sLoc}.parts: required, at least one`));
 
+    if (section.hasAudio && (section.parts || []).some((p) => (p.questions || []).some((q) => q.hasAudio)))
+      errors.push(
+        at(
+          `${sLoc}: has section-level audio AND per-question audio - use one or the other`
+        )
+      );
+
     (section.parts || []).forEach((part, pInd) => {
       const pLoc = `${sLoc}.parts[${pInd}]`;
       const bankLabels = (part.bank || []).map((b) => b.label);
@@ -121,63 +194,65 @@ function validateExam(exam, file) {
         if (!b.label) errors.push(at(`${pLoc}.bank[${bInd}].label: required`));
         if (b.hasImage && !b.imagePrompt)
           errors.push(at(`${pLoc}.bank[${bInd}].imagePrompt: required when hasImage is true`));
-        if (!b.hasImage && !b.textCn && !b.textRu)
+        if (!b.hasImage && !part.bankHasImage && !b.textCn && !b.textRu)
           errors.push(at(`${pLoc}.bank[${bInd}]: needs textCn/textRu or hasImage`));
       });
+
+      if (part.bankHasImage && !part.bankImagePrompt)
+        errors.push(at(`${pLoc}.bankImagePrompt: required when bankHasImage is true`));
+      if (part.bankHasImage && (part.bank || []).some((b) => b.hasImage))
+        errors.push(
+          at(`${pLoc}: has bankHasImage AND per-entry bank pictures - use one or the other`)
+        );
 
       if (!Array.isArray(part.questions) || !part.questions.length)
         errors.push(at(`${pLoc}.questions: required, at least one`));
 
+      const ctxCommon = { bankLabels, sectionType: section.type, at, errors, warnings };
+
+      (part.examples || []).forEach((ex, exInd) => {
+        validateQuestionLike(ex, `${pLoc}.examples[${exInd}]`, ctxCommon);
+      });
+
       (part.questions || []).forEach((q, qInd) => {
-        const qLoc = `${pLoc}.questions[${qInd}]`;
-        if (!q.questionType) {
-          errors.push(at(`${qLoc}.questionType: required`));
-          return;
-        }
-
-        (q.options || []).forEach((o, oInd) => {
-          if (!o.label) errors.push(at(`${qLoc}.options[${oInd}].label: required`));
-          if (o.hasImage && !o.imagePrompt)
-            errors.push(at(`${qLoc}.options[${oInd}].imagePrompt: required when hasImage is true`));
-        });
-
-        const optionLabels = (q.options || []).map((o) => o.label);
-        const usesBank = BANK_ANSWER_TYPES.includes(q.questionType);
-        const validLabels = usesBank ? bankLabels : optionLabels;
-
-        if (UNGRADED_TYPES.includes(q.questionType)) {
-          // essays have no key - nothing to check
-        } else if (FREE_TEXT_TYPES.includes(q.questionType)) {
-          if (!q.correctAnswer) errors.push(at(`${qLoc}.correctAnswer: required`));
-        } else if (!q.correctAnswer) {
-          errors.push(at(`${qLoc}.correctAnswer: required`));
-        } else if (!validLabels.includes(q.correctAnswer)) {
-          errors.push(
-            at(
-              `${qLoc}.correctAnswer "${q.correctAnswer}" is not one of the ` +
-                `${usesBank ? 'part bank' : 'question option'} labels ` +
-                `[${validLabels.join(', ') || 'none'}]`
-            )
-          );
-        }
-
-        if (usesBank && !bankLabels.length)
-          errors.push(at(`${qLoc}: type "${q.questionType}" needs a non-empty ${pLoc}.bank`));
-        if (!usesBank && !optionLabels.length && !FREE_TEXT_TYPES.includes(q.questionType) &&
-          !UNGRADED_TYPES.includes(q.questionType))
-          errors.push(at(`${qLoc}.options: required for type "${q.questionType}"`));
-
-        // Listening questions are answered from audio, so a missing script means
-        // the question can never be rendered even once media generation runs.
-        if (section.type === 'listening' && q.hasAudio !== false && !q.ttsText)
-          errors.push(at(`${qLoc}.ttsText: required for a listening question with audio`));
-        if (q.hasImage && !q.imagePrompt)
-          errors.push(at(`${qLoc}.imagePrompt: required when hasImage is true`));
+        validateQuestionLike(q, `${pLoc}.questions[${qInd}]`, ctxCommon);
       });
     });
   });
 
-  return errors;
+  return { errors, warnings };
+}
+
+/**
+ * Maps one question-shaped item (a real question or a worked example) into the
+ * schema's QuestionSchema shape. `number` is only ever assigned to real
+ * questions - an example never gets a printed number and never advances the
+ * running count, matching how the real paper numbers only the graded items.
+ */
+function mapQuestionLike(q, ind, number) {
+  return {
+    ind,
+    number,
+    questionType: q.questionType,
+    promptCn: q.promptCn ?? null,
+    promptRu: q.promptRu ?? null,
+    pinyin: q.pinyin ?? null,
+    ttsText: q.ttsText ?? null,
+    hasAudio: Boolean(q.hasAudio),
+    audioStartSec: q.audioStartSec ?? null,
+    hasImage: Boolean(q.hasImage),
+    imagePrompt: q.imagePrompt ?? null,
+    options: (q.options || []).map((o) => ({
+      label: o.label,
+      textCn: o.textCn ?? null,
+      textRu: o.textRu ?? null,
+      pinyin: o.pinyin ?? null,
+      hasImage: Boolean(o.hasImage),
+      imagePrompt: o.imagePrompt ?? null,
+    })),
+    correctAnswer: q.correctAnswer ?? null,
+    explanationRu: q.explanationRu ?? null,
+  };
 }
 
 /**
@@ -193,11 +268,11 @@ function toDocument(exam) {
       titleCn: section.titleCn ?? null,
       titleRu: section.titleRu ?? null,
       durationMinutes: section.durationMinutes ?? null,
+      hasAudio: Boolean(section.hasAudio),
       parts: section.parts.map((part, pInd) => ({
         ind: part.ind ?? pInd,
         instructionCn: part.instructionCn ?? null,
         instructionRu: part.instructionRu ?? null,
-        exampleRu: part.exampleRu ?? null,
         bank: (part.bank || []).map((b) => ({
           label: b.label,
           textCn: b.textCn ?? null,
@@ -206,28 +281,12 @@ function toDocument(exam) {
           hasImage: Boolean(b.hasImage),
           imagePrompt: b.imagePrompt ?? null,
         })),
-        questions: part.questions.map((q, qInd) => ({
-          ind: q.ind ?? qInd,
-          number: q.number ?? runningNumber++,
-          questionType: q.questionType,
-          promptCn: q.promptCn ?? null,
-          promptRu: q.promptRu ?? null,
-          pinyin: q.pinyin ?? null,
-          ttsText: q.ttsText ?? null,
-          hasAudio: Boolean(q.hasAudio),
-          hasImage: Boolean(q.hasImage),
-          imagePrompt: q.imagePrompt ?? null,
-          options: (q.options || []).map((o) => ({
-            label: o.label,
-            textCn: o.textCn ?? null,
-            textRu: o.textRu ?? null,
-            pinyin: o.pinyin ?? null,
-            hasImage: Boolean(o.hasImage),
-            imagePrompt: o.imagePrompt ?? null,
-          })),
-          correctAnswer: q.correctAnswer ?? null,
-          explanationRu: q.explanationRu ?? null,
-        })),
+        bankHasImage: Boolean(part.bankHasImage),
+        bankImagePrompt: part.bankImagePrompt ?? null,
+        examples: (part.examples || []).map((ex, exInd) => mapQuestionLike(ex, ex.ind ?? exInd, null)),
+        questions: part.questions.map((q, qInd) =>
+          mapQuestionLike(q, q.ind ?? qInd, q.number ?? runningNumber++)
+        ),
       })),
     };
   });
@@ -278,6 +337,20 @@ function splitTtsLines(text) {
 function collectMedia(exam) {
   const items = [];
   exam.sections.forEach((section) => {
+    if (section.hasAudio) {
+      items.push({
+        kind: 'audio',
+        key: getSectionAudioKey({
+          version: exam.version,
+          level: String(exam.level),
+          slug: exam.slug,
+          sectionType: section.type,
+        }),
+        ttsText: null,
+        ttsLines: null,
+        note: `full ${section.type} section recording (instructions, examples, questions, pauses)`,
+      });
+    }
     section.parts.forEach((part, pInd) => {
       const ctx = {
         version: exam.version,
@@ -287,6 +360,15 @@ function collectMedia(exam) {
         partInd: part.ind ?? pInd,
       };
 
+      if (part.bankHasImage) {
+        items.push({
+          kind: 'image',
+          key: getPartBankImageKey(ctx),
+          prompt: part.bankImagePrompt ?? null,
+          note: `combined bank picture (all letters) of ${section.type} part ${ctx.partInd}`,
+        });
+      }
+
       (part.bank || []).forEach((b) => {
         if (!b.hasImage) return;
         items.push({
@@ -294,6 +376,36 @@ function collectMedia(exam) {
           key: getBankImageKey(ctx, b.label),
           prompt: b.imagePrompt ?? null,
           note: `bank ${b.label} of ${section.type} part ${ctx.partInd}`,
+        });
+      });
+
+      (part.examples || []).forEach((ex, exInd) => {
+        const ind = ex.ind ?? exInd;
+        if (ex.hasAudio) {
+          items.push({
+            kind: 'audio',
+            key: getExampleAudioKey(ctx, ind),
+            ttsText: ex.ttsText ?? null,
+            ttsLines: splitTtsLines(ex.ttsText),
+            note: `${section.type} part ${ctx.partInd} example ${ind}`,
+          });
+        }
+        if (ex.hasImage) {
+          items.push({
+            kind: 'image',
+            key: getExampleImageKey(ctx, ind),
+            prompt: ex.imagePrompt ?? null,
+            note: `${section.type} part ${ctx.partInd} example ${ind}`,
+          });
+        }
+        (ex.options || []).forEach((o) => {
+          if (!o.hasImage) return;
+          items.push({
+            kind: 'image',
+            key: getExampleOptionImageKey(ctx, ind, o.label),
+            prompt: o.imagePrompt ?? null,
+            note: `${section.type} part ${ctx.partInd} example ${ind} option ${o.label}`,
+          });
         });
       });
 
@@ -347,6 +459,7 @@ async function run() {
 
   const parsed = [];
   const allErrors = [];
+  const allWarnings = [];
 
   for (const file of files) {
     let exam;
@@ -358,7 +471,8 @@ async function run() {
     }
     if (ONLY_SLUG && exam.slug !== ONLY_SLUG) continue;
 
-    const errors = validateExam(exam, file);
+    const { errors, warnings } = validateExam(exam, file);
+    allWarnings.push(...warnings);
     if (errors.length) allErrors.push(...errors);
     else parsed.push({ file, exam });
   }
@@ -378,6 +492,12 @@ async function run() {
     allErrors.forEach((e) => console.error(`  - ${e}`));
     console.error('\nNothing was imported. Fix the content and re-run.');
     process.exit(1);
+  }
+
+  if (allWarnings.length) {
+    console.warn(`\n${allWarnings.length} warning(s):`);
+    allWarnings.forEach((w) => console.warn(`  ! ${w}`));
+    console.warn('');
   }
 
   const mode = VALIDATE_ONLY ? 'VALIDATE ONLY' : APPLY ? 'APPLYING' : 'DRY RUN';

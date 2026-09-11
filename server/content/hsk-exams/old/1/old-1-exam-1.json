@@ -25,7 +25,7 @@
             {
               "questionType": "listening-true-false",
               "ttsText": "我喝水。",
-              "hasAudio": true,
+              "hasAudio": false,
               "hasImage": true,
               "imagePrompt": "A woman drinking a glass of water. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
               "options": [
@@ -41,12 +41,13 @@
                 }
               ],
               "correctAnswer": "A",
-              "explanationRu": "На картинке человек пьёт воду — совпадает с 我喝水."
+              "explanationRu": "На картинке человек пьёт воду — совпадает с 我喝水.",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-true-false",
               "ttsText": "他是老师。",
-              "hasAudio": true,
+              "hasAudio": false,
               "hasImage": true,
               "imagePrompt": "A male doctor in a white coat with a stethoscope, standing in a clinic. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
               "options": [
@@ -62,12 +63,13 @@
                 }
               ],
               "correctAnswer": "B",
-              "explanationRu": "На картинке врач (医生), а в аудио — 老师 (учитель)."
+              "explanationRu": "На картинке врач (医生), а в аудио — 老师 (учитель).",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-true-false",
               "ttsText": "这是我的猫。",
-              "hasAudio": true,
+              "hasAudio": false,
               "hasImage": true,
               "imagePrompt": "A small orange cat sitting and facing the viewer. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
               "options": [
@@ -83,12 +85,13 @@
                 }
               ],
               "correctAnswer": "A",
-              "explanationRu": "На картинке кошка (猫)."
+              "explanationRu": "На картинке кошка (猫).",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-true-false",
               "ttsText": "我们看电视。",
-              "hasAudio": true,
+              "hasAudio": false,
               "hasImage": true,
               "imagePrompt": "Two people sitting on a sofa watching a television. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
               "options": [
@@ -104,12 +107,13 @@
                 }
               ],
               "correctAnswer": "A",
-              "explanationRu": "На картинке люди смотрят телевизор (看电视)."
+              "explanationRu": "На картинке люди смотрят телевизор (看电视).",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-true-false",
               "ttsText": "今天下雨。",
-              "hasAudio": true,
+              "hasAudio": false,
               "hasImage": true,
               "imagePrompt": "A bright sunny day with a big sun and clear blue sky. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
               "options": [
@@ -125,7 +129,29 @@
                 }
               ],
               "correctAnswer": "B",
-              "explanationRu": "На картинке солнечно, а в аудио — 下雨 (идёт дождь)."
+              "explanationRu": "На картинке солнечно, а в аудио — 下雨 (идёт дождь).",
+              "audioStartSec": null
+            }
+          ],
+          "examples": [
+            {
+              "questionType": "listening-true-false",
+              "ttsText": "我喝茶。",
+              "hasImage": true,
+              "imagePrompt": "A young woman sitting at a table holding a small cup of hot tea, about to drink. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A"
             }
           ]
         },
@@ -137,197 +163,186 @@
             {
               "questionType": "listening-choice",
               "ttsText": "我吃米饭。",
-              "hasAudio": true,
+              "hasAudio": false,
               "options": [
                 {
-                  "label": "A",
-                  "hasImage": true,
-                  "imagePrompt": "A man eating a bowl of white rice with chopsticks. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "A"
                 },
                 {
-                  "label": "B",
-                  "hasImage": true,
-                  "imagePrompt": "A woman drinking a cup of hot tea. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "B"
                 },
                 {
-                  "label": "C",
-                  "hasImage": true,
-                  "imagePrompt": "A person reading an open book. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "C"
                 }
               ],
               "correctAnswer": "A",
-              "explanationRu": "吃米饭 — есть рис."
+              "explanationRu": "吃米饭 — есть рис.",
+              "audioStartSec": null,
+              "hasImage": true,
+              "imagePrompt": "Three photographs arranged side by side, left to right in order A/B/C: (A) A man eating a bowl of white rice with chopsticks. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (B) A woman drinking a cup of hot tea. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (C) A person reading an open book. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.. Clean studio photography, consistent lighting and framing across all three, plain white backgrounds, no text, no letters, no Chinese characters."
             },
             {
               "questionType": "listening-choice",
               "ttsText": "她在睡觉。",
-              "hasAudio": true,
+              "hasAudio": false,
               "options": [
                 {
-                  "label": "A",
-                  "hasImage": true,
-                  "imagePrompt": "A woman working at a desk with a computer. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "A"
                 },
                 {
-                  "label": "B",
-                  "hasImage": true,
-                  "imagePrompt": "A woman sleeping in bed under a blanket. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "B"
                 },
                 {
-                  "label": "C",
-                  "hasImage": true,
-                  "imagePrompt": "A woman eating at a table. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "C"
                 }
               ],
               "correctAnswer": "B",
-              "explanationRu": "睡觉 — спать."
+              "explanationRu": "睡觉 — спать.",
+              "audioStartSec": null,
+              "hasImage": true,
+              "imagePrompt": "Three photographs arranged side by side, left to right in order A/B/C: (A) A woman working at a desk with a computer. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (B) A woman sleeping in bed under a blanket. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (C) A woman eating at a table. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.. Clean studio photography, consistent lighting and framing across all three, plain white backgrounds, no text, no letters, no Chinese characters."
             },
             {
               "questionType": "listening-choice",
               "ttsText": "爸爸打电话。",
-              "hasAudio": true,
+              "hasAudio": false,
               "options": [
                 {
-                  "label": "A",
-                  "hasImage": true,
-                  "imagePrompt": "A middle-aged man talking on a mobile phone. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "A"
                 },
                 {
-                  "label": "B",
-                  "hasImage": true,
-                  "imagePrompt": "A man watching television on a sofa. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "B"
                 },
                 {
-                  "label": "C",
-                  "hasImage": true,
-                  "imagePrompt": "A man reading a newspaper. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "C"
                 }
               ],
               "correctAnswer": "A",
-              "explanationRu": "打电话 — говорить по телефону."
+              "explanationRu": "打电话 — говорить по телефону.",
+              "audioStartSec": null,
+              "hasImage": true,
+              "imagePrompt": "Three photographs arranged side by side, left to right in order A/B/C: (A) A middle-aged man talking on a mobile phone. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (B) A man watching television on a sofa. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (C) A man reading a newspaper. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.. Clean studio photography, consistent lighting and framing across all three, plain white backgrounds, no text, no letters, no Chinese characters."
             },
             {
               "questionType": "listening-choice",
               "ttsText": "我买苹果。",
-              "hasAudio": true,
+              "hasAudio": false,
               "options": [
                 {
-                  "label": "A",
-                  "hasImage": true,
-                  "imagePrompt": "A person buying clothes in a shop. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "A"
                 },
                 {
-                  "label": "B",
-                  "hasImage": true,
-                  "imagePrompt": "A person buying red apples at a fruit stall. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "B"
                 },
                 {
-                  "label": "C",
-                  "hasImage": true,
-                  "imagePrompt": "A person buying a book. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "C"
                 }
               ],
               "correctAnswer": "B",
-              "explanationRu": "买苹果 — покупать яблоки."
+              "explanationRu": "买苹果 — покупать яблоки.",
+              "audioStartSec": null,
+              "hasImage": true,
+              "imagePrompt": "Three photographs arranged side by side, left to right in order A/B/C: (A) A person buying clothes in a shop. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (B) A person buying red apples at a fruit stall. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (C) A person buying a book. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.. Clean studio photography, consistent lighting and framing across all three, plain white backgrounds, no text, no letters, no Chinese characters."
             },
             {
               "questionType": "listening-choice",
               "ttsText": "我坐飞机。",
-              "hasAudio": true,
+              "hasAudio": false,
               "options": [
                 {
-                  "label": "A",
-                  "hasImage": true,
-                  "imagePrompt": "A yellow taxi car on a street. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "A"
                 },
                 {
-                  "label": "B",
-                  "hasImage": true,
-                  "imagePrompt": "A white passenger airplane flying in the sky. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "B"
                 },
                 {
-                  "label": "C",
-                  "hasImage": true,
-                  "imagePrompt": "A wooden chair standing alone. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+                  "label": "C"
                 }
               ],
               "correctAnswer": "B",
-              "explanationRu": "坐飞机 — лететь на самолёте."
+              "explanationRu": "坐飞机 — лететь на самолёте.",
+              "audioStartSec": null,
+              "hasImage": true,
+              "imagePrompt": "Three photographs arranged side by side, left to right in order A/B/C: (A) A yellow taxi car on a street. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (B) A white passenger airplane flying in the sky. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (C) A wooden chair standing alone. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.. Clean studio photography, consistent lighting and framing across all three, plain white backgrounds, no text, no letters, no Chinese characters."
             }
           ]
         },
         {
           "ind": 2,
           "instructionCn": "第三部分：听对话，选择对应的图片。",
-          "instructionRu": "Прослушайте диалог и выберите подходящую картинку. Одна картинка лишняя.",
+          "instructionRu": "Прослушайте диалог и выберите подходящую картинку.",
           "bank": [
             {
               "label": "A",
-              "textRu": "Врач в больнице",
-              "hasImage": true,
-              "imagePrompt": "A doctor in a white coat standing in a hospital room. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Врач в больнице"
             },
             {
               "label": "B",
-              "textRu": "Ученики в школе",
-              "hasImage": true,
-              "imagePrompt": "Two students sitting at desks in a school classroom. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Ученики в школе"
             },
             {
               "label": "C",
-              "textRu": "Женщина с чашкой чая",
-              "hasImage": true,
-              "imagePrompt": "A woman holding a cup of hot tea with both hands. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Женщина с чашкой чая"
             },
             {
               "label": "D",
-              "textRu": "Мужчина с собакой",
-              "hasImage": true,
-              "imagePrompt": "A man standing next to a friendly brown dog on a lead. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Мужчина с собакой"
             },
             {
               "label": "E",
-              "textRu": "Семья ужинает",
-              "hasImage": true,
-              "imagePrompt": "A family of three sitting at a table eating dinner together. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Семья ужинает"
             },
             {
               "label": "F",
-              "textRu": "Человек читает книгу",
-              "hasImage": true,
-              "imagePrompt": "A person sitting in an armchair reading an open book. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Человек читает книгу"
             }
           ],
           "questions": [
             {
               "questionType": "listening-picture-match",
               "ttsText": "女：你好，你是医生吗？ 男：是，我是医生。",
-              "hasAudio": true,
-              "correctAnswer": "A"
+              "hasAudio": false,
+              "correctAnswer": "A",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-picture-match",
               "ttsText": "男：你喝茶吗？ 女：谢谢，我喝茶。",
-              "hasAudio": true,
-              "correctAnswer": "C"
+              "hasAudio": false,
+              "correctAnswer": "C",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-picture-match",
               "ttsText": "女：这是你的狗吗？ 男：是，是我的狗。",
-              "hasAudio": true,
-              "correctAnswer": "D"
+              "hasAudio": false,
+              "correctAnswer": "D",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-picture-match",
               "ttsText": "男：你在学校吗？ 女：是，我在学校学习。",
-              "hasAudio": true,
-              "correctAnswer": "B"
+              "hasAudio": false,
+              "correctAnswer": "B",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-picture-match",
               "ttsText": "女：你们在做什么？ 男：我们在吃饭。",
-              "hasAudio": true,
-              "correctAnswer": "E"
+              "hasAudio": false,
+              "correctAnswer": "E",
+              "audioStartSec": null
+            }
+          ],
+          "bankHasImage": true,
+          "bankImagePrompt": "Six photographs arranged in a 3x2 grid, labeled in reading order A/B/C/D/E/F: (A) A doctor in a white coat standing in a hospital room. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (B) Two students sitting at desks in a school classroom. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (C) A woman holding a cup of hot tea with both hands. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (D) A man standing next to a friendly brown dog on a lead. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (E) A family of three sitting at a table eating dinner together. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.; (F) A person sitting in an armchair reading an open book. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.. Clean studio photography, consistent lighting and framing across all six, plain white backgrounds, no text, no letters, no Chinese characters.",
+          "examples": [
+            {
+              "questionType": "listening-picture-match",
+              "ttsText": "女：你在做什么？男：我在看书。",
+              "promptCn": "女：你在做什么？男：我在看书。",
+              "pinyin": "Nǚ: Nǐ zài zuò shénme? Nán: Wǒ zài kàn shū.",
+              "correctAnswer": "F"
             }
           ]
         },
@@ -339,7 +354,7 @@
             {
               "questionType": "listening-choice",
               "ttsText": "男：现在几点？ 女：现在三点。 问：现在几点？",
-              "hasAudio": true,
+              "hasAudio": false,
               "options": [
                 {
                   "label": "A",
@@ -361,12 +376,13 @@
                 }
               ],
               "correctAnswer": "B",
-              "explanationRu": "Женщина отвечает 现在三点."
+              "explanationRu": "Женщина отвечает 现在三点.",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-choice",
               "ttsText": "女：你有几个朋友？ 男：我有三个朋友。 问：男的有几个朋友？",
-              "hasAudio": true,
+              "hasAudio": false,
               "options": [
                 {
                   "label": "A",
@@ -388,12 +404,13 @@
                 }
               ],
               "correctAnswer": "A",
-              "explanationRu": "Мужчина отвечает 我有三个朋友."
+              "explanationRu": "Мужчина отвечает 我有三个朋友.",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-choice",
               "ttsText": "男：这个多少钱？ 女：十块。 问：这个多少钱？",
-              "hasAudio": true,
+              "hasAudio": false,
               "options": [
                 {
                   "label": "A",
@@ -415,12 +432,13 @@
                 }
               ],
               "correctAnswer": "B",
-              "explanationRu": "Женщина отвечает 十块."
+              "explanationRu": "Женщина отвечает 十块.",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-choice",
               "ttsText": "女：明天你去哪儿？ 男：我去商店。 问：男的明天去哪儿？",
-              "hasAudio": true,
+              "hasAudio": false,
               "options": [
                 {
                   "label": "A",
@@ -442,12 +460,13 @@
                 }
               ],
               "correctAnswer": "C",
-              "explanationRu": "Мужчина отвечает 我去商店."
+              "explanationRu": "Мужчина отвечает 我去商店.",
+              "audioStartSec": null
             },
             {
               "questionType": "listening-choice",
               "ttsText": "男：你妈妈做什么工作？ 女：她是老师。 问：女的妈妈做什么工作？",
-              "hasAudio": true,
+              "hasAudio": false,
               "options": [
                 {
                   "label": "A",
@@ -469,11 +488,39 @@
                 }
               ],
               "correctAnswer": "B",
-              "explanationRu": "Женщина отвечает 她是老师."
+              "explanationRu": "Женщина отвечает 她是老师.",
+              "audioStartSec": null
+            }
+          ],
+          "examples": [
+            {
+              "questionType": "listening-choice",
+              "ttsText": "下午我去商店，我想买一些水果。他下午去哪里？",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "商店",
+                  "pinyin": "shāngdiàn"
+                },
+                {
+                  "label": "B",
+                  "textCn": "医院",
+                  "pinyin": "yīyuàn"
+                },
+                {
+                  "label": "C",
+                  "textCn": "学校",
+                  "pinyin": "xuéxiào"
+                }
+              ],
+              "correctAnswer": "A",
+              "promptCn": "下午我去商店，我想买一些水果。问：他下午去哪里？",
+              "pinyin": "Xiàwǔ wǒ qù shāngdiàn, wǒ xiǎng mǎi yìxiē shuǐguǒ. Wèn: Tā xiàwǔ qù nǎli?"
             }
           ]
         }
-      ]
+      ],
+      "hasAudio": true
     },
     {
       "type": "reading",
@@ -591,48 +638,78 @@
               "correctAnswer": "B",
               "explanationRu": "На картинке такси (出租车), а слово — 飞机 (самолёт)."
             }
+          ],
+          "examples": [
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "电视",
+              "pinyin": "diànshì",
+              "hasImage": true,
+              "imagePrompt": "An open laptop computer on a desk. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B"
+            },
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "飞机",
+              "pinyin": "fēijī",
+              "hasImage": true,
+              "imagePrompt": "A white passenger airplane flying in the sky. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A"
+            }
           ]
         },
         {
           "ind": 1,
           "instructionCn": "第二部分：看句子，选择对应的图片。",
-          "instructionRu": "Прочитайте предложение и выберите подходящую картинку. Одна картинка лишняя.",
+          "instructionRu": "Прочитайте предложение и выберите подходящую картинку.",
           "bank": [
             {
               "label": "A",
-              "textRu": "Женщина читает книгу",
-              "hasImage": true,
-              "imagePrompt": "A woman sitting and reading an open book. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Женщина читает книгу"
             },
             {
               "label": "B",
-              "textRu": "Мужчина спит",
-              "hasImage": true,
-              "imagePrompt": "A man sleeping peacefully in a bed. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Мужчина спит"
             },
             {
               "label": "C",
-              "textRu": "Ребёнок ест яблоко",
-              "hasImage": true,
-              "imagePrompt": "A child eating a red apple. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Ребёнок ест яблоко"
             },
             {
               "label": "D",
-              "textRu": "Люди смотрят фильм",
-              "hasImage": true,
-              "imagePrompt": "People sitting in a cinema watching a film on a big screen. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Люди смотрят фильм"
             },
             {
               "label": "E",
-              "textRu": "Врач и пациент",
-              "hasImage": true,
-              "imagePrompt": "A doctor examining a patient in a hospital. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Врач и пациент"
             },
             {
               "label": "F",
-              "textRu": "Дождливая погода",
-              "hasImage": true,
-              "imagePrompt": "Heavy rain falling on a cold grey street. Simple flat vector illustration, plain white background, single clear subject, no text, no letters, no Chinese characters, bright friendly colors, textbook illustration style."
+              "textRu": "Дождливая погода"
             }
           ],
           "questions": [
@@ -666,12 +743,22 @@
               "promptRu": "Сын ест яблоко.",
               "correctAnswer": "C"
             }
-          ]
+          ],
+          "examples": [
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "我很喜欢这本书。",
+              "correctAnswer": "A",
+              "pinyin": "Wǒ hěn xǐhuan zhè běn shū."
+            }
+          ],
+          "bankHasImage": true,
+          "bankImagePrompt": "Six photographs arranged in a 3x2 grid, labeled in reading order A/B/C/D/E/F: (A) A woman sitting and reading an open book; (B) A man sleeping peacefully in a bed; (C) A child eating a red apple; (D) People sitting in a cinema watching a film on a big screen; (E) A doctor examining a patient in a hospital; (F) Heavy rain falling on a cold grey street. Clean studio photography, consistent lighting and framing across all six, plain white backgrounds, no text, no letters, no Chinese characters."
         },
         {
           "ind": 2,
           "instructionCn": "第三部分：给问题选择对应的答句。",
-          "instructionRu": "Подберите к каждому вопросу подходящий ответ. Один ответ лишний.",
+          "instructionRu": "Подберите к каждому вопросу подходящий ответ.",
           "bank": [
             {
               "label": "A",
@@ -741,12 +828,20 @@
               "promptRu": "Как дела?",
               "correctAnswer": "E"
             }
+          ],
+          "examples": [
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "你好吗？",
+              "promptRu": "Как дела?",
+              "correctAnswer": "E"
+            }
           ]
         },
         {
           "ind": 3,
           "instructionCn": "第四部分：选词填空。",
-          "instructionRu": "Выберите подходящее слово и вставьте его в пропуск. Одно слово лишнее.",
+          "instructionRu": "Выберите подходящее слово и вставьте его в пропуск.",
           "bank": [
             {
               "label": "A",
@@ -820,6 +915,15 @@
               "promptRu": "Сколько стоит эта книга?",
               "correctAnswer": "E",
               "explanationRu": "多少钱 — «сколько стоит»."
+            }
+          ],
+          "examples": [
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "你（ ）说汉语吗？",
+              "promptRu": "Ты ( ) говорить по-китайски?",
+              "correctAnswer": "D",
+              "explanationRu": "会 выражает приобретённое умение: 你会说汉语吗？ — «Ты умеешь говорить по-китайски?»"
             }
           ]
         }

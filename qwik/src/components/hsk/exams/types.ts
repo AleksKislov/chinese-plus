@@ -35,6 +35,7 @@ export type ExamQuestion = {
   pinyin: string | null;
   ttsText: string | null;
   hasAudio: boolean;
+  audioStartSec: number | null;
   hasImage: boolean;
   options: ExamChoice[];
   correctAnswer: string | null;
@@ -47,8 +48,18 @@ export type ExamPart = {
   ind: number;
   instructionCn: string | null;
   instructionRu: string | null;
-  exampleRu: string | null;
   bank: ExamChoice[];
+  // Alternative to per-entry bank pictures: ONE combined picture covering every
+  // letter (HSK 1 listening part 3's A-F strip). When set, this is the only
+  // bank picture to render - individual bank entries carry no image of their
+  // own alongside it.
+  bankHasImage: boolean;
+  bankImageUrl: string | null;
+  // Worked example(s) shown before the real questions (例如) - same shape as a
+  // real question (same image/audio/options), so the real picture the example
+  // sentence describes renders instead of just a text caption. `number` is
+  // always null; not part of the graded set.
+  examples: ExamQuestion[];
   questions: ExamQuestion[];
 };
 
@@ -59,6 +70,10 @@ export type ExamSection = {
   titleCn: string | null;
   titleRu: string | null;
   durationMinutes: number | null;
+  // One continuous recording for the whole section, as on a real exam paper.
+  // Mutually exclusive with per-question audio.
+  hasAudio: boolean;
+  audioUrl: string | null;
   parts: ExamPart[];
 };
 
@@ -67,6 +82,7 @@ export type HskExamType = {
   version: 'old' | 'new';
   level: string;
   slug: string;
+  isApproved: boolean;
   title: { cn: string | null; ru: string | null };
   descriptionRu: string | null;
   ind: number;
@@ -85,6 +101,7 @@ export type HskExamListItem = {
   durationMinutes: number | null;
   questionsNum: number;
   sectionTypes: ExamSectionType[];
+  isApproved: boolean;
 };
 
 export const SECTION_TITLES_RU: Record<ExamSectionType, string> = {

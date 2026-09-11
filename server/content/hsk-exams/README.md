@@ -212,7 +212,7 @@ Rules that matter for a test rather than a decoration:
 - **Distractor pictures in the same bank must be clearly distinguishable** from
   each other and rendered in the same style, so the choice tests comprehension
   rather than image quality.
-- Export as **WebP** (the key convention the import script emits) and keep them
+- Export as **PNG** (the key convention the import script emits) and keep them
   small — these are illustrations, not photographs.
 
 ## Generating audio
@@ -278,7 +278,7 @@ For exam audio specifically:
       },
       {
         "kind": "image",
-        "key": "hsk-exams/new/1/new-1-exam-1/listening/p0/q0.webp",
+        "key": "hsk-exams/old/1/old-1-h11329/listening/p0/q0.png",
         "prompt": "A young woman sitting at a table holding a small cup of hot tea …",
         "note": "listening part 0 question 0"
       }
