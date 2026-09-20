@@ -84,6 +84,7 @@ export default component$(() => {
                     <details class="z-40">
                       <summary>HSK</summary>
                       <ul class="w-52 bg-base-200">
+                        <MenuLink href="/hsk/exams/" text="Экзамены" />
                         <MenuItemNew name={hsk2.name} links={hsk2.links} />
                         <MenuItemNew name={hsk3.name} links={hsk3.links} />
                       </ul>
@@ -121,6 +122,7 @@ export default component$(() => {
                 </MenuDropdownGroup>
 
                 <MenuDropdownGroup name="HSK">
+                  <MenuLink href="/hsk/exams/" text="Экзамены" />
                   <MenuItemNew name={hsk2.name} links={hsk2.links} />
                   <MenuItemNew name={hsk3.name} links={hsk3.links} />
                 </MenuDropdownGroup>
@@ -298,7 +300,7 @@ export const blog: MenuItemProps = {
 };
 
 export const hsk3: MenuItemProps = {
-  name: 'HSK 3.0',
+  name: 'Лексика HSK 3.0',
   links: [
     {
       href: '/hsk/3/table',
@@ -316,7 +318,7 @@ export const hsk3: MenuItemProps = {
 };
 
 export const hsk2: MenuItemProps = {
-  name: 'HSK 2.0',
+  name: 'Лексика HSK 2.0',
   links: [
     {
       href: '/hsk/2/table',

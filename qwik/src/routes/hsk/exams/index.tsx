@@ -1,5 +1,6 @@
 import { component$, useContext } from '@builder.io/qwik';
 import { type DocumentHead, routeLoader$, useLocation, Link } from '@builder.io/qwik-city';
+import CONST_URLS from '~/misc/consts/urls';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
@@ -169,13 +170,21 @@ export default component$(() => {
   );
 });
 
-export const head: DocumentHead = {
-  title: 'Chinese+ Пробные экзамены HSK',
-  meta: [
-    {
-      name: 'description',
-      content:
-        'Полноформатные пробные экзамены HSK: аудирование, чтение и письмо с проверкой ответов и пояснениями.',
-    },
-  ],
+export const head: DocumentHead = () => {
+  const title = 'Chinese+ Пробные экзамены HSK';
+  const description =
+    'Полноформатные пробные экзамены HSK: аудирование, чтение и письмо с проверкой ответов и пояснениями.';
+  const url = `${CONST_URLS.siteUrl}/hsk/exams/`;
+
+  return {
+    title,
+    meta: [
+      { name: 'description', content: description },
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: description },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: url },
+      { property: 'og:image', content: CONST_URLS.defaultTextPic },
+    ],
+  };
 };

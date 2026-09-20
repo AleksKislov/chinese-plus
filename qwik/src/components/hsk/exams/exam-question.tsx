@@ -146,8 +146,14 @@ export const ExamQuestionCard = component$<Props>(
                 </div>
               )}
 
+              {/* A listening question's own pinyin is the answer transcript, so
+                  it stays hidden while ungraded - but a worked example is
+                  already shown pre-answered (see exampleLabel below), so its
+                  pinyin is never a spoiler and always renders. */}
+              {(exampleLabel || !q.questionType.startsWith('listening')) && q.pinyin && (
+                <p class="text-sm opacity-70 lowercase mb-1">{q.pinyin}</p>
+              )}
               {q.promptCn && <p class="text-lg mb-1">{q.promptCn}</p>}
-              {q.pinyin && <p class="text-sm opacity-70 lowercase mb-1">{q.pinyin}</p>}
 
               {isFreeText(q.questionType) || ungraded ? (
                 ungraded ? (

@@ -1,5 +1,6 @@
 import { component$, useContext, useStore, useSignal, $ } from '@builder.io/qwik';
 import { type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
+import CONST_URLS from '~/misc/consts/urls';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
@@ -319,16 +320,20 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const exam = resolveValue(useGetExam);
-  const title = exam?.title.ru || exam?.title.cn || 'Пробный экзамен HSK';
+  const title = `Chinese+ ${exam?.title.ru || exam?.title.cn || 'Пробный экзамен HSK'}`;
+  const description =
+    exam?.descriptionRu || 'Полноформатный пробный экзамен HSK с проверкой ответов и пояснениями.';
+  const url = `${CONST_URLS.siteUrl}/hsk/exams/${exam?.slug || ''}/`;
+
   return {
-    title: `Chinese+ ${title}`,
+    title,
     meta: [
-      {
-        name: 'description',
-        content:
-          exam?.descriptionRu ||
-          'Полноформатный пробный экзамен HSK с проверкой ответов и пояснениями.',
-      },
+      { name: 'description', content: description },
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: description },
+      { property: 'og:type', content: 'article' },
+      { property: 'og:url', content: url },
+      { property: 'og:image', content: CONST_URLS.defaultTextPic },
     ],
   };
 };
