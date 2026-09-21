@@ -36,6 +36,13 @@ export const getCoverImage = (content: BlogBlock[] | undefined): string => {
   return '';
 };
 
+// a text line that is entirely [h3]...[/h3] renders as a section heading
+export const HEADING_REGEX = /^\[h3\](.+)\[\/h3\]$/i;
+
+// markup is rendered, not displayed, so it must never leak into previews,
+// meta descriptions or the rss feed
+export const stripBlogTags = (text: string): string => text.replace(/\[\/?h3\]/gi, '');
+
 // the card description is the post's own text, not a separately stored field
 export const getPreviewText = (content: BlogBlock[] | undefined, maxLen = 180): string => {
   const firstText = (content || []).find(
@@ -43,7 +50,7 @@ export const getPreviewText = (content: BlogBlock[] | undefined, maxLen = 180): 
   );
   if (!firstText) return '';
 
-  const text = firstText.text.trim();
+  const text = stripBlogTags(firstText.text).trim();
   return text.length > maxLen ? text.slice(0, maxLen).trimEnd() + '…' : text;
 };
 

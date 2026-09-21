@@ -3,7 +3,14 @@ import { countZnChars } from './count-zn-chars';
 import { parseTextWords } from './parse-text-words';
 import { getContentPath, withSlug } from './get-content-path';
 import { parseTags } from './parse-tags';
-import { newBlogBlock, getCoverImage, getPreviewText, getVideoEmbedUrl } from './blog-blocks';
+import {
+  newBlogBlock,
+  getCoverImage,
+  getPreviewText,
+  getVideoEmbedUrl,
+  stripBlogTags,
+  HEADING_REGEX,
+} from './blog-blocks';
 
 export {
   parseVideoWords,
@@ -16,6 +23,8 @@ export {
   getCoverImage,
   getPreviewText,
   getVideoEmbedUrl,
+  stripBlogTags,
+  HEADING_REGEX,
 };
 export type {
   BlogBlock,

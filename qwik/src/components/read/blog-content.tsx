@@ -1,5 +1,5 @@
 import { component$, useSignal } from '@builder.io/qwik';
-import { type BlogBlock, getVideoEmbedUrl } from '~/misc/helpers/content';
+import { type BlogBlock, getVideoEmbedUrl, HEADING_REGEX } from '~/misc/helpers/content';
 import { Paragraph } from './paragraph';
 import { FontSizeBtns } from '../common/content-cards/content-page-card';
 import { BlogCarousel } from './blog-carousel';
@@ -23,11 +23,23 @@ export const BlogContent = component$(({ content, tooltipsByBlock }: BlogContent
             .split('\n')
             .map((line) => line.trim())
             .filter(Boolean)
-            .map((line, i) => (
-              <p key={`${ind}-${i}`}>
-                <LinkedText text={line} />
-              </p>
-            ));
+            .map((line, i) => {
+              // a whole line wrapped in [h3]...[/h3] becomes a section heading
+              const heading = line.match(HEADING_REGEX);
+              if (heading) {
+                return (
+                  <h3 key={`${ind}-${i}`}>
+                    <LinkedText text={heading[1].trim()} />
+                  </h3>
+                );
+              }
+
+              return (
+                <p key={`${ind}-${i}`}>
+                  <LinkedText text={line} />
+                </p>
+              );
+            });
         }
 
         if (block.type === 'image') {
