@@ -14,6 +14,7 @@ type ParagraphProps = {
   showTranslation: boolean;
   forEditing?: boolean;
   hideParagNum?: boolean;
+  showPinyin?: boolean;
 };
 
 export const Paragraph = component$(
@@ -27,16 +28,23 @@ export const Paragraph = component$(
     showTranslation,
     forEditing,
     hideParagNum,
+    showPinyin,
   }: ParagraphProps) => {
     const blockClass = 'my-1 rounded-md p-2 relative bg-base-200';
     const paragNum = ind + 1;
 
     return (
       <div class={`grid ${showTranslation ? 'lg:grid-cols-2' : ''} grid-cols-1 gap-2`}>
-        <div class={`${blockClass} ${FontSizeMap[fontSize]}`}>
+        <div class={`${blockClass} ${FontSizeMap[fontSize]} ${showPinyin ? 'leading-[2.2]' : ''}`}>
           {!hideParagNum && <ParagNum num={paragNum} />}
           {tooltipedParag.map((word, i) => (
-            <WordTooltip key={i} word={word} currentWord={currentWord} hasReddened={undefined} />
+            <WordTooltip
+              key={i}
+              word={word}
+              currentWord={currentWord}
+              hasReddened={undefined}
+              showPinyin={showPinyin}
+            />
           ))}
           {!forEditing && <ParagPlus strLen={strLen} ind={ind} />}
         </div>

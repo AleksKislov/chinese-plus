@@ -54,6 +54,7 @@ export const TextMainContent = component$(
       audioSrc: hasAudio,
       isApproved,
       user: textAuthor,
+      level,
     } = text;
 
     const yandexAds = configState.find((x) => x.type === YANDEX_ADS.banner);
@@ -62,6 +63,7 @@ export const TextMainContent = component$(
     const isLongTxt = Boolean(pages && pages.length);
     const currentWord = useSignal<DictWord | null>(null);
     const showTranslation = useSignal(true);
+    const showPinyin = useSignal(level === 1);
 
     const editChineseArrModalId = 'editChineseArrModalId';
 
@@ -69,7 +71,11 @@ export const TextMainContent = component$(
       <MainContent>
         <Alerts />
 
-        <TextHeadBtns showTranslation={showTranslation} fontSizeSig={fontSizeSig} />
+        <TextHeadBtns
+          showTranslation={showTranslation}
+          fontSizeSig={fontSizeSig}
+          showPinyin={showPinyin}
+        />
 
         {isLongTxt && <LongTxtPagination numOfPages={pages.length} curPage={curPage} />}
 
@@ -85,6 +91,7 @@ export const TextMainContent = component$(
             ind={i}
             currentWord={currentWord}
             showTranslation={showTranslation.value}
+            showPinyin={showPinyin.value}
           />
         ))}
         <div>{restLoading && <Loader />}</div>

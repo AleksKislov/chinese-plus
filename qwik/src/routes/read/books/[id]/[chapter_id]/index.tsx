@@ -68,6 +68,7 @@ export default component$(() => {
   const pageLoader = useGetBookPage();
   const currentWord = useSignal<DictWord | null>(null);
   const showTranslation = useSignal(false);
+  const showPinyin = useSignal(false);
   const fontSizeSig = useSignal(FontSizeBtns.md);
 
   const addressees = useSignal<Addressee[]>([]);
@@ -97,7 +98,11 @@ export default component$(() => {
             <h3>{getChapterTitle(loc.params.chapter_id)}</h3>
           </div>
 
-          <TextHeadBtns showTranslation={showTranslation} fontSizeSig={fontSizeSig} />
+          <TextHeadBtns
+            showTranslation={showTranslation}
+            fontSizeSig={fontSizeSig}
+            showPinyin={showPinyin}
+          />
 
           {Array.from({ length: Math.max(page.translation.length, tooltipTxt.length) }).map(
             (_, i) => (
@@ -110,6 +115,7 @@ export default component$(() => {
                 ind={i}
                 currentWord={currentWord}
                 showTranslation={showTranslation.value}
+                showPinyin={showPinyin.value}
               />
             ),
           )}
