@@ -55,6 +55,14 @@ export type ExamPart = {
   // own alongside it.
   bankHasImage: boolean;
   bankImageUrl: string | null;
+  // Set at content authoring time and never touched by upload/delete - unlike
+  // bankHasImage (which the admin upload/delete endpoints flip to track
+  // whether the file currently exists), this only reflects which of the two
+  // bank-picture layouts the part was written for. Use this, not
+  // bankHasImage, to decide which layout to render - otherwise deleting the
+  // combined picture flips bankHasImage to false and strands the part in the
+  // per-letter layout with no way back.
+  bankImagePrompt: string | null;
   // Worked example(s) shown before the real questions (例如) - same shape as a
   // real question (same image/audio/options), so the real picture the example
   // sentence describes renders instead of just a text caption. `number` is

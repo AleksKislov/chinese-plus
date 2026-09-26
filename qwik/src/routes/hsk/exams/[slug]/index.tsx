@@ -160,8 +160,13 @@ export default component$(() => {
                   )}
 
                   {/* Shared answer set: the A-F picture strip or word bank the
-                      questions in this part are answered from. */}
-                  {part.bankHasImage ? (
+                      questions in this part are answered from. Branches on
+                      bankImagePrompt (fixed at content authoring time), not
+                      bankHasImage (which upload/delete flip as the file comes
+                      and goes) - otherwise deleting the combined picture would
+                      strand the part in the per-letter layout with no way
+                      back to re-upload it. */}
+                  {part.bankImagePrompt != null ? (
                     // ONE combined picture for the whole bank (all letters together) -
                     // one file to generate/upload instead of one per letter, the same
                     // idea as a listening-choice question's single 3-in-1 picture.
