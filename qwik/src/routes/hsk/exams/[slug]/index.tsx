@@ -38,6 +38,10 @@ export default component$(() => {
   // questionKey() -> chosen label or typed text
   const answers = useStore<Record<string, string>>({});
   const isChecked = useSignal(false);
+  // Old HSK 2 has its own line-by-line layout (see ExamQuestionCard's variant);
+  // every other paper keeps the default rendering.
+  const cardVariant =
+    exam.value.version === 'old' && exam.value.level === '2' ? ('old-2' as const) : undefined;
 
   const gradeable = exam.value.sections.flatMap((section, sInd) =>
     section.parts.flatMap((part, pInd) =>
@@ -259,6 +263,7 @@ export default component$(() => {
                       answer={ex.correctAnswer ?? undefined}
                       isChecked={true}
                       exampleLabel={part.examples.length > 1 ? `Пример ${exInd + 1}` : 'Пример'}
+                      variant={cardVariant}
                       admin={
                         isAdmin
                           ? { slug: exam.value.slug, sectionType: section.type, isExample: true }
@@ -277,6 +282,7 @@ export default component$(() => {
                         part={part}
                         answer={answers[key]}
                         isChecked={isChecked.value}
+                        variant={cardVariant}
                         sectionAudioId={
                           section.audioUrl ? `section-audio-${section.type}` : undefined
                         }

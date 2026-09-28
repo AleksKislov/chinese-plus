@@ -1,0 +1,1430 @@
+{
+  "version": "old",
+  "level": "2",
+  "slug": "old-2-h21334",
+  "ind": 5,
+  "durationMinutes": 55,
+  "title": {
+    "cn": "HSK（二级）H21334",
+    "ru": "HSK 2 — экзамен H21334"
+  },
+  "descriptionRu": "Официальный пробный экзамен HSK 2 (вариант H21334): 35 заданий на аудирование и 25 на чтение, около 55 минут.",
+  "sections": [
+    {
+      "type": "listening",
+      "titleCn": "一、听力",
+      "titleRu": "Аудирование",
+      "durationMinutes": 25,
+      "hasAudio": true,
+      "parts": [
+        {
+          "ind": 0,
+          "instructionCn": "第一部分：第1-10题。听句子，看图片，判断对错。",
+          "instructionRu": "Прослушайте фразу и посмотрите на картинку. Соответствует ли картинка?",
+          "questions": [
+            {
+              "questionType": "listening-true-false",
+              "number": 1,
+              "hasImage": true,
+              "imagePrompt": "A woman eating a green apple, taking a bite. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "他在喝咖啡。"
+            },
+            {
+              "questionType": "listening-true-false",
+              "number": 2,
+              "hasImage": true,
+              "imagePrompt": "A man in a suit reading a folded newspaper while walking. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "他在打电话。"
+            },
+            {
+              "questionType": "listening-true-false",
+              "number": 3,
+              "hasImage": true,
+              "imagePrompt": "A hand holding a stack of red paper tickets. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "这是票。"
+            },
+            {
+              "questionType": "listening-true-false",
+              "number": 4,
+              "hasImage": true,
+              "imagePrompt": "A young woman with an upset, uncomfortable expression on her face. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "她很高兴。"
+            },
+            {
+              "questionType": "listening-true-false",
+              "number": 5,
+              "hasImage": true,
+              "imagePrompt": "A businesswoman and a businessman shaking hands. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "他们在握手。"
+            },
+            {
+              "questionType": "listening-true-false",
+              "number": 6,
+              "hasImage": true,
+              "imagePrompt": "A man in blue sportswear jogging outdoors. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "他在跑步。"
+            },
+            {
+              "questionType": "listening-true-false",
+              "number": 7,
+              "hasImage": true,
+              "imagePrompt": "A smiling young woman holding an open carton of eggs. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "这是鸡蛋。"
+            },
+            {
+              "questionType": "listening-true-false",
+              "number": 8,
+              "hasImage": true,
+              "imagePrompt": "A small colorful parakeet in a cage next to a girl looking at it. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "她在看电视。"
+            },
+            {
+              "questionType": "listening-true-false",
+              "number": 9,
+              "hasImage": true,
+              "imagePrompt": "A man in a suit holding up his mobile phone to take a photo. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "他在打篮球。"
+            },
+            {
+              "questionType": "listening-true-false",
+              "number": 10,
+              "hasImage": true,
+              "imagePrompt": "Two young women laughing together, one whispering to the other. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "她们很高兴。"
+            }
+          ],
+          "exampleRu": "Например: «我们家有三个人。» (У нас в семье три человека.) — картинка семьи из трёх человек — «верно» (A); «我每天坐公共汽车去上班。» (Каждый день я езжу на работу на автобусе.) — картинка велосипеда — «неверно» (B).",
+          "examples": [
+            {
+              "questionType": "listening-true-false",
+              "ttsText": "我们家有三个人。",
+              "hasImage": true,
+              "imagePrompt": "A happy family of three: a father, a mother and their little daughter hugging and smiling. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A"
+            },
+            {
+              "questionType": "listening-true-false",
+              "ttsText": "我每天坐公共汽车去上班。",
+              "hasImage": true,
+              "imagePrompt": "A grey mountain bicycle standing on its own, side view. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B"
+            }
+          ]
+        },
+        {
+          "ind": 1,
+          "instructionCn": "第二部分：第11-15题。听对话，选择对应的图片。",
+          "instructionRu": "Прослушайте диалог и выберите подходящую картинку.",
+          "bank": [
+            {
+              "label": "A",
+              "textRu": "Мужчина с полотенцем на шее говорит по телефону"
+            },
+            {
+              "label": "B",
+              "textRu": "Чайник наливает чай в чашку"
+            },
+            {
+              "label": "C",
+              "textRu": "Женщина помогает ребёнку писать"
+            },
+            {
+              "label": "D",
+              "textRu": "Девушка чеканит футбольный мяч"
+            },
+            {
+              "label": "E",
+              "textRu": "Деловая женщина смотрит на часы, говорит по телефону"
+            },
+            {
+              "label": "F",
+              "textRu": "Рука держит стопку денег"
+            }
+          ],
+          "questions": [
+            {
+              "questionType": "listening-picture-match",
+              "number": 11,
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "女：你想喝点儿什么？男：来一杯茶吧。"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "number": 12,
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "女：这个字怎么写？男：来，我教你。"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "number": 13,
+              "correctAnswer": "F",
+              "audioStartSec": null,
+              "ttsText": "男：这些钱够买那个吗？女：够了，你看看。"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "number": 14,
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "女：你运动完了？男：是，我正给朋友打电话呢。"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "number": 15,
+              "correctAnswer": "E",
+              "audioStartSec": null,
+              "ttsText": "男：几点了？女：我看看手表，已经八点了。"
+            }
+          ],
+          "exampleRu": "Например: мужчина: «你喜欢什么运动？» — женщина: «我最喜欢踢足球。» (— Каким спортом ты любишь заниматься? — Больше всего люблю играть в футбол.) — правильный ответ D.",
+          "examples": [
+            {
+              "questionType": "listening-picture-match",
+              "ttsText": "男：你喜欢什么运动？女：我最喜欢踢足球。",
+              "correctAnswer": "D",
+              "promptCn": "男：你喜欢什么运动？\n女：我最喜欢踢足球。",
+              "pinyin": "Nán: Nǐ xǐhuan shénme yùndòng?\nNǚ: Wǒ zuì xǐhuan tī zúqiú."
+            }
+          ],
+          "bankHasImage": true,
+          "bankImagePrompt": "Six photographs arranged in a 3x2 grid, labeled in reading order A/B/C/D/E/F: (A) A man with a towel around his neck after exercising, talking on his mobile phone with a hand on his hip; (B) A teapot pouring tea into a small cup; (C) A woman helping a child write, guiding the child's hand over a notebook; (D) A girl in a red football kit juggling a football with her knee; (E) A businesswoman looking at her wristwatch while holding a phone to her ear; (F) A hand holding a stack of paper banknotes. Clean studio photography, consistent lighting and framing across all six, plain white backgrounds, no text, no letters, no Chinese characters."
+        },
+        {
+          "ind": 2,
+          "instructionCn": "第二部分：第16-20题。",
+          "instructionRu": "Прослушайте диалог и выберите подходящую картинку (задания 16–20).",
+          "bank": [
+            {
+              "label": "A",
+              "textRu": "Девушка ест арбуз"
+            },
+            {
+              "label": "B",
+              "textRu": "Белая кошка сидит"
+            },
+            {
+              "label": "C",
+              "textRu": "Двое деловых людей разговаривают, один с телефоном"
+            },
+            {
+              "label": "D",
+              "textRu": "Мужчина фотографирует камерой"
+            },
+            {
+              "label": "E",
+              "textRu": "Люди стоят в очереди"
+            }
+          ],
+          "questions": [
+            {
+              "questionType": "listening-picture-match",
+              "number": 16,
+              "correctAnswer": "E",
+              "audioStartSec": null,
+              "ttsText": "男：你们在等什么？女：等电影票，人很多。"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "number": 17,
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "女：这个西瓜真甜。男：多吃点儿吧。"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "number": 18,
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "男：这是你的猫吗？女：是，它很安静。"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "number": 19,
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "女：你在照相吗？男：是，这儿风景真好。"
+            },
+            {
+              "questionType": "listening-picture-match",
+              "number": 20,
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "男：你的手机号是多少？女：我发短信给你吧。"
+            }
+          ],
+          "examples": [],
+          "bankHasImage": true,
+          "bankImagePrompt": "Five photographs arranged in a 3x2 grid (last cell empty), labeled in reading order A/B/C/D/E: (A) A young woman happily eating a slice of watermelon with both hands; (B) A fluffy white cat sitting calmly, looking at the camera; (C) Two businesspeople talking, one holding out a mobile phone to show the other; (D) A man with a camera around his neck taking a photograph; (E) A line of people standing behind a rope barrier, waiting in a queue. Clean studio photography, consistent lighting and framing across all five, plain white backgrounds, no text, no letters, no Chinese characters."
+        },
+        {
+          "ind": 3,
+          "instructionCn": "第三部分：第21-30题。听对话和问题，选择正确答案。",
+          "instructionRu": "Прослушайте короткий диалог и вопрос, выберите правильный ответ.",
+          "questions": [
+            {
+              "questionType": "listening-choice",
+              "number": 21,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "10：00",
+                  "textRu": "10:00"
+                },
+                {
+                  "label": "B",
+                  "textCn": "11：00",
+                  "textRu": "11:00"
+                },
+                {
+                  "label": "C",
+                  "textCn": "14：00",
+                  "textRu": "14:00"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "男：电影几点开始？女：10点，还有半个小时呢。问：电影几点开始？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 22,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "医院",
+                  "pinyin": "yīyuàn",
+                  "textRu": "больница"
+                },
+                {
+                  "label": "B",
+                  "textCn": "教室",
+                  "pinyin": "jiàoshì",
+                  "textRu": "класс"
+                },
+                {
+                  "label": "C",
+                  "textCn": "火车站",
+                  "pinyin": "huǒchēzhàn",
+                  "textRu": "вокзал"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "女：你在哪儿呢？男：我在火车站，等你的车。问：男的在哪儿？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 23,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "卖东西",
+                  "pinyin": "mài dōngxi",
+                  "textRu": "продавать вещи"
+                },
+                {
+                  "label": "B",
+                  "textCn": "踢足球",
+                  "pinyin": "tī zúqiú",
+                  "textRu": "играть в футбол"
+                },
+                {
+                  "label": "C",
+                  "textCn": "打篮球",
+                  "pinyin": "dǎ lánqiú",
+                  "textRu": "играть в баскетбол"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "男：他们在做什么？女：他们在踢足球呢。问：他们在做什么？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 24,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "跳舞",
+                  "pinyin": "tiàowǔ",
+                  "textRu": "танцевать"
+                },
+                {
+                  "label": "B",
+                  "textCn": "唱歌",
+                  "pinyin": "chànggē",
+                  "textRu": "петь"
+                },
+                {
+                  "label": "C",
+                  "textCn": "起床",
+                  "pinyin": "qǐchuáng",
+                  "textRu": "вставать"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "女：几点了？男：七点了，你该起床了。问：男的让女的做什么？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 25,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "很不错",
+                  "pinyin": "hěn búcuò",
+                  "textRu": "очень неплохое"
+                },
+                {
+                  "label": "B",
+                  "textCn": "不好吃",
+                  "pinyin": "bù hǎochī",
+                  "textRu": "невкусное"
+                },
+                {
+                  "label": "C",
+                  "textCn": "颜色不好",
+                  "pinyin": "yánsè bù hǎo",
+                  "textRu": "плохой цвет"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "男：这个菜怎么样？女：很不错，你也尝尝。问：女的觉得这个菜怎么样？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 26,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "水",
+                  "pinyin": "shuǐ",
+                  "textRu": "вода"
+                },
+                {
+                  "label": "B",
+                  "textCn": "苹果",
+                  "pinyin": "píngguǒ",
+                  "textRu": "яблоко"
+                },
+                {
+                  "label": "C",
+                  "textCn": "报纸",
+                  "pinyin": "bàozhǐ",
+                  "textRu": "газета"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "女：你想喝点儿什么？男：给我一杯水吧。问：男的想喝什么？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 27,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "爸爸",
+                  "pinyin": "bàba",
+                  "textRu": "папа"
+                },
+                {
+                  "label": "B",
+                  "textCn": "朋友",
+                  "pinyin": "péngyou",
+                  "textRu": "друг"
+                },
+                {
+                  "label": "C",
+                  "textCn": "学生",
+                  "pinyin": "xuésheng",
+                  "textRu": "ученик"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "男：那个人是谁？女：他是我朋友，我们认识很多年了。问：那个人是谁？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 28,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "生病了",
+                  "pinyin": "shēngbìng le",
+                  "textRu": "заболел"
+                },
+                {
+                  "label": "B",
+                  "textCn": "要学习",
+                  "pinyin": "yào xuéxí",
+                  "textRu": "нужно учиться"
+                },
+                {
+                  "label": "C",
+                  "textCn": "家里有事",
+                  "pinyin": "jiāli yǒu shì",
+                  "textRu": "дела дома"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "女：他今天怎么没来？男：他家里有事，请假了。问：他今天为什么没来？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 29,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "明天",
+                  "pinyin": "míngtiān",
+                  "textRu": "завтра"
+                },
+                {
+                  "label": "B",
+                  "textCn": "下星期",
+                  "pinyin": "xià xīngqī",
+                  "textRu": "на следующей неделе"
+                },
+                {
+                  "label": "C",
+                  "textCn": "下个月",
+                  "pinyin": "xià ge yuè",
+                  "textRu": "в следующем месяце"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "男：你什么时候回国？女：下星期，机票已经买好了。问：女的什么时候回国？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 30,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "走路",
+                  "pinyin": "zǒulù",
+                  "textRu": "пешком"
+                },
+                {
+                  "label": "B",
+                  "textCn": "开车",
+                  "pinyin": "kāi chē",
+                  "textRu": "на своей машине"
+                },
+                {
+                  "label": "C",
+                  "textCn": "坐出租车",
+                  "pinyin": "zuò chūzūchē",
+                  "textRu": "на такси"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "女：你怎么来的？男：不远，我走路来的。问：男的怎么来的？"
+            }
+          ],
+          "exampleRu": "Например: мужчина: «小王，这里有几个杯子，哪个是你的？» — женщина: «左边那个红色的是我的。» Вопрос: какого цвета стакан Сяо Вана? — правильный ответ A (红色, красный).",
+          "examples": [
+            {
+              "questionType": "listening-choice",
+              "ttsText": "男：小王，这里有几个杯子，哪个是你的？女：左边那个红色的是我的。问：小王的杯子是什么颜色的？",
+              "promptCn": "男：小王，这里有几个杯子，哪个是你的？\n女：左边那个红色的是我的。\n问：小王的杯子是什么颜色的？",
+              "pinyin": "Nán: Xiǎo Wáng, zhèli yǒu jǐ ge bēizi, nǎge shì nǐ de?\nNǚ: Zuǒbian nàge hóngsè de shì wǒ de.\nWèn: Xiǎo Wáng de bēizi shì shénme yánsè de?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "红色",
+                  "pinyin": "hóngsè",
+                  "textRu": "красный"
+                },
+                {
+                  "label": "B",
+                  "textCn": "黑色",
+                  "pinyin": "hēisè",
+                  "textRu": "чёрный"
+                },
+                {
+                  "label": "C",
+                  "textCn": "白色",
+                  "pinyin": "báisè",
+                  "textRu": "белый"
+                }
+              ],
+              "correctAnswer": "A"
+            }
+          ]
+        },
+        {
+          "ind": 4,
+          "instructionCn": "第四部分：第31-35题。听对话和问题，选择正确答案。",
+          "instructionRu": "Прослушайте диалог (4–5 реплик) и вопрос, выберите правильный ответ.",
+          "questions": [
+            {
+              "questionType": "listening-choice",
+              "number": 31,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "多运动",
+                  "pinyin": "duō yùndòng",
+                  "textRu": "больше двигаться"
+                },
+                {
+                  "label": "B",
+                  "textCn": "早睡觉",
+                  "pinyin": "zǎo shuìjiào",
+                  "textRu": "раньше ложиться спать"
+                },
+                {
+                  "label": "C",
+                  "textCn": "慢点儿走",
+                  "pinyin": "màn diǎnr zǒu",
+                  "textRu": "ходить помедленнее"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "男：医生，我最近总是很累。女：你要早点儿睡觉，别太晚了。男：好，我试试。女：对身体好。问：医生让男的怎么做？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 32,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "阴天",
+                  "pinyin": "yīntiān",
+                  "textRu": "пасмурно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "下雨",
+                  "pinyin": "xiàyǔ",
+                  "textRu": "дождь"
+                },
+                {
+                  "label": "C",
+                  "textCn": "下雪",
+                  "pinyin": "xiàxuě",
+                  "textRu": "снег"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "女：明天天气怎么样？男：听说会下雪。女：那我们得多穿点儿。男：是。问：明天天气怎么样？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 33,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "7岁",
+                  "pinyin": "qī suì",
+                  "textRu": "в 7 лет"
+                },
+                {
+                  "label": "B",
+                  "textCn": "一年前",
+                  "pinyin": "yì nián qián",
+                  "textRu": "год назад"
+                },
+                {
+                  "label": "C",
+                  "textCn": "上大学时",
+                  "pinyin": "shàng dàxué shí",
+                  "textRu": "во время учёбы в университете"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "男：你是什么时候认识她的？女：七岁的时候，我们是同班同学。男：这么久了。女：是啊，快二十年了。问：他们是什么时候认识的？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 34,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "米饭太少",
+                  "pinyin": "mǐfàn tài shǎo",
+                  "textRu": "риса слишком мало"
+                },
+                {
+                  "label": "B",
+                  "textCn": "今天不忙",
+                  "pinyin": "jīntiān bù máng",
+                  "textRu": "сегодня не занят"
+                },
+                {
+                  "label": "C",
+                  "textCn": "想吃羊肉",
+                  "pinyin": "xiǎng chī yángròu",
+                  "textRu": "хочет есть баранину"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "女：你今天怎么有空？男：今天不忙，就早点儿下班了。问：男的为什么有空？"
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 35,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "弟弟",
+                  "pinyin": "dìdi",
+                  "textRu": "младший брат"
+                },
+                {
+                  "label": "B",
+                  "textCn": "女儿",
+                  "pinyin": "nǚ'ér",
+                  "textRu": "дочь"
+                },
+                {
+                  "label": "C",
+                  "textCn": "儿子",
+                  "pinyin": "érzi",
+                  "textRu": "сын"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "女：那个孩子是你什么人？男：是我儿子，刚上小学。问：那个孩子是男的什么人？"
+            }
+          ],
+          "exampleRu": "Например: женщина: «请在这儿写您的名字。» — мужчина: «是这儿吗？» — женщина: «不是，是这儿。» — мужчина: «好，谢谢。» Вопрос: что должен написать мужчина? — правильный ответ A (名字, имя).",
+          "examples": [
+            {
+              "questionType": "listening-choice",
+              "ttsText": "女：请在这儿写您的名字。男：是这儿吗？女：不是，是这儿。男：好，谢谢。问：男的要写什么？",
+              "promptCn": "女：请在这儿写您的名字。\n男：是这儿吗？\n女：不是，是这儿。\n男：好，谢谢。\n问：男的要写什么？",
+              "pinyin": "Nǚ: Qǐng zài zhèr xiě nín de míngzi.\nNán: Shì zhèr ma?\nNǚ: Bú shì, shì zhèr.\nNán: Hǎo, xièxie.\nWèn: Nán de yào xiě shénme?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "名字",
+                  "pinyin": "míngzi",
+                  "textRu": "имя"
+                },
+                {
+                  "label": "B",
+                  "textCn": "时间",
+                  "pinyin": "shíjiān",
+                  "textRu": "время"
+                },
+                {
+                  "label": "C",
+                  "textCn": "房间号",
+                  "pinyin": "fángjiān hào",
+                  "textRu": "номер комнаты"
+                }
+              ],
+              "correctAnswer": "A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "reading",
+      "titleCn": "二、阅读",
+      "titleRu": "Чтение",
+      "durationMinutes": 22,
+      "parts": [
+        {
+          "ind": 0,
+          "instructionCn": "第一部分：第36-40题。看句子，选择对应的图片。",
+          "instructionRu": "Прочитайте предложение и выберите подходящую картинку.",
+          "exampleRu": "Например: 每个星期六，我都去打篮球。 — ответ D.",
+          "bank": [
+            {
+              "label": "A",
+              "textRu": "Стакан с цветными карандашами"
+            },
+            {
+              "label": "B",
+              "textRu": "Мужчина пьёт воду из бутылки"
+            },
+            {
+              "label": "C",
+              "textRu": "Женщина моет машину"
+            },
+            {
+              "label": "D",
+              "textRu": "Девушка бросает баскетбольный мяч"
+            },
+            {
+              "label": "E",
+              "textRu": "Подарочная коробка с бантом"
+            },
+            {
+              "label": "F",
+              "textRu": "Пара читает вместе на диване"
+            }
+          ],
+          "questions": [
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "这个车有多长时间没洗了？",
+              "pinyin": "Zhège chē yǒu duō cháng shíjiān méi xǐ le?",
+              "promptRu": "Сколько времени эту машину не мыли?",
+              "correctAnswer": "C",
+              "number": 36
+            },
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "生日快乐！希望你喜欢。",
+              "pinyin": "Shēngrì kuàilè! Xīwàng nǐ xǐhuan.",
+              "promptRu": "С днём рождения! Надеюсь, тебе понравится.",
+              "correctAnswer": "E",
+              "number": 37
+            },
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "这本书很有意思，你也看看。",
+              "pinyin": "Zhè běn shū hěn yǒuyìsi, nǐ yě kànkan.",
+              "promptRu": "Эта книга очень интересная, ты тоже почитай.",
+              "correctAnswer": "F",
+              "number": 38
+            },
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "牛奶是我昨天中午买的，还能喝吗？",
+              "pinyin": "Niúnǎi shì wǒ zuótiān zhōngwǔ mǎi de, hái néng hē ma?",
+              "promptRu": "Молоко я купил(а) вчера в обед, его ещё можно пить?",
+              "correctAnswer": "B",
+              "number": 39
+            },
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "哥，你那儿有黄色的铅笔吗？",
+              "pinyin": "Gē, nǐ nàr yǒu huángsè de qiānbǐ ma?",
+              "promptRu": "Брат, у тебя есть жёлтый карандаш?",
+              "correctAnswer": "A",
+              "number": 40
+            }
+          ],
+          "bankHasImage": true,
+          "bankImagePrompt": "Six photographs arranged in a 3x2 grid, labeled in reading order A/B/C/D/E/F: (A) A cup holding many colorful sharpened pencils; (B) A man drinking water from a bottle; (C) A woman crouching to wash a car with a sponge; (D) A young woman in a red sports vest about to throw a basketball; (E) A wrapped gift box tied with a red ribbon; (F) A couple sitting together on a sofa, reading a book together. Clean studio photography, consistent lighting and framing across all six, plain white backgrounds, no text, no letters, no Chinese characters.",
+          "examples": [
+            {
+              "questionType": "reading-picture-match",
+              "promptCn": "每个星期六，我都去打篮球。",
+              "pinyin": "Měi ge xīngqīliù, wǒ dōu qù dǎ lánqiú.",
+              "correctAnswer": "D"
+            }
+          ]
+        },
+        {
+          "ind": 1,
+          "instructionCn": "第二部分：第41-45题。选词填空。",
+          "instructionRu": "Выберите подходящее слово и вставьте его в пропуск.",
+          "exampleRu": "Например: 这儿的羊肉很好吃，但是也很（贵）。 — ответ E.",
+          "bank": [
+            {
+              "label": "A",
+              "textCn": "累",
+              "pinyin": "lèi",
+              "textRu": "уставший"
+            },
+            {
+              "label": "B",
+              "textCn": "旁边",
+              "pinyin": "pángbiān",
+              "textRu": "рядом"
+            },
+            {
+              "label": "C",
+              "textCn": "介绍",
+              "pinyin": "jièshào",
+              "textRu": "знакомить, представлять"
+            },
+            {
+              "label": "D",
+              "textCn": "已经",
+              "pinyin": "yǐjīng",
+              "textRu": "уже"
+            },
+            {
+              "label": "E",
+              "textCn": "贵",
+              "pinyin": "guì",
+              "textRu": "дорогой"
+            },
+            {
+              "label": "F",
+              "textCn": "告诉",
+              "pinyin": "gàosu",
+              "textRu": "рассказать, сказать"
+            }
+          ],
+          "questions": [
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "她笑着说：\"我（     ）知道了。\"",
+              "pinyin": "Tā xiàozhe shuō: \"Wǒ (     ) zhīdào le.\"",
+              "promptRu": "Она сказала с улыбкой: «Я уже знаю».",
+              "correctAnswer": "D",
+              "number": 41,
+              "explanationRu": "已经知道了 — «уже знаю»."
+            },
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "你和他是同学？我还想（     ）你们认识呢。",
+              "pinyin": "Nǐ hé tā shì tóngxué? Wǒ hái xiǎng (     ) nǐmen rènshi ne.",
+              "promptRu": "Вы с ним однокурсники? А я как раз хотел вас познакомить.",
+              "correctAnswer": "C",
+              "number": 42,
+              "explanationRu": "介绍你们认识 — «познакомить вас»."
+            },
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "怎么样？忙了一天（     ）了吧？",
+              "pinyin": "Zěnmeyàng? Mángle yì tiān (     ) le ba?",
+              "promptRu": "Ну как? Наверное, устал(а) после целого дня дел?",
+              "correctAnswer": "A",
+              "number": 43,
+              "explanationRu": "忙了一天累了 — «устал после дня работы»."
+            },
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "老师（     ）我，要想学好汉语，听说读写一个都不能少。",
+              "pinyin": "Lǎoshī (     ) wǒ, yào xiǎng xuéhǎo Hànyǔ, tīng shuō dú xiě yí ge dōu bù néng shǎo.",
+              "promptRu": "Учитель сказал мне: чтобы хорошо выучить китайский, нужны и слушание, и говорение, и чтение, и письмо.",
+              "correctAnswer": "F",
+              "number": 44,
+              "explanationRu": "老师告诉我 — «учитель сказал мне»."
+            },
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "女：还有多远？\n男：快了，就在前面那个商店（     ）。",
+              "pinyin": "Nǚ: Hái yǒu duō yuǎn?\nNán: Kuài le, jiù zài qiánmiàn nàge shāngdiàn (     ).",
+              "promptRu": "— Далеко ещё? — Уже скоро, прямо рядом с тем магазином впереди.",
+              "correctAnswer": "B",
+              "number": 45,
+              "explanationRu": "商店旁边 — «рядом с магазином»."
+            }
+          ],
+          "examples": [
+            {
+              "questionType": "reading-fill-blank",
+              "promptCn": "这儿的羊肉很好吃，但是也很（ ）。",
+              "pinyin": "Zhèr de yángròu hěn hǎochī, dànshì yě hěn (guì).",
+              "correctAnswer": "E"
+            }
+          ]
+        },
+        {
+          "ind": 2,
+          "instructionCn": "第三部分：第46-50题。判断对错。",
+          "instructionRu": "Прочитайте текст и утверждение со звёздочкой (★). Верно ли утверждение?",
+          "exampleRu": "Например: «Сейчас 11:30, они плавают уже 20 минут. ★ Они начали плавать в 11:10.» — верно; «Я умею танцевать, но танцую так себе. ★ Она танцует очень хорошо.» — неверно.",
+          "questions": [
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "服务员，还有大点儿的桌子吗？我们有12个人，这个桌子可能坐不下。\n★ 他觉得椅子太小了。",
+              "pinyin": "Fúwùyuán, hái yǒu dà diǎnr de zhuōzi ma? Wǒmen yǒu 12 ge rén, zhège zhuōzi kěnéng zuòbuxià.\n★ Tā juéde yǐzi tài xiǎo le.",
+              "promptRu": "Официант, есть стол побольше? Нас 12 человек, за этим столом можем не поместиться. ★ Он считает, что стулья слишком маленькие.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "Речь идёт о столе (桌子), а не о стульях (椅子).",
+              "number": 46
+            },
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "今年比去年热得早，去年这个时候，天气还有点儿冷，出门时要穿好几件衣服呢。\n★ 去年这时候穿得多。",
+              "pinyin": "Jīnnián bǐ qùnián rè de zǎo, qùnián zhège shíhou, tiānqì hái yǒudiǎnr lěng, chūmén shí yào chuān hǎo jǐ jiàn yīfu ne.\n★ Qùnián zhè shíhou chuān de duō.",
+              "promptRu": "В этом году потеплело раньше, чем в прошлом, в это же время в прошлом году было ещё холодновато, приходилось надевать много одежды перед выходом. ★ В это время в прошлом году одевались тепло.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "去年…要穿好几件衣服 — «в прошлом году приходилось надевать много одежды».",
+              "number": 47
+            },
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "同学们，我们现在要回宾馆了，今天玩儿得高兴吗？\n★ 他们准备去机场。",
+              "pinyin": "Tóngxuémen, wǒmen xiànzài yào huí bīnguǎn le, jīntiān wánr de gāoxìng ma?\n★ Tāmen zhǔnbèi qù jīchǎng.",
+              "promptRu": "Ребята, сейчас мы возвращаемся в гостиницу, хорошо ли вам было сегодня? ★ Они собираются в аэропорт.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "Они возвращаются в гостиницу (宾馆), а не едут в аэропорт.",
+              "number": 48
+            },
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "今天的汉字课就到这里，大家有什么不懂的问题，下课后可以来问我。\n★ 他上完课了。",
+              "pinyin": "Jīntiān de Hànzì kè jiù dào zhèli, dàjiā yǒu shénme bù dǒng de wèntí, xiàkè hòu kěyǐ lái wèn wǒ.\n★ Tā shàngwán kè le.",
+              "promptRu": "На сегодня урок иероглифов закончен, если у кого-то есть непонятные вопросы, подходите после урока. ★ Он закончил вести урок.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "今天的课就到这里 — «на сегодня урок закончен».",
+              "number": 49
+            },
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "小雨，你都看了两个多小时了，这样对眼睛不好。来吃点儿水果，休息一下吧。\n★ 小雨正在吃水果。",
+              "pinyin": "Xiǎoyǔ, nǐ dōu kànle liǎng ge duō xiǎoshí le, zhèyàng duì yǎnjing bù hǎo. Lái chī diǎnr shuǐguǒ, xiūxi yíxià ba.\n★ Xiǎoyǔ zhèngzài chī shuǐguǒ.",
+              "promptRu": "Сяоюй, ты уже больше двух часов смотришь — это вредно для глаз. Иди поешь фруктов, отдохни немного. ★ Сяоюй сейчас ест фрукты.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "Её только зовут поесть фруктов — она ещё не ест их.",
+              "number": 50
+            }
+          ],
+          "examples": [
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "现在是11点30分，他们已经游了20分钟了。\n★ 他们11点10分开始游泳。",
+              "pinyin": "Xiànzài shì 11 diǎn 30 fēn, tāmen yǐjīng yóule 20 fēnzhōng le.\n★ Tāmen 11 diǎn 10 fēn kāishǐ yóuyǒng.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "A"
+            },
+            {
+              "questionType": "reading-true-false",
+              "promptCn": "我会跳舞，但跳得不怎么样。\n★ 她跳得非常好。",
+              "pinyin": "Wǒ huì tiàowǔ, dàn tiào de bù zěnmeyàng.\n★ Tā tiào de fēicháng hǎo.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "✓",
+                  "textRu": "Верно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "✗",
+                  "textRu": "Неверно"
+                }
+              ],
+              "correctAnswer": "B"
+            }
+          ]
+        },
+        {
+          "ind": 3,
+          "instructionCn": "第四部分：第51-55题。给句子选择对应的答句。",
+          "instructionRu": "Подберите к каждой фразе подходящую реплику из списка.",
+          "exampleRu": "Например: 他还在教室里学习。 — ответ E.",
+          "bank": [
+            {
+              "label": "A",
+              "textCn": "准备好了吗？可以开始了吗？",
+              "pinyin": "Zhǔnbèi hǎo le ma? Kěyǐ kāishǐ le ma?",
+              "textRu": "Готов(а)? Можно начинать?"
+            },
+            {
+              "label": "B",
+              "textCn": "不认识，可能是新来的同学吧。",
+              "pinyin": "Bú rènshi, kěnéng shì xīn lái de tóngxué ba.",
+              "textRu": "Не знаю его, наверное, это новый одноклассник."
+            },
+            {
+              "label": "C",
+              "textCn": "你妹妹和你们一起住？",
+              "pinyin": "Nǐ mèimei hé nǐmen yìqǐ zhù?",
+              "textRu": "Твоя младшая сестра живёт с вами?"
+            },
+            {
+              "label": "D",
+              "textCn": "不客气，外面冷，你快进去吧，再见。",
+              "pinyin": "Bú kèqi, wàimiàn lěng, nǐ kuài jìnqu ba, zàijiàn.",
+              "textRu": "Не за что, на улице холодно, иди скорее внутрь, пока."
+            },
+            {
+              "label": "E",
+              "textCn": "他在哪儿呢？你看见他了吗？",
+              "pinyin": "Tā zài nǎr ne? Nǐ kànjiàn tā le ma?",
+              "textRu": "Где же он? Ты его видел(а)?"
+            },
+            {
+              "label": "F",
+              "textCn": "那家饭店鱼做得不错，就是离这儿有点儿远。",
+              "pinyin": "Nà jiā fàndiàn yú zuò de búcuò, jiù shì lí zhèr yǒudiǎnr yuǎn.",
+              "textRu": "В том ресторане неплохо готовят рыбу, только он далековато отсюда."
+            }
+          ],
+          "questions": [
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "没有，她买房子了。",
+              "pinyin": "Méiyǒu, tā mǎi fángzi le.",
+              "promptRu": "Нет, она купила свою квартиру.",
+              "correctAnswer": "C",
+              "number": 51,
+              "explanationRu": "Ответ на вопрос, живёт ли сестра вместе с ними."
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "等一下，再给我5分钟。",
+              "pinyin": "Děng yíxià, zài gěi wǒ 5 fēnzhōng.",
+              "promptRu": "Подожди, дай мне ещё 5 минут.",
+              "correctAnswer": "A",
+              "number": 52,
+              "explanationRu": "Ответ на вопрос «готов? можно начинать?»."
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "坐在最右边的那个人是谁？",
+              "pinyin": "Zuò zài zuì yòubian de nàge rén shì shéi?",
+              "promptRu": "Кто тот человек, что сидит с самого края справа?",
+              "correctAnswer": "B",
+              "number": 53,
+              "explanationRu": "Ответ «не знаю, наверное новый одноклассник» — на вопрос о незнакомце."
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "没关系，我们可以坐出租车去。",
+              "pinyin": "Méi guānxi, wǒmen kěyǐ zuò chūzūchē qù.",
+              "promptRu": "Ничего страшного, можем поехать на такси.",
+              "correctAnswer": "F",
+              "number": 54,
+              "explanationRu": "Ответ на замечание, что ресторан далеко."
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "谢谢你送我回家。",
+              "pinyin": "Xièxie nǐ sòng wǒ huí jiā.",
+              "promptRu": "Спасибо, что подвёз(ла) меня домой.",
+              "correctAnswer": "D",
+              "number": 55,
+              "explanationRu": "Ответ «не за что, иди скорее в дом» на благодарность за проводы."
+            }
+          ],
+          "examples": [
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "他还在教室里学习。",
+              "pinyin": "Tā hái zài jiàoshì li xuéxí.",
+              "correctAnswer": "E"
+            }
+          ]
+        },
+        {
+          "ind": 4,
+          "instructionCn": "第四部分：第56-60题。",
+          "instructionRu": "Подберите к каждой фразе подходящую реплику из списка (задания 56–60).",
+          "bank": [
+            {
+              "label": "A",
+              "textCn": "第一天上班，大家给了我很多帮助。",
+              "pinyin": "Dì-yī tiān shàngbān, dàjiā gěile wǒ hěn duō bāngzhù.",
+              "textRu": "В первый день на работе все очень мне помогли."
+            },
+            {
+              "label": "B",
+              "textCn": "你们别等我吃饭了。",
+              "pinyin": "Nǐmen bié děng wǒ chī fàn le.",
+              "textRu": "Не ждите меня с ужином."
+            },
+            {
+              "label": "C",
+              "textCn": "这是您的孩子？真漂亮，多大了？",
+              "pinyin": "Zhè shì nín de háizi? Zhēn piàoliang, duō dà le?",
+              "textRu": "Это ваш ребёнок? Такой хорошенький, сколько ему лет?"
+            },
+            {
+              "label": "D",
+              "textCn": "我电脑出问题了，怎么都打不开。",
+              "pinyin": "Wǒ diànnǎo chū wèntí le, zěnme dōu dǎbukāi.",
+              "textRu": "У меня проблема с компьютером, никак не могу его включить."
+            },
+            {
+              "label": "E",
+              "textCn": "先生，您要喝点儿什么？",
+              "pinyin": "Xiānsheng, nín yào hē diǎnr shénme?",
+              "textRu": "Господин, что будете пить?"
+            }
+          ],
+          "questions": [
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "6岁，明年就要上小学了。",
+              "pinyin": "6 suì, míngnián jiù yào shàng xiǎoxué le.",
+              "promptRu": "6 лет, в следующем году уже пойдёт в школу.",
+              "correctAnswer": "C",
+              "number": 56,
+              "explanationRu": "Ответ про возраст ребёнка — на вопрос «сколько ему лет?»."
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "我晚上和朋友去看电影，回家晚。",
+              "pinyin": "Wǒ wǎnshang hé péngyou qù kàn diànyǐng, huí jiā wǎn.",
+              "promptRu": "Вечером иду с другом в кино, домой вернусь поздно.",
+              "correctAnswer": "B",
+              "number": 57,
+              "explanationRu": "Предупреждение не ждать с ужином — из-за похода в кино."
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "你能给我看看吗？",
+              "pinyin": "Nǐ néng gěi wǒ kànkan ma?",
+              "promptRu": "Можешь посмотреть?",
+              "correctAnswer": "D",
+              "number": 58,
+              "explanationRu": "Просьба посмотреть — на жалобу о сломанном компьютере."
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "给我来杯咖啡吧。",
+              "pinyin": "Gěi wǒ lái bēi kāfēi ba.",
+              "promptRu": "Принесите мне чашку кофе.",
+              "correctAnswer": "E",
+              "number": 59,
+              "explanationRu": "Ответ на вопрос официанта, что будете пить."
+            },
+            {
+              "questionType": "reading-sentence-match",
+              "promptCn": "能在这儿工作，我觉得很快乐。",
+              "pinyin": "Néng zài zhèr gōngzuò, wǒ juéde hěn kuàilè.",
+              "promptRu": "Я счастлив(а), что работаю здесь.",
+              "correctAnswer": "A",
+              "number": 60,
+              "explanationRu": "Продолжение мысли про первый день на работе и помощь коллег."
+            }
+          ],
+          "examples": []
+        }
+      ]
+    }
+  ]
+}
