@@ -18,7 +18,7 @@ const getExamsList = async (req, res) => {
   if (lvl) query.level = lvl;
 
   const exams = await HskExam.find(query)
-    .select('version level slug title descriptionRu ind durationMinutes isApproved sections')
+    .select('version level slug title descriptionRu ind durationMinutes isApproved updatedAt sections')
     .sort({ version: 1, level: 1, ind: 1 })
     .lean();
 

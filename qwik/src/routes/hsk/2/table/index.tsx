@@ -9,6 +9,7 @@ import { ApiService } from '~/misc/actions/request';
 import { PageTitle } from '~/components/common/layout/title';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
+import { HskExamsLinkCard } from '~/components/hsk/exams-link-card';
 import { MainContent } from '~/components/common/layout/main-content';
 import { getTokenFromCookie } from '~/misc/actions/auth';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
@@ -80,6 +81,7 @@ export default component$(() => {
           />
           <PhoneticsLinkCard />
           <CharactersLinkCard />
+          <HskExamsLinkCard version="old" level={loc.url.searchParams.get('lvl') || '1'} />
         </Sidebar>
 
         <MainContent>

@@ -8,6 +8,7 @@ import { NewHskTable } from '~/components/hsk/new-hsk-table';
 import { PageTitle } from '~/components/common/layout/title';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
+import { HskExamsLinkCard } from '~/components/hsk/exams-link-card';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
@@ -59,6 +60,7 @@ export default component$(() => {
           />
           <PhoneticsLinkCard />
           <CharactersLinkCard />
+          <HskExamsLinkCard version="new" level={loc.url.searchParams.get('lvl') || '1'} />
         </Sidebar>
 
         <MainContent>

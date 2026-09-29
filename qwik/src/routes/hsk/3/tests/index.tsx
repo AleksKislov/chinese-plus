@@ -1,6 +1,7 @@
 import { component$, useStore, useTask$, $ } from '@builder.io/qwik';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
+import { HskExamsLinkCard } from '~/components/hsk/exams-link-card';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
 import { TableCard } from '~/components/hsk/table-card';
@@ -105,6 +106,7 @@ export default component$(() => {
             isOldHsk={false}
             isForTests={true}
           />
+          <HskExamsLinkCard version="new" level={loc.url.searchParams.get('lvl') || '1'} />
         </Sidebar>
 
         <MainContent>

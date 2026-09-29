@@ -10,6 +10,13 @@ export default extendConfig(baseConfig, () => {
         input: ["src/entry.express.tsx", "@qwik-city-plan"],
       },
     },
-    plugins: [nodeServerAdapter({ name: "express" })],
+    plugins: [
+      nodeServerAdapter({
+        name: "express",
+        // SSG would write an empty dist/sitemap.xml (no static pages here), and
+        // express.static serves it ahead of the dynamic src/routes/sitemap.xml.
+        ssg: { sitemapOutFile: null },
+      }),
+    ],
   };
 });

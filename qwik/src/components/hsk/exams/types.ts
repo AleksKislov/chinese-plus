@@ -96,6 +96,7 @@ export type HskExamType = {
   ind: number;
   durationMinutes: number | null;
   sections: ExamSection[];
+  updatedAt?: string;
 };
 
 export type HskExamListItem = {
@@ -110,6 +111,7 @@ export type HskExamListItem = {
   questionsNum: number;
   sectionTypes: ExamSectionType[];
   isApproved: boolean;
+  updatedAt?: string;
 };
 
 export const SECTION_TITLES_RU: Record<ExamSectionType, string> = {

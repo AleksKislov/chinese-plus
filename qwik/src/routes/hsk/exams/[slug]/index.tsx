@@ -1,17 +1,30 @@
 import { component$, useContext, useStore, useSignal, $ } from '@builder.io/qwik';
-import { type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
+import { type DocumentHead, Link, routeLoader$ } from '@builder.io/qwik-city';
 import CONST_URLS from '~/misc/consts/urls';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
-import { BackBtn } from '~/components/common/ui/back-btn';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
+import { JsonLd } from '~/components/common/seo/json-ld';
 import { ApiService } from '~/misc/actions/request';
 import { getTokenFromCookie } from '~/misc/actions/auth';
 import { userContext } from '~/root';
 import { ExamQuestionCard } from '~/components/hsk/exams/exam-question';
 import { AdminImageSlot } from '~/components/hsk/exams/admin-image-slot';
 import { useSetExamApproved } from '~/misc/actions/hsk-exams/set-approved';
+import { ExamCard } from '~/components/hsk/exams/exam-card';
 import {
+  VERSION_NAME,
+  examsPath,
+  getExamVariant,
+  levelLabel,
+  levelName,
+  ogImagePath,
+  wordTestsPath,
+  wordsPath,
+} from '~/components/hsk/exams/levels';
+import {
+  type HskExamListItem,
   type HskExamType,
   SECTION_TITLES_RU,
   isCorrect,
@@ -20,30 +33,61 @@ import {
 } from '~/components/hsk/exams/types';
 
 export const useGetExam = routeLoader$(
-  async ({ params, cookie, redirect }): Promise<HskExamType> => {
+  async ({ params, cookie, status }): Promise<HskExamType | null> => {
     // Sent whether or not the visitor is an admin - optional-admin-auth.js on the
     // backend decides what a missing/non-admin token is worth (nothing: only an
     // approved exam resolves either way).
     const token = getTokenFromCookie(cookie);
     const exam = await ApiService.get(`/api/hsk-exams/${params.slug}`, token, null);
-    if (!exam) throw redirect(302, '/hsk/exams/');
+    // A real 404 rather than a redirect to the list: a redirect reads as a "soft
+    // 404" to search engines and keeps removed exams lingering in the index.
+    if (!exam) status(404);
     return exam;
   },
 );
 
+// Other papers of the same version and level, for the "more variants" block.
+export const useRelatedExams = routeLoader$(async (ev): Promise<HskExamListItem[]> => {
+  const exam = await ev.resolveValue(useGetExam);
+  if (!exam) return [];
+  const token = getTokenFromCookie(ev.cookie);
+  const list: HskExamListItem[] = await ApiService.get(
+    `/api/hsk-exams?version=${exam.version}&lvl=${exam.level}`,
+    token,
+    [],
+  );
+  return list.filter((e) => e.slug !== exam.slug);
+});
+
+const ExamNotFound = component$(() => (
+  <>
+    <PageTitle txt={'Экзамен не найден'} />
+    <div class="prose">
+      <p>
+        Этот вариант удалён или ещё не опубликован. Все варианты — на странице{' '}
+        <Link href={examsPath()}>пробных экзаменов HSK</Link>.
+      </p>
+    </div>
+  </>
+));
+
 export default component$(() => {
   const exam = useGetExam();
+  const related = useRelatedExams();
   const { isAdmin } = useContext(userContext);
   const setApproved = useSetExamApproved();
   // questionKey() -> chosen label or typed text
   const answers = useStore<Record<string, string>>({});
   const isChecked = useSignal(false);
+
+  const paper = exam.value;
+  if (!paper) return <ExamNotFound />;
   // Old HSK 2 has its own line-by-line layout (see ExamQuestionCard's variant);
   // every other paper keeps the default rendering.
   const cardVariant =
-    exam.value.version === 'old' && exam.value.level === '2' ? ('old-2' as const) : undefined;
+    paper.version === 'old' && paper.level === '2' ? ('old-2' as const) : undefined;
 
-  const gradeable = exam.value.sections.flatMap((section, sInd) =>
+  const gradeable = paper.sections.flatMap((section, sInd) =>
     section.parts.flatMap((part, pInd) =>
       part.questions
         .filter((q) => !isUngraded(q.questionType))
@@ -60,28 +104,55 @@ export default component$(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
+  const lvlLabel = levelLabel(paper.version, paper.level);
+
   return (
     <>
-      <BackBtn path={'/hsk/exams/'} />
-      <PageTitle txt={exam.value.title.ru || exam.value.title.cn || exam.value.slug} />
+      <Breadcrumbs
+        items={[
+          { name: 'Пробные экзамены HSK', href: examsPath() },
+          { name: VERSION_NAME[paper.version], href: examsPath(paper.version) },
+          { name: `HSK ${lvlLabel}`, href: examsPath(paper.version, paper.level) },
+          { name: `Вариант ${getExamVariant(paper)}` },
+        ]}
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Quiz',
+          name: `Пробный экзамен ${levelName(
+            paper.version,
+            paper.level,
+          )} — вариант ${getExamVariant(paper)}`,
+          description: paper.descriptionRu || undefined,
+          url: `${CONST_URLS.siteUrl}/hsk/exams/${paper.slug}/`,
+          inLanguage: 'ru',
+          learningResourceType: 'Пробный экзамен',
+          educationalLevel: levelName(paper.version, paper.level),
+          about: { '@type': 'Thing', name: 'Китайский язык, экзамен HSK' },
+          isAccessibleForFree: true,
+          timeRequired: paper.durationMinutes ? `PT${paper.durationMinutes}M` : undefined,
+          dateModified: paper.updatedAt || undefined,
+          provider: { '@type': 'Organization', name: 'Chinese+', url: CONST_URLS.siteUrl },
+        }}
+      />
+      <PageTitle txt={paper.title.ru || paper.title.cn || paper.slug} />
 
       <FlexRow>
         <MainContent>
           <div class="flex flex-wrap gap-1 mb-3">
             <span class="badge badge-primary badge-sm">
-              {exam.value.version === 'new' ? 'HSK 3.0' : 'HSK 2.0'} · уровень {exam.value.level}
+              {VERSION_NAME[paper.version]} · уровень {lvlLabel}
             </span>
-            {exam.value.durationMinutes && (
-              <span class="badge badge-ghost badge-sm">{exam.value.durationMinutes} мин</span>
+            {paper.durationMinutes && (
+              <span class="badge badge-ghost badge-sm">{paper.durationMinutes} мин</span>
             )}
             <span class="badge badge-ghost badge-sm">{gradeable.length} заданий с проверкой</span>
             {isAdmin && (
               <span
-                class={`badge badge-sm ${
-                  exam.value.isApproved ? 'badge-success' : 'badge-warning'
-                }`}
+                class={`badge badge-sm ${paper.isApproved ? 'badge-success' : 'badge-warning'}`}
               >
-                {exam.value.isApproved ? 'одобрен' : 'не одобрен'}
+                {paper.isApproved ? 'одобрен' : 'не одобрен'}
               </span>
             )}
           </div>
@@ -92,19 +163,19 @@ export default component$(() => {
               class="btn btn-sm btn-outline mb-4"
               onClick$={async () => {
                 await setApproved.submit({
-                  slug: exam.value.slug,
-                  isApproved: !exam.value.isApproved,
+                  slug: paper.slug,
+                  isApproved: !paper.isApproved,
                 });
                 window.location.reload();
               }}
             >
-              {exam.value.isApproved ? 'Снять с публикации' : 'Одобрить и опубликовать'}
+              {paper.isApproved ? 'Снять с публикации' : 'Одобрить и опубликовать'}
             </button>
           )}
 
-          {exam.value.descriptionRu && (
+          {paper.descriptionRu && (
             <div class="prose mb-4">
-              <p>{exam.value.descriptionRu}</p>
+              <p>{paper.descriptionRu}</p>
             </div>
           )}
 
@@ -119,7 +190,7 @@ export default component$(() => {
             </div>
           )}
 
-          {exam.value.sections.map((section, sInd) => (
+          {paper.sections.map((section, sInd) => (
             <section key={section.type} class="mb-8">
               <div class="prose mb-3">
                 <h3 class="mb-0">
@@ -196,7 +267,7 @@ export default component$(() => {
                       )}
                       {isAdmin && (
                         <AdminImageSlot
-                          slug={exam.value.slug}
+                          slug={paper.slug}
                           sectionType={section.type}
                           partInd={part.ind}
                           target="bank-combined"
@@ -237,7 +308,7 @@ export default component$(() => {
                             )}
                             {isAdmin && (
                               <AdminImageSlot
-                                slug={exam.value.slug}
+                                slug={paper.slug}
                                 sectionType={section.type}
                                 partInd={part.ind}
                                 target="bank"
@@ -266,7 +337,7 @@ export default component$(() => {
                       variant={cardVariant}
                       admin={
                         isAdmin
-                          ? { slug: exam.value.slug, sectionType: section.type, isExample: true }
+                          ? { slug: paper.slug, sectionType: section.type, isExample: true }
                           : undefined
                       }
                       onAnswer$={$(() => {})}
@@ -287,7 +358,7 @@ export default component$(() => {
                           section.audioUrl ? `section-audio-${section.type}` : undefined
                         }
                         admin={
-                          isAdmin ? { slug: exam.value.slug, sectionType: section.type } : undefined
+                          isAdmin ? { slug: paper.slug, sectionType: section.type } : undefined
                         }
                         onAnswer$={$((value: string) => {
                           answers[key] = value;
@@ -323,6 +394,27 @@ export default component$(() => {
               </button>
             )}
           </div>
+
+          <div class="prose max-w-none mt-8 mb-3">
+            <h2>Ещё пробные экзамены HSK {lvlLabel}</h2>
+            <p>
+              Все варианты уровня — на странице{' '}
+              <Link href={examsPath(paper.version, paper.level)}>
+                пробных экзаменов {levelName(paper.version, paper.level)}
+              </Link>
+              . Повторить лексику:{' '}
+              <Link href={wordsPath(paper.version, paper.level)}>список слов</Link> и{' '}
+              <Link href={wordTestsPath(paper.version, paper.level)}>тесты на слова</Link> HSK{' '}
+              {lvlLabel}.
+            </p>
+          </div>
+          {!!related.value.length && (
+            <div class="grid gap-3 sm:grid-cols-2 mb-6">
+              {related.value.slice(0, 4).map((e) => (
+                <ExamCard key={e.slug} exam={e} />
+              ))}
+            </div>
+          )}
         </MainContent>
       </FlexRow>
     </>
@@ -331,10 +423,26 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const exam = resolveValue(useGetExam);
-  const title = `Chinese+ ${exam?.title.ru || exam?.title.cn || 'Пробный экзамен HSK'}`;
+  if (!exam) {
+    return {
+      title: 'Экзамен не найден | Chinese+',
+      meta: [{ name: 'robots', content: 'noindex' }],
+    };
+  }
+
+  // Search queries are "пробный экзамен HSK 1", not the paper's own title, so
+  // the keywords go first and the brand last.
+  const title = `Пробный экзамен ${levelName(
+    exam.version,
+    exam.level,
+  )} онлайн — вариант ${getExamVariant(exam)} | Chinese+`;
   const description =
-    exam?.descriptionRu || 'Полноформатный пробный экзамен HSK с проверкой ответов и пояснениями.';
-  const url = `${CONST_URLS.siteUrl}/hsk/exams/${exam?.slug || ''}/`;
+    exam.descriptionRu ||
+    `Бесплатный пробный экзамен ${levelName(
+      exam.version,
+      exam.level,
+    )} онлайн: мгновенная проверка ответов с пояснениями и текстами аудио.`;
+  const url = `${CONST_URLS.siteUrl}/hsk/exams/${exam.slug}/`;
 
   return {
     title,
@@ -344,7 +452,13 @@ export const head: DocumentHead = ({ resolveValue }) => {
       { property: 'og:description', content: description },
       { property: 'og:type', content: 'article' },
       { property: 'og:url', content: url },
-      { property: 'og:image', content: CONST_URLS.defaultTextPic },
+      {
+        property: 'og:image',
+        content: `${CONST_URLS.siteUrl}${ogImagePath(exam.version, exam.level)}`,
+      },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+      { name: 'twitter:card', content: 'summary_large_image' },
     ],
   };
 };
