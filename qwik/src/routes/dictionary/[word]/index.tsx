@@ -48,6 +48,7 @@ import {
 } from '~/routes/dictionary';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
+import { Breadcrumbs, truncateCrumb } from '~/components/common/layout/breadcrumbs';
 
 export const useGetRuWord = routeLoader$(async ({ params }): Promise<RuWord | null> => {
   if (!isRussian(params.word)) return null;
@@ -176,6 +177,12 @@ export default component$(() => {
           inDefinedTermSet: `${CONST_URLS.siteUrl}/dictionary`,
           url: `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(loc.params.word)}`,
         }}
+      />
+      <Breadcrumbs
+        items={[
+          { name: 'Словарь', href: '/dictionary/' },
+          { name: truncateCrumb(loc.params.word) },
+        ]}
       />
       <PageTitle txt={'Китайско-русский словарь: ' + loc.params.word} />
 

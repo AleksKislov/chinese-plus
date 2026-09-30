@@ -9,6 +9,12 @@ export type Crumb = {
   href?: string;
 };
 
+const MAX_CRUMB_LENGTH = 60;
+
+// Long content titles (texts, videos, posts) would blow up the trail - cut them short.
+export const truncateCrumb = (name: string, max = MAX_CRUMB_LENGTH): string =>
+  name.length > max ? name.slice(0, max - 1).trimEnd() + '…' : name;
+
 type BreadcrumbsProps = {
   // Everything after "Главная", which is always prepended.
   items: Crumb[];

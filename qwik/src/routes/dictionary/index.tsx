@@ -9,6 +9,7 @@ import { alertsContext } from '~/root';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { Loader } from '~/components/common/ui/loader';
 import { HandwritingInput } from '~/components/search/handwriting-input';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export const HanziWriterSettings = {
   width: 60,
@@ -116,6 +117,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Словарь' }]} />
       <PageTitle txt={'Китайско-русский словарь'} />
 
       <FlexRow>

@@ -7,6 +7,7 @@ import { PageTitle } from '~/components/common/layout/title';
 import { VideoLessonCard } from '~/components/watch/video-lesson-card';
 import { ApiService } from '~/misc/actions/request';
 import { WHERE } from '~/components/common/comments/comment-form';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export type VideoLessonInfo = {
   _id: ObjectId;
@@ -31,6 +32,7 @@ export default component$(() => {
   const videos = getVideos().value;
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Уроки фонетики' }]} />
       <PageTitle txt={'Уроки фонетики китайского языка'} />
       <FlexRow>
         <Sidebar>

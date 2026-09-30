@@ -7,6 +7,7 @@ import { PageTitle } from '~/components/common/layout/title';
 import CONST_URLS from '~/misc/consts/urls';
 import { PinyinTests } from '../../../components/start/pinyin-tests/pinyin-tests';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export const playAudioFromBtn = (sound: string) => {
   if (!sound) return;
@@ -16,6 +17,7 @@ export const playAudioFromBtn = (sound: string) => {
 export default component$(() => {
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Тесты на пиньинь' }]} />
       <PageTitle txt={'Тест на знание пиньиня'} />
 
       <FlexRow>

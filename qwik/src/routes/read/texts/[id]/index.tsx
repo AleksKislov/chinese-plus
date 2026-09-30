@@ -19,6 +19,7 @@ import { getContentPath, withSlug } from '~/misc/helpers/content';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
 import { getOrSetVisitorId } from '~/misc/helpers/visitor-id';
+import { truncateCrumb } from '~/components/common/layout/breadcrumbs';
 
 export type TextContent = {
   // origintext?: string[];
@@ -165,7 +166,12 @@ export default component$(() => {
           author: { '@type': 'Person', name: userName },
         }}
       />
-      <ContentPageHead title={title} hits={hits} path="/read/texts" />
+      <ContentPageHead
+        title={title}
+        hits={hits}
+        path="/read/texts"
+        crumbs={[{ name: 'Тексты', href: '/read/texts/' }, { name: truncateCrumb(title) }]}
+      />
 
       <FlexRow>
         <Sidebar noAds={true}>

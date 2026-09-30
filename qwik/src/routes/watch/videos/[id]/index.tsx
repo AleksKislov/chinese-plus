@@ -34,6 +34,7 @@ import { getIdFromParam } from '~/misc/helpers/tools';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
 import { getOrSetVisitorId } from '~/misc/helpers/visitor-id';
+import { truncateCrumb } from '~/components/common/layout/breadcrumbs';
 
 export type VideoFromDB = VideoCardInfo & {
   pySubs: string[];
@@ -69,20 +70,22 @@ export const getWordsForTooltips = (wordsArr: string[][]) => {
   return ApiService.post('/api/dictionary/allWordsForVideo', wordsArr, undefined, []);
 };
 
-export const useGetVideo = routeLoader$(async (requestEvent): Promise<VideoFromDB & TooltipSubs> => {
-  const { params, redirect } = requestEvent;
-  const visitorId = getOrSetVisitorId(requestEvent);
-  const videoFromDb = await getVideoFromDB(getIdFromParam(params.id), visitorId);
-  if (!videoFromDb) throw redirect(302, '/watch/videos');
+export const useGetVideo = routeLoader$(
+  async (requestEvent): Promise<VideoFromDB & TooltipSubs> => {
+    const { params, redirect } = requestEvent;
+    const visitorId = getOrSetVisitorId(requestEvent);
+    const videoFromDb = await getVideoFromDB(getIdFromParam(params.id), visitorId);
+    if (!videoFromDb) throw redirect(302, '/watch/videos');
 
-  const canonicalId = withSlug(videoFromDb._id, videoFromDb.title);
-  if (params.id !== canonicalId) {
-    throw redirect(301, `/watch/videos/${canonicalId}`);
-  }
+    const canonicalId = withSlug(videoFromDb._id, videoFromDb.title);
+    if (params.id !== canonicalId) {
+      throw redirect(301, `/watch/videos/${canonicalId}`);
+    }
 
-  const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
-  return { ...videoFromDb, tooltipSubs };
-});
+    const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
+    return { ...videoFromDb, tooltipSubs };
+  },
+);
 
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
   return getContentComments(WHERE.video, getIdFromParam(params.id));
@@ -197,7 +200,12 @@ export default component$(() => {
           embedUrl: `https://www.youtube.com/embed/${source}`,
         }}
       />
-      <ContentPageHead title={title} hits={hits} path="/watch/videos" />
+      <ContentPageHead
+        title={title}
+        hits={hits}
+        path="/watch/videos"
+        crumbs={[{ name: 'Видео', href: '/watch/videos/' }, { name: truncateCrumb(title) }]}
+      />
 
       <FlexRow>
         <Sidebar>

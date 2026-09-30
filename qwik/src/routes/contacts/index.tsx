@@ -3,10 +3,12 @@ import { type DocumentHead } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export default component$(() => {
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Контакты' }]} />
       <PageTitle txt={'Пойти на контакт'} />
 
       <FlexRow>

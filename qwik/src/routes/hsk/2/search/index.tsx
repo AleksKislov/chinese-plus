@@ -7,14 +7,19 @@ import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
+import { getWordsSeo, wordsHead } from '~/components/hsk/words-seo';
 import { type DocumentHead } from '@builder.io/qwik-city';
 
 export default component$(() => {
   const hskWords = useSignal<OldHskWordType[]>([]);
 
+  const seo = getWordsSeo({ version: 'old', page: 'search' });
+
   return (
     <>
-      <PageTitle txt={'Поиск слов HSK 2.0'} />
+      <Breadcrumbs items={seo.crumbs} />
+      <PageTitle txt={seo.h1} />
       <FlexRow>
         <Sidebar>
           <div class="card bg-primary text-primary-content">
@@ -34,6 +39,4 @@ export default component$(() => {
   );
 });
 
-export const head: DocumentHead = {
-  title: 'Chinese+ Поиск по словам HSK 2.0',
-};
+export const head: DocumentHead = () => wordsHead({ version: 'old', page: 'search' });

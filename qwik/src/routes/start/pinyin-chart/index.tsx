@@ -13,6 +13,7 @@ import { LentaAds } from '~/components/common/ads/lenta-ads';
 import { BannerAds } from '~/components/common/ads/sidebar-ads';
 import OUR_ADS from '~/misc/consts/our-ads';
 import { OurAds } from '~/components/common/ads/our-ads';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export const initHiglights = () => {
   const tbody = document.querySelector('tbody') as HTMLTableSectionElement;
@@ -64,6 +65,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Таблица пиньиня с озвучкой' }]} />
       <PageTitle txt={'Таблица пиньиня с озвучкой'} />
 
       <div class="alert mt-3 flex">

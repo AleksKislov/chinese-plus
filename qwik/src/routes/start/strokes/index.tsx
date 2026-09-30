@@ -6,6 +6,7 @@ import { MainContent } from '~/components/common/layout/main-content';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { PageTitle } from '~/components/common/layout/title';
 import { StrokeCard } from '~/components/strokes/stroke-card';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export type StrokeExample = {
   name: string;
@@ -236,6 +237,7 @@ export default component$(() => {
   ];
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Черты' }]} />
       <PageTitle txt={'Черты китайских иероглифов'} />
 
       <FlexRow>

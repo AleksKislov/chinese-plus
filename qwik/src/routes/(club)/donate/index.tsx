@@ -8,6 +8,7 @@ import { DonateForm } from '~/components/donate/donate-form';
 import { DonateGoals } from '~/components/donate/donate-goals';
 import { Loader } from '~/components/common/ui/loader';
 import { DonateCrypto, type DonateWallet } from '~/components/donate/donate-crypto';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export type Donate = {
   _id: ObjectId;
@@ -66,6 +67,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Донат и цели' }]} />
       <PageTitle txt={'Донат и цели проекта'} />
       <FlexRow>
         <div class="w-full md:w-1/2 mb-3 mr-4">

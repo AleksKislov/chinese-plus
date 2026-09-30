@@ -14,6 +14,7 @@ import { BannerAds } from '~/components/common/ads/sidebar-ads';
 import { TextbookCard } from '~/components/textbook/textbook-card';
 import { TextbookContent } from '~/components/textbook/textbook-content';
 import { type TooltipSegment } from '~/misc/helpers/content/parse-text-words';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export type TextbookType = {
   _id: ObjectId;
@@ -59,6 +60,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Грамматика' }]} />
       <PageTitle txt={'Грамматика Китайского Языка'} />
 
       <FlexRow>

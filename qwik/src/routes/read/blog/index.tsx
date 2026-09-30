@@ -10,6 +10,7 @@ import { BlogCard } from '~/components/read/blog-card';
 import { CreateBlogCard } from '~/components/read/create-blog-card';
 import { MoreBtnAndLoader } from '~/components/common/ui/more-btn-and-loader';
 import { type BlogBlock } from '~/misc/helpers/content';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export type BlogCardInfo = {
   _id: ObjectId;
@@ -50,6 +51,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Блог' }]} />
       <PageTitle txt={'Блог Chinese+'} />
       <FlexRow>
         <Sidebar>

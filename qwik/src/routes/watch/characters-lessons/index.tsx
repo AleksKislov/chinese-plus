@@ -8,6 +8,7 @@ import { VideoLessonCard } from '~/components/watch/video-lesson-card';
 import { ApiService } from '~/misc/actions/request';
 import { type VideoLessonInfo } from '../phonetics-lessons';
 import { WHERE } from '~/components/common/comments/comment-form';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export const getVideos = routeLoader$((): Promise<VideoLessonInfo[]> => {
   return ApiService.get(`/api/videos/all-video-lessons?category=characters`, undefined, []);
@@ -17,6 +18,7 @@ export default component$(() => {
   const videos = getVideos().value;
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Уроки иероглифики' }]} />
       <PageTitle txt={'Уроки китайской иероглифики'} />
       <FlexRow>
         <Sidebar>

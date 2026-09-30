@@ -23,6 +23,7 @@ import { CommentsFullBlock } from '~/components/common/comments/comments-full-bl
 import { getIdFromParam } from '~/misc/helpers/tools';
 import { withSlug } from '~/misc/helpers/content';
 import { getOrSetVisitorId } from '~/misc/helpers/visitor-id';
+import { truncateCrumb } from '~/components/common/layout/breadcrumbs';
 
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
   return getContentComments(WHERE.charactersLesson, getIdFromParam(params.id));
@@ -73,7 +74,15 @@ export default component$(() => {
 
   return (
     <>
-      <ContentPageHead title={title} hits={hits} path="/watch/characters-lessons" />
+      <ContentPageHead
+        title={title}
+        hits={hits}
+        path="/watch/characters-lessons"
+        crumbs={[
+          { name: 'Уроки иероглифики', href: '/watch/characters-lessons/' },
+          { name: truncateCrumb(title) },
+        ]}
+      />
 
       <FlexRow>
         <Sidebar>

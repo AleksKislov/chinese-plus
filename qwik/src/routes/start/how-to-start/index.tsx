@@ -6,6 +6,7 @@ import { Sidebar } from '~/components/common/layout/sidebar';
 import { PageTitle } from '~/components/common/layout/title';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export const points = [
   {
@@ -61,6 +62,7 @@ export const points = [
 export default component$(() => {
   return (
     <>
+      <Breadcrumbs items={[{ name: 'С чего начать' }]} />
       <PageTitle txt={'С чего начать изучать китайский'} />
 
       <FlexRow>

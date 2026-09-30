@@ -6,6 +6,8 @@ import { Pagination } from '~/components/hsk/pagination';
 import { ApiService } from '~/misc/actions/request';
 import { NewHskTable } from '~/components/hsk/new-hsk-table';
 import { PageTitle } from '~/components/common/layout/title';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
+import { getWordsLevel, getWordsPage, getWordsSeo, wordsHead } from '~/components/hsk/words-seo';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { HskExamsLinkCard } from '~/components/hsk/exams-link-card';
@@ -43,9 +45,17 @@ export default component$(() => {
   const loc = useLocation();
   const hskWords = getHskWords();
 
+  const seo = getWordsSeo({
+    version: 'new',
+    page: 'table',
+    lvl: getWordsLevel(loc.url, 'new'),
+    pg: getWordsPage(loc.url),
+  });
+
   return (
     <>
-      <PageTitle txt={'Вся лексика HSK 3.0'} />
+      <Breadcrumbs items={seo.crumbs} />
+      <PageTitle txt={seo.h1} />
 
       <FlexRow>
         <Sidebar>
@@ -92,13 +102,10 @@ export default component$(() => {
   );
 });
 
-export const head: DocumentHead = {
-  title: 'Chinese+ Лексика HSK 3.0 с озвучкой',
-  meta: [
-    {
-      name: 'description',
-      content:
-        'Все слова нового HSK версии 3.0 (редакция 2025) с переводом, разбитые по уровням. Можно скачать CSV с лексикой (например, для ANKI).',
-    },
-  ],
-};
+export const head: DocumentHead = ({ url }) =>
+  wordsHead({
+    version: 'new',
+    page: 'table',
+    lvl: getWordsLevel(url, 'new'),
+    pg: getWordsPage(url),
+  });

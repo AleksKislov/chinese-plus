@@ -5,7 +5,8 @@ import CONST_URLS from '~/misc/consts/urls';
 import { getBookUrl } from '~/misc/helpers/content/get-book-url';
 import { type BookCardInfo } from '~/routes/read/books';
 import { type HskExamListItem } from '~/components/hsk/exams/types';
-import { examsPath } from '~/components/hsk/exams/levels';
+import { type HskVersion, examsPath } from '~/components/hsk/exams/levels';
+import { WORD_LEVELS, type WordsPage, wordsPageUrl } from '~/components/hsk/words-seo';
 
 type ContentListItem = {
   _id: string;
@@ -104,13 +105,34 @@ const hskExamLevelUrls = (exams: HskExamListItem[]): SitemapUrl[] => {
 };
 
 // Qwik City 301s every slashless path to its "/" twin, so list the URL a crawler lands on.
-const withSlash = (loc: string) => (loc.endsWith('/') ? loc : `${loc}/`);
+const withSlash = (loc: string) => {
+  const [path, query] = loc.split('?');
+  return `${path.endsWith('/') ? path : `${path}/`}${query ? `?${query}` : ''}`;
+};
+
+const escapeXml = (str: string) => str.replace(/&/g, '&amp;');
+
+// Every HSK word list level is its own canonical page (?lvl=); level 1 is the
+// bare path, already listed in STATIC_PATHS.
+const HSK_WORD_PAGES: [HskVersion, WordsPage][] = [
+  ['old', 'table'],
+  ['old', 'tests'],
+  ['new', 'table'],
+  ['new', 'tests'],
+  ['new', 'old-table'],
+];
+const hskWordLevelUrls = (): SitemapUrl[] =>
+  HSK_WORD_PAGES.flatMap(([version, page]) =>
+    WORD_LEVELS[version]
+      .filter((lvl) => lvl !== '1')
+      .map((lvl) => ({ loc: `${CONST_URLS.siteUrl}${wordsPageUrl(version, page, lvl)}` })),
+  );
 
 const toXml = (urls: SitemapUrl[]): string => {
   const entries = urls
     .map(
       ({ loc, lastmod }) => `  <url>
-    <loc>${withSlash(loc)}</loc>
+    <loc>${escapeXml(withSlash(loc))}</loc>
 ${lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : ''}  </url>`,
     )
     .join('\n');
@@ -155,6 +177,7 @@ export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => 
       lastmod: e.updatedAt?.slice(0, 10),
     })),
     ...hskExamLevelUrls(hskExams),
+    ...hskWordLevelUrls(),
   ];
 
   headers.set('Content-Type', 'application/xml; charset=utf-8');

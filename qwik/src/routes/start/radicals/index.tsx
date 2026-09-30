@@ -8,6 +8,7 @@ import { CharactersLinkCard } from '~/components/common/content-cards/characters
 import YANDEX_ADS from '~/misc/consts/ads';
 import { configContext } from '~/root';
 import { BannerAds } from '~/components/common/ads/sidebar-ads';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export default component$(() => {
   const configState = useContext(configContext);
@@ -15,6 +16,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Таблица ключей' }]} />
       <PageTitle txt={'Ключи китайских иероглифов'} />
 
       <FlexRow>

@@ -28,6 +28,7 @@ import {
 import { getIdFromParam } from '~/misc/helpers/tools';
 import { getWordsForTooltips } from '~/routes/read/texts/[id]';
 import { getOrSetVisitorId } from '~/misc/helpers/visitor-id';
+import { Breadcrumbs, truncateCrumb } from '~/components/common/layout/breadcrumbs';
 
 export type BlogPostFromDB = BlogCardInfo;
 
@@ -108,6 +109,9 @@ export default component$(() => {
         }}
       />
       <div class="max-w-prose mx-auto">
+        <Breadcrumbs
+          items={[{ name: 'Блог', href: '/read/blog/' }, { name: truncateCrumb(title) }]}
+        />
         <BackBtn path="/read/blog" />
         <PageTitle txt={title} hits={hits} hSizeSm={true} />
 

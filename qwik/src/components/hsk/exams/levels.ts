@@ -30,10 +30,10 @@ export const fromWordsLevel = (version: HskVersion, lvl: string) =>
   version === 'new' && lvl === '789' ? '7' : lvl;
 
 export const wordsPath = (version: HskVersion, lvl: string) =>
-  `/hsk/${VERSION_SEGMENT[version]}/table?lvl=${toWordsLevel(version, lvl)}`;
+  `/hsk/${VERSION_SEGMENT[version]}/table/?lvl=${toWordsLevel(version, lvl)}`;
 
 export const wordTestsPath = (version: HskVersion, lvl: string) =>
-  `/hsk/${VERSION_SEGMENT[version]}/tests?lvl=${toWordsLevel(version, lvl)}`;
+  `/hsk/${VERSION_SEGMENT[version]}/tests/?lvl=${toWordsLevel(version, lvl)}`;
 
 export const ogImagePath = (version?: HskVersion | '', lvl?: string) =>
   `/img/og/hsk-exams${version ? `-${version}` : ''}${version && lvl ? `-${lvl}` : ''}.png`;

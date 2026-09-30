@@ -14,6 +14,7 @@ import {
 import { EditWordModal } from '~/components/common/modals/edit-word-modal';
 import { MoreInfoModal } from '~/components/common/modals/more-info-modal';
 import { SEGMENTER_ENUM, type SEGMENTER_VERSION } from '../dictionary';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export default component$(() => {
   const segmentAction = useSegmentAndGetTooltips();
@@ -61,6 +62,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Сегментатор' }]} />
       <PageTitle txt={'Сегментация китайского текста'} />
 
       <FlexRow>

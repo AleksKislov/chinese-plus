@@ -1,11 +1,12 @@
 import { component$, Slot } from '@builder.io/qwik';
-import { type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
+import { type DocumentHead, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
 import { ApiService } from '~/misc/actions/request';
 import { type BookCardInfo } from '..';
 import { getBookUrl } from '~/misc/helpers/content/get-book-url';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
+import { type Crumb, truncateCrumb } from '~/components/common/layout/breadcrumbs';
 
 export type ChapterPage = {
   length: number;
@@ -37,7 +38,21 @@ export const useGetBookContents = routeLoader$(({ params }): Promise<BookContent
 export default component$(() => {
   const bookLoader = useGetBookContents();
 
-  const { book } = bookLoader.value;
+  const loc = useLocation();
+
+  const { book, contents } = bookLoader.value;
+
+  // One trail for the whole book section: the book page itself, or book › chapter
+  // when a chapter is open (the chapter route renders inside this layout).
+  const chapter = loc.params.chapter_id
+    ? contents.find((c) => c._id === loc.params.chapter_id)
+    : undefined;
+  const bookTitle = truncateCrumb(book.title.ru);
+  const crumbs: Crumb[] = [
+    { name: 'Книги', href: '/read/books/' },
+    chapter ? { name: bookTitle, href: getBookUrl(book) + '/' } : { name: bookTitle },
+    ...(chapter ? [{ name: truncateCrumb(chapter.title.ru) }] : []),
+  ];
 
   return (
     <>
@@ -52,7 +67,11 @@ export default component$(() => {
           author: { '@type': 'Person', name: book.author.name.ru },
         }}
       />
-      <ContentPageHead title={book.title.ru + ' | ' + book.title.cn} path="/read/books" />
+      <ContentPageHead
+        title={book.title.ru + ' | ' + book.title.cn}
+        path="/read/books"
+        crumbs={crumbs}
+      />
       <Slot />
     </>
   );

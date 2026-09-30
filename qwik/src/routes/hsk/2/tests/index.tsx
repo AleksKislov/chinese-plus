@@ -4,6 +4,8 @@ import { Sidebar } from '~/components/common/layout/sidebar';
 import { HskExamsLinkCard } from '~/components/hsk/exams-link-card';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
+import { getWordsLevel, getWordsPage, getWordsSeo, wordsHead } from '~/components/hsk/words-seo';
 import { TableCard } from '~/components/hsk/table-card';
 import { type DocumentHead, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { type OldHskWordType } from '../table';
@@ -118,9 +120,17 @@ export default component$(() => {
     return word.chinese;
   };
 
+  const seo = getWordsSeo({
+    version: 'old',
+    page: 'tests',
+    lvl: getWordsLevel(loc.url, 'old'),
+    pg: getWordsPage(loc.url),
+  });
+
   return (
     <>
-      <PageTitle txt={'Тесты на знание HSK 2.0'} />
+      <Breadcrumbs items={seo.crumbs} />
+      <PageTitle txt={seo.h1} />
       <FlexRow>
         <Sidebar>
           <TableCard
@@ -237,13 +247,10 @@ export const playAudio = (id: number, lvl: string) => {
   new Audio(`${CONST_URLS.myAudioURL}hsk${lvl}/${id - 1 - firstIdPerLvl[lvl]}.mp3`).play();
 };
 
-export const head: DocumentHead = {
-  title: 'Chinese+ Тесты HSK 2.0',
-  meta: [
-    {
-      name: 'description',
-      content:
-        'Короткие тесты на знание лексики HSK 2.0. Проверьте слух, чтение, знание пиньиня, напечатайте иероглифы на скорость.',
-    },
-  ],
-};
+export const head: DocumentHead = ({ url }) =>
+  wordsHead({
+    version: 'old',
+    page: 'tests',
+    lvl: getWordsLevel(url, 'old'),
+    pg: getWordsPage(url),
+  });

@@ -22,6 +22,7 @@ import { MoreBtnAndLoader } from '~/components/common/ui/more-btn-and-loader';
 import { CreateTextCard } from '~/components/read/create-text-card';
 import { getTextsNumInfo } from '~/misc/actions/texts/get-texts-num-info';
 import { TextsNumInfoCard } from '~/components/read/text-num-info-card';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export type TextCardInfo = {
   _id: ObjectId;
@@ -122,6 +123,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Тексты' }]} />
       <PageTitle txt={'Китайские тексты с озвучкой'} />
       <FlexRow>
         <Sidebar>

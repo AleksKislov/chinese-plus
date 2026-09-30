@@ -6,10 +6,12 @@ import { MainContent } from '~/components/common/layout/main-content';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { PageTitle } from '~/components/common/layout/title';
 import { TonesPractice } from '~/components/start/tones-practice/tones-practice';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export default component$(() => {
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Практика тонов' }]} />
       <PageTitle txt={'Практика произнесения тонов'} />
 
       <FlexRow>

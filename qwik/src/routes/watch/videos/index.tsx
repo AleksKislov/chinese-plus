@@ -11,6 +11,7 @@ import { UnsetFiltersBtn } from '~/components/common/ui/unset-filters-btn';
 import { CategoryFilter } from '~/components/common/ui/category-filter';
 import { WHERE } from '~/components/common/comments/comment-form';
 import { MoreBtnAndLoader } from '~/components/common/ui/more-btn-and-loader';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export type VideoCategory =
   | 'misc'
@@ -95,6 +96,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Видео' }]} />
       <PageTitle txt={'Видео на китайском с субтитрами'} />
       <FlexRow>
         <Sidebar>
