@@ -13,7 +13,7 @@ type NewHskTableRowType = {
   isLegacyBand?: boolean;
 };
 
-// old (2021) list: mp3 named by lvl/id; 2025 list: explicit path, absent if there is no audio yet
+// old (2021) list: mp3 named by lvl/id; 2026 list: explicit path, absent if there is no audio yet
 export const getHskAudioPath = (word: NewHskWordType, isLegacyBand = false) =>
   isLegacyBand ? `newhsk/band${word.lvl}/${word.id}.mp3` : word.audio;
 

@@ -65,7 +65,7 @@ export const getWordsSeo = ({ version, page, lvl = '1', pg = 0 }: WordsSeoParams
       h1:
         version === 'old'
           ? `Слова HSK ${lvl} (HSK 2.0)`
-          : `Слова HSK 3.0 — уровень ${wordLevelLabel(lvl)} (2025)`,
+          : `Слова HSK 3.0 — уровень ${wordLevelLabel(lvl)} (2026)`,
       title:
         version === 'old'
           ? `Слова HSK ${lvl} — ${sizeText} с переводом и озвучкой (HSK 2.0)${pgSuffix} | Chinese+`
@@ -75,7 +75,7 @@ export const getWordsSeo = ({ version, page, lvl = '1', pg = 0 }: WordsSeoParams
       description:
         version === 'old'
           ? `Список слов HSK ${lvl} (стандарт HSK 2.0): ${sizeText} уровня с пиньинем, переводом на русский и озвучкой. Скачайте CSV для Anki и добавляйте слова в личный словарик.`
-          : `Новый список слов HSK 3.0 (редакция 2025), уровень ${wordLevelLabel(
+          : `Новый список слов HSK 3.0 (редакция 2026), уровень ${wordLevelLabel(
               lvl,
             )}: ${sizeText} с пиньинем, переводом на русский и озвучкой. Можно скачать CSV для Anki.`,
       crumbs: [listCrumb, levelCrumb],
@@ -103,7 +103,7 @@ export const getWordsSeo = ({ version, page, lvl = '1', pg = 0 }: WordsSeoParams
       )} — ${sizeText}${pgSuffix} | Chinese+`,
       description: `Прежняя редакция списка слов HSK 3.0 (2021), уровень ${wordLevelLabel(
         lvl,
-      )}: ${sizeText} с переводом и озвучкой. Актуальный список 2025 года — на странице «Слова HSK 3.0».`,
+      )}: ${sizeText} с переводом и озвучкой. Актуальный список 2026 года — на странице «Слова HSK 3.0».`,
       crumbs: [
         listCrumb,
         { name: 'Редакция 2021', href: wordsPagePath(version, 'old-table') },

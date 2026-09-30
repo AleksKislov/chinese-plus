@@ -28,7 +28,7 @@ export type NewHskWordType = {
   py: string;
   ru: string;
   lvl: string;
-  audio?: string; // 2025 list: path under myAudioURL, absent if there is no audio yet
+  audio?: string; // 2026 list: path under myAudioURL, absent if there is no audio yet
 };
 
 export const getHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]> => {
@@ -80,7 +80,7 @@ export default component$(() => {
 
           <div class="alert mb-3">
             <span>
-              Список слов обновлён по стандарту 2025 года (новый HSK 3.0). Прежний список доступен
+              Список слов обновлён по стандарту 2026 года (новый HSK 3.0). Прежний список доступен
               на странице{' '}
               <Link href="/hsk/3/old-table" class="link">
                 Старая таблица

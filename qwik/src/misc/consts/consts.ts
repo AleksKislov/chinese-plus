@@ -101,7 +101,7 @@ const CONSTANTS = {
     '🤷‍',
   ],
   hskInfo: {
-    // HSK 3.0, syllabus 2025-11
+    // HSK 3.0, 2026 edition
     bandSize: {
       '1': 300,
       '2': 200,

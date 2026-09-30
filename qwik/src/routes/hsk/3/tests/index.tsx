@@ -61,7 +61,7 @@ export default component$(() => {
     }
     questionStore.chars = testWords.value.slice(0, QUEST_NUM);
     questionStore.pinyin = testWords.value.slice(QUEST_NUM, QUEST_NUM * 2);
-    // not every 2025 word has audio yet
+    // not every 2026 word has audio yet
     questionStore.audio = testWords.value
       .slice(QUEST_NUM * 2)
       .filter((w) => w.audio)
