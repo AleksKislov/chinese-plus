@@ -51,90 +51,86 @@ router.post(
   },
 );
 
-/**
- * @route     POST api/users/read_today
- * @desc      Add number of read chars into DB for this user
- * @access    Private
- */
-router.post('/read_today', auth, async (req, res) => {
-  let { num, path, ind } = req.body;
+// paragraph key is used as a mongo field name: no dots, no $
+const READ_PATH_RE = /^\/[\w\-/]{1,300}$/;
+const MAX_PARAG_CHARS = 20000;
+
+const parseReadBody = ({ num, path, ind }) => {
   num = parseInt(num);
   ind = parseInt(ind);
+  if (!Number.isInteger(num) || num < 0 || num > MAX_PARAG_CHARS) return null;
+  if (!Number.isInteger(ind) || ind < 0) return null;
+  if (typeof path !== 'string' || !READ_PATH_RE.test(path)) return null;
+  return { num, ind, field: `read_today_arr.${path}` };
+};
+
+/**
+ * Atomic and idempotent: counter changes only if the paragraph state really flips,
+ * so double clicks / out of order requests can't inflate or drive it negative
+ */
+const markParagraph = (isRead) => async (req, res) => {
+  const parsed = parseReadBody(req.body);
+  if (!parsed) return res.status(400).json({ msg: 'Invalid params' });
+
+  const { num, ind, field } = parsed;
   const user_id = req.user.id;
 
   try {
-    const user = await User.findById(user_id);
+    const [filter, update] = isRead
+      ? [
+          { _id: user_id, [field]: { $ne: ind } },
+          { $addToSet: { [field]: ind }, $inc: { read_today_num: num } },
+        ]
+      : [
+          { _id: user_id, [field]: ind },
+          { $pull: { [field]: ind }, $inc: { read_today_num: -num } },
+        ];
 
-    let newObj = user.read_today_arr;
-    if (newObj[path]) {
-      newObj[path].push(ind);
-    } else {
-      newObj[path] = [ind];
+    const changedUser = await User.findOneAndUpdate(filter, update, { new: true }).select(
+      '-password',
+    );
+    if (changedUser && changedUser.read_today_num < 0) {
+      await User.updateOne(
+        { _id: user_id, read_today_num: { $lt: 0 } },
+        { $set: { read_today_num: 0 } },
+      );
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      user_id,
-      {
-        $set: { read_today_num: user.read_today_num + num, read_today_arr: newObj },
-      },
-      { new: true },
-    ).select('-password');
+    // not changed means paragraph is already in requested state -> just return actual data
+    const updatedUser =
+      changedUser && changedUser.read_today_num >= 0
+        ? changedUser
+        : await User.findById(user_id).select('-password');
+    if (!updatedUser) return res.status(404).json({ msg: 'User not found' });
 
-    updateOrCreate({
-      user_id,
-      have_read: updatedUser.read_today_num,
-      daily_goal: updatedUser.daily_reading_goal,
-    });
+    if (changedUser) {
+      updateOrCreate({
+        user_id,
+        have_read: updatedUser.read_today_num,
+        daily_goal: updatedUser.daily_reading_goal,
+      });
+    }
 
     res.json(updatedUser);
   } catch (err) {
     console.log(err.message);
     res.status(500).send('Server error');
   }
-});
+};
+
+/**
+ * @route     POST api/users/read_today
+ * @desc      Add number of read chars into DB for this user
+ * @access    Private
+ */
+router.post('/read_today', auth, markParagraph(true));
 
 /**
  * @route     POST api/users/unread_today
  * @desc      Remove read paragraph from user DB
  * @access    Private
  */
-router.post('/unread_today', auth, async (req, res) => {
-  let { num, path, ind } = req.body;
-  num = parseInt(num);
-  ind = parseInt(ind);
-  const user_id = req.user.id;
-
-  try {
-    const user = await User.findById(user_id);
-
-    let newObj = user.read_today_arr;
-    if (newObj[path]) {
-      const indToDelete = newObj[path].indexOf(ind);
-      newObj[path].splice(indToDelete, 1);
-    } else {
-      throw new Error('No such text here!');
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(
-      user_id,
-      {
-        $set: { read_today_num: user.read_today_num - num, read_today_arr: newObj },
-      },
-      { new: true },
-    ).select('-password');
-
-    updateOrCreate({
-      user_id,
-      have_read: updatedUser.read_today_num,
-      daily_goal: updatedUser.daily_reading_goal,
-    });
-
-    res.json(updatedUser);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).send('Server error');
-  }
-});
+router.post('/unread_today', auth, markParagraph(false));
 
 /**
  * @route     POST api/users/daily_reading_goal

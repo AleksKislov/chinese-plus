@@ -1,4 +1,4 @@
-import { component$, useContext, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+import { component$, useComputed$, useContext } from '@builder.io/qwik';
 import { userContext } from '~/root';
 import { editSvg } from '../common/media/svg';
 import { EditReadGoalModal } from '../common/modals/edit-read-goal-modal';
@@ -7,15 +7,10 @@ export const ReadResultCard = component$(() => {
   const editReadGoalModalId = 'editReadGoalModalId';
   const userState = useContext(userContext);
   const { loggedIn, readTodayNum, readDailyGoal } = userState;
-  const progress = useSignal(loggedIn ? (readTodayNum / readDailyGoal) * 100 : 0);
-
-  useVisibleTask$(({ track }) => {
-    track(() => loggedIn);
-    track(() => readTodayNum);
-    track(() => readDailyGoal);
-    if (!loggedIn) return;
-    progress.value = (readTodayNum / readDailyGoal) * 100;
-    if (!progress.value) progress.value = 0;
+  // read from the store directly, so the card updates when paragraphs are marked
+  const progress = useComputed$(() => {
+    if (!userState.loggedIn || !userState.readDailyGoal) return 0;
+    return (userState.readTodayNum / userState.readDailyGoal) * 100;
   });
 
   return !loggedIn ? null : (

@@ -15,6 +15,7 @@ type ParagraphProps = {
   forEditing?: boolean;
   hideParagNum?: boolean;
   showPinyin?: boolean;
+  pageInd?: number;
 };
 
 export const Paragraph = component$(
@@ -29,6 +30,7 @@ export const Paragraph = component$(
     forEditing,
     hideParagNum,
     showPinyin,
+    pageInd,
   }: ParagraphProps) => {
     const blockClass = 'my-1 rounded-md p-2 relative bg-base-200';
     const paragNum = ind + 1;
@@ -46,7 +48,7 @@ export const Paragraph = component$(
               showPinyin={showPinyin}
             />
           ))}
-          {!forEditing && <ParagPlus strLen={strLen} ind={ind} />}
+          {!forEditing && <ParagPlus strLen={strLen} ind={ind} pageInd={pageInd} />}
         </div>
 
         {showTranslation && (

@@ -1,4 +1,4 @@
-import { component$, useContext, useSignal, useTask$ } from '@builder.io/qwik';
+import { component$, useComputed$, useContext } from '@builder.io/qwik';
 import { plusSvg } from '../common/media/svg';
 import { globalAction$, useLocation, z, zod$ } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
@@ -25,44 +25,48 @@ export const useAddReadChars = globalAction$(
   }),
 );
 
+// long texts and book chapters paginate via query param, so page index goes into the key
+export const getReadKey = (pathname: string, pageInd?: number): string => {
+  const path = pathname.slice(5, -1); // '/read/texts/id/' -> '/texts/id'
+  return pageInd ? `${path}/pg${pageInd}` : path;
+};
+
 type ParagPlusProps = {
   strLen: number;
   ind: number;
+  pageInd?: number;
 };
 
-export const ParagPlus = component$(({ strLen, ind }: ParagPlusProps) => {
+export const ParagPlus = component$(({ strLen, ind, pageInd }: ParagPlusProps) => {
   const addReadChars = useAddReadChars();
   const loc = useLocation();
   const userState = useContext(userContext);
-  const { readTodayMap, loggedIn } = userState;
-  const localPath = loc.url.pathname.slice(5, -1);
-  const alreadyRead = useSignal(false);
-
-  useTask$(({ track }) => {
-    track(() => readTodayMap);
-    if (!loggedIn) return;
-    if (readTodayMap[localPath]?.includes(ind)) alreadyRead.value = true;
-  });
+  const alreadyRead = useComputed$(() =>
+    Boolean(userState.readTodayMap[getReadKey(loc.url.pathname, pageInd)]?.includes(ind)),
+  );
 
   return (
     <div class="absolute right-1 -bottom-1">
       <div class="tooltip tooltip-left text-sm" data-tip={`Прочитано ${strLen} 字`}>
         <div
-          onClick$={() => {
-            userState.readTodayNum += alreadyRead.value ? -strLen : strLen;
-            addReadChars.submit({
-              path: localPath,
+          onClick$={async () => {
+            // wait for server answer, otherwise fast clicks send conflicting requests
+            if (addReadChars.isRunning) return;
+            const { value } = await addReadChars.submit({
+              path: getReadKey(loc.url.pathname, pageInd),
               num: strLen,
               ind,
               action: alreadyRead.value ? ReadAction.del : ReadAction.add,
             });
-            alreadyRead.value = !alreadyRead.value;
+            if (!value?.read_today_arr) return;
+            userState.readTodayNum = value.read_today_num || 0;
+            userState.readTodayMap = value.read_today_arr;
           }}
           class={`rounded-full cursor-pointer ${
             alreadyRead.value
               ? 'bg-success text-success-content'
               : 'bg-neutral text-neutral-content'
-          }`}
+          } ${addReadChars.isRunning ? 'opacity-50 cursor-wait' : ''}`}
         >
           {plusSvg}
         </div>

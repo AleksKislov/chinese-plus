@@ -115,6 +115,7 @@ export default component$(() => {
                 translation={page.translation[i] || ''}
                 strLen={page.origParagsLen[i] || 0}
                 ind={i}
+                pageInd={Number(loc.url.searchParams.get('page')) || 0}
                 currentWord={currentWord}
                 showTranslation={showTranslation.value}
                 showPinyin={showPinyin.value}
@@ -171,7 +172,9 @@ export const head: DocumentHead = ({ resolveValue, params, url }) => {
   const page = +(url.searchParams.get('page') || 0);
   // Chapter links always carry ?page= (the page loader needs it), page 0 included.
   const path = `${getBookUrl(book)}/${params.chapter_id}/?page=${page}`;
-  const title = `${chapter.title.ru} — ${book.title.ru}${page ? `, стр. ${page + 1}` : ''} | Chinese+`;
+  const title = `${chapter.title.ru} — ${book.title.ru}${
+    page ? `, стр. ${page + 1}` : ''
+  } | Chinese+`;
   const description = `${chapter.title.ru} (${chapter.title.cn}) — глава книги «${book.title.ru}» на китайском с переводом и пиньинем.`;
 
   return {

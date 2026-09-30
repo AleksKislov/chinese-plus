@@ -89,6 +89,7 @@ export const TextMainContent = component$(
             translation={isLongTxt ? pages[curPage].translation[i] : translation[i]}
             strLen={isLongTxt ? pages[curPage].origParagsLen[i] : origParagsLen[i]}
             ind={i}
+            pageInd={isLongTxt ? curPage : undefined}
             currentWord={currentWord}
             showTranslation={showTranslation.value}
             showPinyin={showPinyin.value}
