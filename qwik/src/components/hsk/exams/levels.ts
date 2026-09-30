@@ -23,11 +23,17 @@ export const levelName = (version: HskVersion, lvl: string) =>
 export const examsPath = (version?: HskVersion | '', lvl?: string) =>
   `/hsk/exams/${version ? `${VERSION_SEGMENT[version]}/` : ''}${version && lvl ? `${lvl}/` : ''}`;
 
+// The HSK 3.0 word lists store levels 7-9 as "789"; exams store them as "7".
+export const toWordsLevel = (version: HskVersion, lvl: string) =>
+  version === 'new' && lvl === '7' ? '789' : lvl;
+export const fromWordsLevel = (version: HskVersion, lvl: string) =>
+  version === 'new' && lvl === '789' ? '7' : lvl;
+
 export const wordsPath = (version: HskVersion, lvl: string) =>
-  `/hsk/${VERSION_SEGMENT[version]}/table?lvl=${lvl}`;
+  `/hsk/${VERSION_SEGMENT[version]}/table?lvl=${toWordsLevel(version, lvl)}`;
 
 export const wordTestsPath = (version: HskVersion, lvl: string) =>
-  `/hsk/${VERSION_SEGMENT[version]}/tests?lvl=${lvl}`;
+  `/hsk/${VERSION_SEGMENT[version]}/tests?lvl=${toWordsLevel(version, lvl)}`;
 
 export const ogImagePath = (version?: HskVersion | '', lvl?: string) =>
   `/img/og/hsk-exams${version ? `-${version}` : ''}${version && lvl ? `-${lvl}` : ''}.png`;

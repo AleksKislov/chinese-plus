@@ -1,6 +1,6 @@
 import { component$ } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
-import { type HskVersion, HSK_LEVELS, examsPath, levelLabel } from './exams/levels';
+import { type HskVersion, HSK_LEVELS, examsPath, fromWordsLevel, levelLabel } from './exams/levels';
 
 type HskExamsLinkCardProps = {
   version: HskVersion;
@@ -8,7 +8,8 @@ type HskExamsLinkCardProps = {
 };
 
 export const HskExamsLinkCard = component$(({ version, level }: HskExamsLinkCardProps) => {
-  const lvl = HSK_LEVELS[version].includes(level) ? level : '';
+  const examLvl = fromWordsLevel(version, level);
+  const lvl = HSK_LEVELS[version].includes(examLvl) ? examLvl : '';
   return (
     <div class="card w-full bg-base-200 my-3">
       <div class="card-body">
