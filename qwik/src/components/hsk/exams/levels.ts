@@ -119,7 +119,7 @@ export const OLD_LEVEL_FORMAT: Record<string, OldLevelFormat> = {
 };
 
 // Cumulative vocabulary of the updated HSK 3.0 word lists: 300 / +200 / +500 / +1000 /
-// +1600 / +1800 / +5600 for levels 7-9.
+// +1600 / +1800 / +5560 for levels 7-9.
 export const NEW_LEVEL_WORDS: Record<string, number> = {
   '1': 300,
   '2': 500,
@@ -127,7 +127,7 @@ export const NEW_LEVEL_WORDS: Record<string, number> = {
   '4': 2000,
   '5': 3600,
   '6': 5400,
-  '7': 11000,
+  '7': 10960,
 };
 
 export const levelWords = (version: HskVersion, lvl: string): number | undefined =>

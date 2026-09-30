@@ -1,12 +1,12 @@
 const { getDictWordsCsv } = require('../_misc');
-const NewHskWord = require('../../../models/Hskword');
+const { aggregateHskWords } = require('./get-hsk-model');
 
 const downloadNewHskCsv = async (req, res) => {
   const { hsk_level: hskLevel } = req.params;
-  const { has_examples } = req.query;
+  const { has_examples, version } = req.query;
   const hasExamples = Boolean(has_examples);
 
-  const allWords = await NewHskWord.aggregate([
+  const allWords = await aggregateHskWords(version, [
     { $match: { lvl: hskLevel } },
     { $sort: { id: 1 } },
     { $project: { _id: 0, __v: 0, id: 0 } },
@@ -36,7 +36,7 @@ const downloadNewHskCsv = async (req, res) => {
 
   const csv = getDictWordsCsv(mapped, hasExamples, true);
 
-  const filename = `hsk_v3_lvl_${hskLevel}_${hasExamples ? 'with' : 'no'}_examples.csv`;
+  const filename = `hsk_v3${version === '2021' ? '_2021' : ''}_lvl_${hskLevel}_${hasExamples ? 'with' : 'no'}_examples.csv`;
   res.setHeader('Content-disposition', `attachment; filename=${filename}`);
   res.set('Content-Type', 'text/csv');
   res.status(200).send(csv);

@@ -29,8 +29,9 @@ import { CalligraphyGame } from '~/components/games/calligraphy-game';
 export const getTestWords = routeLoader$(async (ev): Promise<TestWord[]> => {
   const lvl = ev.query.get('lvl') || '1';
   const res = await ApiService.get(`/api/newhskwords/all?hsk_level=${lvl}`, undefined, []);
-  return res.map(({ cn: chinese, lvl: level, py: pinyin, id, ru }: NewHskWordType) => ({
+  return res.map(({ cn: chinese, lvl: level, py: pinyin, id, ru, audio }: NewHskWordType) => ({
     id,
+    audio,
     level,
     chinese,
     pinyin,
@@ -58,7 +59,11 @@ export default component$(() => {
     }
     questionStore.chars = testWords.value.slice(0, QUEST_NUM);
     questionStore.pinyin = testWords.value.slice(QUEST_NUM, QUEST_NUM * 2);
-    questionStore.audio = testWords.value.slice(QUEST_NUM * 2, QUEST_NUM * 3);
+    // not every 2025 word has audio yet
+    questionStore.audio = testWords.value
+      .slice(QUEST_NUM * 2)
+      .filter((w) => w.audio)
+      .slice(0, QUEST_NUM);
 
     return () => {
       for (const key in QuestKinds) {
@@ -128,7 +133,7 @@ export default component$(() => {
                         id={`${type}_${word.id}`}
                         onClick$={() => {
                           if (type !== QuestKinds.audio) return;
-                          playAudio(word.id, word.level);
+                          if (word.audio) playAudio(word.audio);
                         }}
                       >
                         {getQuestionBtn(word, type as QuestionType)}
@@ -173,8 +178,8 @@ export default component$(() => {
   );
 });
 
-export const playAudio = (id: number, lvl: string) => {
-  new Audio(`${CONST_URLS.myAudioURL}newhsk/band${lvl}/${id}.mp3`).play();
+export const playAudio = (audioPath: string) => {
+  new Audio(`${CONST_URLS.myAudioURL}${audioPath}`).play();
 };
 
 export const head: DocumentHead = {

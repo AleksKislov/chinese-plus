@@ -101,7 +101,18 @@ const CONSTANTS = {
     '🤷‍',
   ],
   hskInfo: {
+    // HSK 3.0, syllabus 2025-11
     bandSize: {
+      '1': 300,
+      '2': 200,
+      '3': 500,
+      '4': 1000,
+      '5': 1600,
+      '6': 1800,
+      '7-8-9': 5560,
+    },
+    // HSK 3.0, previous (2021) word list
+    bandSizeOld: {
       '1': 500,
       '2': 772,
       '3': 973,

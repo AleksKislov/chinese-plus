@@ -5,23 +5,28 @@ type CsvCardProps = {
   level: string | null;
   isOldHsk: boolean;
   isPrivate: boolean;
+  isLegacyBand?: boolean;
 };
 
-export const CsvCard = component$(({ level, isOldHsk, isPrivate }: CsvCardProps) => {
+export const CsvCard = component$(({ level, isOldHsk, isPrivate, isLegacyBand }: CsvCardProps) => {
   const isNotHsk = level === null && isPrivate && !isOldHsk;
   const nonPrivateHsk = isOldHsk ? 'lexicon/csv/' : 'newhskwords/csv/';
   const privateHsk = isOldHsk ? 'words/csv' : 'userwords/csv';
   const urlPath = isPrivate ? privateHsk : nonPrivateHsk + (level || '1');
 
-  const plainCsvLink = `https://chineseplus.club/api/${urlPath}`;
+  const versionQuery = isLegacyBand && !isPrivate && !isOldHsk ? '?version=2021' : '';
+  const plainCsvLink = `https://chineseplus.club/api/${urlPath}${versionQuery}`;
 
   const hskType = isNotHsk ? '' : `HSK${isOldHsk ? '2' : '3'}.0`;
 
   const downloadCsv = (isHtml: boolean, hasExamples: boolean) =>
     $(async () => {
       try {
-        const link = isHtml ? `${plainCsvLink}?is_html=1` : plainCsvLink;
-        const csvLink = hasExamples ? link + '&has_examples=1' : link;
+        const sep = plainCsvLink.includes('?') ? '&' : '?';
+        const link = isHtml ? `${plainCsvLink}${sep}is_html=1` : plainCsvLink;
+        const csvLink = hasExamples
+          ? `${link}${link.includes('?') ? '&' : '?'}has_examples=1`
+          : link;
         console.log({ csvLink });
         const response = await fetch(csvLink, {
           // @ts-ignore
@@ -33,7 +38,9 @@ export const CsvCard = component$(({ level, isOldHsk, isPrivate }: CsvCardProps)
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
 
-        const hskStr = isNotHsk ? 'words' : `${hskType}${level ? `_lvl_${level}` : ''}`;
+        const hskStr = isNotHsk
+          ? 'words'
+          : `${hskType}${isLegacyBand ? '_2021' : ''}${level ? `_lvl_${level}` : ''}`;
         const fileName = `${isPrivate ? 'user_' : ''}${hskStr}${isHtml ? '_html' : ''}${
           hasExamples ? '_examples' : ''
         }`;

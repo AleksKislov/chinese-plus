@@ -307,6 +307,10 @@ export const hsk3: MenuItemProps = {
       text: 'Таблица',
     },
     {
+      href: '/hsk/3/old-table',
+      text: 'Старая таблица',
+    },
+    {
       href: '/hsk/3/tests',
       text: 'Тесты',
     },

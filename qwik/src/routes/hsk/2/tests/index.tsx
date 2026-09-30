@@ -21,6 +21,7 @@ export type TestWord = {
   id: number;
   pinyin: string;
   translation: string;
+  audio?: string; // hsk 3.0 only: path under myAudioURL
 };
 
 export const QuestKinds = {

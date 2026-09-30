@@ -22,14 +22,14 @@ export default component$(() => {
               <h2 class="card-title">Найти слово HSK 3.0</h2>
               <p>
                 Найдите нужные вам слова нового HSK 3.0
-                <br />1 band - 500 слов
-                <br />2 band - 772 слова
-                <br />3 band - 973 слова
-                <br />4 band - 1000 слов
-                <br />5 band - 1071 слово
-                <br />6 band - 1140 слов
+                <br />1 уровень - 300 слов
+                <br />2 уровень - 200 слов
+                <br />3 уровень - 500 слов
+                <br />4 уровень - 1000 слов
+                <br />5 уровень - 1600 слов
+                <br />6 уровень - 1800 слов
                 <br />
-                7,8,9 bands - 5636 слов
+                7-9 уровни - 5560 слов
               </p>
               <HskSearchForm hskWords={hskWords} isOldHsk={false} />
             </div>

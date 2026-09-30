@@ -10,15 +10,21 @@ type NewHskTableRowType = {
   word: NewHskWordType;
   hideBtnsSig: Signal<string[]>;
   currentWord: Signal<NewHskWordType | undefined>;
+  isLegacyBand?: boolean;
 };
 
-export const pronounce = (id: number, lvl: string) => {
-  new Audio(`${CONST_URLS.myAudioURL}newhsk/band${lvl}/${id}.mp3`).play();
+// old (2021) list: mp3 named by lvl/id; 2025 list: explicit path, absent if there is no audio yet
+export const getHskAudioPath = (word: NewHskWordType, isLegacyBand = false) =>
+  isLegacyBand ? `newhsk/band${word.lvl}/${word.id}.mp3` : word.audio;
+
+export const pronounce = (audioPath: string) => {
+  new Audio(`${CONST_URLS.myAudioURL}${audioPath}`).play();
 };
 
 export const NewHskTableRow = component$(
-  ({ word, hideBtnsSig, currentWord }: NewHskTableRowType) => {
-    const { cn, py, ru, id, lvl } = word;
+  ({ word, hideBtnsSig, currentWord, isLegacyBand }: NewHskTableRowType) => {
+    const { cn, py, ru, id } = word;
+    const audioPath = getHskAudioPath(word, isLegacyBand);
 
     return (
       <>
@@ -43,9 +49,11 @@ export const NewHskTableRow = component$(
             </td>
           )}
           <td>
-            <button class="btn btn-sm btn-info" onClick$={() => pronounce(id, lvl)}>
-              {playSvg}
-            </button>
+            {audioPath && (
+              <button class="btn btn-sm btn-info" onClick$={() => pronounce(audioPath)}>
+                {playSvg}
+              </button>
+            )}
           </td>
           <td>
             <label

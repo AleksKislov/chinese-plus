@@ -1,0 +1,74 @@
+import { component$ } from '@builder.io/qwik';
+import { type DocumentHead, Link, useLocation, routeLoader$ } from '@builder.io/qwik-city';
+import { TableCard } from '~/components/hsk/table-card';
+import { Pagination } from '~/components/hsk/pagination';
+import { ApiService } from '~/misc/actions/request';
+import { NewHskTable } from '~/components/hsk/new-hsk-table';
+import { PageTitle } from '~/components/common/layout/title';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { MainContent } from '~/components/common/layout/main-content';
+import { CsvCard } from '~/components/hsk/csv-card';
+import { type NewHskWordType } from '../table';
+
+// previous (2021) HSK 3.0 word list, kept for reference
+export const getOldHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]> => {
+  const lvl = ev.query.get('lvl') || '1';
+  const lmt = ev.query.get('pg') || '0';
+  return await ApiService.get(
+    `/api/newhskwords?hsk_level=${lvl}&limit=${lmt}&version=2021`,
+    undefined,
+    [],
+  );
+});
+
+export default component$(() => {
+  const loc = useLocation();
+  const hskWords = getOldHskWords();
+  const level = loc.url.searchParams.get('lvl') || '1';
+
+  return (
+    <>
+      <PageTitle txt={'Лексика HSK 3.0 — старая таблица (редакция 2021)'} />
+
+      <FlexRow>
+        <Sidebar>
+          <TableCard level={level} isOldHsk={false} isForTests={false} isLegacyBand={true} />
+          <CsvCard level={level} isOldHsk={false} isPrivate={false} isLegacyBand={true} />
+        </Sidebar>
+
+        <MainContent>
+          <div class="alert alert-info mb-3">
+            <span>
+              Это старая редакция списка слов HSK 3.0 (2021). Актуальный список смотрите на странице{' '}
+              <Link href="/hsk/3/table" class="link">
+                Таблица
+              </Link>
+              .
+            </span>
+          </div>
+
+          <Pagination
+            level={level}
+            curPage={+loc.url.searchParams.get('pg')! || 0}
+            isOldHsk={false}
+            isLegacyBand={true}
+          />
+
+          <NewHskTable hskWords={hskWords?.value || []} isLegacyBand={true} />
+        </MainContent>
+      </FlexRow>
+    </>
+  );
+});
+
+export const head: DocumentHead = {
+  title: 'Chinese+ Старая таблица лексики HSK 3.0 (2021) с озвучкой',
+  meta: [
+    {
+      name: 'description',
+      content:
+        'Старая редакция списка слов HSK 3.0 (2021) с переводом и озвучкой по уровням. Можно скачать CSV (например, для ANKI).',
+    },
+  ],
+};

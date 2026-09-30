@@ -4,9 +4,10 @@ import { useNavigate } from '@builder.io/qwik-city';
 type CardInfoProps = {
   isOldHsk: boolean;
   isForTests: boolean;
+  isLegacyBand?: boolean;
 };
 
-export const CardInfo = component$(({ isOldHsk, isForTests }: CardInfoProps) => {
+export const CardInfo = component$(({ isOldHsk, isForTests, isLegacyBand }: CardInfoProps) => {
   let text, title;
 
   const refresh = useNavigate();
@@ -19,9 +20,13 @@ export const CardInfo = component$(({ isOldHsk, isForTests }: CardInfoProps) => 
   if (isOldHskTable) {
     text = 'Все 5000 слов HSK, отсортированные по уровням сложности: от 1 до 6';
     title = 'Слова HSK 2.0';
+  } else if (isNewHskTable && isLegacyBand) {
+    text =
+      'Старая редакция лексики HSK 3.0 (2021): 500 / 772 / 973 / 1000 / 1071 / 1140 / 5636 слов по уровням (band). Актуальный список находится на странице «Таблица».';
+    title = 'Слова HSK 3.0 (старая редакция)';
   } else if (isNewHskTable) {
     text =
-      'Все слова нового HSK v3.0, отсортированные по уровням сложности (aka band): от 1 до 7-8-9 (последние 3 уровня не разделяют)';
+      'Все слова нового HSK v3.0, отсортированные по уровням сложности: от 1 до 7-8-9 (последние 3 уровня не разделяют)';
     title = 'Слова HSK 3.0';
   } else if (isNewHskTests) {
     text = 'Проверьте насколько хорошо вы знаете лексику нового HSK 3.0 разных уровней сложности.';

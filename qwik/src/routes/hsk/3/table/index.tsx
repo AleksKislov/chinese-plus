@@ -1,5 +1,5 @@
 import { component$, useContext } from '@builder.io/qwik';
-import { type DocumentHead, useLocation } from '@builder.io/qwik-city';
+import { type DocumentHead, Link, useLocation } from '@builder.io/qwik-city';
 import { routeLoader$ } from '@builder.io/qwik-city';
 import { TableCard } from '~/components/hsk/table-card';
 import { Pagination } from '~/components/hsk/pagination';
@@ -26,6 +26,7 @@ export type NewHskWordType = {
   py: string;
   ru: string;
   lvl: string;
+  audio?: string; // 2025 list: path under myAudioURL, absent if there is no audio yet
 };
 
 export const getHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]> => {
@@ -67,6 +68,17 @@ export default component$(() => {
           {mainContentAds?.isActive && <OurAds adsInfo={mainContentAds} />}
           {bannerAds?.isActive && <BannerAds />}
 
+          <div class="alert mb-3">
+            <span>
+              Список слов обновлён по стандарту 2025 года (новый HSK 3.0). Прежний список доступен
+              на странице{' '}
+              <Link href="/hsk/3/old-table" class="link">
+                Старая таблица
+              </Link>
+              .
+            </span>
+          </div>
+
           <Pagination
             level={loc.url.searchParams.get('lvl') || '1'}
             curPage={+loc.url.searchParams.get('pg')! || 0}
@@ -86,7 +98,7 @@ export const head: DocumentHead = {
     {
       name: 'description',
       content:
-        'Все слова нового HSK версии 3.0 с переводом и озвучкой разбитые по уровням. Можно скачать CSV с лексикой (например, для ANKI).',
+        'Все слова нового HSK версии 3.0 (редакция 2025) с переводом, разбитые по уровням. Можно скачать CSV с лексикой (например, для ANKI).',
     },
   ],
 };

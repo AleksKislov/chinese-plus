@@ -39,6 +39,7 @@ const STATIC_PATHS = [
   '/hsk/2/tests',
   '/hsk/2/search',
   '/hsk/3/table',
+  '/hsk/3/old-table',
   '/hsk/3/tests',
   '/hsk/3/search',
   '/hsk/exams',
