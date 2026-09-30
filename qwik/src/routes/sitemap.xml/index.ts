@@ -2,6 +2,7 @@ import { type RequestHandler } from '@builder.io/qwik-city';
 import { slugify } from 'transliteration';
 import { ApiService } from '~/misc/actions/request';
 import CONST_URLS from '~/misc/consts/urls';
+import { type SitemapUrl, toSitemapXml } from '~/misc/helpers/sitemap';
 import { getBookUrl } from '~/misc/helpers/content/get-book-url';
 import { type BookCardInfo } from '~/routes/read/books';
 import { type HskExamListItem } from '~/components/hsk/exams/types';
@@ -12,11 +13,6 @@ type ContentListItem = {
   _id: string;
   title: string;
   date?: string;
-};
-
-type SitemapUrl = {
-  loc: string;
-  lastmod?: string;
 };
 
 const STATIC_PATHS = [
@@ -104,14 +100,6 @@ const hskExamLevelUrls = (exams: HskExamListItem[]): SitemapUrl[] => {
   }));
 };
 
-// Qwik City 301s every slashless path to its "/" twin, so list the URL a crawler lands on.
-const withSlash = (loc: string) => {
-  const [path, query] = loc.split('?');
-  return `${path.endsWith('/') ? path : `${path}/`}${query ? `?${query}` : ''}`;
-};
-
-const escapeXml = (str: string) => str.replace(/&/g, '&amp;');
-
 // Every HSK word list level is its own canonical page (?lvl=); level 1 is the
 // bare path, already listed in STATIC_PATHS.
 const HSK_WORD_PAGES: [HskVersion, WordsPage][] = [
@@ -127,21 +115,6 @@ const hskWordLevelUrls = (): SitemapUrl[] =>
       .filter((lvl) => lvl !== '1')
       .map((lvl) => ({ loc: `${CONST_URLS.siteUrl}${wordsPageUrl(version, page, lvl)}` })),
   );
-
-const toXml = (urls: SitemapUrl[]): string => {
-  const entries = urls
-    .map(
-      ({ loc, lastmod }) => `  <url>
-    <loc>${escapeXml(withSlash(loc))}</loc>
-${lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : ''}  </url>`,
-    )
-    .join('\n');
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${entries}
-</urlset>`;
-};
 
 export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => {
   cacheControl({ maxAge: 3600, staleWhileRevalidate: 86400 });
@@ -181,5 +154,5 @@ export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => 
   ];
 
   headers.set('Content-Type', 'application/xml; charset=utf-8');
-  send(200, toXml(urls));
+  send(200, toSitemapXml(urls));
 };

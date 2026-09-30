@@ -1,10 +1,10 @@
 /**
- * Renders the 1200x630 social preview images for the HSK exam pages and HSK word
- * list pages into public/img/og/ (names match ogImagePath() in
+ * Renders the 1200x630 social preview images into public/img/og/: the site-wide
+ * fallback (chineseplus.png, used by RouterHead) and the HSK exam and word list pages (names match ogImagePath() in
  * src/components/hsk/exams/levels.ts and getWordsSeo() in src/components/hsk/words-seo.ts).
  * Re-run after adding a level or changing the copy:
  *
- *   node scripts/generate-hsk-og.mjs
+ *   node scripts/generate-og.mjs
  *
  * Uses @resvg/resvg-js (already in node_modules via the build toolchain; if it
  * ever goes missing: npm i -D @resvg/resvg-js) and macOS system fonts.
@@ -136,6 +136,13 @@ for (const [lvl, n] of Object.entries(NEW_WORDS)) {
     glyph: '词',
   };
 }
+
+images['chineseplus'] = {
+  kicker: 'Китайский язык онлайн',
+  big: 'Chinese+',
+  sub: 'Тексты · видео · HSK · словарь · бесплатно',
+  glyph: '中',
+};
 
 mkdirSync(OUT_DIR, { recursive: true });
 for (const [name, data] of Object.entries(images)) {

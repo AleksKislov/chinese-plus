@@ -5,6 +5,7 @@ const mdbg = require('mdbg');
 const nodejieba = require('nodejieba');
 const { getAllWords, getWordsForParag, shortenTranslation } = require('./services');
 const auth = require('../../middleware/auth');
+const { cacheRoute, TTL } = require('../../src/cache');
 
 const Dictionary = require('../../src/models/Dictionary');
 
@@ -15,6 +16,7 @@ const {
   wildcardSearch,
   pinyinSearch,
   handwritingSearch,
+  getSitemapWords,
 } = require('../../src/api/services/dictionary');
 
 /**
@@ -108,6 +110,13 @@ router.post('/allwords', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+/**
+ * @route     GET api/dictionary/sitemap-words
+ * @desc      HSK words that have a dictionary entry, for sitemap-dictionary.xml
+ * @access    Public
+ */
+router.get('/sitemap-words', cacheRoute('dictionary-sitemap', { ttl: TTL.DAY }), getSitemapWords);
 
 /**
  * @route     POST api/dictionary/wildcardSearch

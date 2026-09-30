@@ -173,7 +173,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Онлайн-словарь китайского языка',
+  title: 'Китайско-русский словарь онлайн — перевод, пиньинь, иероглифы | Chinese+',
   meta: [
     {
       name: 'description',

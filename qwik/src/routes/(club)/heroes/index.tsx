@@ -150,7 +150,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Герои клуба',
+  title: 'Герои клуба | Chinese+',
   meta: [
     {
       name: 'description',

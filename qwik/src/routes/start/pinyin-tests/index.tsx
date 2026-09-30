@@ -47,7 +47,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Тест на знание пиньиня',
+  title: 'Тест на знание пиньиня онлайн | Chinese+',
   meta: [
     {
       name: 'description',

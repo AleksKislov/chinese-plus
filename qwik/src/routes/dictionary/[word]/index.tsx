@@ -318,15 +318,17 @@ export const head: DocumentHead = ({ resolveValue, params }) => {
   const cnTranslation = resolveValue(useLoadTranslation);
   const ruWord = resolveValue(useGetRuWord);
   const word = params.word;
-  const url = `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(word)}`;
+  const url = `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(word)}/`;
 
   if (isWildcardPattern(word)) {
-    const title = `Chinese+ поиск по шаблону ${word}`;
+    const title = `Слова по шаблону ${word} — китайско-русский словарь | Chinese+`;
     const description = `Поиск китайских слов по шаблону "${word}" в китайско-русском словаре Chinese+.`;
 
     return {
       title,
       meta: [
+        // One page per possible pattern - endless thin pages, keep them out of the index.
+        { name: 'robots', content: 'noindex, follow' },
         { name: 'description', content: description },
         { property: 'og:title', content: title },
         { property: 'og:description', content: description },
@@ -342,9 +344,9 @@ export const head: DocumentHead = ({ resolveValue, params }) => {
     const chineseLabel = hasTrad
       ? `${wordObj.chinese} (традиционное написание: ${wordObj.tradChinese})`
       : wordObj.chinese;
-    const title = `Chinese+ ${wordObj.chinese}${hasTrad ? ' / ' + wordObj.tradChinese : ''} (${
+    const title = `${wordObj.chinese}${hasTrad ? ' / ' + wordObj.tradChinese : ''} (${
       wordObj.pinyin
-    }) — перевод с китайского на русский`;
+    }) — перевод с китайского на русский | Chinese+`;
     const description = `Значение китайского слова ${chineseLabel}: ${stripRuMarkup(
       wordObj.russian,
     )}`.slice(0, 300);
@@ -362,7 +364,7 @@ export const head: DocumentHead = ({ resolveValue, params }) => {
   }
 
   if (ruWord?.word) {
-    const title = `Chinese+ ${ruWord.word.ru} — перевод с русского на китайский (${ruWord.word.cn})`;
+    const title = `${ruWord.word.ru} по-китайски — ${ruWord.word.cn}, перевод с русского на китайский | Chinese+`;
     const description = `Как будет "${ruWord.word.ru}" по-китайски: ${ruWord.word.cn}`;
 
     return {
@@ -378,8 +380,11 @@ export const head: DocumentHead = ({ resolveValue, params }) => {
   }
 
   return {
-    title: `Chinese+ ${word} — китайско-русский словарь`,
+    title: `${word} — китайско-русский словарь | Chinese+`,
     meta: [
+      // Not a single dictionary entry (a phrase, pinyin search or unknown word): any
+      // input makes its own URL here, so only real word pages get indexed.
+      { name: 'robots', content: 'noindex, follow' },
       {
         name: 'description',
         content: `Перевод слова "${word}" в китайско-русском словаре Chinese+ с примерами и анимацией написания иероглифов.`,

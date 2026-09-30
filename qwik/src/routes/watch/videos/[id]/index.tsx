@@ -203,7 +203,6 @@ export default component$(() => {
       <ContentPageHead
         title={title}
         hits={hits}
-        path="/watch/videos"
         crumbs={[{ name: 'Видео', href: '/watch/videos/' }, { name: truncateCrumb(title) }]}
       />
 
@@ -260,7 +259,7 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const videoInfo = resolveValue(useGetVideo);
-  const title = `Chinese+ Китайское видео с переводом: ${videoInfo.title}`;
+  const title = `${videoInfo.title} — видео на китайском с субтитрами и переводом | Chinese+`;
   const description = `Видео на китайском языке с переводом и субтитрами: ${videoInfo.desc}`;
   const url =
     CONST_URLS.siteUrl +

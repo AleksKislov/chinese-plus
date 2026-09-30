@@ -153,7 +153,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ С чего начать изучать китайский язык',
+  title: 'С чего начать изучать китайский язык | Chinese+',
   meta: [
     {
       name: 'description',

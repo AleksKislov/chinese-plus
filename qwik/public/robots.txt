@@ -14,3 +14,4 @@ Disallow: /read/unapproved-blog
 Disallow: /watch/unapproved-videos
 
 Sitemap: https://www.chineseplus.club/sitemap.xml
+Sitemap: https://www.chineseplus.club/sitemap-dictionary.xml

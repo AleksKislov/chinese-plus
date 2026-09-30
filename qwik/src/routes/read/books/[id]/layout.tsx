@@ -67,11 +67,7 @@ export default component$(() => {
           author: { '@type': 'Person', name: book.author.name.ru },
         }}
       />
-      <ContentPageHead
-        title={book.title.ru + ' | ' + book.title.cn}
-        path="/read/books"
-        crumbs={crumbs}
-      />
+      <ContentPageHead title={book.title.ru + ' | ' + book.title.cn} crumbs={crumbs} />
       <Slot />
     </>
   );
@@ -79,44 +75,25 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const bookInfo = resolveValue(useGetBookContents);
-  const title = `Chinese+ ${bookInfo.book.title.ru}`;
+  const title = `${bookInfo.book.title.ru} — книга на китайском с переводом | Chinese+`;
   const description = `Книга на китайском языке с переводом: ${bookInfo.book.about}`;
 
+  // Keyed so a chapter page's head (rendered inside this layout) replaces these
+  // instead of adding a second description/og tag.
   return {
     title,
     meta: [
+      { key: 'description', name: 'description', content: description },
+      { key: 'og:title', property: 'og:title', content: title },
+      { key: 'og:description', property: 'og:description', content: description },
+      { key: 'og:type', property: 'og:type', content: 'book' },
       {
-        name: 'description',
-        content: description,
-      },
-      {
-        property: 'og:title',
-        content: title,
-      },
-      {
-        property: 'og:description',
-        content: description,
-      },
-      {
-        property: 'og:type',
-        content: 'book',
-      },
-      {
+        key: 'og:url',
         property: 'og:url',
-        content: CONST_URLS.siteUrl + getBookUrl(bookInfo.book),
+        content: CONST_URLS.siteUrl + getBookUrl(bookInfo.book) + '/',
       },
-      {
-        property: 'og:image',
-        content: bookInfo.book.picUrl,
-      },
-      {
-        name: 'twitter:card',
-        content: 'book_image_' + bookInfo.book._id,
-      },
-      {
-        name: 'twitter:image',
-        content: bookInfo.book.picUrl,
-      },
+      { key: 'og:image', property: 'og:image', content: bookInfo.book.picUrl },
+      { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     ],
   };
 };

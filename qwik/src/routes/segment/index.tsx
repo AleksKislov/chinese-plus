@@ -174,7 +174,7 @@ export default component$(() => {
 
 export const head: DocumentHead = () => {
   return {
-    title: `Chinese+ Сегментация китайского текста`,
+    title: 'Сегментация китайского текста онлайн — разбить на слова | Chinese+',
     meta: [
       {
         name: 'description',

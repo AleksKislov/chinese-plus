@@ -109,7 +109,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Изучать китайский - интересно!',
+  title: 'Китайский язык онлайн бесплатно — тексты, видео, HSK, словарь | Chinese+',
   meta: [
     {
       name: 'description',
@@ -118,7 +118,7 @@ export const head: DocumentHead = {
     },
     {
       property: 'og:title',
-      content: 'Chinese+ Изучать китайский - интересно!',
+      content: 'Китайский язык онлайн бесплатно — тексты, видео, HSK, словарь | Chinese+',
     },
     {
       property: 'og:description',

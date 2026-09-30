@@ -85,7 +85,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Грамматика Китайского Языка для HSK3.0',
+  title: 'Грамматика китайского языка для HSK 3.0 | Chinese+',
   meta: [
     {
       name: 'description',

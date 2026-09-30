@@ -22,6 +22,7 @@ import { Alerts } from '~/components/common/alerts/alerts';
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { getContentComments } from '~/misc/actions/get-content-comments';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
+import { truncateCrumb } from '~/components/common/layout/breadcrumbs';
 import {
   type TooltipSubs,
   type VideoFromDB,
@@ -38,12 +39,14 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
   return getContentComments(WHERE.video, params.id);
 });
 
-export const useGetVideo = routeLoader$(async ({ params, redirect }): Promise<VideoFromDB & TooltipSubs> => {
-  const videoFromDb = await getVideoFromDB(params.id);
-  if (!videoFromDb) throw redirect(302, '/watch/unapproved-videos');
-  const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
-  return { ...videoFromDb, tooltipSubs };
-});
+export const useGetVideo = routeLoader$(
+  async ({ params, redirect }): Promise<VideoFromDB & TooltipSubs> => {
+    const videoFromDb = await getVideoFromDB(params.id);
+    if (!videoFromDb) throw redirect(302, '/watch/unapproved-videos');
+    const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
+    return { ...videoFromDb, tooltipSubs };
+  },
+);
 
 type YTPlayer = {
   player: {
@@ -122,7 +125,15 @@ export default component$(() => {
 
   return (
     <>
-      <ContentPageHead title={title} hits={hits} path="/watch/unapproved-videos" />
+      <ContentPageHead
+        title={title}
+        hits={hits}
+        crumbs={[
+          { name: 'Видео', href: '/watch/videos/' },
+          { name: 'На проверке', href: '/watch/unapproved-videos/' },
+          { name: truncateCrumb(title) },
+        ]}
+      />
 
       <FlexRow>
         <Sidebar>

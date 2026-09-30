@@ -31,7 +31,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Контакты',
+  title: 'Контакты | Chinese+',
   meta: [
     {
       name: 'description',

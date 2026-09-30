@@ -8,6 +8,8 @@ import { MainContent } from '~/components/common/layout/main-content';
 import { type VideoLessonInfo } from '..';
 
 import { YoutubeService } from '~/misc/actions/youtube-service';
+import { JsonLd } from '~/components/common/seo/json-ld';
+import CONST_URLS from '~/misc/consts/urls';
 import { ContentPageCard } from '~/components/common/content-cards/content-page-card';
 import {
   type Addressee,
@@ -74,10 +76,20 @@ export default component$(() => {
 
   return (
     <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'VideoObject',
+          name: title,
+          description: desc,
+          thumbnailUrl: YoutubeService.getVideoPicUrl(source),
+          uploadDate: date,
+          embedUrl: `https://www.youtube.com/embed/${source}`,
+        }}
+      />
       <ContentPageHead
         title={title}
         hits={hits}
-        path="/watch/phonetics-lessons"
         crumbs={[
           { name: 'Уроки фонетики', href: '/watch/phonetics-lessons/' },
           { name: truncateCrumb(title) },
@@ -133,14 +145,22 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const videoInfo = resolveValue(getVideo);
+  const title = `${videoInfo.title} — урок китайской фонетики с носителем | Chinese+`;
+  const description = `Видео-урок китайской фонетики с носителем языка: ${videoInfo.desc}`;
+  const url = `${CONST_URLS.siteUrl}/watch/phonetics-lessons/${withSlug(
+    videoInfo._id,
+    videoInfo.title,
+  )}/`;
 
   return {
-    title: `Chinese+ Китайская фонетика с носителем: ${videoInfo.title}`,
+    title,
     meta: [
-      {
-        name: 'description',
-        content: `Видео-урок китайской фонетики с носителем языка: ${videoInfo.desc}`,
-      },
+      { name: 'description', content: description },
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: description },
+      { property: 'og:type', content: 'video.other' },
+      { property: 'og:url', content: url },
+      { property: 'og:image', content: YoutubeService.getVideoPicUrl(videoInfo.source) },
     ],
   };
 };

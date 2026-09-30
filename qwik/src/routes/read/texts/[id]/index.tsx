@@ -169,7 +169,6 @@ export default component$(() => {
       <ContentPageHead
         title={title}
         hits={hits}
-        path="/read/texts"
         crumbs={[{ name: 'Тексты', href: '/read/texts/' }, { name: truncateCrumb(title) }]}
       />
 
@@ -209,7 +208,7 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const textInfo = resolveValue(useGetText);
-  const title = `Chinese+ Китайский c переводом: ${textInfo.title}`;
+  const title = `${textInfo.title} — текст на китайском с переводом | Chinese+`;
   const description = `Текст на китайском языке с переводом: ${textInfo.description}`;
   const url =
     CONST_URLS.siteUrl +

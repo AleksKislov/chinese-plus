@@ -45,7 +45,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Видео уроки китайской иероглифике',
+  title: 'Видеоуроки китайской иероглифики | Chinese+',
   meta: [
     {
       name: 'description',

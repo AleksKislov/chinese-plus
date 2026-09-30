@@ -294,7 +294,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Черты китайских иероглифов',
+  title: 'Черты китайских иероглифов | Chinese+',
   meta: [
     {
       name: 'description',

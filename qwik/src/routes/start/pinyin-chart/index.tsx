@@ -184,7 +184,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Таблица пиньиня с озвучкой',
+  title: 'Таблица пиньиня с озвучкой | Chinese+',
   meta: [
     {
       name: 'description',

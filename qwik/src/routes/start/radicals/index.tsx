@@ -2175,7 +2175,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Ключи китайских иероглифов',
+  title: 'Таблица ключей китайских иероглифов | Chinese+',
   meta: [
     {
       name: 'description',

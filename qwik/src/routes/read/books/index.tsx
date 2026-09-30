@@ -71,7 +71,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Книги на китайском с переводом',
+  title: 'Книги на китайском с переводом — читать онлайн | Chinese+',
   meta: [
     {
       name: 'description',

@@ -1,7 +1,9 @@
 import { component$, useSignal, useStore } from '@builder.io/qwik';
-import { routeLoader$, useLocation } from '@builder.io/qwik-city';
+import { type DocumentHead, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { ApiService } from '~/misc/actions/request';
+import CONST_URLS from '~/misc/consts/urls';
+import { getBookUrl } from '~/misc/helpers/content/get-book-url';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { getWordsForTooltips, type TooltipParagraph } from '~/routes/read/texts/[id]';
@@ -159,3 +161,28 @@ export default component$(() => {
     </>
   );
 });
+
+export const head: DocumentHead = ({ resolveValue, params, url }) => {
+  const { book, contents } = resolveValue(useGetBookContents);
+  const chapter = contents.find((c) => c._id === params.chapter_id);
+  if (!chapter) return {};
+
+  // Every page of a chapter has its own text, so each is its own canonical URL.
+  const page = +(url.searchParams.get('page') || 0);
+  // Chapter links always carry ?page= (the page loader needs it), page 0 included.
+  const path = `${getBookUrl(book)}/${params.chapter_id}/?page=${page}`;
+  const title = `${chapter.title.ru} — ${book.title.ru}${page ? `, стр. ${page + 1}` : ''} | Chinese+`;
+  const description = `${chapter.title.ru} (${chapter.title.cn}) — глава книги «${book.title.ru}» на китайском с переводом и пиньинем.`;
+
+  return {
+    title,
+    links: [{ key: 'canonical', rel: 'canonical', href: CONST_URLS.siteUrl + path }],
+    meta: [
+      { key: 'description', name: 'description', content: description },
+      { key: 'og:title', property: 'og:title', content: title },
+      { key: 'og:description', property: 'og:description', content: description },
+      { key: 'og:type', property: 'og:type', content: 'article' },
+      { key: 'og:url', property: 'og:url', content: CONST_URLS.siteUrl + path },
+    ],
+  };
+};

@@ -6,6 +6,7 @@ import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 import { TextCard } from '~/components/read/text-card';
 import { type TextCardInfo } from '../texts';
 import { MoreBtnAndLoader } from '~/components/common/ui/more-btn-and-loader';
@@ -37,6 +38,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Тексты', href: '/read/texts/' }, { name: 'На проверке' }]} />
       <PageTitle txt={'Тексты на проверке'} />
       <FlexRow>
         <Sidebar>

@@ -99,7 +99,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Донат',
+  title: 'Поддержать проект — донат и цели | Chinese+',
   meta: [
     {
       name: 'description',

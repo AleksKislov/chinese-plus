@@ -58,7 +58,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Видео уроки фонетики китайского языка',
+  title: 'Видеоуроки фонетики китайского языка с носителем | Chinese+',
   meta: [
     {
       name: 'description',

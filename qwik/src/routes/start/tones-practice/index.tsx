@@ -43,7 +43,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Практика произнесения тонов',
+  title: 'Практика тонов китайского языка онлайн | Chinese+',
   meta: [
     {
       name: 'description',

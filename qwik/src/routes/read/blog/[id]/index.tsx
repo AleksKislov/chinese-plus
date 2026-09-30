@@ -11,7 +11,6 @@ import {
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { getContentComments } from '~/misc/actions/get-content-comments';
 import { type BlogCardInfo } from '..';
-import { BackBtn } from '~/components/common/ui/back-btn';
 import { PageTitle } from '~/components/common/layout/title';
 import { BlogPostCard } from '~/components/read/blog-post-card';
 import { BlogContent } from '~/components/read/blog-content';
@@ -112,7 +111,6 @@ export default component$(() => {
         <Breadcrumbs
           items={[{ name: 'Блог', href: '/read/blog/' }, { name: truncateCrumb(title) }]}
         />
-        <BackBtn path="/read/blog" />
         <PageTitle txt={title} hits={hits} hSizeSm={true} />
 
         <Alerts />
@@ -148,7 +146,7 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const postInfo = resolveValue(useGetBlogPost);
-  const title = `Chinese+ Блог: ${postInfo.title}`;
+  const title = `${postInfo.title} | Блог Chinese+`;
   const description = getPreviewText(postInfo.content) || postInfo.title;
   const url =
     CONST_URLS.siteUrl +

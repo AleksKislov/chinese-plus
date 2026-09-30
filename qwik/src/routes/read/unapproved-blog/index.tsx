@@ -6,6 +6,7 @@ import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 import { BlogCard } from '~/components/read/blog-card';
 import { type BlogCardInfo } from '../blog';
 import { MoreBtnAndLoader } from '~/components/common/ui/more-btn-and-loader';
@@ -32,6 +33,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Блог', href: '/read/blog/' }, { name: 'На проверке' }]} />
       <PageTitle txt={'Посты на проверке'} />
       <FlexRow>
         <Sidebar>

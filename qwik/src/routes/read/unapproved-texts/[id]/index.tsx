@@ -10,6 +10,7 @@ import { type CommentType } from '~/components/common/comments/comment-card';
 import { getContentComments } from '~/misc/actions/get-content-comments';
 import { parseTextWords } from '~/misc/helpers/content';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
+import { truncateCrumb } from '~/components/common/layout/breadcrumbs';
 import {
   getTextFromDB,
   getWordsForTooltips,
@@ -65,7 +66,15 @@ export default component$(() => {
 
   return (
     <>
-      <ContentPageHead title={title} hits={hits} path="/read/unapproved-texts" />
+      <ContentPageHead
+        title={title}
+        hits={hits}
+        crumbs={[
+          { name: 'Тексты', href: '/read/texts/' },
+          { name: 'На проверке', href: '/read/unapproved-texts/' },
+          { name: truncateCrumb(title) },
+        ]}
+      />
 
       <FlexRow>
         <Sidebar>

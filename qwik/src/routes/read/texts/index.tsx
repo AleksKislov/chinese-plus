@@ -164,7 +164,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Тексты на китайском с переводом',
+  title: 'Тексты на китайском с переводом и озвучкой | Chinese+',
   meta: [
     {
       name: 'description',
