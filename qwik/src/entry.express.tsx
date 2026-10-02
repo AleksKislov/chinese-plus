@@ -98,6 +98,8 @@ app.use(
 // Static asset handlers
 // https://expressjs.com/en/starter/static-files.html
 app.use(`/build`, express.static(buildDir, { immutable: true, maxAge: '1y' }));
+// Vite-hashed css + bundle-graph.json: without this they're revalidated (304) on every load
+app.use(`/assets`, express.static(join(distDir, 'assets'), { immutable: true, maxAge: '1y' }));
 app.use(express.static(distDir, { redirect: false }));
 
 // Use Qwik City's page and endpoint request handler

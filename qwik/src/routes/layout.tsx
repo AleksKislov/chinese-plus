@@ -1,6 +1,6 @@
 import { component$, Slot, useContext, useTask$, useVisibleTask$ } from '@builder.io/qwik';
 import Header from '../components/common/layout/header/header';
-import { routeLoader$ } from '@builder.io/qwik-city';
+import { routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
 import { getTokenFromCookie, logout, type UserFromDB } from '~/misc/actions/auth';
 import { Footer } from '~/components/common/layout/footer';
@@ -75,6 +75,7 @@ export default component$(() => {
   const beVersion = useGetBackendVersion();
   const feConfigs = useFeConfigs();
   const configState = useContext(configContext);
+  const loc = useLocation();
 
   useTask$(({ track }) => {
     track(() => user.value);
@@ -115,14 +116,10 @@ export default component$(() => {
     if (user.value === null) logout();
   });
 
+  // layout loaders re-run on every client navigation - replace, don't append
   useTask$(({ track }) => {
     const res = track(() => feConfigs.value);
-    configState.push(...res.filter((x) => x.isActive));
-  });
-
-  useTask$(({ track }) => {
-    const res = track(() => feConfigs.value);
-    configState.push(...res.filter((x) => x.isActive));
+    configState.splice(0, configState.length, ...res.filter((x) => x.isActive));
   });
 
   return (
@@ -131,6 +128,10 @@ export default component$(() => {
         class={'flex flex-col min-h-screen text-base-content'}
         data-theme={isDarkTheme ? ThemeTypes.dark : ThemeTypes.light}
       >
+        {/* page data is fetched on click (no data prefetch), so show that the click registered */}
+        {loc.isNavigating && (
+          <div class="nav-progress fixed top-0 left-0 z-50 h-1 w-full bg-secondary" />
+        )}
         <Header />
         <section class={'relative flex flex-col min-h-screen justify-between '}>
           <div class="relative container mx-auto px-4 lg:px-28">
