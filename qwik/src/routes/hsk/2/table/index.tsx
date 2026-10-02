@@ -1,4 +1,4 @@
-import { component$, useContext } from '@builder.io/qwik';
+import { component$, useContext, useComputed$ } from '@builder.io/qwik';
 import { type DocumentHead, useLocation } from '@builder.io/qwik-city';
 import { routeLoader$ } from '@builder.io/qwik-city';
 import { Alerts } from '~/components/common/alerts/alerts';
@@ -63,17 +63,21 @@ export default component$(() => {
   const hskWords = getHskWords();
   const userHskWords = getUserHsk2Words();
 
-  const seo = getWordsSeo({
-    version: 'old',
-    page: 'table',
-    lvl: getWordsLevel(loc.url, 'old'),
-    pg: getWordsPage(loc.url),
-  });
+  // useComputed$ re-derives on ?lvl= / ?pg= changes; a plain const in the component
+  // body is computed once, leaving the H1 and breadcrumbs on the first level.
+  const seo = useComputed$(() =>
+    getWordsSeo({
+      version: 'old',
+      page: 'table',
+      lvl: getWordsLevel(loc.url, 'old'),
+      pg: getWordsPage(loc.url),
+    }),
+  );
 
   return (
     <>
-      <Breadcrumbs items={seo.crumbs} />
-      <PageTitle txt={seo.h1} />
+      <Breadcrumbs items={seo.value.crumbs} />
+      <PageTitle txt={seo.value.h1} />
 
       <FlexRow>
         <Alerts />

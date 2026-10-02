@@ -1,4 +1,4 @@
-import { component$ } from '@builder.io/qwik';
+import { component$, useComputed$ } from '@builder.io/qwik';
 import { type DocumentHead, Link, useLocation, routeLoader$ } from '@builder.io/qwik-city';
 import { TableCard } from '~/components/hsk/table-card';
 import { Pagination } from '~/components/hsk/pagination';
@@ -27,24 +27,28 @@ export const getOldHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]>
 export default component$(() => {
   const loc = useLocation();
   const hskWords = getOldHskWords();
-  const level = loc.url.searchParams.get('lvl') || '1';
+  const level = useComputed$(() => loc.url.searchParams.get('lvl') || '1');
 
-  const seo = getWordsSeo({
-    version: 'new',
-    page: 'old-table',
-    lvl: getWordsLevel(loc.url, 'new'),
-    pg: getWordsPage(loc.url),
-  });
+  // useComputed$ re-derives on ?lvl= / ?pg= changes; a plain const in the component
+  // body is computed once, leaving the H1 and breadcrumbs on the first level.
+  const seo = useComputed$(() =>
+    getWordsSeo({
+      version: 'new',
+      page: 'old-table',
+      lvl: getWordsLevel(loc.url, 'new'),
+      pg: getWordsPage(loc.url),
+    }),
+  );
 
   return (
     <>
-      <Breadcrumbs items={seo.crumbs} />
-      <PageTitle txt={seo.h1} />
+      <Breadcrumbs items={seo.value.crumbs} />
+      <PageTitle txt={seo.value.h1} />
 
       <FlexRow>
         <Sidebar>
-          <TableCard level={level} isOldHsk={false} isForTests={false} isLegacyBand={true} />
-          <CsvCard level={level} isOldHsk={false} isPrivate={false} isLegacyBand={true} />
+          <TableCard level={level.value} isOldHsk={false} isForTests={false} isLegacyBand={true} />
+          <CsvCard level={level.value} isOldHsk={false} isPrivate={false} isLegacyBand={true} />
         </Sidebar>
 
         <MainContent>
@@ -59,7 +63,7 @@ export default component$(() => {
           </div>
 
           <Pagination
-            level={level}
+            level={level.value}
             curPage={+loc.url.searchParams.get('pg')! || 0}
             isOldHsk={false}
             isLegacyBand={true}

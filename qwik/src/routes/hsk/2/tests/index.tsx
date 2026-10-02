@@ -1,4 +1,4 @@
-import { component$, useStore, useTask$, $ } from '@builder.io/qwik';
+import { component$, useStore, useTask$, $, useComputed$ } from '@builder.io/qwik';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { HskExamsLinkCard } from '~/components/hsk/exams-link-card';
@@ -120,17 +120,21 @@ export default component$(() => {
     return word.chinese;
   };
 
-  const seo = getWordsSeo({
-    version: 'old',
-    page: 'tests',
-    lvl: getWordsLevel(loc.url, 'old'),
-    pg: getWordsPage(loc.url),
-  });
+  // useComputed$ re-derives on ?lvl= / ?pg= changes; a plain const in the component
+  // body is computed once, leaving the H1 and breadcrumbs on the first level.
+  const seo = useComputed$(() =>
+    getWordsSeo({
+      version: 'old',
+      page: 'tests',
+      lvl: getWordsLevel(loc.url, 'old'),
+      pg: getWordsPage(loc.url),
+    }),
+  );
 
   return (
     <>
-      <Breadcrumbs items={seo.crumbs} />
-      <PageTitle txt={seo.h1} />
+      <Breadcrumbs items={seo.value.crumbs} />
+      <PageTitle txt={seo.value.h1} />
       <FlexRow>
         <Sidebar>
           <TableCard
