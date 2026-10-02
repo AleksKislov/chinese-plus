@@ -1,5 +1,6 @@
 import { component$ } from '@builder.io/qwik';
-import { Link } from '@builder.io/qwik-city';
+import { Link, useLocation } from '@builder.io/qwik-city';
+import { wordsLevelHref } from './words-seo';
 
 import CONSTANTS from '~/misc/consts/consts';
 export const hskInfo = CONSTANTS.hskInfo;
@@ -20,6 +21,7 @@ export const Pagination = component$(
       : isLegacyBand
       ? hskInfo.bandSizeOld
       : hskInfo.bandSize;
+    const loc = useLocation();
     const maxPerRow = 10;
     const lvl = level === '789' ? '7-8-9' : level;
     const numOfPages = Math.ceil(infoToUse[lvl] / maxWordsPerPage);
@@ -38,7 +40,7 @@ export const Pagination = component$(
                     prefetch="js"
                     class={`btn btn-sm ${curPage === ind + maxPerRow * rowNum ? 'btn-active' : ''}`}
                     key={ind}
-                    href={`?lvl=${level}&pg=${ind + maxPerRow * rowNum}`}
+                    href={wordsLevelHref(loc.url.pathname, level, ind + maxPerRow * rowNum)}
                   >
                     {ind + 1 + maxPerRow * rowNum}
                   </Link>

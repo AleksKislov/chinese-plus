@@ -4,6 +4,7 @@ import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-l
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { Sidebar } from '~/components/common/layout/sidebar';
+import { PinyinChartLinkCard } from '~/components/common/content-cards/pinyin-chart-link-card';
 import { PageTitle } from '~/components/common/layout/title';
 import { TonesPractice } from '~/components/start/tones-practice/tones-practice';
 import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
@@ -34,6 +35,7 @@ export default component$(() => {
             </div>
           </div>
           <PhoneticsLinkCard />
+          <PinyinChartLinkCard />
         </Sidebar>
         <MainContent>
           <TonesPractice />

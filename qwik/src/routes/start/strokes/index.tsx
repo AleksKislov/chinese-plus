@@ -238,7 +238,7 @@ export default component$(() => {
   return (
     <>
       <Breadcrumbs items={[{ name: 'Черты' }]} />
-      <PageTitle txt={'Черты китайских иероглифов'} />
+      <PageTitle txt={'Черты китайских иероглифов — простые и сложные'} />
 
       <FlexRow>
         <Sidebar>
@@ -298,11 +298,12 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Черты китайских иероглифов | Chinese+',
+  title: 'Черты китайских иероглифов — названия и примеры | Chinese+',
   meta: [
     {
       name: 'description',
-      content: 'Черточек, из которых состоят китайские иероглифы, не так уж и много.',
+      content:
+        'Все черты китайских иероглифов (笔画): простые и сложные, с китайскими и русскими названиями, примерами иероглифов и анимацией написания.',
     },
   ],
 };

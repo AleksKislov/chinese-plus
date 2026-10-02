@@ -40,10 +40,15 @@ export const wordsPagePath = (version: HskVersion, page: WordsPage) =>
   `/hsk/${VERSION_SEGMENT[version]}/${page}/`;
 
 // Level 1, first page is the bare path - the URL the menu and sitemap already use.
-export const wordsPageUrl = (version: HskVersion, page: WordsPage, lvl = '1', pg = 0) => {
+// Canonical URL of a level/page on any word list path. Also used for the level
+// menu and pagination links, so internal links point at the canonical URL.
+export const wordsLevelHref = (pathname: string, lvl = '1', pg = 0) => {
   const params = [lvl !== '1' || pg ? `lvl=${lvl}` : '', pg ? `pg=${pg}` : ''].filter(Boolean);
-  return `${wordsPagePath(version, page)}${params.length ? `?${params.join('&')}` : ''}`;
+  return `${pathname}${params.length ? `?${params.join('&')}` : ''}`;
 };
+
+export const wordsPageUrl = (version: HskVersion, page: WordsPage, lvl = '1', pg = 0) =>
+  wordsLevelHref(wordsPagePath(version, page), lvl, pg);
 
 // How a level is named: plain "HSK 1" for the old standard (what people search
 // for), "HSK 3.0 уровень 1" for the new one - same convention as the exam pages.

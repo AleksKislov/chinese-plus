@@ -48,7 +48,17 @@ const splitSpeakerLines = (text: string): string[] =>
  * Once the paper is checked, correct/incorrect state and the explanation appear.
  */
 export const ExamQuestionCard = component$<Props>(
-  ({ question: q, part, answer, isChecked, sectionAudioId, admin, exampleLabel, variant, onAnswer$ }) => {
+  ({
+    question: q,
+    part,
+    answer,
+    isChecked,
+    sectionAudioId,
+    admin,
+    exampleLabel,
+    variant,
+    onAnswer$,
+  }) => {
     const isOld2 = variant === 'old-2';
     const correct = isCorrect(q, answer);
     const choices = getChoices(q, part);

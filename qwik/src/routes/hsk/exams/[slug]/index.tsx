@@ -443,7 +443,7 @@ export const head: DocumentHead = ({ resolveValue }) => {
   const title = `Пробный экзамен ${levelName(
     exam.version,
     exam.level,
-  )} онлайн — вариант ${getExamVariant(exam)} | Chinese+`;
+  )} онлайн — пробник ${getExamVariant(exam)} с ответами | Chinese+`;
   const description =
     exam.descriptionRu ||
     `Бесплатный пробный экзамен ${levelName(

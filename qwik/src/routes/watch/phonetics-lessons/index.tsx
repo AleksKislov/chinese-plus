@@ -2,6 +2,7 @@ import { component$ } from '@builder.io/qwik';
 import { routeLoader$, type DocumentHead } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
+import { PinyinChartLinkCard } from '~/components/common/content-cards/pinyin-chart-link-card';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
 import { VideoLessonCard } from '~/components/watch/video-lesson-card';
@@ -45,6 +46,7 @@ export default component$(() => {
               </p>
             </div>
           </div>
+          <PinyinChartLinkCard />
         </Sidebar>
 
         <MainContent>

@@ -3,6 +3,7 @@ import type { DocumentHead } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { Sidebar } from '~/components/common/layout/sidebar';
+import { PinyinChartLinkCard } from '~/components/common/content-cards/pinyin-chart-link-card';
 import { PageTitle } from '~/components/common/layout/title';
 import CONST_URLS from '~/misc/consts/urls';
 import { PinyinTests } from '../../../components/start/pinyin-tests/pinyin-tests';
@@ -30,6 +31,7 @@ export default component$(() => {
             </div>
           </div>
           <PhoneticsLinkCard />
+          <PinyinChartLinkCard />
         </Sidebar>
         <MainContent>
           <small class="text-base-content">

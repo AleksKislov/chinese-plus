@@ -1,5 +1,6 @@
 import { component$ } from '@builder.io/qwik';
-import { useNavigate } from '@builder.io/qwik-city';
+import { Link, useLocation } from '@builder.io/qwik-city';
+import { wordsLevelHref } from './words-seo';
 
 import { CardInfo } from './card-info';
 import CONSTANTS from '~/misc/consts/consts';
@@ -15,7 +16,7 @@ type TabelCardProps = {
 
 export const TableCard = component$(
   ({ level, isOldHsk, isForTests, isLegacyBand }: TabelCardProps) => {
-    const nav = useNavigate();
+    const loc = useLocation();
     const infoToUse: HskLvlSizeMap = isOldHsk
       ? hskInfo.oldLevelSize
       : isLegacyBand
@@ -37,20 +38,26 @@ export const TableCard = component$(
           <table class="table w-full overflow-hidden !rounded-t-none">
             <tbody>
               {levels.map((lvl) => {
-                const href = `?lvl=${rmHyphen(lvl)}&pg=0`;
+                // Real links (crawlable) to the level's canonical URL.
+                const href = wordsLevelHref(loc.url.pathname, rmHyphen(lvl));
                 return (
                   <tr
                     key={lvl}
-                    class={`hover hover:text-primary-focus cursor-pointer ${
-                      level === lvl ? 'bg-base-200 text-primary-focus' : ''
+                    class={`hover hover:text-primary-focus ${
+                      level === rmHyphen(lvl) ? 'bg-base-200 text-primary-focus' : ''
                     }`}
-                    onClick$={() => nav(href)}
                   >
                     <td class="pl-8">
-                      {isOldHsk ? 'HSK ' : isLegacyBand ? 'Band ' : 'Уровень '} {lvl}
+                      <Link prefetch="js" href={href} class="block">
+                        {isOldHsk ? 'HSK ' : isLegacyBand ? 'Band ' : 'Уровень '} {lvl}
+                      </Link>
                     </td>
                     <td class={`float-right pr-8`}>
-                      <span class={`badge bg-warning text-warning-content`}>{infoToUse[lvl]}</span>
+                      <Link prefetch="js" href={href} tabIndex={-1} aria-hidden="true">
+                        <span class={`badge bg-warning text-warning-content`}>
+                          {infoToUse[lvl]}
+                        </span>
+                      </Link>
                     </td>
                   </tr>
                 );
