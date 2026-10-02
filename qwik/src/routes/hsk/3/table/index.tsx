@@ -82,7 +82,7 @@ export default component$(() => {
             <span>
               Список слов обновлён по стандарту 2026 года (новый HSK 3.0). Прежний список доступен
               на странице{' '}
-              <Link href="/hsk/3/old-table" class="link">
+              <Link prefetch="js" href="/hsk/3/old-table" class="link">
                 Старая таблица
               </Link>
               .

@@ -248,7 +248,11 @@ export default component$(() => {
               <p>
                 Познакомились с чертами - переходите знакомиться со следующим понятием в
                 иероглифике:{' '}
-                <Link href="/start/radicals" class="link hover:link-success font-bold">
+                <Link
+                  prefetch="js"
+                  href="/start/radicals"
+                  class="link hover:link-success font-bold"
+                >
                   ключи
                 </Link>
               </p>

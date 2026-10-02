@@ -70,6 +70,7 @@ export const StrokeCard = component$(({ char, ind, isSimple }: StrokeCardProps) 
               На китайском:{' '}
               <div class="tooltip tooltip-info" data-tip={'Посмотреть в словаре'}>
                 <Link
+                  prefetch="js"
                   class="text-2xl hover:link-success"
                   href={`/dictionary/${encodeURIComponent(char.name)}`}
                 >

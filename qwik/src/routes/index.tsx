@@ -65,7 +65,7 @@ export default component$(() => {
       {!loggedIn && (
         <FlexRow>
           <div class="flex flex-col items-center w-full mb-3">
-            <Link href="/read/texts" class="btn btn-accent mb-2">
+            <Link prefetch="js" href="/read/texts" class="btn btn-accent mb-2">
               Учиться бесплатно
             </Link>
             <p class="text-xs opacity-60 mb-3">

@@ -34,7 +34,7 @@ export const Breadcrumbs = component$(({ items }: BreadcrumbsProps) => {
           {crumbs.map(({ name, href }, ind) => (
             <li key={ind}>
               {href && ind < crumbs.length - 1 ? (
-                <Link href={href} class="link link-hover">
+                <Link prefetch="js" href={href} class="link link-hover">
                   {name}
                 </Link>
               ) : (

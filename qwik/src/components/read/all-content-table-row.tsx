@@ -42,7 +42,7 @@ export const AllContentTableRow = component$(
             class='tooltip tooltip-info before:z-50 before:content-[attr(data-tip)]'
             data-tip={user.name}
           >
-            <Link href={"/users/" + user._id}>
+            <Link prefetch="js" href={"/users/" + user._id}>
               <div class='avatar'>
                 <div class='mask mask-squircle w-10 h-10'>
                   <AvatarImg userName={user.name} newAvatar={user.newAvatar} size={48} />

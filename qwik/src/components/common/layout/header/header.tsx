@@ -101,7 +101,7 @@ export default component$(() => {
 
             {/* desctop menu */}
             <div class="hidden lg:flex">
-              <Link class="btn btn-ghost normal-case text-xl mt-2" href="/">
+              <Link prefetch="js" class="btn btn-ghost normal-case text-xl mt-2" href="/">
                 <div>{logoSvg}</div>
                 <Brand />
               </Link>
@@ -139,7 +139,7 @@ export default component$(() => {
           {/* brand for mobile */}
           <div class="navbar-center lg:hidden">
             <div class="flex">
-              <Link class="btn btn-ghost normal-case text-2xl" href="/">
+              <Link prefetch="js" class="btn btn-ghost normal-case text-2xl" href="/">
                 <div>{logoSvg}</div>
                 <Brand isMobile={true} />
               </Link>

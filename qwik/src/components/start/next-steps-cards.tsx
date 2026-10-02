@@ -41,6 +41,7 @@ export const NextStepsCards = component$(() => {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 my-4">
       {steps.map((step, ind) => (
         <Link
+          prefetch="js"
           key={ind}
           href={step.href}
           class="card bg-base-300 hover:bg-base-200 transition-colors"

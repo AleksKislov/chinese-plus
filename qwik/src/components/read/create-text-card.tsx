@@ -11,7 +11,7 @@ export const CreateTextCard = component$(() => {
         <p>Поделитесь текстом с другими посетителями сайта и станьте героем нашего клуба!</p>
         <div class="card-actions justify-end">
           <div class={loggedIn ? '' : 'tooltip tooltip-info tooltip-bottom'} data-tip="Нужно войти">
-            <Link href="/create/text">
+            <Link prefetch="js" href="/create/text">
               <button class="btn btn-sm btn-primary" disabled={!loggedIn}>
                 ok!
               </button>

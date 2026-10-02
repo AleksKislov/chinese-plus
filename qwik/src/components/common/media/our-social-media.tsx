@@ -12,7 +12,7 @@ export const OurSocialMedia = component$(() => {
   return (
     <>
       {socMedia.map(({ href, svg }, ind) => (
-        <Link href={href} target={'_blank'} class={'pl-2 hover:text-info'} key={ind}>
+        <Link prefetch="js" href={href} target={'_blank'} class={'pl-2 hover:text-info'} key={ind}>
           {svg}
         </Link>
       ))}

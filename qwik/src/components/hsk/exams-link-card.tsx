@@ -16,7 +16,11 @@ export const HskExamsLinkCard = component$(({ version, level }: HskExamsLinkCard
         <h2 class="card-title">Готовитесь к HSK?</h2>
         <p>
           Проверьте себя на{' '}
-          <Link class="link link-hover link-secondary font-bold" href={examsPath(version, lvl)}>
+          <Link
+            prefetch="js"
+            class="link link-hover link-secondary font-bold"
+            href={examsPath(version, lvl)}
+          >
             пробном экзамене HSK{lvl ? ` ${levelLabel(version, lvl)}` : ''}
           </Link>{' '}
           — с аудированием, проверкой ответов и пояснениями.

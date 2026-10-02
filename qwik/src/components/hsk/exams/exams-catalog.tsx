@@ -187,6 +187,7 @@ const LevelButtons = component$(({ data }: { data: ExamsCatalogData }) => {
   return (
     <div class="flex flex-wrap gap-2 mb-6">
       <Link
+        prefetch="js"
         href={examsPath(version)}
         class={`btn btn-xs ${!data.lvl ? 'btn-secondary' : 'btn-outline'}`}
       >
@@ -196,6 +197,7 @@ const LevelButtons = component$(({ data }: { data: ExamsCatalogData }) => {
         const count = data.counts[`${version}-${l}`] || 0;
         return (
           <Link
+            prefetch="js"
             key={l}
             href={examsPath(version, l)}
             class={`btn btn-xs ${
@@ -230,7 +232,7 @@ const GroupedExams = component$(({ data }: { data: ExamsCatalogData }) => (
           <div key={`${v}-${l}`}>
             <div class="prose mb-2">
               <h2 class="mb-0">
-                <Link href={examsPath(v, l)} class="link link-hover">
+                <Link prefetch="js" href={examsPath(v, l)} class="link link-hover">
                   Пробные экзамены {levelName(v, l)}
                 </Link>
               </h2>
@@ -261,7 +263,7 @@ const OldFormatTable = component$(() => (
           return (
             <tr key={l}>
               <td>
-                <Link href={examsPath('old', l)} class="link link-hover">
+                <Link prefetch="js" href={examsPath('old', l)} class="link link-hover">
                   HSK {l}
                 </Link>
               </td>
@@ -292,7 +294,7 @@ const NewWordsTable = component$(() => (
         {HSK_LEVELS.new.map((l) => (
           <tr key={l}>
             <td>
-              <Link href={examsPath('new', l)} class="link link-hover">
+              <Link prefetch="js" href={examsPath('new', l)} class="link link-hover">
                 HSK {levelLabel('new', l)}
               </Link>
             </td>
@@ -320,7 +322,9 @@ const LevelFormat = component$(({ data }: { data: ExamsCatalogData }) => {
         <li>
           Лексика: <b>{levelWords(version, lvl)}</b> слов
           {version === 'new' && ' (с учётом предыдущих уровней)'} —{' '}
-          <Link href={wordsPath(version, lvl)}>список слов HSK {label}</Link>
+          <Link prefetch="js" href={wordsPath(version, lvl)}>
+            список слов HSK {label}
+          </Link>
         </li>
         {format ? (
           <>
@@ -351,7 +355,10 @@ const LevelFormat = component$(({ data }: { data: ExamsCatalogData }) => {
       </ul>
       <p>
         Перед экзаменом повторите слова в{' '}
-        <Link href={wordTestsPath(version, lvl)}>тестах на лексику HSK {label}</Link>.
+        <Link prefetch="js" href={wordTestsPath(version, lvl)}>
+          тестах на лексику HSK {label}
+        </Link>
+        .
       </p>
     </div>
   );
@@ -367,7 +374,10 @@ export const ExamsCatalog = component$(({ data }: { data: ExamsCatalogData }) =>
         <div class="prose">
           <p>
             Такого уровня нет. Все экзамены — на странице{' '}
-            <Link href={examsPath()}>пробных экзаменов HSK</Link>.
+            <Link prefetch="js" href={examsPath()}>
+              пробных экзаменов HSK
+            </Link>
+            .
           </p>
         </div>
       </>
@@ -432,6 +442,7 @@ export const ExamsCatalog = component$(({ data }: { data: ExamsCatalogData }) =>
 
           <div class="flex flex-wrap gap-2 mb-3">
             <Link
+              prefetch="js"
               href={examsPath()}
               class={`btn btn-sm ${!version ? 'btn-primary' : 'btn-outline'}`}
             >
@@ -439,6 +450,7 @@ export const ExamsCatalog = component$(({ data }: { data: ExamsCatalogData }) =>
             </Link>
             {VERSIONS.map((v) => (
               <Link
+                prefetch="js"
                 key={v}
                 href={examsPath(v)}
                 class={`btn btn-sm ${version === v ? 'btn-primary' : 'btn-outline'}`}

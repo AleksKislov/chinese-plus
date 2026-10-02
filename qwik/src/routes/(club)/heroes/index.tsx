@@ -117,7 +117,7 @@ export default component$(() => {
                   {sorted.value.map((hero) => (
                     <tr>
                       <td>
-                        <Link href={'/users/' + hero.userId}>
+                        <Link prefetch="js" href={'/users/' + hero.userId}>
                           <div class="flex">
                             <div class="avatar">
                               <div class="mask mask-squircle w-10 h-10">

@@ -4,7 +4,12 @@ import { type Config } from '~/root';
 
 export const OurAds = component$(({ adsInfo }: { adsInfo?: Config }) => {
   return (
-    <Link href={(adsInfo?.link as string) || ''} target={'_blank'} class="card w-full mb-3">
+    <Link
+      prefetch="js"
+      href={(adsInfo?.link as string) || ''}
+      target={'_blank'}
+      class="card w-full mb-3"
+    >
       <figure>
         <img
           class="pointer rounded-xl"

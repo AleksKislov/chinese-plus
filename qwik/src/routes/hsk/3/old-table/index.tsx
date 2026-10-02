@@ -51,7 +51,7 @@ export default component$(() => {
           <div class="alert alert-info mb-3">
             <span>
               Это старая редакция списка слов HSK 3.0 (2021). Актуальный список смотрите на странице{' '}
-              <Link href="/hsk/3/table" class="link">
+              <Link prefetch="js" href="/hsk/3/table" class="link">
                 Таблица
               </Link>
               .

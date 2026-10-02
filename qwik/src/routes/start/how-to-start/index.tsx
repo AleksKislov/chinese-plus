@@ -20,11 +20,11 @@ export const points = [
     txt: (
       <span>
         Далее можно начать знакомиться с лексикой и{' '}
-        <Link class="link font-bold hover:link-success" href="/start/textbook/">
+        <Link prefetch="js" class="link font-bold hover:link-success" href="/start/textbook/">
           грамматикой
         </Link>{' '}
         китайского языка. Лексику можно начинать учить с 1-го уровня{' '}
-        <Link class="link font-bold hover:link-success" href="/hsk/2/table">
+        <Link prefetch="js" class="link font-bold hover:link-success" href="/hsk/2/table">
           HSK
         </Link>
       </span>
@@ -36,7 +36,7 @@ export const points = [
     txt: (
       <span>
         Одновременно с пунктом 2 можно начинать слушать аудиоуроки и читать простые{' '}
-        <Link class="link font-bold hover:link-success" href="/read/texts">
+        <Link prefetch="js" class="link font-bold hover:link-success" href="/read/texts">
           тексты
         </Link>
         , слушать озвучку носителем языка
@@ -50,7 +50,7 @@ export const points = [
       <span>
         По мере увеличения словарного запаса наращивайте свой уровень и переходите к более сложным
         материалам, например, к просмотру{' '}
-        <Link class="link font-bold hover:link-success" href="/watch/videos">
+        <Link prefetch="js" class="link font-bold hover:link-success" href="/watch/videos">
           видео
         </Link>{' '}
         на китайском языке с интерактивными субтитрами.
@@ -99,6 +99,7 @@ export default component$(() => {
                           латинскими буквами с указанием тонов (всего их 4) над гласными - пиньинем.
                           Чтобы разобраться с фонетикой, смотрите{' '}
                           <Link
+                            prefetch="js"
                             class="link font-bold hover:link-success"
                             href="/watch/phonetics-lessons"
                           >
@@ -106,6 +107,7 @@ export default component$(() => {
                           </Link>{' '}
                           с носителем языка. Рекомендуем так же пользоваться нашей{' '}
                           <Link
+                            prefetch="js"
                             class="link font-bold hover:link-success"
                             href="/start/pinyin-chart"
                           >
@@ -126,11 +128,16 @@ export default component$(() => {
                         </div>
                         <div>
                           Сначала нужно узнать из каких вообще{' '}
-                          <Link class="link font-bold hover:link-success" href="/start/strokes">
+                          <Link
+                            prefetch="js"
+                            class="link font-bold hover:link-success"
+                            href="/start/strokes"
+                          >
                             черт
                           </Link>{' '}
                           состоят иероглифы, как их писать. Потом можете посмотреть{' '}
                           <Link
+                            prefetch="js"
                             class="link font-bold hover:link-success"
                             href="/watch/characters-lessons"
                           >

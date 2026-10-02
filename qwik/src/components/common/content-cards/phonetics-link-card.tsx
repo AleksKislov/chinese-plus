@@ -8,7 +8,11 @@ export const PhoneticsLinkCard = component$(() => {
         <h2 class="card-title">Пиньинь сложный? </h2>
         <p>
           Смотрите наш курс по{' '}
-          <Link class="link link-hover link-secondary font-bold" href="/watch/phonetics-lessons">
+          <Link
+            prefetch="js"
+            class="link link-hover link-secondary font-bold"
+            href="/watch/phonetics-lessons"
+          >
             фонетике
           </Link>{' '}
           китайского языка: пиньинь, произношение, тоны, сочетания тонов и пр.

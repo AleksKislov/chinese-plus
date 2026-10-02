@@ -65,7 +65,10 @@ const ExamNotFound = component$(() => (
     <div class="prose">
       <p>
         Этот вариант удалён или ещё не опубликован. Все варианты — на странице{' '}
-        <Link href={examsPath()}>пробных экзаменов HSK</Link>.
+        <Link prefetch="js" href={examsPath()}>
+          пробных экзаменов HSK
+        </Link>
+        .
       </p>
     </div>
   </>
@@ -399,13 +402,18 @@ export default component$(() => {
             <h2>Ещё пробные экзамены HSK {lvlLabel}</h2>
             <p>
               Все варианты уровня — на странице{' '}
-              <Link href={examsPath(paper.version, paper.level)}>
+              <Link prefetch="js" href={examsPath(paper.version, paper.level)}>
                 пробных экзаменов {levelName(paper.version, paper.level)}
               </Link>
               . Повторить лексику:{' '}
-              <Link href={wordsPath(paper.version, paper.level)}>список слов</Link> и{' '}
-              <Link href={wordTestsPath(paper.version, paper.level)}>тесты на слова</Link> HSK{' '}
-              {lvlLabel}.
+              <Link prefetch="js" href={wordsPath(paper.version, paper.level)}>
+                список слов
+              </Link>{' '}
+              и{' '}
+              <Link prefetch="js" href={wordTestsPath(paper.version, paper.level)}>
+                тесты на слова
+              </Link>{' '}
+              HSK {lvlLabel}.
             </p>
           </div>
           {!!related.value.length && (

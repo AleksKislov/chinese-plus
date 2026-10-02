@@ -22,7 +22,7 @@ export default component$(() => {
       <PageTitle txt={'Управление книгами'} />
 
       <div class="mb-3">
-        <Link href="/create/book" class="btn btn-primary">
+        <Link prefetch="js" href="/create/book" class="btn btn-primary">
           + Создать книгу
         </Link>
       </div>
@@ -46,7 +46,11 @@ export default component$(() => {
                 <td>{book.author?.name?.ru || '—'}</td>
                 <td>{book.year || '—'}</td>
                 <td>
-                  <Link href={`/edit/book/${book._id}`} class="btn btn-sm btn-outline">
+                  <Link
+                    prefetch="js"
+                    href={`/edit/book/${book._id}`}
+                    class="btn btn-sm btn-outline"
+                  >
                     Управлять
                   </Link>
                 </td>

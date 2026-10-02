@@ -24,6 +24,7 @@ export default component$(() => {
               <p class="text-xs">
                 Для референса взята библиотека:{' '}
                 <Link
+                  prefetch="js"
                   href="https://github.com/sanjirenqunti/sanjirenqunti.github.io"
                   class="link link-hover link-secondary font-bold"
                 >

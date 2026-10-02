@@ -31,15 +31,15 @@ export const featuresArr = [
     desc: (
       <p>
         Все{' '}
-        <Link href="/read/texts" class="link link-secondary">
+        <Link prefetch="js" href="/read/texts" class="link link-secondary">
           тексты
         </Link>
         ,{' '}
-        <Link href="/read/books" class="link link-secondary">
+        <Link prefetch="js" href="/read/books" class="link link-secondary">
           книги
         </Link>{' '}
         и{' '}
-        <Link href="/watch/videos" class="link link-secondary">
+        <Link prefetch="js" href="/watch/videos" class="link link-secondary">
           видео
         </Link>{' '}
         с параллельным переводом и переводом каждого слова. Кликните на{' '}
@@ -53,11 +53,11 @@ export const featuresArr = [
     desc: (
       <p>
         Пользователи регулярно добавляют новые{' '}
-        <Link href="/read/texts" class="link link-secondary">
+        <Link prefetch="js" href="/read/texts" class="link link-secondary">
           тексты
         </Link>{' '}
         и{' '}
-        <Link href="/watch/videos" class="link link-secondary">
+        <Link prefetch="js" href="/watch/videos" class="link link-secondary">
           видео
         </Link>
         . Поделитесь и Вы своими переводами
@@ -70,15 +70,15 @@ export const featuresArr = [
     desc: (
       <p>
         Любые слова из лексики{' '}
-        <Link href="/hsk/2/table" class="link link-secondary">
+        <Link prefetch="js" href="/hsk/2/table" class="link link-secondary">
           HSK
         </Link>
         ,{' '}
-        <Link href="/read/texts" class="link link-secondary">
+        <Link prefetch="js" href="/read/texts" class="link link-secondary">
           текстов
         </Link>{' '}
         или{' '}
-        <Link href="/dictionary" class="link link-secondary">
+        <Link prefetch="js" href="/dictionary" class="link link-secondary">
           словаря
         </Link>{' '}
         можно добавить в личный вокабуляр и повторять отдельно
@@ -91,27 +91,27 @@ export const featuresArr = [
     desc: (
       <p>
         Рекомендации{' '}
-        <Link href="/start/how-to-start" class="link link-secondary">
+        <Link prefetch="js" href="/start/how-to-start" class="link link-secondary">
           с чего начать
         </Link>
         , озвучка{' '}
-        <Link href="/hsk/2/table" class="link link-secondary">
+        <Link prefetch="js" href="/hsk/2/table" class="link link-secondary">
           HSK
         </Link>
         -лексики и{' '}
-        <Link href="/start/pinyin-chart" class="link link-secondary">
+        <Link prefetch="js" href="/start/pinyin-chart" class="link link-secondary">
           пиньиня
         </Link>{' '}
         (плюс{' '}
-        <Link href="/start/pinyin-tests" class="link link-secondary">
+        <Link prefetch="js" href="/start/pinyin-tests" class="link link-secondary">
           тесты
         </Link>
         ), уроки по{' '}
-        <Link href="/watch/phonetics-lessons" class="link link-secondary">
+        <Link prefetch="js" href="/watch/phonetics-lessons" class="link link-secondary">
           фонетике
         </Link>{' '}
         и{' '}
-        <Link href="/watch/characters-lessons" class="link link-secondary">
+        <Link prefetch="js" href="/watch/characters-lessons" class="link link-secondary">
           иероглифике
         </Link>
       </p>
@@ -124,7 +124,7 @@ export const featuresArr = [
     desc: (
       <p>
         Каждый иероглиф в{' '}
-        <Link href="/dictionary" class="link link-secondary">
+        <Link prefetch="js" href="/dictionary" class="link link-secondary">
           словаре
         </Link>{' '}
         снабжен анимированным порядком написания черт иероглифа

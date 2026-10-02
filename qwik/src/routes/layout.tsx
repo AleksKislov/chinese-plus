@@ -8,6 +8,10 @@ import { userContext, configContext, type Config, IsLightThemeCookieName } from 
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { ThemeTypes } from '~/components/common/layout/header/theme-changer';
 import { ChineseSelectionPopup } from '~/components/common/selection/chinese-selection-popup';
+import { cachedFetch } from '~/misc/helpers/tools/cached-fetch';
+
+// version/configs are identical for every visitor - don't hit the backend on every request
+const SHARED_LOADER_TTL_MS = 60 * 1000;
 
 export const getNewMentions = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
   const token = getTokenFromCookie(cookie);
@@ -22,7 +26,9 @@ export const useGetUser = routeLoader$(async ({ cookie }): Promise<UserFromDB | 
 });
 
 export const useGetBackendVersion = routeLoader$(async (): Promise<{ v: string } | null> => {
-  return ApiService.get('/api/project/version', undefined, null);
+  return cachedFetch('be-version', SHARED_LOADER_TTL_MS, () =>
+    ApiService.get('/api/project/version', undefined, null),
+  );
 });
 
 export const useGetUserHsk2WordsTotal = routeLoader$(async ({ cookie }): Promise<number> => {
@@ -47,7 +53,12 @@ export const useGetUserWords = routeLoader$(async ({ cookie, url }): Promise<str
 });
 
 export const useFeConfigs = routeLoader$((): Promise<Config[]> => {
-  return ApiService.get('/api/project/configs', undefined, []);
+  return cachedFetch(
+    'fe-configs',
+    SHARED_LOADER_TTL_MS,
+    () => ApiService.get('/api/project/configs', undefined, []),
+    (configs) => configs.length > 0,
+  );
 });
 
 export const useCheckTheme = routeLoader$(({ cookie }): boolean => {

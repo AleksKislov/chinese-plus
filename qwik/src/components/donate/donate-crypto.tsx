@@ -31,7 +31,7 @@ export const DonateCrypto = component$(({ wallets }: DonateWalletProps) => {
 
         <p class="text-sm">
           Если хотите поддержать криптой неанонимно, то напишите{' '}
-          <Link href="/contacts" class="link hover:link-success">
+          <Link prefetch="js" href="/contacts" class="link hover:link-success">
             админу
           </Link>
         </p>

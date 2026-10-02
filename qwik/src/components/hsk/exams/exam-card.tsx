@@ -15,7 +15,7 @@ export const ExamCard = component$(({ exam }: { exam: HskExamListItem }) => {
         !exam.isApproved ? 'border-warning' : 'border-base-300 hover:border-primary'
       }`}
     >
-      <Link href={`/hsk/exams/${exam.slug}/`} class="card-body p-4">
+      <Link prefetch="js" href={`/hsk/exams/${exam.slug}/`} class="card-body p-4">
         <h3 class="card-title text-base">{exam.title.ru || exam.title.cn || exam.slug}</h3>
         {exam.title.cn && exam.title.ru && <p class="text-sm opacity-70">{exam.title.cn}</p>}
         {exam.descriptionRu && <p class="text-sm opacity-80">{exam.descriptionRu}</p>}

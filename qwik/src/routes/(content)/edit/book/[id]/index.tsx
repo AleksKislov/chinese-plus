@@ -70,6 +70,7 @@ const AddPagesForm = component$(({ bookId, chapter }: AddPagesFormProps) => {
       <div class="mb-3">
         {chapter.pages.map((page) => (
           <Link
+            prefetch="js"
             key={page._id}
             href={`/edit/book-page/${page._id}`}
             class="btn btn-sm btn-outline hover:btn-accent m-1"

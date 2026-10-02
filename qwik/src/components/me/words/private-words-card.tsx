@@ -13,11 +13,11 @@ export const PrivateWordsCard = component$(({ wordsTotal }: TabelCardProps) => {
         <p class="card-title">Лексика для повторения</p>
         <p>
           Добавляйте сюда любые слова из{' '}
-          <Link class="link link-hover bg-secondary" href="/read/texts">
+          <Link prefetch="js" class="link link-hover bg-secondary" href="/read/texts">
             текстов
           </Link>{' '}
           или{' '}
-          <Link class="link link-hover bg-secondary" href="/dictionary">
+          <Link prefetch="js" class="link link-hover bg-secondary" href="/dictionary">
             словаря
           </Link>
           , чтобы повторить их отдельно.

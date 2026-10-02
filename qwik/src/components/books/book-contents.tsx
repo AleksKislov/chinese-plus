@@ -33,6 +33,7 @@ export const BookContentsComponent = component$(
                 <div>
                   {value.pages.map((page, i) => (
                     <Link
+                      prefetch="js"
                       key={i}
                       href={`${getBookUrl(book)}/${value._id}?page=${page.ind}`}
                       class={`btn btn-sm btn-outline hover:btn-accent m-1 ${

@@ -16,7 +16,7 @@ export const PrivateHskCard = component$(({ lvlSignal, lvlWordsNumMap }: TabelCa
         <p class="card-title">Лексика для повторения</p>
         <p>
           Добавляйте сюда любые слова из списков{' '}
-          <Link class="link link-hover bg-secondary" href="/hsk/2/table">
+          <Link prefetch="js" class="link link-hover bg-secondary" href="/hsk/2/table">
             HSK 2.0
           </Link>
           , чтобы повторить их отдельно.

@@ -14,7 +14,7 @@ export const CreateBlogCard = component$(() => {
         </p>
         <div class="card-actions justify-end">
           <div class={loggedIn ? '' : 'tooltip tooltip-info tooltip-bottom'} data-tip="Нужно войти">
-            <Link href="/create/blog">
+            <Link prefetch="js" href="/create/blog">
               <button class="btn btn-sm btn-primary" disabled={!loggedIn}>
                 ok!
               </button>

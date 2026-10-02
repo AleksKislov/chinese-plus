@@ -35,6 +35,7 @@ export const Pagination = component$(
                 .slice(maxPerRow * (rowNum + 1) - maxPerRow, maxPerRow * (rowNum + 1))
                 .map((el, ind) => (
                   <Link
+                    prefetch="js"
                     class={`btn btn-sm ${curPage === ind + maxPerRow * rowNum ? 'btn-active' : ''}`}
                     key={ind}
                     href={`?lvl=${level}&pg=${ind + maxPerRow * rowNum}`}

@@ -89,7 +89,7 @@ export const LinkedText = component$(({ text }: LinkedTextProps) => {
         if (!('href' in seg)) return <span key={i}>{seg.text}</span>;
 
         return seg.internal ? (
-          <Link key={i} href={toInternalHref(seg.href)} class="link link-info">
+          <Link prefetch="js" key={i} href={toInternalHref(seg.href)} class="link link-info">
             {seg.label}
           </Link>
         ) : (
