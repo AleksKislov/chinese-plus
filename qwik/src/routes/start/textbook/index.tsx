@@ -1,6 +1,5 @@
-import { component$, useContext } from '@builder.io/qwik';
-import { type DocumentHead, useLocation } from '@builder.io/qwik-city';
-import { routeLoader$ } from '@builder.io/qwik-city';
+import { component$, useContext, useSignal } from '@builder.io/qwik';
+import { type DocumentHead, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
 import { PageTitle } from '~/components/common/layout/title';
 import { FlexRow } from '~/components/common/layout/flex-row';
@@ -11,43 +10,28 @@ import { CharactersLinkCard } from '~/components/common/content-cards/characters
 import { configContext } from '~/root';
 import YANDEX_ADS from '~/misc/consts/ads';
 import { BannerAds } from '~/components/common/ads/sidebar-ads';
-import { TextbookCard } from '~/components/textbook/textbook-card';
-import { TextbookContent } from '~/components/textbook/textbook-content';
-import { type TooltipSegment } from '~/misc/helpers/content/parse-text-words';
 import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
+import CONST_URLS from '~/misc/consts/urls';
+import { GrammarLevelsCard } from '~/components/grammar/grammar-levels-card';
+import { GrammarTopicCard } from '~/components/grammar/grammar-topic-card';
+import { GrammarWordModals } from '~/components/grammar/grammar-word-modals';
+import {
+  GRAMMAR_CATEGORIES,
+  type GrammarCategory,
+  type GrammarLevelInfo,
+  type GrammarTopicSummary,
+  grammarLevelLabel,
+  grammarLevelUrl,
+} from '~/components/grammar/types';
 
-export type TextbookType = {
-  _id: ObjectId;
-  ind: number;
-  level: string;
-  topic: string;
-  content: TextbookContentType[];
-};
+const getLevel = (query: URLSearchParams) => query.get('lvl') || '1';
 
-export type TextbookContentType = {
-  desc: string;
-  examples: TextbookExampleType[];
-};
-
-export type TextbookExampleType = {
-  cn: TooltipSegment[];
-  // tooltips: TooltipSegment[];
-  py: string;
-  ru: string;
-  audio: string;
-};
-
-export type ShortTextbookType = {
-  [key: string]: number;
-};
-
-export const useTextbook = routeLoader$(async (ev): Promise<TextbookType[]> => {
-  const lvl = ev.query.get('lvl') || '1';
-  return await ApiService.get(`/api/textbooks?lvl=${lvl}`, undefined, []);
+export const useGrammarLevels = routeLoader$(async (): Promise<GrammarLevelInfo[]> => {
+  return await ApiService.get('/api/grammar', undefined, []);
 });
 
-export const useAllTextbooks = routeLoader$(async (): Promise<ShortTextbookType> => {
-  return await ApiService.get(`/api/textbooks`, undefined, {});
+export const useGrammarTopics = routeLoader$(async (ev): Promise<GrammarTopicSummary[]> => {
+  return await ApiService.get(`/api/grammar/level/${getLevel(ev.query)}`, undefined, []);
 });
 
 export default component$(() => {
@@ -55,21 +39,35 @@ export default component$(() => {
   const bannerAds = configState.find((x) => x.type === YANDEX_ADS.banner);
 
   const loc = useLocation();
-  const textbook = useTextbook();
-  const allTextbooks = useAllTextbooks();
+  const level = getLevel(loc.url.searchParams);
+  const levels = useGrammarLevels();
+  const topics = useGrammarTopics();
+  const currentWord = useSignal<DictWord | null>(null);
+
+  const categories = (Object.keys(GRAMMAR_CATEGORIES) as GrammarCategory[])
+    .map((category) => ({
+      category,
+      topics: topics.value.filter((t) => t.category === category),
+    }))
+    .filter((c) => c.topics.length);
 
   return (
     <>
-      <Breadcrumbs items={[{ name: 'Грамматика' }]} />
-      <PageTitle txt={'Грамматика Китайского Языка'} />
+      <Breadcrumbs
+        items={
+          level === '1'
+            ? [{ name: 'Грамматика' }]
+            : [
+                { name: 'Грамматика', href: grammarLevelUrl('1') },
+                { name: `Уровень ${grammarLevelLabel(level)}` },
+              ]
+        }
+      />
+      <PageTitle txt={`Грамматика китайского языка — HSK ${grammarLevelLabel(level)}`} />
 
       <FlexRow>
         <Sidebar>
-          <TextbookCard
-            curLevel={loc.url.searchParams.get('lvl') || '1'}
-            val={allTextbooks.value}
-          />
-
+          <GrammarLevelsCard levels={levels.value} curLevel={level} />
           <PhoneticsLinkCard />
           <CharactersLinkCard />
         </Sidebar>
@@ -77,20 +75,43 @@ export default component$(() => {
         <MainContent>
           {bannerAds?.isActive && <BannerAds />}
 
-          <TextbookContent topics={textbook?.value || []} />
+          {!topics.value.length && <div class="alert">Темы для этого уровня ещё готовятся.</div>}
+
+          {categories.map(({ category, topics }) => (
+            <section key={category} class="mb-8">
+              <div class="prose mb-2">
+                <h2>
+                  {GRAMMAR_CATEGORIES[category].ru}{' '}
+                  <span class="opacity-60 text-lg font-normal">
+                    {GRAMMAR_CATEGORIES[category].cn}
+                  </span>
+                </h2>
+              </div>
+
+              {topics.map((topic) => (
+                <GrammarTopicCard key={topic.slug} topic={topic} currentWord={currentWord} />
+              ))}
+            </section>
+          ))}
+
+          <GrammarWordModals currentWord={currentWord} />
         </MainContent>
       </FlexRow>
     </>
   );
 });
 
-export const head: DocumentHead = {
-  title: 'Грамматика китайского языка для HSK 3.0 | Chinese+',
-  meta: [
-    {
-      name: 'description',
-      content:
-        'Грамматика разбита по уровням сложности HSK3.0, все темы - с примерами, переводом и озвучкой носителем языка',
-    },
-  ],
+export const head: DocumentHead = ({ url }) => {
+  const level = getLevel(url.searchParams);
+  const label = grammarLevelLabel(level);
+  return {
+    title: `Грамматика китайского языка HSK ${label} (HSK 3.0) | Chinese+`,
+    meta: [
+      {
+        name: 'description',
+        content: `Грамматика HSK ${label} по новому стандарту HSK 3.0 (редакция 2026): все темы уровня с объяснениями на русском, примерами, пиньинем, переводом и озвучкой.`,
+      },
+    ],
+    links: [{ rel: 'canonical', href: `${CONST_URLS.siteUrl}${grammarLevelUrl(level)}` }],
+  };
 };

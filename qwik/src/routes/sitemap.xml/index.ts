@@ -8,6 +8,9 @@ import { type BookCardInfo } from '~/routes/read/books';
 import { type HskExamListItem } from '~/components/hsk/exams/types';
 import { type HskVersion, examsPath } from '~/components/hsk/exams/levels';
 import { WORD_LEVELS, type WordsPage, wordsPageUrl } from '~/components/hsk/words-seo';
+import { grammarLevelUrl, grammarTopicUrl } from '~/components/grammar/types';
+
+type GrammarSlug = { slug: string; level: string; updatedAt?: string };
 
 type ContentListItem = {
   _id: string;
@@ -119,23 +122,32 @@ const hskWordLevelUrls = (): SitemapUrl[] =>
 export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => {
   cacheControl({ maxAge: 3600, staleWhileRevalidate: 86400 });
 
-  const [textsRes, videos, phoneticsLessons, charactersLessons, books, blogPosts, hskExams] =
-    await Promise.all([
-      ApiService.get('/api/texts/', undefined, { texts: [] }) as Promise<{
-        texts: ContentListItem[];
-      }>,
-      ApiService.get('/api/videos/all_approved', undefined, []) as Promise<ContentListItem[]>,
-      ApiService.get('/api/videos/all-video-lessons?category=phonetics', undefined, []) as Promise<
-        ContentListItem[]
-      >,
-      ApiService.get('/api/videos/all-video-lessons?category=characters', undefined, []) as Promise<
-        ContentListItem[]
-      >,
-      ApiService.get('/api/books/all', undefined, []) as Promise<BookCardInfo[]>,
-      fetchAllApprovedBlogPosts(),
-      // Requested without a token, so the backend returns approved exams only.
-      ApiService.get('/api/hsk-exams', undefined, []) as Promise<HskExamListItem[]>,
-    ]);
+  const [
+    textsRes,
+    videos,
+    phoneticsLessons,
+    charactersLessons,
+    books,
+    blogPosts,
+    hskExams,
+    grammarTopics,
+  ] = await Promise.all([
+    ApiService.get('/api/texts/', undefined, { texts: [] }) as Promise<{
+      texts: ContentListItem[];
+    }>,
+    ApiService.get('/api/videos/all_approved', undefined, []) as Promise<ContentListItem[]>,
+    ApiService.get('/api/videos/all-video-lessons?category=phonetics', undefined, []) as Promise<
+      ContentListItem[]
+    >,
+    ApiService.get('/api/videos/all-video-lessons?category=characters', undefined, []) as Promise<
+      ContentListItem[]
+    >,
+    ApiService.get('/api/books/all', undefined, []) as Promise<BookCardInfo[]>,
+    fetchAllApprovedBlogPosts(),
+    // Requested without a token, so the backend returns approved exams only.
+    ApiService.get('/api/hsk-exams', undefined, []) as Promise<HskExamListItem[]>,
+    ApiService.get('/api/grammar/slugs', undefined, []) as Promise<GrammarSlug[]>,
+  ]);
 
   const urls: SitemapUrl[] = [
     ...STATIC_PATHS.map((path) => ({ loc: `${CONST_URLS.siteUrl}${path}` })),
@@ -151,6 +163,14 @@ export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => 
     })),
     ...hskExamLevelUrls(hskExams),
     ...hskWordLevelUrls(),
+    // level 1 is /start/textbook, already in STATIC_PATHS
+    ...[...new Set(grammarTopics.map((t) => t.level))]
+      .filter((lvl) => lvl !== '1')
+      .map((lvl) => ({ loc: `${CONST_URLS.siteUrl}${grammarLevelUrl(lvl)}` })),
+    ...grammarTopics.map((t) => ({
+      loc: `${CONST_URLS.siteUrl}${grammarTopicUrl(t.slug)}`,
+      lastmod: t.updatedAt?.slice(0, 10),
+    })),
   ];
 
   headers.set('Content-Type', 'application/xml; charset=utf-8');

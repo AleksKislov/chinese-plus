@@ -19,7 +19,8 @@ export const PageTitle = component$(({ txt, hits, hSizeSm }: PageTitleProps) => 
           </h1>
         </div>
       ) : (
-        <div class="prose mb-3">
+        // Not capped at prose line length either: long titles stay on one line on desktop.
+        <div class="prose max-w-none mb-3">
           <h1>{txt}</h1>
         </div>
       )}
