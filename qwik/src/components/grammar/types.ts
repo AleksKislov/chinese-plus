@@ -61,7 +61,15 @@ export type GrammarCategory = keyof typeof GRAMMAR_CATEGORIES;
 
 export const grammarLevelLabel = (level: string) => (level === '789' ? '7-9' : level);
 
-export const GRAMMAR_PATH = '/start/textbook';
-export const grammarLevelUrl = (level: string) =>
-  level === '1' ? `${GRAMMAR_PATH}/` : `${GRAMMAR_PATH}/?lvl=${level}`;
+// same order and keys as GRAMMAR_LEVELS in server/src/api/services/grammar/consts.js
+export const GRAMMAR_LEVELS = ['1', '2', '3', '4', '5', '6', '789'];
+
+// /hsk/grammar/ is the hub (all levels); every level has its own page, e.g. /hsk/grammar/2/.
+// Topic slugs ("hsk1-prefixes") never collide with the level segments.
+export const GRAMMAR_PATH = '/hsk/grammar';
+export const grammarHubUrl = `${GRAMMAR_PATH}/`;
+export const grammarLevelUrl = (level: string) => `${GRAMMAR_PATH}/${level}/`;
+// 1200x630 previews from scripts/generate-og.mjs: hub and one per level
+export const grammarOgImage = (level?: string) =>
+  `/img/og/hsk-grammar${level ? `-${level}` : ''}.png`;
 export const grammarTopicUrl = (slug: string) => `${GRAMMAR_PATH}/${slug}/`;

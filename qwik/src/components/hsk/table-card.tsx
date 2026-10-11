@@ -1,6 +1,6 @@
 import { component$ } from '@builder.io/qwik';
 import { Link, useLocation } from '@builder.io/qwik-city';
-import { wordsLevelHref } from './words-seo';
+import { wordsBasePath, wordsLevelHref } from './words-seo';
 
 import { CardInfo } from './card-info';
 import CONSTANTS from '~/misc/consts/consts';
@@ -39,7 +39,10 @@ export const TableCard = component$(
             <tbody>
               {levels.map((lvl) => {
                 // Real links (crawlable) to the level's canonical URL.
-                const href = wordsLevelHref(loc.url.pathname, rmHyphen(lvl));
+                const href = wordsLevelHref(
+                  wordsBasePath(loc.url.pathname, loc.params.lvl),
+                  rmHyphen(lvl),
+                );
                 return (
                   <tr
                     key={lvl}

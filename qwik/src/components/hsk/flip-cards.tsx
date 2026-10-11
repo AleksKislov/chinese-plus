@@ -1,5 +1,5 @@
 import { component$ } from '@builder.io/qwik';
-import { type OldHskWordType } from '~/routes/hsk/2/table';
+import { type OldHskWordType } from '~/routes/hsk/2/table/[...lvl]';
 import { FlipCard } from './flip-card';
 import { type PinyinAboveStore } from './hsk-table';
 

@@ -1,7 +1,7 @@
 import { component$, useSignal } from '@builder.io/qwik';
 import { OldHskTable } from '~/components/hsk/hsk-table';
 import { HskSearchForm } from '~/components/hsk/search-form';
-import { type OldHskWordType } from '../table';
+import { type OldHskWordType } from '../table/[...lvl]';
 
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';

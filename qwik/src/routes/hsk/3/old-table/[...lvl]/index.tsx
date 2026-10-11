@@ -6,16 +6,25 @@ import { ApiService } from '~/misc/actions/request';
 import { NewHskTable } from '~/components/hsk/new-hsk-table';
 import { PageTitle } from '~/components/common/layout/title';
 import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
-import { getWordsLevel, getWordsPage, getWordsSeo, wordsHead } from '~/components/hsk/words-seo';
+import {
+  getWordsLevel,
+  getWordsPage,
+  getWordsSeo,
+  wordsHead,
+  wordsLevelOnGet,
+} from '~/components/hsk/words-seo';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { CsvCard } from '~/components/hsk/csv-card';
-import { type NewHskWordType } from '../table';
+import { type NewHskWordType } from '../../table/[...lvl]';
 
 // previous (2021) HSK 3.0 word list, kept for reference
+// /hsk/…/{lvl}/ - redirects old ?lvl= links and /1/, 404s unknown levels.
+export const onGet = wordsLevelOnGet('new');
+
 export const getOldHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]> => {
-  const lvl = ev.query.get('lvl') || '1';
+  const lvl = ev.params.lvl || '1';
   const lmt = ev.query.get('pg') || '0';
   return await ApiService.get(
     `/api/newhskwords?hsk_level=${lvl}&limit=${lmt}&version=2021`,
@@ -27,15 +36,15 @@ export const getOldHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]>
 export default component$(() => {
   const loc = useLocation();
   const hskWords = getOldHskWords();
-  const level = useComputed$(() => loc.url.searchParams.get('lvl') || '1');
+  const level = useComputed$(() => loc.params.lvl || '1');
 
-  // useComputed$ re-derives on ?lvl= / ?pg= changes; a plain const in the component
+  // useComputed$ re-derives when the level / ?pg= changes; a plain const in the component
   // body is computed once, leaving the H1 and breadcrumbs on the first level.
   const seo = useComputed$(() =>
     getWordsSeo({
       version: 'new',
       page: 'old-table',
-      lvl: getWordsLevel(loc.url, 'new'),
+      lvl: getWordsLevel(loc.params, 'new'),
       pg: getWordsPage(loc.url),
     }),
   );
@@ -76,10 +85,10 @@ export default component$(() => {
   );
 });
 
-export const head: DocumentHead = ({ url }) =>
+export const head: DocumentHead = ({ url, params }) =>
   wordsHead({
     version: 'new',
     page: 'old-table',
-    lvl: getWordsLevel(url, 'new'),
+    lvl: getWordsLevel(params, 'new'),
     pg: getWordsPage(url),
   });

@@ -14,8 +14,10 @@ import {
   GRAMMAR_CATEGORIES,
   type GrammarLevelInfo,
   type GrammarTopicResponse,
+  grammarHubUrl,
   grammarLevelLabel,
   grammarLevelUrl,
+  grammarOgImage,
   grammarTopicUrl,
 } from '~/components/grammar/types';
 
@@ -43,7 +45,7 @@ export default component$(() => {
     return (
       <>
         <PageTitle txt="Тема не найдена" />
-        <Link href={grammarLevelUrl('1')} class="link link-primary">
+        <Link href={grammarHubUrl} class="link link-primary">
           ← Все темы грамматики
         </Link>
       </>
@@ -57,7 +59,7 @@ export default component$(() => {
     <>
       <Breadcrumbs
         items={[
-          { name: 'Грамматика', href: grammarLevelUrl('1') },
+          { name: 'Грамматика HSK 3.0', href: grammarHubUrl },
           { name: `Уровень ${levelLabel}`, href: grammarLevelUrl(topic.level) },
           { name: truncateCrumb(topic.title.ru) },
         ]}
@@ -114,9 +116,19 @@ export const head: DocumentHead = ({ resolveValue }) => {
 
   const { topic } = data;
   const levelLabel = grammarLevelLabel(topic.level);
+  const title = `${topic.title.ru} (${topic.title.cn}) — грамматика HSK ${levelLabel} | Chinese+`;
+  const description = `${topic.summary} Грамматика HSK ${levelLabel} (HSK 3.0): примеры с пиньинем, переводом и аудио.`;
+  const url = `${CONST_URLS.siteUrl}${grammarTopicUrl(topic.slug)}`;
   return {
-    title: `${topic.title.ru} (${topic.title.cn}) — грамматика HSK ${levelLabel} | Chinese+`,
-    meta: [{ name: 'description', content: topic.summary }],
-    links: [{ rel: 'canonical', href: `${CONST_URLS.siteUrl}${grammarTopicUrl(topic.slug)}` }],
+    title,
+    meta: [
+      { name: 'description', content: description },
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: description },
+      { property: 'og:type', content: 'article' },
+      { property: 'og:url', content: url },
+      { property: 'og:image', content: `${CONST_URLS.siteUrl}${grammarOgImage(topic.level)}` },
+    ],
+    links: [{ rel: 'canonical', href: url }],
   };
 };

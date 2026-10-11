@@ -60,6 +60,27 @@ export default component$(() => {
                 >
                   <li>
                     <details class="z-40">
+                      <summary>Введение</summary>
+                      <ul class="w-52 bg-base-200">
+                        <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
+                        <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
+                        <MenuItemNew name={startChars.name} links={startChars.links} />
+                      </ul>
+                    </details>
+                  </li>
+                  <li>
+                    <details class="z-40">
+                      <summary>HSK</summary>
+                      <ul class="w-52 bg-base-200">
+                        <MenuLink href="/hsk/exams/" text="Экзамены" />
+                        <MenuLink href="/hsk/grammar/" text="Грамматика" />
+                        <MenuItemNew name={hsk3.name} links={hsk3.links} />
+                        <MenuItemNew name={hsk2.name} links={hsk2.links} />
+                      </ul>
+                    </details>
+                  </li>
+                  <li>
+                    <details class="z-40">
                       <summary>{read.name}</summary>
                       <ul class="w-52 bg-base-200">
                         <MenuItemNew name={'Тексты'} links={read.links} />
@@ -69,27 +90,6 @@ export default component$(() => {
                     </details>
                   </li>
                   <MenuItemNew name={watch.name} links={watch.links} />
-                  <li>
-                    <details class="z-40">
-                      <summary>Учебник</summary>
-                      <ul class="w-52 bg-base-200">
-                        <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
-                        <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
-                        <MenuItemNew name={startChars.name} links={startChars.links} />
-                        <MenuLink href={'/start/textbook'} text={'Грамматика'} />
-                      </ul>
-                    </details>
-                  </li>
-                  <li>
-                    <details class="z-40">
-                      <summary>HSK</summary>
-                      <ul class="w-52 bg-base-200">
-                        <MenuLink href="/hsk/exams/" text="Экзамены" />
-                        <MenuItemNew name={hsk2.name} links={hsk2.links} />
-                        <MenuItemNew name={hsk3.name} links={hsk3.links} />
-                      </ul>
-                    </details>
-                  </li>
                   <MenuLink href="/dictionary" text="Словарь" />
                   <MenuItemNew name={blog.name} links={blog.links} />
                   {/* <MenuLink href="/heroes" text="Герои клуба" /> */}
@@ -106,6 +106,19 @@ export default component$(() => {
                 <Brand />
               </Link>
               <ul class="menu menu-horizontal mt-1">
+                <MenuDropdownGroup name="Введение">
+                  <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
+                  <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
+                  <MenuItemNew name={startChars.name} links={startChars.links} />
+                </MenuDropdownGroup>
+
+                <MenuDropdownGroup name="HSK">
+                  <MenuLink href="/hsk/exams/" text="Экзамены" />
+                  <MenuLink href="/hsk/grammar/" text="Грамматика" />
+                  <MenuItemNew name={hsk3.name} links={hsk3.links} />
+                  <MenuItemNew name={hsk2.name} links={hsk2.links} />
+                </MenuDropdownGroup>
+
                 <MenuDropdownGroup name={read.name}>
                   <MenuItemNew name={'Тексты'} links={read.links} />
                   <MenuLink href={'/read/books'} text={'Книги'} />
@@ -113,19 +126,6 @@ export default component$(() => {
                 </MenuDropdownGroup>
 
                 <MenuItem name={watch.name} links={watch.links} />
-
-                <MenuDropdownGroup name="Учебник">
-                  <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
-                  <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
-                  <MenuItemNew name={startChars.name} links={startChars.links} />
-                  <MenuLink href={'/start/textbook'} text={'Грамматика'} />
-                </MenuDropdownGroup>
-
-                <MenuDropdownGroup name="HSK">
-                  <MenuLink href="/hsk/exams/" text="Экзамены" />
-                  <MenuItemNew name={hsk2.name} links={hsk2.links} />
-                  <MenuItemNew name={hsk3.name} links={hsk3.links} />
-                </MenuDropdownGroup>
 
                 <MenuLink href="/dictionary" text="Словарь" />
                 {/* <MenuItem name={ourClub.name} links={ourClub.links} /> */}

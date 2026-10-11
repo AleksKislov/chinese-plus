@@ -8,7 +8,7 @@ import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { getTokenFromCookie } from '~/misc/actions/auth';
-import { type UserOldHskWordType } from '~/routes/hsk/2/table';
+import { type UserOldHskWordType } from '~/routes/hsk/2/table/[...lvl]';
 import { PrivateHskCard } from '~/components/me/hsk/private-hsk-card';
 import { TypingGame } from '~/components/games/typing-game';
 import { CalligraphyGame } from '~/components/games/calligraphy-game';

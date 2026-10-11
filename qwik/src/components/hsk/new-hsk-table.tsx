@@ -1,6 +1,6 @@
 import { component$, useSignal } from '@builder.io/qwik';
 import { HideButtons } from './hide-buttons';
-import { type NewHskWordType } from '~/routes/hsk/3/table';
+import { type NewHskWordType } from '~/routes/hsk/3/table/[...lvl]';
 import { NewHskTableRow } from './new-hsk-table-row';
 import { MoreInfoModal } from '../common/modals/more-info-modal';
 import { moreInfoModalId } from '../common/tooltips/word-tooltip';

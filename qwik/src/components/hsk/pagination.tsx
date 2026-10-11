@@ -1,6 +1,6 @@
 import { component$ } from '@builder.io/qwik';
 import { Link, useLocation } from '@builder.io/qwik-city';
-import { wordsLevelHref } from './words-seo';
+import { wordsBasePath, wordsLevelHref } from './words-seo';
 
 import CONSTANTS from '~/misc/consts/consts';
 export const hskInfo = CONSTANTS.hskInfo;
@@ -40,7 +40,11 @@ export const Pagination = component$(
                     prefetch="js"
                     class={`btn btn-sm ${curPage === ind + maxPerRow * rowNum ? 'btn-active' : ''}`}
                     key={ind}
-                    href={wordsLevelHref(loc.url.pathname, level, ind + maxPerRow * rowNum)}
+                    href={wordsLevelHref(
+                      wordsBasePath(loc.url.pathname, loc.params.lvl),
+                      level,
+                      ind + maxPerRow * rowNum,
+                    )}
                   >
                     {ind + 1 + maxPerRow * rowNum}
                   </Link>

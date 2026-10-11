@@ -19,14 +19,15 @@ export const points = [
     title: 'Далее - лексика и грамматика',
     txt: (
       <span>
-        Далее можно начать знакомиться с лексикой и{' '}
-        <Link prefetch="js" class="link font-bold hover:link-success" href="/start/textbook/">
+        Далее можно начать знакомиться с простой{' '}
+        <Link prefetch="js" class="link font-bold hover:link-success" href="/hsk/3/table">
+          лексикой
+        </Link>{' '}
+        и{' '}
+        <Link prefetch="js" class="link font-bold hover:link-success" href="/hsk/grammar/">
           грамматикой
         </Link>{' '}
-        китайского языка. Лексику можно начинать учить с 1-го уровня{' '}
-        <Link prefetch="js" class="link font-bold hover:link-success" href="/hsk/2/table">
-          HSK
-        </Link>
+        китайского языка.
       </span>
     ),
   },
@@ -35,7 +36,7 @@ export const points = [
     title: 'От простого к сложному',
     txt: (
       <span>
-        Одновременно с пунктом 2 можно начинать слушать аудиоуроки и читать простые{' '}
+        Одновременно можно начинать слушать аудиоуроки и читать простые{' '}
         <Link prefetch="js" class="link font-bold hover:link-success" href="/read/texts">
           тексты
         </Link>

@@ -1,6 +1,6 @@
 import { component$, type Signal } from '@builder.io/qwik';
 import CONST_URLS from '~/misc/consts/urls';
-import { type NewHskWordType } from '~/routes/hsk/3/table';
+import { type NewHskWordType } from '~/routes/hsk/3/table/[...lvl]';
 import { parseRussian } from '~/misc/helpers/translation';
 import { moreInfoSvg, playSvg } from '../common/media/svg';
 import { HideBtnsEnum } from './hide-buttons';

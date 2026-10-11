@@ -5,8 +5,8 @@ Grammar topics by HSK 3.0 level, following the grammar syllabus
 `{level}.json` with level `1`..`6` or `789`.
 
 Imported into the `grammars` collection by `scripts/import-grammar.js` and
-shown on `/start/textbook/?lvl={level}` (level page) and
-`/start/textbook/{slug}/` (topic page).
+shown on `/hsk/grammar/?lvl={level}` (level page) and
+`/hsk/grammar/{slug}/` (topic page).
 
 ## Workflow
 

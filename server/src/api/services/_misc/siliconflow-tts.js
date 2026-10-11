@@ -19,7 +19,7 @@ async function synthesizeSpeech(text) {
     body: JSON.stringify({
       model,
       // CosyVoice sometimes clips the last syllable; a trailing pause gives it room to finish
-      input: `${text}。`,
+      input: `${text}。,.`,
       // input: '今天是 二 零 二 六 年 十月一号。..',
       voice: voice.includes(':') ? voice : `${model}:${voice}`,
       response_format: 'mp3',

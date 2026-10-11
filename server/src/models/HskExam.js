@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
  * A full HSK mock exam, authored offline as JSON under server/content/hsk-exams
  * and imported with scripts/import-hsk-exams.js. One document per exam - the
  * whole thing is always read and written as a unit, so sections/parts/questions
- * are embedded rather than split across collections (same call as Textbook's
+ * are embedded rather than split across collections (same call as Grammar's
  * nested `examples`, unlike the Book/BookContent/BookPage split).
  *
  * The nesting mirrors a real exam paper:

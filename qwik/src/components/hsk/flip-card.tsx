@@ -1,6 +1,6 @@
 import './flip-cards.css';
 import { component$, useSignal } from '@builder.io/qwik';
-import { type OldHskWordType } from '~/routes/hsk/2/table';
+import { type OldHskWordType } from '~/routes/hsk/2/table/[...lvl]';
 
 export const FlipCard = component$(
   ({ word, pinyinAbove }: { word: OldHskWordType; pinyinAbove: boolean }) => {

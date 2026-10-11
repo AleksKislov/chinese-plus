@@ -29,11 +29,15 @@ export const toWordsLevel = (version: HskVersion, lvl: string) =>
 export const fromWordsLevel = (version: HskVersion, lvl: string) =>
   version === 'new' && lvl === '789' ? '7' : lvl;
 
+// Same URLs as wordsLevelHref() in ../words-seo.ts (not imported: that module imports this one).
+const wordsListPath = (version: HskVersion, page: 'table' | 'tests', lvl: string) =>
+  `/hsk/${VERSION_SEGMENT[version]}/${page}/${lvl !== '1' ? `${lvl}/` : ''}`;
+
 export const wordsPath = (version: HskVersion, lvl: string) =>
-  `/hsk/${VERSION_SEGMENT[version]}/table/?lvl=${toWordsLevel(version, lvl)}`;
+  wordsListPath(version, 'table', toWordsLevel(version, lvl));
 
 export const wordTestsPath = (version: HskVersion, lvl: string) =>
-  `/hsk/${VERSION_SEGMENT[version]}/tests/?lvl=${toWordsLevel(version, lvl)}`;
+  wordsListPath(version, 'tests', toWordsLevel(version, lvl));
 
 export const ogImagePath = (version?: HskVersion | '', lvl?: string) =>
   `/img/og/hsk-exams${version ? `-${version}` : ''}${version && lvl ? `-${lvl}` : ''}.png`;

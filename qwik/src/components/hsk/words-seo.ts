@@ -1,12 +1,12 @@
-import { type DocumentHeadValue } from '@builder.io/qwik-city';
+import { type DocumentHeadValue, type RequestHandler } from '@builder.io/qwik-city';
 import CONSTANTS from '~/misc/consts/consts';
 import CONST_URLS from '~/misc/consts/urls';
 import { type Crumb } from '~/components/common/layout/breadcrumbs';
 import { type HskVersion, VERSION_NAME, VERSION_SEGMENT, pluralRu } from './exams/levels';
 
 // SEO for the HSK word list pages (/hsk/{2,3}/table, /tests, /search, /hsk/3/old-table).
-// Levels there are ?lvl= params; the canonical keeps lvl (and pg) so every level
-// is its own indexable page instead of all of them collapsing into level 1.
+// Each level is its own path - /hsk/3/table/4/ - served by an optional catch-all
+// route ([...lvl]); level 1 is the bare /hsk/3/table/. Pagination stays ?pg=.
 
 export type WordsPage = 'table' | 'tests' | 'search' | 'old-table';
 
@@ -28,8 +28,9 @@ const levelSize = (version: HskVersion, page: WordsPage, lvl: string): number | 
   return sizes[sizeKey(lvl) as keyof typeof sizes];
 };
 
-export const getWordsLevel = (url: URL, version: HskVersion): string => {
-  const lvl = url.searchParams.get('lvl') || '1';
+// `params` is the route's params ({ lvl: '' | '4' } from the [...lvl] segment).
+export const getWordsLevel = (params: Record<string, string>, version: HskVersion): string => {
+  const lvl = params.lvl || '1';
   return WORD_LEVELS[version].includes(lvl) ? lvl : '1';
 };
 
@@ -39,13 +40,38 @@ export const getWordsPage = (url: URL): number =>
 export const wordsPagePath = (version: HskVersion, page: WordsPage) =>
   `/hsk/${VERSION_SEGMENT[version]}/${page}/`;
 
-// Level 1, first page is the bare path - the URL the menu and sitemap already use.
-// Canonical URL of a level/page on any word list path. Also used for the level
-// menu and pagination links, so internal links point at the canonical URL.
-export const wordsLevelHref = (pathname: string, lvl = '1', pg = 0) => {
-  const params = [lvl !== '1' || pg ? `lvl=${lvl}` : '', pg ? `pg=${pg}` : ''].filter(Boolean);
-  return `${pathname}${params.length ? `?${params.join('&')}` : ''}`;
+// Canonical URL of a level/page under a word list's base path ("/hsk/3/table/").
+// Level 1 is the bare base path. Also used by the level menu and pagination, so
+// internal links point at the canonical URL.
+export const wordsLevelHref = (basePath: string, lvl = '1', pg = 0) =>
+  `${basePath}${lvl !== '1' ? `${lvl}/` : ''}${pg ? `?pg=${pg}` : ''}`;
+
+// "/hsk/3/table/4/" -> "/hsk/3/table/": strips the [...lvl] segment from the current path.
+export const wordsBasePath = (pathname: string, lvlParam?: string) => {
+  const path = pathname.endsWith('/') ? pathname : `${pathname}/`;
+  return lvlParam && path.endsWith(`/${lvlParam}/`) ? path.slice(0, -(lvlParam.length + 1)) : path;
 };
+
+/**
+ * onGet for the [...lvl] word list routes: 301s the old ?lvl= URLs and /1/ to the
+ * canonical path, and 404s anything that isn't a level of this word list.
+ */
+export const wordsLevelOnGet =
+  (version: HskVersion): RequestHandler =>
+  ({ params, query, url, redirect, error }) => {
+    const base = wordsBasePath(url.pathname, params.lvl);
+    const pg = +(query.get('pg') || 0) || 0;
+    const legacyLvl = query.get('lvl');
+
+    if (legacyLvl !== null) {
+      const lvl = WORD_LEVELS[version].includes(legacyLvl) ? legacyLvl : '1';
+      throw redirect(301, wordsLevelHref(base, lvl, pg));
+    }
+    if (params.lvl === '1') throw redirect(301, wordsLevelHref(base, '1', pg));
+    if (params.lvl && !WORD_LEVELS[version].includes(params.lvl)) {
+      throw error(404, 'Not found');
+    }
+  };
 
 export const wordsPageUrl = (version: HskVersion, page: WordsPage, lvl = '1', pg = 0) =>
   wordsLevelHref(wordsPagePath(version, page), lvl, pg);

@@ -1,5 +1,5 @@
 import { component$, useSignal } from '@builder.io/qwik';
-import { type NewHskWordType } from '~/routes/hsk/3/table';
+import { type NewHskWordType } from '~/routes/hsk/3/table/[...lvl]';
 import { DictWordTranslation } from '../translation/dict-word-translation';
 import { ShowHideBtn } from './show-hide-btn';
 

@@ -1,19 +1,23 @@
 import { component$, useContext, useComputed$ } from '@builder.io/qwik';
-import { type DocumentHead, useLocation } from '@builder.io/qwik-city';
+import { type DocumentHead, Link, useLocation } from '@builder.io/qwik-city';
 import { routeLoader$ } from '@builder.io/qwik-city';
-import { Alerts } from '~/components/common/alerts/alerts';
 import { TableCard } from '~/components/hsk/table-card';
 import { Pagination } from '~/components/hsk/pagination';
-import { OldHskTable } from '~/components/hsk/hsk-table';
 import { ApiService } from '~/misc/actions/request';
+import { NewHskTable } from '~/components/hsk/new-hsk-table';
 import { PageTitle } from '~/components/common/layout/title';
 import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
-import { getWordsLevel, getWordsPage, getWordsSeo, wordsHead } from '~/components/hsk/words-seo';
+import {
+  getWordsLevel,
+  getWordsPage,
+  getWordsSeo,
+  wordsHead,
+  wordsLevelOnGet,
+} from '~/components/hsk/words-seo';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { HskExamsLinkCard } from '~/components/hsk/exams-link-card';
 import { MainContent } from '~/components/common/layout/main-content';
-import { getTokenFromCookie } from '~/misc/actions/auth';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
 import { CsvCard } from '~/components/hsk/csv-card';
@@ -23,35 +27,23 @@ import { BannerAds } from '~/components/common/ads/sidebar-ads';
 import OUR_ADS from '~/misc/consts/our-ads';
 import { OurAds } from '~/components/common/ads/our-ads';
 
-export type OldHskWordType = {
+export type NewHskWordType = {
   _id: ObjectId;
-  word_id: number;
-  chinese: string;
-  pinyin: string;
-  translation: string;
-  level: number;
+  id: number;
+  cn: string;
+  py: string;
+  ru: string;
+  lvl: string;
+  audio?: string; // 2026 list: path under myAudioURL, absent if there is no audio yet
 };
 
-export type UserOldHskWordType = {
-  _id: ObjectId;
-  word_id: number;
-  chinese: string;
-  pinyin: string;
-  translation: string;
-  level: number;
-  hskWordId: ObjectId;
-};
+// /hsk/…/{lvl}/ - redirects old ?lvl= links and /1/, 404s unknown levels.
+export const onGet = wordsLevelOnGet('new');
 
-export const getUserHsk2Words = routeLoader$(async ({ cookie }): Promise<UserOldHskWordType[]> => {
-  const token = getTokenFromCookie(cookie);
-  if (!token) return [];
-  return await ApiService.get('/api/words', token, []);
-});
-
-export const getHskWords = routeLoader$(async ({ query }): Promise<OldHskWordType[]> => {
-  const lvl = query.get('lvl') || '1';
-  const lmt = query.get('pg') || '0';
-  return await ApiService.get(`/api/lexicon?hsk_level=${lvl}&limit=${lmt}`, undefined, []);
+export const getHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]> => {
+  const lvl = ev.params.lvl || '1';
+  const lmt = ev.query.get('pg') || '0';
+  return await ApiService.get(`/api/newhskwords?hsk_level=${lvl}&limit=${lmt}`, undefined, []);
 });
 
 export default component$(() => {
@@ -61,15 +53,14 @@ export default component$(() => {
 
   const loc = useLocation();
   const hskWords = getHskWords();
-  const userHskWords = getUserHsk2Words();
 
-  // useComputed$ re-derives on ?lvl= / ?pg= changes; a plain const in the component
+  // useComputed$ re-derives when the level / ?pg= changes; a plain const in the component
   // body is computed once, leaving the H1 and breadcrumbs on the first level.
   const seo = useComputed$(() =>
     getWordsSeo({
-      version: 'old',
+      version: 'new',
       page: 'table',
-      lvl: getWordsLevel(loc.url, 'old'),
+      lvl: getWordsLevel(loc.params, 'new'),
       pg: getWordsPage(loc.url),
     }),
   );
@@ -80,49 +71,46 @@ export default component$(() => {
       <PageTitle txt={seo.value.h1} />
 
       <FlexRow>
-        <Alerts />
-
-        <Sidebar noAds={true}>
-          <TableCard
-            level={loc.url.searchParams.get('lvl') || '1'}
-            isOldHsk={true}
-            isForTests={false}
-          />
-          <CsvCard
-            level={loc.url.searchParams.get('lvl') || '1'}
-            isOldHsk={true}
-            isPrivate={false}
-          />
+        <Sidebar>
+          <TableCard level={loc.params.lvl || '1'} isOldHsk={false} isForTests={false} />
+          <CsvCard level={loc.params.lvl || '1'} isOldHsk={false} isPrivate={false} />
           <PhoneticsLinkCard />
           <CharactersLinkCard />
-          <HskExamsLinkCard version="old" level={loc.url.searchParams.get('lvl') || '1'} />
+          <HskExamsLinkCard version="new" level={loc.params.lvl || '1'} />
         </Sidebar>
 
         <MainContent>
           {mainContentAds?.isActive && <OurAds adsInfo={mainContentAds} />}
           {bannerAds?.isActive && <BannerAds />}
 
+          <div class="alert mb-3">
+            <span>
+              Список слов обновлён по стандарту 2026 года (новый HSK 3.0). Прежний список доступен
+              на странице{' '}
+              <Link prefetch="js" href="/hsk/3/old-table" class="link">
+                Старая таблица
+              </Link>
+              .
+            </span>
+          </div>
+
           <Pagination
-            level={loc.url.searchParams.get('lvl') || '1'}
+            level={loc.params.lvl || '1'}
             curPage={+loc.url.searchParams.get('pg')! || 0}
-            isOldHsk={true}
+            isOldHsk={false}
           />
 
-          <OldHskTable
-            hskWords={hskWords?.value || []}
-            userHskWords={userHskWords?.value || []}
-            isPrivate={false}
-          />
+          <NewHskTable hskWords={hskWords?.value || []} />
         </MainContent>
       </FlexRow>
     </>
   );
 });
 
-export const head: DocumentHead = ({ url }) =>
+export const head: DocumentHead = ({ url, params }) =>
   wordsHead({
-    version: 'old',
+    version: 'new',
     page: 'table',
-    lvl: getWordsLevel(url, 'old'),
+    lvl: getWordsLevel(params, 'new'),
     pg: getWordsPage(url),
   });

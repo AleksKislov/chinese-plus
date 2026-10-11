@@ -1,6 +1,6 @@
 /**
  * Renders the 1200x630 social preview images into public/img/og/: the site-wide
- * fallback (chineseplus.png, used by RouterHead) and the HSK exam and word list pages (names match ogImagePath() in
+ * fallback (chineseplus.png, used by RouterHead) and the HSK exam, word list and grammar pages (names match ogImagePath() in
  * src/components/hsk/exams/levels.ts and getWordsSeo() in src/components/hsk/words-seo.ts).
  * Re-run after adding a level or changing the copy:
  *
@@ -134,6 +134,25 @@ for (const [lvl, n] of Object.entries(NEW_WORDS)) {
     badge: 'HSK 3.0 · 2025',
     sub: `${n} слов уровня · тесты · CSV для Anki`,
     glyph: '词',
+  };
+}
+
+// Grammar (HSK 3.0 only) - names match grammarOgImage() in src/components/grammar/types.ts.
+const GRAMMAR_KICKER = 'Грамматика китайского языка';
+images['hsk-grammar'] = {
+  kicker: GRAMMAR_KICKER,
+  big: 'HSK 1–9',
+  badge: 'HSK 3.0',
+  sub: 'Объяснения на русском · примеры с аудио',
+  glyph: '法',
+};
+for (const lvl of ['1', '2', '3', '4', '5', '6', '789']) {
+  images[`hsk-grammar-${lvl}`] = {
+    kicker: GRAMMAR_KICKER,
+    big: `HSK ${lvl === '789' ? '7–9' : lvl}`,
+    badge: 'HSK 3.0',
+    sub: 'Объяснения на русском · примеры с аудио',
+    glyph: '法',
   };
 }
 

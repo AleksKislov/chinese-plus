@@ -33,8 +33,8 @@ const STATIC_PATHS = [
   '/start/pinyin-tests',
   '/start/radicals',
   '/start/strokes',
-  '/start/textbook',
   '/start/tones-practice',
+  '/hsk/grammar',
   '/hsk/2/table',
   '/hsk/2/tests',
   '/hsk/2/search',
@@ -103,7 +103,7 @@ const hskExamLevelUrls = (exams: HskExamListItem[]): SitemapUrl[] => {
   }));
 };
 
-// Every HSK word list level is its own canonical page (?lvl=); level 1 is the
+// Every HSK word list level is its own canonical page (/hsk/3/table/4/); level 1 is the
 // bare path, already listed in STATIC_PATHS.
 const HSK_WORD_PAGES: [HskVersion, WordsPage][] = [
   ['old', 'table'],
@@ -118,6 +118,19 @@ const hskWordLevelUrls = (): SitemapUrl[] =>
       .filter((lvl) => lvl !== '1')
       .map((lvl) => ({ loc: `${CONST_URLS.siteUrl}${wordsPageUrl(version, page, lvl)}` })),
   );
+
+// Level pages, lastmod = the most recently updated topic of the level.
+const grammarLevelUrls = (topics: GrammarSlug[]): SitemapUrl[] => {
+  const lastmodByLevel = new Map<string, string>();
+  for (const t of topics) {
+    const lastmod = t.updatedAt?.slice(0, 10) || '';
+    if (lastmod >= (lastmodByLevel.get(t.level) || '')) lastmodByLevel.set(t.level, lastmod);
+  }
+  return [...lastmodByLevel].map(([level, lastmod]) => ({
+    loc: `${CONST_URLS.siteUrl}${grammarLevelUrl(level)}`,
+    lastmod: lastmod || undefined,
+  }));
+};
 
 export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => {
   cacheControl({ maxAge: 3600, staleWhileRevalidate: 86400 });
@@ -163,10 +176,8 @@ export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => 
     })),
     ...hskExamLevelUrls(hskExams),
     ...hskWordLevelUrls(),
-    // level 1 is /start/textbook, already in STATIC_PATHS
-    ...[...new Set(grammarTopics.map((t) => t.level))]
-      .filter((lvl) => lvl !== '1')
-      .map((lvl) => ({ loc: `${CONST_URLS.siteUrl}${grammarLevelUrl(lvl)}` })),
+    // the hub /hsk/grammar is in STATIC_PATHS; every level has its own page
+    ...grammarLevelUrls(grammarTopics),
     ...grammarTopics.map((t) => ({
       loc: `${CONST_URLS.siteUrl}${grammarTopicUrl(t.slug)}`,
       lastmod: t.updatedAt?.slice(0, 10),

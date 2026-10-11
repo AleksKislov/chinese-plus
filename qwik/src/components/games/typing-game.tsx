@@ -1,6 +1,6 @@
 import { shuffleArr } from '~/misc/helpers/tools/shuffle-arr';
 import { arrorUturnDown } from '../common/media/svg';
-import { type TestWord } from '~/routes/hsk/2/tests';
+import { type TestWord } from '~/routes/hsk/2/tests/[...lvl]';
 import {
   $,
   component$,

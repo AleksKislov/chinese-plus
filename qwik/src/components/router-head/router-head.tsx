@@ -10,7 +10,7 @@ const DEFAULT_OG_IMAGE = `${CONST_URLS.siteUrl}/img/og/chineseplus.png`;
 export const RouterHead = component$(() => {
   const head = useDocumentHead();
   const loc = useLocation();
-  // A page may set its own canonical (e.g. HSK word lists keep ?lvl=); otherwise
+  // A page may set its own canonical (e.g. HSK word lists keep ?pg=, book chapters ?page=); otherwise
   // the path without query params is canonical.
   const hasOwnCanonical = head.links.some((l) => l.rel === 'canonical');
 
@@ -40,21 +40,23 @@ export const RouterHead = component$(() => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+      {/* meta/og/links/styles are siblings - keys must be unique across all of them, or
+          Qwik's diff crashes on client navigation (elmToMove is undefined) */}
       {head.meta.map((m, ind) => (
-        <meta key={ind} {...m} />
+        <meta key={`meta-${ind}`} {...m} />
       ))}
 
       {ogDefaults.map((m) => (
-        <meta key={m.property} {...m} />
+        <meta key={`og-${m.property}`} {...m} />
       ))}
       {needsTwitterCard && <meta name="twitter:card" content="summary_large_image" />}
 
       {head.links.map((l, ind) => (
-        <link key={ind} {...l} />
+        <link key={`link-${ind}`} {...l} />
       ))}
 
       {head.styles.map((s, ind) => (
-        <style key={ind} {...s.props} dangerouslySetInnerHTML={s.style} />
+        <style key={`style-${ind}`} {...s.props} dangerouslySetInnerHTML={s.style} />
       ))}
     </>
   );

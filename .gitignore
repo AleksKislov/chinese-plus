@@ -1,3 +1,4 @@
 .DS_Store
 monitoring/.env
 .claude/
+audio/
