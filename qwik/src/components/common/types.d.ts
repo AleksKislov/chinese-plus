@@ -24,9 +24,12 @@ type NewAvatar = {
   seed: string;
 };
 
+type UserRole = 'user' | 'admin' | 'moderator';
+
 type ShortUserInfo = {
   _id: ObjectId;
   name: string;
   newAvatar?: NewAvatar;
+  role?: UserRole;
   bio?: string;
 };

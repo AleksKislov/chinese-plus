@@ -1,4 +1,5 @@
 import { component$, useSignal } from '@builder.io/qwik';
+import { Link } from '@builder.io/qwik-city';
 import { UserDateDiv } from '../common/comments/user-with-date';
 import { ContentCat } from '../common/content-cards/content-cat';
 import { LikeBtn } from '../common/content-cards/like-btn';
@@ -7,6 +8,7 @@ import { WHERE } from '../common/comments/comment-form';
 import { EditBtn } from '../common/content-cards/edit-btn';
 import { DeleteContentBtn } from '../common/content-cards/delete-content-btn';
 import { LinkedText } from '../common/linked-text';
+import { SmallAvatar } from '../common/ui/small-avatar';
 
 const NO_BIO_TEXT = 'Автор ничего не написал о себе, но он/она точно хороший человек :)';
 
@@ -15,6 +17,8 @@ type BlogPostCardProps = {
   tags: string[];
   userId: ObjectId;
   userName: string;
+  userAvatar?: NewAvatar;
+  userRole?: UserRole;
   userBio?: string;
   date: ISODate;
   category: string;
@@ -28,6 +32,8 @@ export const BlogPostCard = component$(
     tags,
     userId,
     userName,
+    userAvatar,
+    userRole,
     userBio,
     date,
     category,
@@ -40,7 +46,12 @@ export const BlogPostCard = component$(
       <div class="card w-full bg-base-300 mb-3">
         <div class="card-body">
           <TagsLine tags={tags} />
-          <UserDateDiv userId={userId} userName={userName} date={date} ptNum={0} />
+          <div class="flex items-center gap-3">
+            <Link href={`/users/${userId}`} class="avatar" prefetch="js">
+              <SmallAvatar userName={userName} newAvatar={userAvatar} role={userRole} />
+            </Link>
+            <UserDateDiv userId={userId} userName={userName} date={date} ptNum={0} />
+          </div>
 
           <div class="flex flex-wrap items-center gap-x-6 gap-y-1">
             <div>

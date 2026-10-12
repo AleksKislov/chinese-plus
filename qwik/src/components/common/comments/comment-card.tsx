@@ -64,7 +64,7 @@ export const CommentCard = component$(
       date,
       text,
       likes,
-      user: { _id: userId, name: userName, newAvatar },
+      user: { _id: userId, name: userName, newAvatar, role },
       destination: contentType,
       post_id: contentId,
       commentIdToReply: replyInfo,
@@ -120,11 +120,11 @@ export const CommentCard = component$(
           <div class="card-body">
             <div class="flex">
               <div
-                class="tooltip tooltip-info mr-4"
+                class="tooltip tooltip-info mr-4 [&:has(.role-badge:hover)]:before:hidden [&:has(.role-badge:hover)]:after:hidden"
                 data-tip={ownsComment ? 'Это вы' : 'Обратиться к пользователю'}
               >
                 <div class="avatar cursor-pointer" onClick$={writeToUser}>
-                  <SmallAvatar newAvatar={newAvatar} userName={userName} />
+                  <SmallAvatar newAvatar={newAvatar} userName={userName} role={role} />
                 </div>
               </div>
               <div>

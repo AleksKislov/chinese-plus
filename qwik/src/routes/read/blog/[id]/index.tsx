@@ -75,7 +75,7 @@ export default component$(() => {
     title,
     tags,
     hits,
-    user: { _id: userId, name: userName, bio: userBio },
+    user: { _id: userId, name: userName, newAvatar: userAvatar, role: userRole, bio: userBio },
     date,
     category,
     likes,
@@ -124,6 +124,8 @@ export default component$(() => {
           tags={tags}
           userId={userId}
           userName={userName}
+          userAvatar={userAvatar}
+          userRole={userRole}
           userBio={userBio}
           date={date}
           category={CONSTANTS.blogCategories[category as keyof typeof CONSTANTS.blogCategories]}
