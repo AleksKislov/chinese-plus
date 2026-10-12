@@ -1,13 +1,8 @@
 import { $, component$, type Signal, useSignal } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
-import { ApiService } from '~/misc/actions/request';
+import { useGetGrammarTopic } from '~/misc/actions/grammar/get-topic';
 import { GrammarTopicBody } from './grammar-topic-body';
-import {
-  type GrammarTopic,
-  type GrammarTopicResponse,
-  type GrammarTopicSummary,
-  grammarTopicUrl,
-} from './types';
+import { type GrammarTopic, type GrammarTopicSummary, grammarTopicUrl } from './types';
 
 type GrammarTopicCardProps = {
   topic: GrammarTopicSummary;
@@ -19,6 +14,7 @@ export const GrammarTopicCard = component$(({ topic, currentWord }: GrammarTopic
   const full = useSignal<GrammarTopic | null>(null);
   const loading = useSignal(false);
   const failed = useSignal(false);
+  const getTopic = useGetGrammarTopic();
 
   // the handler is lazy-loaded, so the event is stale by the time it runs
   // (currentTarget is null, <details> may already be toggled) — rely on state only;
@@ -28,11 +24,7 @@ export const GrammarTopicCard = component$(({ topic, currentWord }: GrammarTopic
 
     loading.value = true;
     failed.value = false;
-    const res: GrammarTopicResponse | null = await ApiService.get(
-      `/api/grammar/topic/${topic.slug}`,
-      undefined,
-      null,
-    );
+    const { value: res } = await getTopic.submit({ slug: topic.slug });
     if (res?.topic) full.value = res.topic;
     else failed.value = true;
     loading.value = false;
