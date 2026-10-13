@@ -142,8 +142,8 @@ each section, as on the paper.
 | `reading-sentence-match` | part `bank` | `promptCn` |
 | `reading-fill-blank` | part `bank` | `promptCn` with `（ ）` |
 | `reading-choice` | `options` | `promptCn` passage |
-| `writing-sentence-order` | literal text | `correctAnswer` = full sentence |
-| `writing-character` | literal text | `pinyin`, `correctAnswer` = character |
+| `writing-sentence-order` | `options` = the words, in paper order | `correctAnswer` = full sentence; several accepted orders separated by ` / ` |
+| `writing-character` | literal text | `promptCn` with `（ ）`, `pinyin`, `correctAnswer` = character |
 | `writing-essay` | not auto-graded | `promptRu` |
 
 The validator enforces this table: a bank-answered question with no bank, an

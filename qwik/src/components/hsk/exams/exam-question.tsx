@@ -1,6 +1,7 @@
 import { component$, type QRL } from '@builder.io/qwik';
 import { playSvg } from '~/components/common/media/svg';
 import { AdminImageSlot } from './admin-image-slot';
+import { SentenceOrder } from './sentence-order';
 import {
   type ExamPart,
   type ExamQuestion,
@@ -29,10 +30,13 @@ type Props = {
   exampleLabel?: string;
   // Paper-specific layout tweaks. 'old-2' (old HSK 2) prints dialogues and
   // passage + ★ statement one line per row - its content stores those lines
-  // newline-separated - and answers reading true/false with two plain
-  // Верно/Неверно buttons. Every other paper renders exactly as before.
-  variant?: 'old-2';
+  // newline-separated. 'old-3' (old HSK 3) does the same and has no pictures of
+  // its own on any question. Every other paper renders exactly as before.
+  variant?: 'old-2' | 'old-3';
 };
+
+// The blank in a fill-in prompt: "没（     ）系" -> before "没", after "系".
+const BLANK_RE = /（\s*）/;
 
 // "男：…女：…问：…" -> one entry per speaker turn, for showing a transcript line by line.
 const splitSpeakerLines = (text: string): string[] =>
@@ -60,6 +64,9 @@ export const ExamQuestionCard = component$<Props>(
     onAnswer$,
   }) => {
     const isOld2 = variant === 'old-2';
+    const isOld3 = variant === 'old-3';
+    // Both old papers print dialogues and passages one line per row.
+    const isLineLayout = isOld2 || isOld3;
     const correct = isCorrect(q, answer);
     const choices = getChoices(q, part);
     const ungraded = isUngraded(q.questionType);
@@ -73,7 +80,8 @@ export const ExamQuestionCard = component$<Props>(
     const hasOwnPictureOptions = !usesBank(q.questionType) && choices.some((c) => c.imageUrl);
     // Own picture (q.hasImage) is likewise a concept only non-bank types have -
     // a bank-answered question is never illustrated by its own picture.
-    const canHaveOwnImage = !usesBank(q.questionType);
+    // The old HSK 3 paper only has pictures in its listening part 1 bank.
+    const canHaveOwnImage = !usesBank(q.questionType) && !isOld3;
     // The combined 3-photos-in-one-picture question type (HSK 1 listening part
     // 2's picture-choice items) needs roughly double the width to keep each of
     // its three sub-photos legible; every other own-image type is one plain
@@ -81,7 +89,16 @@ export const ExamQuestionCard = component$<Props>(
     const ownImageWidth = q.questionType === 'listening-choice' ? 440 : 220;
     // See the pinyin comment in the render below.
     const showPinyin = !!exampleLabel || !q.questionType.startsWith('listening');
-    const isOld2TrueFalse = isOld2 && q.questionType === 'reading-true-false';
+    // Every ✓/✗ question, on any paper, answers with two plain Верно/Неверно
+    // buttons rather than lettered A/B rows - the picture, if any, is the
+    // question's own image above them.
+    const isPlainTrueFalse = q.questionType.endsWith('-true-false');
+    // Writing part 2: the pinyin sits over the blank and the character is typed
+    // right into it, as on the paper.
+    const blankParts =
+      q.questionType === 'writing-character' && q.promptCn && BLANK_RE.test(q.promptCn)
+        ? q.promptCn.split(BLANK_RE)
+        : null;
 
     const stateClass = !isChecked
       ? 'border-base-300'
@@ -176,7 +193,23 @@ export const ExamQuestionCard = component$<Props>(
                   it stays hidden while ungraded - but a worked example is
                   already shown pre-answered (see exampleLabel below), so its
                   pinyin is never a spoiler and always renders. */}
-              {isOld2 && q.promptCn?.includes('\n') ? (
+              {blankParts ? (
+                <p class="text-lg mb-1 leading-loose">
+                  {blankParts[0]}（
+                  <span class="inline-flex flex-col items-center align-bottom mx-1">
+                    {q.pinyin && <span class="text-sm opacity-70 leading-none">{q.pinyin}</span>}
+                    <input
+                      type="text"
+                      aria-label={q.pinyin ? `Иероглиф для ${q.pinyin}` : 'Иероглиф'}
+                      class="input input-bordered input-sm w-14 text-center text-lg"
+                      value={answer || ''}
+                      disabled={isChecked}
+                      onInput$={(e) => onAnswer$((e.target as HTMLInputElement).value)}
+                    />
+                  </span>
+                  ）{blankParts.slice(1).join('（ ）')}
+                </p>
+              ) : isLineLayout && q.promptCn?.includes('\n') ? (
                 // One row per line, each with its own pinyin above it - the
                 // pinyin is stored with the same line breaks as promptCn.
                 <div class="mb-1">
@@ -199,7 +232,16 @@ export const ExamQuestionCard = component$<Props>(
                 </>
               )}
 
-              {isFreeText(q.questionType) || ungraded ? (
+              {blankParts ? null : q.questionType === 'writing-sentence-order' ? (
+                <SentenceOrder
+                  chunks={q.options}
+                  answer={answer}
+                  isChecked={isChecked}
+                  correct={correct}
+                  exampleSentence={exampleLabel ? q.correctAnswer || '' : undefined}
+                  onAnswer$={onAnswer$}
+                />
+              ) : isFreeText(q.questionType) || ungraded ? (
                 ungraded ? (
                   <textarea
                     class="textarea textarea-bordered w-full"
@@ -220,7 +262,7 @@ export const ExamQuestionCard = component$<Props>(
               ) : (
                 <div
                   class={
-                    usesBank(q.questionType) || hasOwnPictureOptions || isOld2TrueFalse
+                    usesBank(q.questionType) || hasOwnPictureOptions || isPlainTrueFalse
                       ? 'flex flex-wrap gap-2'
                       : 'flex flex-col gap-2'
                   }
@@ -306,14 +348,14 @@ export const ExamQuestionCard = component$<Props>(
                           onAnswer$(choice.label);
                         }}
                       >
-                        {isOld2TrueFalse ? (
+                        {isPlainTrueFalse ? (
                           <span class="font-normal normal-case">
                             {choice.textCn} {choice.textRu}
                           </span>
                         ) : (
                           <span class="font-bold mr-1">{choice.label}</span>
                         )}
-                        {!usesBank(q.questionType) && !isOld2TrueFalse && (
+                        {!usesBank(q.questionType) && !isPlainTrueFalse && (
                           <span class="font-normal normal-case">
                             {choice.textCn}
                             {choice.pinyin && (
@@ -335,7 +377,12 @@ export const ExamQuestionCard = component$<Props>(
 
               {isChecked && !ungraded && !correct && q.correctAnswer && (
                 <p class="text-sm mt-2">
-                  Правильный ответ: <span class="font-bold">{q.correctAnswer}</span>
+                  Правильный ответ:{' '}
+                  <span class="font-bold">
+                    {isPlainTrueFalse
+                      ? choices.find((c) => c.label === q.correctAnswer)?.textRu ?? q.correctAnswer
+                      : q.correctAnswer}
+                  </span>
                 </p>
               )}
 
@@ -346,7 +393,7 @@ export const ExamQuestionCard = component$<Props>(
               {isChecked &&
                 !exampleLabel &&
                 q.ttsText &&
-                (isOld2 ? (
+                (isLineLayout ? (
                   <div class="text-sm opacity-70 mt-1">
                     <p class="mb-0">Текст аудио:</p>
                     {splitSpeakerLines(q.ttsText).map((line, i) => (

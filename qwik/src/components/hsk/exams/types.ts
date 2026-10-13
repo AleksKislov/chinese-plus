@@ -143,12 +143,27 @@ export const getChoices = (q: ExamQuestion, part: ExamPart): ExamChoice[] =>
 export const questionKey = (sectionInd: number, partInd: number, qInd: number): string =>
   `${sectionInd}-${partInd}-${qInd}`;
 
+// A writing-sentence-order answer is the placed chunks joined with this, so the
+// answer alone says which chunk sits where (see sentence-order.tsx).
+export const CHUNK_SEPARATOR = '|';
+// Between alternative correct sentences in a writing-sentence-order key.
+const ACCEPTED_ORDERS_SEPARATOR = '/';
+
+// The chunks never carry the final 。/？, and the taker never types it - compare
+// the bare characters only.
+const toBareSentence = (s: string) => s.replace(/[|\s。，、？！.,?!]/g, '');
+
 /**
  * Whether an answer is correct. Essays are never auto-graded, so they always
  * report false and are excluded from the score.
  */
 export const isCorrect = (q: ExamQuestion, answer: string | undefined): boolean => {
   if (!answer || !q.correctAnswer || isUngraded(q.questionType)) return false;
+  // The key may list several accepted orders: "你丈夫的鼻子怎么了？ / 你的丈夫鼻子怎么了？"
+  if (q.questionType === 'writing-sentence-order')
+    return q.correctAnswer
+      .split(ACCEPTED_ORDERS_SEPARATOR)
+      .some((s) => toBareSentence(answer) === toBareSentence(s));
   if (isFreeText(q.questionType)) return answer.trim() === q.correctAnswer.trim();
   return answer === q.correctAnswer;
 };
