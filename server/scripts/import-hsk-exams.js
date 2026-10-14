@@ -78,7 +78,12 @@ const BANK_ANSWER_TYPES = [
 ];
 // Question types graded against free text rather than a label.
 const FREE_TEXT_TYPES = ['writing-sentence-order', 'writing-character'];
-const UNGRADED_TYPES = ['writing-essay'];
+// Answered by ordering the question's own options; the key is the labels in
+// order ('BCA'), so it is checked as a permutation rather than one label.
+const ORDER_TYPES = ['reading-sentence-order'];
+// Not auto-graded: writing-picture-sentence keeps a sample sentence in
+// correctAnswer, shown after checking.
+const UNGRADED_TYPES = ['writing-essay', 'writing-picture-sentence'];
 
 /** Recursively collect every .json file under a directory. */
 function findJsonFiles(dir) {
@@ -116,6 +121,17 @@ function validateQuestionLike(q, qLoc, { bankLabels, sectionType, at, errors, wa
 
   if (UNGRADED_TYPES.includes(q.questionType)) {
     // essays have no key - nothing to check
+    if (q.questionType === 'writing-picture-sentence' && !q.promptCn)
+      errors.push(at(`${qLoc}.promptCn: required - the word the sentence must use`));
+  } else if (ORDER_TYPES.includes(q.questionType)) {
+    const key = [...(q.correctAnswer || '')].sort().join('');
+    if (!q.correctAnswer || key !== [...optionLabels].sort().join(''))
+      errors.push(
+        at(
+          `${qLoc}.correctAnswer "${q.correctAnswer}" must use every option label ` +
+            `[${optionLabels.join(', ')}] exactly once`
+        )
+      );
   } else if (FREE_TEXT_TYPES.includes(q.questionType)) {
     if (!q.correctAnswer) errors.push(at(`${qLoc}.correctAnswer: required`));
   } else if (!q.correctAnswer) {
@@ -283,6 +299,8 @@ function toDocument(exam) {
         })),
         bankHasImage: Boolean(part.bankHasImage),
         bankImagePrompt: part.bankImagePrompt ?? null,
+        passageCn: part.passageCn ?? null,
+        passageRu: part.passageRu ?? null,
         examples: (part.examples || []).map((ex, exInd) => mapQuestionLike(ex, ex.ind ?? exInd, null)),
         questions: part.questions.map((q, qInd) =>
           mapQuestionLike(q, q.ind ?? qInd, q.number ?? runningNumber++)

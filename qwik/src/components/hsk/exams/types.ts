@@ -22,9 +22,11 @@ export type ExamQuestionType =
   | 'reading-sentence-match'
   | 'reading-fill-blank'
   | 'reading-choice'
+  | 'reading-sentence-order'
   | 'writing-sentence-order'
   | 'writing-character'
-  | 'writing-essay';
+  | 'writing-essay'
+  | 'writing-picture-sentence';
 
 export type ExamQuestion = {
   ind: number;
@@ -63,6 +65,10 @@ export type ExamPart = {
   // combined picture flips bankHasImage to false and strands the part in the
   // per-letter layout with no way back.
   bankImagePrompt: string | null;
+  // One text shared by all the part's questions (HSK 4+ reading: one passage,
+  // two ★ questions); each question then has only its ★ line in promptCn.
+  passageCn: string | null;
+  passageRu: string | null;
   // Worked example(s) shown before the real questions (例如) - same shape as a
   // real question (same image/audio/options), so the real picture the example
   // sentence describes renders instead of just a text caption. `number` is
@@ -133,7 +139,12 @@ const FREE_TEXT_TYPES: ExamQuestionType[] = ['writing-sentence-order', 'writing-
 
 export const usesBank = (t: ExamQuestionType): boolean => BANK_ANSWER_TYPES.includes(t);
 export const isFreeText = (t: ExamQuestionType): boolean => FREE_TEXT_TYPES.includes(t);
-export const isUngraded = (t: ExamQuestionType): boolean => t === 'writing-essay';
+export const isUngraded = (t: ExamQuestionType): boolean =>
+  t === 'writing-essay' || t === 'writing-picture-sentence';
+// Answered by putting pieces in order: words into a sentence (writing), or
+// sentences A/B/C into a paragraph (reading, key like 'BCA').
+export const isOrderType = (t: ExamQuestionType): boolean =>
+  t === 'writing-sentence-order' || t === 'reading-sentence-order';
 
 /** The choices a question is answered from - either its own or the part's bank. */
 export const getChoices = (q: ExamQuestion, part: ExamPart): ExamChoice[] =>
@@ -143,8 +154,9 @@ export const getChoices = (q: ExamQuestion, part: ExamPart): ExamChoice[] =>
 export const questionKey = (sectionInd: number, partInd: number, qInd: number): string =>
   `${sectionInd}-${partInd}-${qInd}`;
 
-// A writing-sentence-order answer is the placed chunks joined with this, so the
-// answer alone says which chunk sits where (see sentence-order.tsx).
+// An order-type answer is the placed pieces joined with this - chunk texts for
+// writing-sentence-order, labels for reading-sentence-order - so the answer
+// alone says which piece sits where (see sentence-order.tsx).
 export const CHUNK_SEPARATOR = '|';
 // Between alternative correct sentences in a writing-sentence-order key.
 const ACCEPTED_ORDERS_SEPARATOR = '/';
@@ -159,8 +171,9 @@ const toBareSentence = (s: string) => s.replace(/[|\s。，、？！.,?!]/g, '')
  */
 export const isCorrect = (q: ExamQuestion, answer: string | undefined): boolean => {
   if (!answer || !q.correctAnswer || isUngraded(q.questionType)) return false;
-  // The key may list several accepted orders: "你丈夫的鼻子怎么了？ / 你的丈夫鼻子怎么了？"
-  if (q.questionType === 'writing-sentence-order')
+  // The key may list several accepted orders: "你丈夫的鼻子怎么了？ / 你的丈夫鼻子怎么了？".
+  // Reading order answers are labels ("B|C|A" vs "BCA"), compared the same way.
+  if (isOrderType(q.questionType))
     return q.correctAnswer
       .split(ACCEPTED_ORDERS_SEPARATOR)
       .some((s) => toBareSentence(answer) === toBareSentence(s));

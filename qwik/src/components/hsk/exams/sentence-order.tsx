@@ -2,13 +2,16 @@ import { $, component$, sync$, useSignal, type QRL } from '@builder.io/qwik';
 import { CHUNK_SEPARATOR, type ExamChoice } from './types';
 
 type Props = {
-  // The scrambled words, in the order printed on the paper.
+  // The scrambled pieces, in the order printed on the paper.
   chunks: ExamChoice[];
+  // Reading part 2 (HSK 4+): the pieces are whole sentences A/B/C, stacked one
+  // per row, and the answer is their labels in order rather than their text.
+  byLabel?: boolean;
   answer: string | undefined;
   isChecked: boolean;
   correct: boolean;
-  // Set for a worked example: show the words and the finished sentence, with
-  // nothing to drag.
+  // Set for a worked example: show the pieces and the finished result (the
+  // sentence, or the label order 'BAC'), with nothing to drag.
   exampleSentence?: string;
   onAnswer$: QRL<(value: string) => void>;
 };
@@ -21,11 +24,11 @@ type DragSource = { from: 'pool' | 'line'; index: number };
  * truth (it lives in the page's answer store), so resetting the exam clears this
  * component too. A repeated word maps to the first copy not already placed.
  */
-const parseAnswer = (answer: string | undefined, chunks: ExamChoice[]) => {
+const parseAnswer = (answer: string | undefined, chunks: ExamChoice[], byLabel: boolean) => {
   const used = new Set<number>();
   const line: number[] = [];
   for (const token of (answer || '').split(CHUNK_SEPARATOR)) {
-    const ind = chunks.findIndex((c, i) => !used.has(i) && c.textCn === token);
+    const ind = chunks.findIndex((c, i) => !used.has(i) && tokenOf(c, byLabel) === token);
     if (ind === -1) continue;
     used.add(ind);
     line.push(ind);
@@ -33,6 +36,8 @@ const parseAnswer = (answer: string | undefined, chunks: ExamChoice[]) => {
   const pool = chunks.map((_, i) => i).filter((i) => !used.has(i));
   return { line, pool };
 };
+
+const tokenOf = (c: ExamChoice, byLabel: boolean) => (byLabel ? c.label : c.textCn || '');
 
 // Drag handlers run lazily, so anything that has to happen during the event
 // itself goes through sync$: Firefox only starts a drag once data is set, and a
@@ -50,13 +55,33 @@ const acceptDrop = sync$((e: DragEvent) => {
 });
 
 /**
- * HSK 3 writing part 1: build a sentence from the given words. Click a word to
- * put it at the end of the line (click it again on the line to take it back),
- * or drag it - between words on the line, or back to the pool.
+ * HSK 3+ writing part 1: build a sentence from the given words; HSK 4+ reading
+ * part 2: put three sentences in order. Click a piece to put it at the end of
+ * the line (click it again on the line to take it back), or drag it - between
+ * pieces on the line, or back to the pool.
  */
 export const SentenceOrder = component$<Props>(
-  ({ chunks, answer, isChecked, correct, exampleSentence, onAnswer$ }) => {
+  ({ chunks, answer, isChecked, correct, byLabel = false, exampleSentence, onAnswer$ }) => {
     const dragged = useSignal<DragSource | null>(null);
+
+    if (exampleSentence !== undefined && byLabel) {
+      // The key is the label order ('BAC') - show the sentences in that order.
+      const ordered = [...exampleSentence]
+        .map((label) => chunks.find((c) => c.label === label))
+        .filter((c): c is ExamChoice => !!c);
+      return (
+        <div>
+          {chunks.map((c) => (
+            <p key={c.label} class="mb-1">
+              <span class="font-bold mr-2">{c.label}</span>
+              {c.textCn}
+            </p>
+          ))}
+          <p class="font-bold mt-2 mb-1">→ {exampleSentence.split('').join(' ')}</p>
+          <p class="text-lg mb-0">{ordered.map((c) => c.textCn).join('，')}。</p>
+        </div>
+      );
+    }
 
     if (exampleSentence !== undefined) {
       return (
@@ -73,10 +98,10 @@ export const SentenceOrder = component$<Props>(
       );
     }
 
-    const { line, pool } = parseAnswer(answer, chunks);
+    const { line, pool } = parseAnswer(answer, chunks, byLabel);
 
     const commit = $((next: number[]) =>
-      onAnswer$(next.map((i) => chunks[i].textCn || '').join(CHUNK_SEPARATOR)),
+      onAnswer$(next.map((i) => tokenOf(chunks[i], byLabel)).join(CHUNK_SEPARATOR)),
     );
 
     // Put the dragged word before line slot `target` (line.length = at the end).
@@ -103,11 +128,25 @@ export const SentenceOrder = component$<Props>(
 
     const lineBtnClass = !isChecked ? 'btn-primary' : correct ? 'btn-success' : 'btn-error';
     const lockClass = isChecked ? 'pointer-events-none' : '';
+    // Whole sentences: one per row, wrapping, label in front.
+    const rowsClass = byLabel ? 'flex-col items-stretch' : 'flex-wrap items-center';
+    const pieceClass = byLabel
+      ? 'h-auto min-h-8 py-2 justify-start text-left whitespace-normal text-base'
+      : 'text-lg';
+    const pieceText = (chunkInd: number) =>
+      byLabel ? (
+        <>
+          <span class="font-bold mr-2">{chunks[chunkInd].label}</span>
+          {chunks[chunkInd].textCn}
+        </>
+      ) : (
+        chunks[chunkInd].textCn
+      );
 
     return (
       <div>
         <div
-          class="min-h-14 border-2 border-dashed border-base-300 rounded-lg p-2 flex flex-wrap gap-2 items-center"
+          class={`min-h-14 border-2 border-dashed border-base-300 rounded-lg p-2 flex gap-2 ${rowsClass}`}
           onDragOver$={allowDrop}
           onDrop$={[acceptDrop, $(() => dropAt(line.length))]}
         >
@@ -119,7 +158,7 @@ export const SentenceOrder = component$<Props>(
                 draggable={!isChecked}
                 // pointer-events-none rather than `disabled`, so the graded
                 // color survives (see ExamQuestionCard).
-                class={`btn btn-sm text-lg normal-case font-normal ${lineBtnClass} ${lockClass}`}
+                class={`btn btn-sm normal-case font-normal ${pieceClass} ${lineBtnClass} ${lockClass}`}
                 onClick$={() => commit(line.filter((_, k) => k !== j))}
                 onDragStart$={[
                   startDrag,
@@ -129,19 +168,21 @@ export const SentenceOrder = component$<Props>(
                 ]}
                 onDrop$={[acceptDrop, $(() => dropAt(j))]}
               >
-                {chunks[chunkInd].textCn}
+                {pieceText(chunkInd)}
               </button>
             ))
           ) : (
             <span class="text-sm opacity-50 px-1">
-              Нажимайте на слова по порядку или перетащите их сюда
+              {byLabel
+                ? 'Нажимайте на предложения по порядку или перетащите их сюда'
+                : 'Нажимайте на слова по порядку или перетащите их сюда'}
             </span>
           )}
         </div>
 
         {!!pool.length && (
           <div
-            class="flex flex-wrap gap-2 mt-2 min-h-10"
+            class={`flex gap-2 mt-2 min-h-10 ${rowsClass}`}
             onDragOver$={allowDrop}
             onDrop$={[acceptDrop, dropToPool]}
           >
@@ -150,7 +191,7 @@ export const SentenceOrder = component$<Props>(
                 type="button"
                 key={chunkInd}
                 draggable={!isChecked}
-                class={`btn btn-sm btn-outline text-lg normal-case font-normal ${lockClass}`}
+                class={`btn btn-sm btn-outline normal-case font-normal ${pieceClass} ${lockClass}`}
                 onClick$={() => commit([...line, chunkInd])}
                 onDragStart$={[
                   startDrag,
@@ -159,7 +200,7 @@ export const SentenceOrder = component$<Props>(
                   }),
                 ]}
               >
-                {chunks[chunkInd].textCn}
+                {pieceText(chunkInd)}
               </button>
             ))}
           </div>

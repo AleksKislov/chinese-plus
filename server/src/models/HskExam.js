@@ -52,10 +52,12 @@ const QuestionSchema = new Schema(
         'reading-sentence-match', // match a sentence to its pair in the bank
         'reading-fill-blank', // fill the gap from a shared word bank
         'reading-choice', // read a passage, answer multiple choice
+        'reading-sentence-order', // put 3 sentences A/B/C in order; key is e.g. 'BCA'
         // writing (higher levels only)
         'writing-sentence-order', // reorder scrambled chunks into a sentence
         'writing-character', // write the character for a given pinyin
         'writing-essay', // free text, not auto-graded
+        'writing-picture-sentence', // make a sentence about a picture using the word in promptCn; not auto-graded, correctAnswer is a sample sentence
       ],
     },
 
@@ -111,6 +113,12 @@ const PartSchema = new Schema(
     // not used alongside it.
     bankHasImage: { type: Boolean, default: false },
     bankImagePrompt: { type: String, default: null },
+
+    // One reading text shared by every question in the part (HSK 4+ reading
+    // part 3: "80-81." - one passage, two ★ questions). Questions then carry
+    // only their own ★ line in promptCn.
+    passageCn: { type: String, default: null },
+    passageRu: { type: String, default: null },
 
     // Worked example(s) shown before the real questions (例如), as on the real
     // paper - e.g. a real listening part shows the actual picture the example

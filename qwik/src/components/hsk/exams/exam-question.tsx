@@ -2,6 +2,7 @@ import { component$, type QRL } from '@builder.io/qwik';
 import { playSvg } from '~/components/common/media/svg';
 import { AdminImageSlot } from './admin-image-slot';
 import { SentenceOrder } from './sentence-order';
+import { checkPictureSentence, pictureSentenceHint } from './picture-sentence';
 import {
   type ExamPart,
   type ExamQuestion,
@@ -9,6 +10,7 @@ import {
   getChoices,
   isCorrect,
   isFreeText,
+  isOrderType,
   isUngraded,
   usesBank,
 } from './types';
@@ -31,8 +33,9 @@ type Props = {
   // Paper-specific layout tweaks. 'old-2' (old HSK 2) prints dialogues and
   // passage + ★ statement one line per row - its content stores those lines
   // newline-separated. 'old-3' (old HSK 3) does the same and has no pictures of
-  // its own on any question. Every other paper renders exactly as before.
-  variant?: 'old-2' | 'old-3';
+  // its own on any question. 'old-4' (old HSK 4+) likewise, except for the
+  // writing part 2 pictures. Every other paper renders exactly as before.
+  variant?: 'old-2' | 'old-3' | 'old-4';
 };
 
 // The blank in a fill-in prompt: "没（     ）系" -> before "没", after "系".
@@ -65,8 +68,10 @@ export const ExamQuestionCard = component$<Props>(
   }) => {
     const isOld2 = variant === 'old-2';
     const isOld3 = variant === 'old-3';
-    // Both old papers print dialogues and passages one line per row.
-    const isLineLayout = isOld2 || isOld3;
+    const isOld4 = variant === 'old-4';
+    // The old papers print dialogues and passages one line per row.
+    const isLineLayout = isOld2 || isOld3 || isOld4;
+    const isPictureSentence = q.questionType === 'writing-picture-sentence';
     const correct = isCorrect(q, answer);
     const choices = getChoices(q, part);
     const ungraded = isUngraded(q.questionType);
@@ -80,8 +85,10 @@ export const ExamQuestionCard = component$<Props>(
     const hasOwnPictureOptions = !usesBank(q.questionType) && choices.some((c) => c.imageUrl);
     // Own picture (q.hasImage) is likewise a concept only non-bank types have -
     // a bank-answered question is never illustrated by its own picture.
-    // The old HSK 3 paper only has pictures in its listening part 1 bank.
-    const canHaveOwnImage = !usesBank(q.questionType) && !isOld3;
+    // The old HSK 3 paper only has pictures in its listening part 1 bank, old
+    // HSK 4 only in writing part 2.
+    const canHaveOwnImage =
+      !usesBank(q.questionType) && !isOld3 && (!isOld4 || isPictureSentence);
     // The combined 3-photos-in-one-picture question type (HSK 1 listening part
     // 2's picture-choice items) needs roughly double the width to keep each of
     // its three sub-photos legible; every other own-image type is one plain
@@ -193,7 +200,7 @@ export const ExamQuestionCard = component$<Props>(
                   it stays hidden while ungraded - but a worked example is
                   already shown pre-answered (see exampleLabel below), so its
                   pinyin is never a spoiler and always renders. */}
-              {blankParts ? (
+              {isPictureSentence ? null : blankParts ? (
                 <p class="text-lg mb-1 leading-loose">
                   {blankParts[0]}（
                   <span class="inline-flex flex-col items-center align-bottom mx-1">
@@ -232,9 +239,48 @@ export const ExamQuestionCard = component$<Props>(
                 </>
               )}
 
-              {blankParts ? null : q.questionType === 'writing-sentence-order' ? (
+              {blankParts ? null : isPictureSentence ? (
+                <div>
+                  <p class="mb-2">
+                    Слово: <span class="text-xl font-bold">{q.promptCn}</span>
+                  </p>
+                  <input
+                    type="text"
+                    aria-label="Ваше предложение"
+                    placeholder="Напишите предложение иероглифами"
+                    class="input input-bordered w-full text-lg"
+                    value={answer || ''}
+                    disabled={isChecked}
+                    onInput$={(e) => onAnswer$((e.target as HTMLInputElement).value)}
+                  />
+                  {!exampleLabel && !isChecked && pictureSentenceHint(answer, q.promptCn) && (
+                    <p class="text-sm text-warning mt-1 mb-0">
+                      {pictureSentenceHint(answer, q.promptCn)}
+                    </p>
+                  )}
+                  {/* Only the formal checks - grammar and fit to the picture
+                      aren't judged, so this never counts towards the score. */}
+                  {!exampleLabel && isChecked && (
+                    <ul class="text-sm mt-2 mb-0 list-none p-0">
+                      {checkPictureSentence(answer, q.promptCn).map((c) => (
+                        <li key={c.label} class={c.ok ? 'text-success' : 'text-error'}>
+                          {c.ok ? '✓' : '✗'} {c.label}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {!exampleLabel && (
+                    <p class="text-xs opacity-70 mt-1 mb-0">
+                      Ответ проверяется только по формальным признакам: иероглифы, заданное слово,
+                      длина, знак в конце. Грамматика и соответствие картинке пока не проверяются,
+                      в счёт баллов задание не идёт.
+                    </p>
+                  )}
+                </div>
+              ) : isOrderType(q.questionType) ? (
                 <SentenceOrder
                   chunks={q.options}
+                  byLabel={q.questionType === 'reading-sentence-order'}
                   answer={answer}
                   isChecked={isChecked}
                   correct={correct}
@@ -369,9 +415,15 @@ export const ExamQuestionCard = component$<Props>(
                 </div>
               )}
 
-              {isChecked && ungraded && (
+              {isChecked && ungraded && !isPictureSentence && (
                 <p class="text-sm opacity-70 mt-2">
                   Свободный ответ — проверяется вручную, в счёт баллов не идёт.
+                </p>
+              )}
+
+              {isChecked && isPictureSentence && !exampleLabel && q.correctAnswer && (
+                <p class="text-sm mt-2">
+                  Пример ответа: <span class="font-bold">{q.correctAnswer}</span>
                 </p>
               )}
 

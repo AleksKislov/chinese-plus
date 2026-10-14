@@ -94,6 +94,8 @@ Nesting mirrors a real exam paper: `exam → section → part → question`.
           "instructionCn": "…",
           "instructionRu": "…",
           "exampleRu": "…",      // optional worked example (例如)
+          "passageCn": "…",      // optional text shared by all the part's questions
+          "passageRu": "…",      //   (HSK 4+ reading: one passage, two ★ questions)
 
           // Shared answer set for match-type parts: the A–F picture strip, or
           // the word bank of a fill-in-the-blank part. Omit for parts whose
@@ -141,10 +143,12 @@ each section, as on the paper.
 | `reading-picture-match` | part `bank` | `promptCn`, bank pictures |
 | `reading-sentence-match` | part `bank` | `promptCn` |
 | `reading-fill-blank` | part `bank` | `promptCn` with `（ ）` |
-| `reading-choice` | `options` | `promptCn` passage |
+| `reading-choice` | `options` | `promptCn` passage, or only the ★ line when the part has `passageCn` |
+| `reading-sentence-order` | `options` A/B/C, ordered | `correctAnswer` = labels in order, e.g. `BCA` |
 | `writing-sentence-order` | `options` = the words, in paper order | `correctAnswer` = full sentence; several accepted orders separated by ` / ` |
 | `writing-character` | literal text | `promptCn` with `（ ）`, `pinyin`, `correctAnswer` = character |
 | `writing-essay` | not auto-graded | `promptRu` |
+| `writing-picture-sentence` | not auto-graded | picture, `promptCn` = the word to use, `correctAnswer` = sample sentence |
 
 The validator enforces this table: a bank-answered question with no bank, an
 option-answered question with no options, or a `correctAnswer` that matches no

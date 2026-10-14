@@ -85,11 +85,11 @@ export default component$(() => {
 
   const paper = exam.value;
   if (!paper) return <ExamNotFound />;
-  // Old HSK 2 and 3 have their own line-by-line layout (see ExamQuestionCard's
+  // Old HSK 2-4 have their own line-by-line layout (see ExamQuestionCard's
   // variant); every other paper keeps the default rendering.
   const cardVariant =
-    paper.version === 'old' && (paper.level === '2' || paper.level === '3')
-      ? (`old-${paper.level}` as 'old-2' | 'old-3')
+    paper.version === 'old' && ['2', '3', '4'].includes(paper.level)
+      ? (`old-${paper.level}` as 'old-2' | 'old-3' | 'old-4')
       : undefined;
 
   const gradeable = paper.sections.flatMap((section, sInd) =>
@@ -236,6 +236,20 @@ export default component$(() => {
                       {part.instructionRu && (
                         <p class="text-sm opacity-80 mb-0">{part.instructionRu}</p>
                       )}
+                    </div>
+                  )}
+
+                  {/* One text shared by every question below it (HSK 4+
+                      reading: "80-81." - one passage, two ★ questions). */}
+                  {part.passageCn && (
+                    <div class="card bg-base-100 border border-base-300 mb-3">
+                      <div class="card-body p-4">
+                        {part.passageCn.split('\n').map((line, i) => (
+                          <p key={i} class="text-lg mb-1">
+                            {line}
+                          </p>
+                        ))}
+                      </div>
                     </div>
                   )}
 
