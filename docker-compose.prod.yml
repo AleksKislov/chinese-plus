@@ -32,6 +32,9 @@ services:
       dockerfile: Dockerfile.prod
     ports:
       - 10000:10000
+    # Prometheus metrics (server/src/metrics.js): docker network only, scraped by grafana-alloy
+    expose:
+      - 9464
     environment:
       BE_VERSION: ${VERSION}
     env_file:

@@ -25,7 +25,8 @@ export default component$(() => {
   });
 
   return (
-    <header class="bg-base-300 mb-4">
+    // relative z-30: header menus open above sticky page elements (e.g. the tutor toolbar, z-20)
+    <header class="bg-base-300 mb-4 relative z-30">
       <div class="md:container md:mx-auto ">
         <div class="navbar h-12 flex justify-between">
           <div class="lg:w-full">
@@ -91,6 +92,7 @@ export default component$(() => {
                   </li>
                   <MenuItemNew name={watch.name} links={watch.links} />
                   <MenuLink href="/dictionary" text="Словарь" />
+                  <MenuLink href="/tutor/" text="AI-учитель" />
                   <MenuItemNew name={blog.name} links={blog.links} />
                   {/* <MenuLink href="/heroes" text="Герои клуба" /> */}
                   {/* <MenuLink href="/donate" text="Донат и цели" /> */}
@@ -128,6 +130,8 @@ export default component$(() => {
                 <MenuItem name={watch.name} links={watch.links} />
 
                 <MenuLink href="/dictionary" text="Словарь" />
+
+                <MenuLink href="/tutor/" text="AI-учитель" />
                 {/* <MenuItem name={ourClub.name} links={ourClub.links} /> */}
                 <MenuItem name={blog.name} links={blog.links} />
 

@@ -76,6 +76,7 @@ app.use('/api/project', require('./routes/api/project'));
 app.use('/api/grammar', require('./routes/api/grammar'));
 app.use('/api/hsk-exams', require('./routes/api/hsk-exams'));
 app.use('/api/ru-dictionary', require('./routes/api/ru-dictionary'));
+app.use('/api/tutor', require('./routes/api/tutor'));
 
 // glcoud services routes
 app.use('/gcloud/youtube', require('./routes/gcloud/youtube'));
@@ -95,6 +96,9 @@ process.on('uncaughtException', (err) => {
   logger.fatal({ err }, 'Uncaught exception - process will exit');
   process.exit(1);
 });
+
+// Prometheus metrics on a separate, unpublished port (see src/metrics.js)
+require('./src/metrics').startMetricsServer();
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {

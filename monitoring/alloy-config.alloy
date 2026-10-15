@@ -53,6 +53,15 @@ prometheus.scrape "cadvisor" {
   forward_to      = [prometheus.remote_write.grafana_cloud.receiver]
 }
 
+// App metrics of the backend (server/src/metrics.js): AI tutor tokens, cost, latency.
+// Port 9464 is not published, only reachable on the docker network.
+prometheus.scrape "chin_plus_be" {
+  targets         = [{"__address__" = "chin_plus_be:9464"}]
+  job_name        = "chin_plus_be"
+  scrape_interval = "60s"
+  forward_to      = [prometheus.remote_write.grafana_cloud.receiver]
+}
+
 prometheus.remote_write "grafana_cloud" {
   endpoint {
     url = env("PROMETHEUS_URL")
