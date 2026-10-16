@@ -10,6 +10,10 @@ const PRICES = {
   cached: price('TUTOR_PRICE_CACHED_PER_M', price('TUTOR_PRICE_INPUT_PER_M', 0.15)),
 };
 
+// USD per 1M TTS characters; defaults: MiniMax speech-2.8 hd $100, turbo $60
+const ttsPricePerM = () =>
+  price('TUTOR_PRICE_TTS_PER_M_CHARS', /-hd$/.test(process.env.MINIMAX_TTS_MODEL || '') ? 100 : 60);
+
 // OpenAI-style or DeepSeek-style usage -> { prompt, completion, cached }
 const readUsage = (usage = {}) => ({
   prompt: usage.prompt_tokens || 0,
@@ -71,4 +75,17 @@ function saveUsage(userId, inc, log) {
   );
 }
 
-module.exports = { tutorCompletion };
+// a new audio clip was generated (cached clips cost nothing and are only counted in metrics)
+function recordTts({ userId, chars, seconds, log }) {
+  const costUsd = (chars * ttsPricePerM()) / 1e6;
+  log.info(
+    { tutor: { kind: 'tts', userId: String(userId), seconds, chars, costUsd } },
+    'tutor: tts call',
+  );
+  metrics.tutorTts.inc({ status: 'generated' });
+  metrics.tutorTtsChars.inc(chars);
+  metrics.tutorTtsCost.inc(costUsd);
+  saveUsage(userId, { ttsRequests: 1, ttsChars: chars, ttsCostUsd: costUsd }, log);
+}
+
+module.exports = { tutorCompletion, recordTts };

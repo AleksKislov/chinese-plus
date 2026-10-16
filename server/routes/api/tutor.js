@@ -9,6 +9,11 @@ const {
   getAllChats,
   deleteChat,
   clearMemory,
+  getBlockAudio,
+  getSampleAudio,
+  updateTtsSettings,
+  setListenMode,
+  getTextSuggestions,
 } = require('../../src/api/services/tutor');
 
 /**
@@ -41,12 +46,49 @@ router.get('/chats/:id', auth, getChat);
 router.delete('/chats/:id', auth, deleteChat);
 
 /**
+ * @route     GET api/tutor/texts?level=1..6
+ * @desc      3 texts for an "Обсудить текст" lesson: bookmarks first, then random of the level
+ * @access    Private
+ */
+router.get('/texts', auth, getTextSuggestions);
+
+/**
  * @route     POST api/tutor/messages
- * @desc      Send a message ({ text, level, chatId? }) and get the tutor's reply;
- *            without chatId a new chat is created
+ * @desc      Send a message ({ text, level, chatId?, lesson? }) and get the tutor's reply;
+ *            without chatId a new lesson is created, lesson { kind: chat | vocab | text,
+ *            textId? | textUrl? } sets its type (vocab / text may come without text)
  * @access    Private
  */
 router.post('/messages', auth, sendMessage);
+
+/**
+ * @route     POST api/tutor/tts
+ * @desc      Audio of a Chinese block of a tutor reply ({ chatId, messageId, block }):
+ *            generated once with MiniMax, stored in the audio bucket -> { audio }
+ * @access    Private (own chats; admins also for chats they read)
+ */
+router.post('/tts', auth, getBlockAudio);
+
+/**
+ * @route     POST api/tutor/tts/sample
+ * @desc      Fixed sample phrase with { voice, speed } (keys), to try a voice -> { audio }
+ * @access    Private
+ */
+router.post('/tts/sample', auth, getSampleAudio);
+
+/**
+ * @route     PUT api/tutor/settings
+ * @desc      Save the user's audio settings { voice, speed } (keys of TTS_VOICES / TTS_SPEEDS)
+ * @access    Private
+ */
+router.put('/settings', auth, updateTtsSettings);
+
+/**
+ * @route     PUT api/tutor/listen-mode
+ * @desc      Remember the "Аудирование" toggle ({ listenMode: boolean })
+ * @access    Private
+ */
+router.put('/listen-mode', auth, setListenMode);
 
 /**
  * @route     DELETE api/tutor/memory

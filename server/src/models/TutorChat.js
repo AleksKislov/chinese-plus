@@ -8,6 +8,7 @@ const BlockSchema = new mongoose.Schema(
     text: { type: String, required: true }, // for 'grammar': the lesson title
     ru: { type: String }, // translation of a 'cn' block
     slug: { type: String }, // 'grammar' block: Grammar.slug, checked against the DB
+    audio: { type: String }, // 'cn' block: path under the audio bucket, e.g. 'tutor/3f2a….mp3'
     words: { type: [String], default: [] }, // segmented text, for word tooltips
   },
   { _id: false },
@@ -27,6 +28,15 @@ const TutorChatSchema = new mongoose.Schema({
   level: { type: Number, min: 1, max: 6, default: 1 }, // HSK level the teacher speaks at
   messages: { type: [MessageSchema], default: [] },
   summarizedCount: { type: Number, default: 0 }, // messages already folded into TutorProfile.memory
+  // lesson type, chosen at the start (server/src/api/services/tutor/lesson-focus.js)
+  focus: {
+    kind: { type: String, enum: ['chat', 'vocab', 'text'], default: 'chat' },
+    words: { type: [String], default: undefined }, // 'vocab': words picked at the start
+    textId: { type: mongoose.Schema.Types.ObjectId, ref: 'text' }, // 'text'
+    textTitle: { type: String },
+    textLevel: { type: Number },
+    text: { type: String }, // 'text': Chinese of the first page, as sent to the model
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

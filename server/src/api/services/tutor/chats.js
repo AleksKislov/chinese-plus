@@ -3,14 +3,17 @@ const TutorChat = require('../../../models/TutorChat');
 const TutorProfile = require('../../../models/TutorProfile');
 const { attachTooltips } = require('./segment');
 const { usageOf } = require('./limits');
-const { TUTOR } = require('./consts');
+const { TUTOR, HSK_LEVELS } = require('./consts');
+const { suggestTexts } = require('./lesson-focus');
+const { resolveTts, markAvailableAudio, ttsChoices } = require('./tts');
 const { getUserPrivileges } = require('../_misc/get-user-privileges');
 
 // every query is scoped to req.user.id: a user only ever reaches their own chats.
 // The one exception: an admin may READ any chat (getChat, getAllChats); writing, deleting
 // and the memory stay owner-only.
 
-const CHAT_LIST_FIELDS = 'num title level createdAt updatedAt';
+const CHAT_LIST_FIELDS =
+  'num title level createdAt updatedAt focus.kind focus.textId focus.textTitle';
 
 // sidebar: chats, what the tutor remembers, today's usage
 async function getChats(req, res) {
@@ -21,15 +24,19 @@ async function getChats(req, res) {
       .limit(TUTOR.CHATS_IN_LIST)
       .select(CHAT_LIST_FIELDS)
       .lean(),
-    TutorProfile.findOne({ user: userId }).select('memory level usage').lean(),
+    TutorProfile.findOne({ user: userId }).select('memory level usage tts listenMode').lean(),
     getUserPrivileges(userId),
   ]);
+  const tts = resolveTts(profile?.tts);
   res.json({
     chats,
     memory: profile?.memory || '',
     level: profile?.level || 1,
     usage: usageOf(profile),
     isAdmin,
+    tts: { voice: tts.voice, speed: tts.speed },
+    listenMode: Boolean(profile?.listenMode),
+    ttsChoices: ttsChoices(),
   });
 }
 
@@ -50,6 +57,9 @@ async function getChat(req, res) {
   }
 
   await attachTooltips(chat.messages);
+  // `audio` only where the clip for the viewer's voice + speed exists (plays instantly)
+  const viewer = await TutorProfile.findOne({ user: req.user.id }).select('tts').lean();
+  await markAvailableAudio(chat.messages, resolveTts(viewer?.tts).options);
   const { user, ...rest } = chat;
   res.json(
     isOwner ? rest : { ...rest, readOnly: true, owner: { _id: user?._id, name: user?.name } },
@@ -93,4 +103,26 @@ async function getAllChats(req, res) {
   );
 }
 
-module.exports = { getChats, getChat, getAllChats, deleteChat, clearMemory };
+// body: { listenMode: boolean } - remembered "Аудирование" toggle
+async function setListenMode(req, res) {
+  const { listenMode } = req.body || {};
+  if (typeof listenMode !== 'boolean') return res.status(400).json({ msg: 'Неверное значение' });
+  await TutorProfile.updateOne({ user: req.user.id }, { $set: { listenMode } }, { upsert: true });
+  res.json({ listenMode });
+}
+
+// "Обсудить текст": 3 texts (bookmarks first, then random of the level). Query: ?level=1..6
+async function getTextSuggestions(req, res) {
+  const level = HSK_LEVELS.includes(Number(req.query.level)) ? Number(req.query.level) : 1;
+  res.json(await suggestTexts(req.user.id, level));
+}
+
+module.exports = {
+  getChats,
+  getChat,
+  getAllChats,
+  deleteChat,
+  clearMemory,
+  setListenMode,
+  getTextSuggestions,
+};

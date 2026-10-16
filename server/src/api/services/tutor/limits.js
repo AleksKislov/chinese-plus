@@ -5,6 +5,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 // one request per user at a time (also keeps the quota updates below race-free)
 const inFlight = new Set();
+const ttsInFlight = new Set();
 
 // all users together, per process: caps the API bill if something goes wrong
 let globalDay = '';
@@ -20,8 +21,9 @@ function takeGlobalQuota() {
   return true;
 }
 
-// atomically counts one message for today; false when the daily limit is reached
-async function takeUserQuota(userId) {
+// atomically counts one use for today; false when the daily limit is reached.
+// field: 'count' (messages) | 'ttsCount' (generated audio clips)
+async function takeDailyQuota(userId, field, limit) {
   const day = today();
   await TutorProfile.updateOne(
     { user: userId },
@@ -30,14 +32,17 @@ async function takeUserQuota(userId) {
   );
   await TutorProfile.updateOne(
     { user: userId, 'usage.day': { $ne: day } },
-    { $set: { 'usage.day': day, 'usage.count': 0 } },
+    { $set: { 'usage.day': day, 'usage.count': 0, 'usage.ttsCount': 0 } },
   );
   const res = await TutorProfile.updateOne(
-    { user: userId, 'usage.count': { $lt: TUTOR.USER_DAILY_MESSAGES } },
-    { $inc: { 'usage.count': 1 } },
+    { user: userId, [`usage.${field}`]: { $not: { $gte: limit } } }, // missing counts as 0
+    { $inc: { [`usage.${field}`]: 1 } },
   );
   return res.modifiedCount === 1;
 }
+
+const takeUserQuota = (userId) => takeDailyQuota(userId, 'count', TUTOR.USER_DAILY_MESSAGES);
+const takeTtsQuota = (userId) => takeDailyQuota(userId, 'ttsCount', TUTOR.USER_DAILY_TTS);
 
 // the reply failed: the message does not count
 async function refundQuota(userId) {
@@ -53,4 +58,12 @@ const usageOf = (profile) => ({
   limit: TUTOR.USER_DAILY_MESSAGES,
 });
 
-module.exports = { inFlight, takeGlobalQuota, takeUserQuota, refundQuota, usageOf };
+module.exports = {
+  inFlight,
+  ttsInFlight,
+  takeGlobalQuota,
+  takeUserQuota,
+  takeTtsQuota,
+  refundQuota,
+  usageOf,
+};

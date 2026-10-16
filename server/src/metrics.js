@@ -44,6 +44,25 @@ const tutorRejected = new client.Counter({
   registers: [register],
 });
 
+const tutorTts = new client.Counter({
+  name: 'tutor_tts_requests_total',
+  help: 'AI tutor audio requests',
+  labelNames: ['status'], // generated | cached | error | rejected
+  registers: [register],
+});
+
+const tutorTtsChars = new client.Counter({
+  name: 'tutor_tts_chars_total',
+  help: 'AI tutor TTS billable characters',
+  registers: [register],
+});
+
+const tutorTtsCost = new client.Counter({
+  name: 'tutor_tts_cost_usd_total',
+  help: 'AI tutor TTS cost estimate in USD (TUTOR_PRICE_TTS_PER_M_CHARS env)',
+  registers: [register],
+});
+
 function startMetricsServer() {
   const port = Number(process.env.METRICS_PORT) || 9464;
   http
@@ -65,4 +84,7 @@ module.exports = {
   tutorCost,
   tutorDuration,
   tutorRejected,
+  tutorTts,
+  tutorTtsChars,
+  tutorTtsCost,
 };

@@ -6,9 +6,16 @@ const TutorProfileSchema = new mongoose.Schema({
   memory: { type: String, default: '' }, // LLM-written summary of past chats
   memoryUpdatedAt: { type: Date },
   level: { type: Number, min: 1, max: 6, default: 1 }, // last HSK level chosen
+  // audio settings, keys of TTS_VOICES / TTS_SPEEDS (server/src/api/services/tutor/consts.js)
+  tts: {
+    voice: { type: String, default: 'teacher' },
+    speed: { type: String, default: 'normal' },
+  },
+  listenMode: { type: Boolean, default: false }, // "Аудирование": Chinese text hidden behind audio
   usage: {
     day: { type: String, default: '' }, // 'YYYY-MM-DD' (UTC)
     count: { type: Number, default: 0 },
+    ttsCount: { type: Number, default: 0 }, // generated audio clips
   },
 });
 

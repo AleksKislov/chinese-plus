@@ -1,6 +1,15 @@
 const { logger } = require('../../../logger');
 const { sendMessage } = require('./send-message');
-const { getChats, getChat, getAllChats, deleteChat, clearMemory } = require('./chats');
+const { getBlockAudio, getSampleAudio, updateTtsSettings } = require('./tts');
+const {
+  getChats,
+  getChat,
+  getAllChats,
+  deleteChat,
+  clearMemory,
+  setListenMode,
+  getTextSuggestions,
+} = require('./chats');
 
 // unlike apiDecorator, never sends the error text to the client
 const safe = (cb) => async (req, res) => {
@@ -19,4 +28,9 @@ module.exports = {
   getAllChats: safe(getAllChats),
   deleteChat: safe(deleteChat),
   clearMemory: safe(clearMemory),
+  setListenMode: safe(setListenMode),
+  getTextSuggestions: safe(getTextSuggestions),
+  getBlockAudio: safe(getBlockAudio),
+  getSampleAudio: safe(getSampleAudio),
+  updateTtsSettings: safe(updateTtsSettings),
 };

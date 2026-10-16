@@ -12,7 +12,14 @@ browser-side request works locally and fails only in production.
 - Page data: `routeLoader$`.
 - Data needed after a user action: `globalAction$` / `routeAction$` in `qwik/src/misc/actions/`
   (e.g. `grammar/get-topic.ts`, `grammar/delete-audio.ts`), called with `action.submit(…)`.
+  Note: every action re-runs all route loaders of the page. For frequent calls whose result
+  doesn't need fresh page data, use `server$` (also runs on the FE server, no loader re-run),
+  e.g. `misc/actions/tutor/tutor-api.ts`.
 - When writing or reviewing frontend code, check where every `ApiService` call runs.
+
+## Feature docs
+
+- AI tutor (`/tutor/`, `server/src/api/services/tutor/`): read `docs/ai-tutor.md` before changing it.
 
 ## Production setup
 

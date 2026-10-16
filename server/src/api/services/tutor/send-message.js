@@ -3,21 +3,32 @@ const TutorChat = require('../../../models/TutorChat');
 const TutorProfile = require('../../../models/TutorProfile');
 const { tutorCompletion } = require('./usage');
 const { tutorRejected } = require('../../../metrics');
-const { tutorSystemPrompt, cleanText, parseReply, toModelMessage } = require('./prompts');
+const {
+  tutorSystemPrompt,
+  LESSON_KICKOFF,
+  cleanText,
+  parseReply,
+  toModelMessage,
+} = require('./prompts');
+const { buildFocus, LessonError } = require('./lesson-focus');
 const { segmentText, attachTooltips } = require('./segment');
 const { inFlight, takeGlobalQuota, takeUserQuota, refundQuota, usageOf } = require('./limits');
 const { summarizeInBackground } = require('./summarize');
 const { getGrammarCatalog } = require('./grammar-catalog');
+const { resolveTts, markAvailableAudio } = require('./tts');
 const { TUTOR, HSK_LEVELS } = require('./consts');
 
-// body: { text, level, chatId? } - no chatId starts a new chat
+// body: { text, level, chatId?, lesson? }. No chatId starts a new lesson; lesson
+// { kind: 'chat' | 'vocab' | 'text', textId?, textUrl? } sets its type. A new 'vocab' / 'text'
+// lesson may come without text: the teacher opens it (LESSON_KICKOFF, not stored).
 async function sendMessage(req, res) {
   const userId = req.user.id;
-  const { chatId } = req.body || {};
+  const { chatId, lesson } = req.body || {};
   const text = typeof req.body?.text === 'string' ? cleanText(req.body.text) : '';
   const level = HSK_LEVELS.includes(Number(req.body?.level)) ? Number(req.body.level) : 1;
+  const kickoff = !chatId && !text && LESSON_KICKOFF[lesson?.kind];
 
-  if (!text) return res.status(400).json({ msg: 'Пустое сообщение' });
+  if (!text && !kickoff) return res.status(400).json({ msg: 'Пустое сообщение' });
   if (text.length > TUTOR.MAX_MESSAGE_LEN) {
     return res.status(400).json({ msg: `Сообщение длиннее ${TUTOR.MAX_MESSAGE_LEN} символов` });
   }
@@ -37,6 +48,16 @@ async function sendMessage(req, res) {
       if (!chat) return res.status(404).json({ msg: 'Чат не найден' });
       if (chat.messages.length >= TUTOR.MAX_CHAT_MESSAGES) {
         return res.status(400).json({ msg: 'Этот чат слишком длинный — начните новый' });
+      }
+    }
+
+    let newLesson = null;
+    if (!chat) {
+      try {
+        newLesson = await buildFocus(userId, lesson);
+      } catch (err) {
+        if (err instanceof LessonError) return res.status(400).json({ msg: err.message });
+        throw err;
       }
     }
 
@@ -60,7 +81,13 @@ async function sendMessage(req, res) {
       if (prev) summarizeInBackground(userId, prev._id, req.log);
       const last = await TutorChat.findOne({ user: userId }).sort({ num: -1 }).select('num').lean();
       const num = (last?.num || 0) + 1; // lesson number, shown in the sidebar
-      chat = new TutorChat({ user: userId, num, title: text.slice(0, 60), level });
+      chat = new TutorChat({
+        user: userId,
+        num,
+        title: newLesson.title || text.slice(0, 60),
+        level,
+        focus: newLesson.focus,
+      });
     }
     chat.level = level;
 
@@ -88,10 +115,11 @@ async function sendMessage(req, res) {
               level,
               memory: profile?.memory,
               grammarTopics: grammar.topics,
+              focus: chat.focus,
             }),
           },
-          ...chat.messages.slice(-TUTOR.HISTORY_MESSAGES).map(toModelMessage),
-          { role: 'user', content: text },
+          ...historyFor(chat),
+          { role: 'user', content: text || kickoff },
         ],
       });
       blocks = parseReply(content, grammar.bySlug);
@@ -103,7 +131,7 @@ async function sendMessage(req, res) {
     }
 
     chat.messages.push(
-      { role: 'user', text },
+      ...(text ? [{ role: 'user', text }] : []), // a kickoff is not shown or stored
       {
         role: 'assistant',
         // grammar links show the lesson title as is
@@ -120,14 +148,19 @@ async function sendMessage(req, res) {
       summarizeInBackground(userId, chat._id, req.log);
     }
 
-    const messages = chat.messages.slice(-2).map((m) => m.toObject());
-    await attachTooltips(messages);
+    const messages = chat.messages.slice(text ? -2 : -1).map((m) => m.toObject());
+    // common phrases (你好！…) may already have audio from other lessons
+    await Promise.all([
+      attachTooltips(messages),
+      markAvailableAudio(messages, resolveTts(profile?.tts).options),
+    ]);
     res.json({
       chat: {
         _id: chat._id,
         num: chat.num,
         title: chat.title,
         level: chat.level,
+        focus: lessonInfo(chat.focus),
         createdAt: chat.createdAt,
         updatedAt: chat.updatedAt,
       },
@@ -139,4 +172,20 @@ async function sendMessage(req, res) {
   }
 }
 
-module.exports = { sendMessage };
+// last messages for the model; a lesson the teacher opened gets its (unstored) kickoff back
+// in front, so the history starts with the student's turn
+function historyFor(chat) {
+  const history = chat.messages.slice(-TUTOR.HISTORY_MESSAGES).map(toModelMessage);
+  const kickoff = LESSON_KICKOFF[chat.focus?.kind];
+  if (kickoff && history[0]?.role === 'assistant')
+    history.unshift({ role: 'user', content: kickoff });
+  return history;
+}
+
+// for the client: the lesson type without the words / text sent to the model
+const lessonInfo = (focus) => ({
+  kind: focus?.kind || 'chat',
+  ...(focus?.textId && { textId: focus.textId, textTitle: focus.textTitle }),
+});
+
+module.exports = { sendMessage, lessonInfo };
