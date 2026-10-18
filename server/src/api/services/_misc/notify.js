@@ -21,21 +21,31 @@ const maxHttpsAgent = fs.existsSync(maxCaPath)
   ? new https.Agent({ ca: fs.readFileSync(maxCaPath) })
   : null;
 
+// tgUrl already has a query (?parse_mode=HTML); axios appends params to it, encoding each
+// value fully - unlike encodeURI, which left & and # in the text and cut the message there
+function sendTelegram(text, chatId) {
+  return axios.get(tgUrl, { params: { text, chat_id: chatId } });
+}
+
+// for user-written text in parse_mode=HTML messages: a stray < or & makes Telegram reject them
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 class Notify {
   static admin(txt) {
-    return axios
-      .get(encodeURI(`${tgUrl}&text=${txt.replace(/<[^>]*>?/gm, '')}&chat_id=${testChatId}`))
-      .catch((err) =>
-        logger.error({ err: err.response?.data || err.message }, 'Notify.admin failed'),
-      );
+    return sendTelegram(escapeHtml(txt.replace(/<[^>]*>?/gm, '')), testChatId).catch((err) =>
+      logger.error({ err: err.response?.data || err.message }, 'Notify.admin failed'),
+    );
   }
 
   static telegramPublic(txt) {
-    axios
-      .get(encodeURI(`${tgUrl}&text=${txt}&chat_id=${tgChannelId}`))
-      .catch((err) =>
-        logger.error({ err: err.response?.data || err.message }, 'Notify.telegramPublic failed'),
-      );
+    sendTelegram(txt, tgChannelId).catch((err) =>
+      logger.error({ err: err.response?.data || err.message }, 'Notify.telegramPublic failed'),
+    );
   }
 
   static vkPublic(message, link) {
@@ -111,7 +121,9 @@ function getLink(content) {
 
 function getTxt(content, isVk, descMaxLen) {
   const obj = {};
-  const userName = content.user.name;
+  // the Telegram (non-VK) text is HTML, so user-written parts are escaped
+  const safe = (str) => (isVk ? str : escapeHtml(str));
+  const userName = safe(content.user.name);
   const link = getLink(content);
 
   if (content.cnSubs) {
@@ -127,8 +139,9 @@ function getTxt(content, isVk, descMaxLen) {
 
   obj.link = link;
 
-  obj.title = content.title;
+  obj.title = safe(content.title);
   if (descMaxLen) obj.desc = truncate(obj.desc || '', descMaxLen);
+  obj.desc = safe(obj.desc);
 
   return writeMsg(obj, isVk);
 }

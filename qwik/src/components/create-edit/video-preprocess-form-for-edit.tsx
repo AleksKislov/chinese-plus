@@ -3,6 +3,7 @@ import { useNavigate } from '@builder.io/qwik-city';
 import CONSTANTS from '~/misc/consts/consts';
 import { AlertColorEnum, alertsContext } from '~/root';
 import { countZnChars, parseTags } from '~/misc/helpers/content';
+import { getRutubeId } from '~/misc/helpers/content/rutube';
 import { FlexRow } from '../common/layout/flex-row';
 import {
   usePublishVideo,
@@ -174,6 +175,15 @@ export const VideoPreprocessFormForEdit = component$(
     });
 
     const editVideo = $(() => {
+      // the BE rejects the whole update on a bad Rutube link, so stop here with a clear message
+      if (store.rutubeUrl.trim() && !getRutubeId(store.rutubeUrl)) {
+        alertsState.push({
+          bg: AlertColorEnum.error,
+          text: 'Неверная ссылка на Rutube (поле «Для админа» в необязательных полях)',
+        });
+        return;
+      }
+
       const {
         lvl,
         desc,

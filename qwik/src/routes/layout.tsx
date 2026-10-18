@@ -1,8 +1,8 @@
-import { component$, Slot, useContext, useTask$, useVisibleTask$ } from '@builder.io/qwik';
+import { component$, Slot, useContext, useTask$ } from '@builder.io/qwik';
 import Header from '../components/common/layout/header/header';
 import { routeLoader$, useLocation } from '@builder.io/qwik-city';
-import { ApiService } from '~/misc/actions/request';
-import { getTokenFromCookie, logout, type UserFromDB } from '~/misc/actions/auth';
+import { ApiService, BASE_URL } from '~/misc/actions/request';
+import { getTokenFromCookie, type UserFromDB } from '~/misc/actions/auth';
 import { Footer } from '~/components/common/layout/footer';
 import { userContext, configContext, type Config } from '~/root';
 import { ThemeTypes } from '~/components/common/layout/header/theme-changer';
@@ -16,10 +16,28 @@ export { getNewMentions, useCheckTheme } from '~/misc/loaders/layout-loaders';
 // version/configs are identical for every visitor - don't hit the backend on every request
 const SHARED_LOADER_TTL_MS = 60 * 1000;
 
+// Logs out (deletes the token) only when the BE definitely rejects it. Anything else -
+// a 404 page, a BE error or restart - keeps the session; ApiService can't tell these apart
+// (it returns null for every failure), hence the plain fetch.
 export const useGetUser = routeLoader$(async ({ cookie }): Promise<UserFromDB | null> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return null;
-  return ApiService.get('/api/auth', token, null);
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/auth`, { headers: { 'x-auth-token': token } });
+    if (res.status === 401) {
+      cookie.delete('token', { path: '/' }); // invalid or expired token
+      return null;
+    }
+    if (!res.ok) return null;
+
+    const user: UserFromDB | null = await res.json();
+    if (!user) cookie.delete('token', { path: '/' }); // valid token of a deleted user
+    return user;
+  } catch (err) {
+    console.log('[fetch fail] for /api/auth', err);
+    return null;
+  }
 });
 
 export const useGetBackendVersion = routeLoader$(async (): Promise<{ v: string } | null> => {
@@ -100,12 +118,6 @@ export default component$(() => {
     if (userWords.value === undefined) return;
     userState.wordsMap = Object.fromEntries(userWords.value.map((chinese) => [chinese, true]));
     userState.wordsCount = userWords.value.length;
-  });
-
-  useVisibleTask$(({ track }) => {
-    track(() => user.value);
-    if (user.value === undefined) return;
-    if (user.value === null) logout();
   });
 
   // layout loaders re-run on every client navigation - replace, don't append
