@@ -16,6 +16,7 @@ import { editWordModalId, moreInfoModalId } from '../common/tooltips/word-toolti
 import { Loader } from '../common/ui/loader';
 import { SimilarTxtImg } from './similar-txt-img';
 import { CommentsFullBlock } from '../common/comments/comments-full-block';
+import { SubscribeCta } from '~/components/common/media/subscribe-cta';
 import { TextHeadBtns } from '../common/read/text-head-btns';
 import { BannerAds } from '../common/ads/sidebar-ads';
 import YANDEX_ADS from '~/misc/consts/ads';
@@ -120,6 +121,8 @@ export const TextMainContent = component$(
             </div>
           </>
         ) : null}
+
+        <SubscribeCta />
 
         <CommentsFullBlock
           contentId={textId}

@@ -14,6 +14,7 @@ export type VideoLessonInfo = {
   _id: ObjectId;
   title: string;
   source: string;
+  rutubeSource?: string; // rutube id, optional alternative player
   hits: number;
   tags: string[];
   category: 'phonetics' | 'characters';

@@ -24,6 +24,11 @@ export const EditBtn = component$(
       return null;
     }
 
+    // video lessons have no edit page (their Rutube link is set on the lesson page itself)
+    if (contentType === WHERE.phoneticsLesson || contentType === WHERE.charactersLesson) {
+      return null;
+    }
+
     const onClickHandler$ = $(() => {
       const curPage = loc.url.searchParams.get('pg');
       const isBook = contentType === WHERE.book;

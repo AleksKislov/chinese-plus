@@ -15,6 +15,7 @@ import { PageTitle } from '~/components/common/layout/title';
 import { BlogPostCard } from '~/components/read/blog-post-card';
 import { BlogContent } from '~/components/read/blog-content';
 import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
+import { SubscribeCta } from '~/components/common/media/subscribe-cta';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
 import {
@@ -132,6 +133,8 @@ export default component$(() => {
           likes={likes}
           isApproved={Boolean(isApproved)}
         />
+
+        <SubscribeCta />
 
         <CommentsFullBlock
           contentId={postId}

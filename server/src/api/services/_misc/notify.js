@@ -1,3 +1,6 @@
+const fs = require('fs');
+const https = require('https');
+const path = require('path');
 const axios = require('axios');
 const qs = require('qs');
 const { logger } = require('../../../logger');
@@ -9,6 +12,14 @@ const testChatId = process.env.TEST_CHAT_ID;
 const tgChannelId = isDevelopment ? testChatId : process.env.TGCHANNEL_ID;
 const vkChannelId = isDevelopment ? '' : process.env.VKCHANNEL_ID;
 const vkToken = process.env.VKCHANNEL_TOKEN;
+const maxChannelId = isDevelopment ? '' : process.env.MAXCHANNEL_ID;
+const maxToken = process.env.MAXCHANNEL_TOKEN;
+// platform-api2.max.ru uses a certificate issued by the Russian Trusted Root CA (Минцифры),
+// which is not in Node's default CA list
+const maxCaPath = path.join(__dirname, '../../../../certs/russian_trusted_root_ca.pem');
+const maxHttpsAgent = fs.existsSync(maxCaPath)
+  ? new https.Agent({ ca: fs.readFileSync(maxCaPath) })
+  : null;
 
 class Notify {
   static admin(txt) {
@@ -27,12 +38,14 @@ class Notify {
       );
   }
 
-  static vkPublic(message) {
+  static vkPublic(message, link) {
     const data = qs.stringify({
       v: '5.131',
       owner_id: vkChannelId,
       access_token: vkToken,
       message,
+      // wall.post adds a link preview (og:image, title) only for a URL passed in attachments
+      attachments: link,
     });
 
     const config = {
@@ -54,36 +67,68 @@ class Notify {
       );
   }
 
+  static maxPublic(text) {
+    if (!maxChannelId || !maxToken) return;
+    if (!maxHttpsAgent) {
+      logger.error({ maxCaPath }, 'Notify.maxPublic failed: CA certificate not found');
+      return;
+    }
+
+    axios
+      .post(
+        'https://platform-api2.max.ru/messages',
+        { text },
+        {
+          params: { chat_id: maxChannelId },
+          headers: { Authorization: maxToken },
+          httpsAgent: maxHttpsAgent,
+        },
+      )
+      .catch((err) =>
+        logger.error({ err: err.response?.data || err.message }, 'Notify.maxPublic failed'),
+      );
+  }
+
   static socialMedia(content) {
     this.telegramPublic(getTxt(content));
-    this.vkPublic(getTxt(content, true));
+    this.vkPublic(getTxt(content, true), getLink(content));
+    // plain-text variant (with the link at the end), same as VK
+    this.maxPublic(getTxt(content, true, MAX_DESC_MAX_LEN));
   }
 }
 
-function getTxt(content, isVk) {
-  const obj = {};
-  const id = content._id;
-  const userName = content.user.name;
+// MAX rejects messages longer than 4000 chars; leave room for header, title and link
+const MAX_DESC_MAX_LEN = 3000;
+
+function getLink(content) {
   const base = 'https://www.chineseplus.club/';
+  const id = content._id;
+
+  if (content.cnSubs) return `${base}watch/videos/${id}`;
+  if (content.origintext) return `${base}read/texts/${id}`;
+  return `${base}read/blog/${id}`;
+}
+
+function getTxt(content, isVk, descMaxLen) {
+  const obj = {};
+  const userName = content.user.name;
+  const link = getLink(content);
 
   if (content.cnSubs) {
-    const link = `${base}watch/videos/${id}`;
     obj.head = getMsgHeader('video', link, content.lvl, userName, isVk);
     obj.desc = content.desc;
-    obj.link = link;
   } else if (content.origintext) {
-    const link = `${base}read/texts/${id}`;
     obj.head = getMsgHeader('text', link, content.level, userName, isVk, content.audioSrc);
     obj.desc = content.description;
-    obj.link = link;
   } else {
-    const link = `${base}read/blog/${id}`;
     obj.head = getMsgHeader('blog', link, null, userName, isVk);
     obj.desc = getBlogDesc(content.content);
-    obj.link = link;
   }
 
+  obj.link = link;
+
   obj.title = content.title;
+  if (descMaxLen) obj.desc = truncate(obj.desc || '', descMaxLen);
 
   return writeMsg(obj, isVk);
 }
@@ -129,9 +174,11 @@ function getBlogDesc(blocks) {
 
   const firstParagraph = textBlock.text.trim().split('\n')[0].trim();
 
-  return firstParagraph.length > BLOG_DESC_MAX_LEN
-    ? firstParagraph.slice(0, BLOG_DESC_MAX_LEN).trimEnd() + '…'
-    : firstParagraph;
+  return truncate(firstParagraph, BLOG_DESC_MAX_LEN);
+}
+
+function truncate(str, maxLen) {
+  return str.length > maxLen ? str.slice(0, maxLen).trimEnd() + '…' : str;
 }
 
 function writeMsg({ head, title, desc, link }, isVk) {

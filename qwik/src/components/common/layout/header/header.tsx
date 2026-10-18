@@ -3,7 +3,7 @@ import { userContext } from '~/root';
 import { Link } from '@builder.io/qwik-city';
 import { MenuItem, type MenuItemProps } from './menu-item';
 import { collapsedMenuSvg, enterSvg, logoSvg } from '../../media/svg';
-import { getNewMentions } from '~/routes/layout';
+import { getNewMentions } from '~/misc/loaders/layout-loaders';
 import { AvatarImg } from '../../media/avatar-img';
 import MenuLink from './menu-link';
 import { MenuItemNew } from './menu-item-new';

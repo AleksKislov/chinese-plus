@@ -26,6 +26,10 @@ import { getIdFromParam } from '~/misc/helpers/tools';
 import { withSlug } from '~/misc/helpers/content';
 import { getOrSetVisitorId } from '~/misc/helpers/visitor-id';
 import { truncateCrumb } from '~/components/common/layout/breadcrumbs';
+import { LessonVideoPlayer } from '~/components/watch/lesson-video-player';
+import { useVideoPlayerChoice } from '~/misc/loaders/video-player-loaders';
+
+export { useVideoPlayerChoice } from '~/misc/loaders/video-player-loaders';
 
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
   return getContentComments(WHERE.phoneticsLesson, getIdFromParam(params.id));
@@ -52,6 +56,7 @@ export const getVideo = routeLoader$(async (requestEvent): Promise<VideoLessonIn
 export default component$(() => {
   const video = getVideo();
   const comments = getComments();
+  const playerChoice = useVideoPlayerChoice();
 
   const addressees = useSignal<Addressee[]>([]);
   const commentIdToReplyStore = useStore<CommentIdToReply>({
@@ -64,6 +69,7 @@ export default component$(() => {
     _id: videoId,
     title,
     source,
+    rutubeSource,
     date,
     hits,
     tags,
@@ -118,16 +124,12 @@ export default component$(() => {
         <MainContent>
           <Alerts />
 
-          <div class="aspect-w-16 aspect-h-9 mb-3">
-            <iframe
-              class="rounded-lg shadow-lg"
-              width="560"
-              height="315"
-              src={`https://www.youtube.com/embed/${source}?controls=0`}
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            ></iframe>
-          </div>
+          <LessonVideoPlayer
+            lessonId={videoId}
+            source={source}
+            rutubeSource={rutubeSource}
+            playerChoice={playerChoice.value}
+          />
 
           <CommentsFullBlock
             contentId={videoId}

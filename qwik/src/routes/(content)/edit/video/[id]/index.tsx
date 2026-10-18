@@ -11,6 +11,7 @@ import { Loader } from '~/components/common/ui/loader';
 import type { ChineseSub, VideoFromDB } from '~/routes/watch/videos/[id]';
 import type { YTVideoInfo } from '~/routes/(content)/create/video';
 import { VideoPreprocessFormForEdit } from '~/components/create-edit/video-preprocess-form-for-edit';
+import { getRutubeVideoUrl } from '~/misc/helpers/content/rutube';
 
 export type EditVideoStore = {
   title: string;
@@ -23,6 +24,7 @@ export type EditVideoStore = {
   length: number;
   chineseArr: string[];
   source: string;
+  rutubeUrl: string; // admin only; empty string removes the Rutube player
   category: string; // eng word
   isApproved: 1 | 0;
   _id: ObjectId;
@@ -73,6 +75,7 @@ export default component$(() => {
     pySubs,
     ruSubs,
     source,
+    rutubeSource,
     chineseArr,
     isApproved,
   } = useGetVideo().value;
@@ -93,6 +96,7 @@ export default component$(() => {
     pySubs,
     ruSubs,
     source,
+    rutubeUrl: rutubeSource ? getRutubeVideoUrl(rutubeSource) : '',
     category,
     tags: tags.join(),
     cnSubs,

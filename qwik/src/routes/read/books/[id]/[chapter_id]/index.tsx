@@ -15,6 +15,7 @@ import { TextHeadBtns } from '~/components/common/read/text-head-btns';
 import { FontSizeBtns } from '~/components/common/content-cards/content-page-card';
 import { BookContentsComponent } from '~/components/books/book-contents';
 import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
+import { SubscribeCta } from '~/components/common/media/subscribe-cta';
 import {
   type Addressee,
   type CommentIdToReply,
@@ -146,6 +147,8 @@ export default component$(() => {
             creatorId={'not_needed'} // only for admin
             isApproved={true}
           />
+
+          <SubscribeCta />
 
           <CommentsFullBlock
             contentId={page._id}

@@ -3,6 +3,7 @@ import { FlexRow } from '../common/layout/flex-row';
 import CONSTANTS from '~/misc/consts/consts';
 import { type NewVideoStore } from '~/routes/(content)/create/video';
 import { type EditVideoStore } from '~/routes/(content)/edit/video/[id]';
+import { getRutubeId } from '~/misc/helpers/content/rutube';
 
 type OtherVideoFieldsProps = {
   store: NewVideoStore | EditVideoStore;
@@ -11,6 +12,10 @@ type OtherVideoFieldsProps = {
 
 export const OtherVideoFields = component$(({ store, isAdmin }: OtherVideoFieldsProps) => {
   const STARS_LVL = [1, 2, 3];
+  // only the edit page has this field: a Rutube link can be added after the video is created
+  const editStore = 'rutubeUrl' in store ? store : null;
+  const isRutubeUrlInvalid =
+    !!editStore?.rutubeUrl.trim() && !getRutubeId(editStore.rutubeUrl);
 
   return (
     <div tabIndex={0} class={`collapse collapse-arrow border border-base-300 bg-base-200`}>
@@ -36,6 +41,29 @@ export const OtherVideoFields = component$(({ store, isAdmin }: OtherVideoFields
                 </label>
               </div>
             </div>
+            {editStore && (
+              <div class="w-full basis-1/2 mx-3">
+                <div class="form-control w-full">
+                  <label class="label">
+                    <span class="label-text">Ссылка на это же видео на Rutube</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="https://rutube.ru/video/..."
+                    class={`input input-bordered w-full ${isRutubeUrlInvalid ? 'input-error' : ''}`}
+                    value={editStore.rutubeUrl}
+                    onInput$={(e) => (editStore.rutubeUrl = (e.target as HTMLInputElement).value)}
+                  />
+                  <label class="label">
+                    <span class={`label-text-alt ${isRutubeUrlInvalid ? 'text-error' : ''}`}>
+                      {isRutubeUrlInvalid
+                        ? 'Не похоже на ссылку на видео Rutube'
+                        : 'Тот же ролик, что на YouTube (субтитры берутся с YouTube). Пусто — без Rutube'}
+                    </span>
+                  </label>
+                </div>
+              </div>
+            )}
           </FlexRow>
         )}
         {/* заголовок и описание */}

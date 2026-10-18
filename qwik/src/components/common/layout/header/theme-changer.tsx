@@ -2,7 +2,7 @@ import { component$, useSignal, useTask$ } from '@builder.io/qwik';
 import { moonSvg, sunSvg } from '../../media/svg';
 import { IsLightThemeCookieName } from '~/root';
 import Cookies from 'js-cookie';
-import { useCheckTheme } from '~/routes/layout';
+import { useCheckTheme } from '~/misc/loaders/layout-loaders';
 
 export const ThemeTypes = {
   dark: 'night',

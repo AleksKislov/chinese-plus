@@ -24,6 +24,7 @@ const VideoSchema = new Schema({
   length: { type: Number },
   lvl: { type: Number, required: true },
   source: { type: String }, // youtube id
+  rutubeSource: { type: String }, // rutube id (32 hex chars), optional alternative player
   isApproved: { type: Number }, // by admin or moderator, 1 or 0
   hits: { type: Number, default: 1 }, // number of visits
   comments_id: [

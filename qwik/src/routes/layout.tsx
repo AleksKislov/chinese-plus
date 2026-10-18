@@ -4,20 +4,17 @@ import { routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
 import { getTokenFromCookie, logout, type UserFromDB } from '~/misc/actions/auth';
 import { Footer } from '~/components/common/layout/footer';
-import { userContext, configContext, type Config, IsLightThemeCookieName } from '~/root';
-import { type CommentType } from '~/components/common/comments/comment-card';
+import { userContext, configContext, type Config } from '~/root';
 import { ThemeTypes } from '~/components/common/layout/header/theme-changer';
 import { ChineseSelectionPopup } from '~/components/common/selection/chinese-selection-popup';
 import { cachedFetch } from '~/misc/helpers/tools/cached-fetch';
+import { useCheckTheme } from '~/misc/loaders/layout-loaders';
+
+// defined outside so header components can use them without importing this file
+export { getNewMentions, useCheckTheme } from '~/misc/loaders/layout-loaders';
 
 // version/configs are identical for every visitor - don't hit the backend on every request
 const SHARED_LOADER_TTL_MS = 60 * 1000;
-
-export const getNewMentions = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
-  const token = getTokenFromCookie(cookie);
-  if (!token) return [];
-  return ApiService.get('/api/comments/to_me/false', token, []);
-});
 
 export const useGetUser = routeLoader$(async ({ cookie }): Promise<UserFromDB | null> => {
   const token = getTokenFromCookie(cookie);
@@ -59,11 +56,6 @@ export const useFeConfigs = routeLoader$((): Promise<Config[]> => {
     () => ApiService.get('/api/project/configs', undefined, []),
     (configs) => configs.length > 0,
   );
-});
-
-export const useCheckTheme = routeLoader$(({ cookie }): boolean => {
-  const isLightTheme = Boolean(+(cookie.get(IsLightThemeCookieName)?.value || '0'));
-  return !isLightTheme;
 });
 
 export default component$(() => {

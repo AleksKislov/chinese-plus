@@ -14,7 +14,6 @@ import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { type VideoCardInfo } from '..';
 
-import YTframeLoader from 'youtube-iframe';
 import { YoutubeService } from '~/misc/actions/youtube-service';
 import CONSTANTS from '~/misc/consts/consts';
 import { ContentPageCard } from '~/components/common/content-cards/content-page-card';
@@ -30,17 +29,32 @@ import { type CommentType } from '~/components/common/comments/comment-card';
 import { getContentComments } from '~/misc/actions/get-content-comments';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
 import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
+import { SubscribeCta } from '~/components/common/media/subscribe-cta';
 import { getIdFromParam } from '~/misc/helpers/tools';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
 import { getOrSetVisitorId } from '~/misc/helpers/visitor-id';
 import { truncateCrumb } from '~/components/common/layout/breadcrumbs';
+import {
+  PlayerState,
+  mountRutubePlayer,
+  mountYoutubePlayer,
+  type VideoPlayerApi,
+  type VideoPlayerType,
+} from '~/components/watch/video-players';
+
+import { PlayerSwitch } from '~/components/watch/player-switch';
+import { useVideoPlayerChoice } from '~/misc/loaders/video-player-loaders';
+
+export { PlayerState };
+export { useVideoPlayerChoice } from '~/misc/loaders/video-player-loaders';
 
 export type VideoFromDB = VideoCardInfo & {
   pySubs: string[];
   ruSubs: string[];
   chineseArr: string[][];
   cnSubs: ChineseSub[];
+  rutubeSource?: string; // rutube id, optional alternative player
 };
 
 export type ChineseSub = {
@@ -49,14 +63,6 @@ export type ChineseSub = {
   dur: NumString;
   text: string;
 };
-
-export enum PlayerState {
-  ended = 0,
-  playing = 1,
-  paused = 2,
-  buffering = 3,
-  videoCued = 5,
-}
 
 export type TooltipSubs = {
   tooltipSubs: (DictWord | string)[][];
@@ -91,25 +97,13 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
   return getContentComments(WHERE.video, getIdFromParam(params.id));
 });
 
-type YTPlayer = {
-  player: {
-    getCurrentTime: NoSerialize<() => number>;
-    getPlayerState: NoSerialize<() => number>;
-
-    pauseVideo: NoSerialize<() => void>;
-    playVideo: NoSerialize<() => void>;
-  };
-};
-
 export default component$(() => {
   const video = useGetVideo();
   const comments = getComments();
-  const YtPlayerId = 'ytPlayerId';
+  const playerChoice = useVideoPlayerChoice();
   const hideBtnsSig = useSignal<string[]>([]);
-  const ytSig = useStore<YTPlayer>({
-    // @ts-ignore
-    player: null,
-  });
+  const playerWrapRef = useSignal<HTMLElement>();
+  const playerApi = useSignal<NoSerialize<VideoPlayerApi>>();
   const subCurrentInd = useSignal(0);
   const curWordInd = useSignal(-1);
   const playerState = useSignal<number>(PlayerState.ended);
@@ -141,38 +135,64 @@ export default component$(() => {
     pySubs,
     chineseArr,
     tooltipSubs,
+    rutubeSource,
   } = video.value;
+
+  // Rutube by default when the video has it: YouTube is throttled for much of our audience
+  const playerType = useSignal<VideoPlayerType>(
+    rutubeSource && playerChoice.value !== 'youtube' ? 'rutube' : 'youtube',
+  );
 
   const mainSub = useSignal(parseVideoWords(chineseArr, tooltipSubs));
 
   useVisibleTask$(({ track }) => {
     track(() => isPaused.value);
-    if (!ytSig.player?.pauseVideo) return;
+    const player = playerApi.value;
+    if (!player) return;
 
     if (isPaused.value && playerState.value === PlayerState.playing) {
-      ytSig.player?.pauseVideo?.();
+      player.pause();
     }
 
-    if (!isPaused.value && playerState.value === PlayerState.paused && ytSig.player.playVideo) {
-      ytSig.player?.playVideo?.();
+    if (!isPaused.value && playerState.value === PlayerState.paused) {
+      player.play();
     }
   });
 
-  useVisibleTask$(() => {
-    if (!ytSig.player) {
-      YTframeLoader.load((YT) => {
-        const ytPlayer = new YT.Player(YtPlayerId, {
-          videoId: source,
-          playerVars: { origin: CONST_URLS.siteUrl },
-        });
+  // (re)mounts the chosen player; switching destroys the previous one
+  useVisibleTask$(({ track, cleanup }) => {
+    const type = track(() => playerType.value);
+    const container = playerWrapRef.value;
+    if (!container) return;
 
-        ytSig.player = noSerialize(ytPlayer) || {};
+    let player: VideoPlayerApi | undefined;
+    let isCleanedUp = false;
+
+    if (type === 'rutube' && rutubeSource) {
+      player = mountRutubePlayer(container, rutubeSource);
+      playerApi.value = noSerialize(player);
+    } else {
+      mountYoutubePlayer(container, source).then((ytPlayer) => {
+        if (isCleanedUp) return ytPlayer.destroy();
+        player = ytPlayer;
+        playerApi.value = noSerialize(ytPlayer);
       });
     }
 
-    setInterval(() => {
-      playerState.value = ytSig.player?.getPlayerState?.() || PlayerState.ended;
-      const curTime = ytSig.player?.getCurrentTime?.() || 0;
+    cleanup(() => {
+      isCleanedUp = true;
+      player?.destroy();
+      playerApi.value = undefined;
+      playerState.value = PlayerState.ended;
+      isPaused.value = false;
+    });
+  });
+
+  useVisibleTask$(({ cleanup }) => {
+    const interval = setInterval(() => {
+      const player = playerApi.value;
+      playerState.value = player?.getPlayerState() ?? PlayerState.ended;
+      const curTime = player?.getCurrentTime() || 0;
 
       const ind = cnSubs.findIndex(({ start, dur }) => {
         return +start < curTime && +start + +dur > curTime;
@@ -185,6 +205,8 @@ export default component$(() => {
       const curInnerTime = curTime - +cnSubs[ind].start;
       curWordInd.value = curInnerTime / secStep;
     }, 100);
+
+    cleanup(() => clearInterval(interval));
   });
 
   return (
@@ -229,8 +251,11 @@ export default component$(() => {
         <MainContent>
           <Alerts />
 
+          {rutubeSource && <PlayerSwitch playerType={playerType} />}
+
           <div class="aspect-w-16 aspect-h-9 mb-3">
-            <div class="rounded-lg" id={YtPlayerId}></div>
+            {/* players are mounted here imperatively, see video-players.ts */}
+            <div class="rounded-lg overflow-hidden" ref={playerWrapRef}></div>
           </div>
 
           <Subs
@@ -242,6 +267,8 @@ export default component$(() => {
             playerState={playerState}
             isPaused={isPaused}
           />
+
+          <SubscribeCta />
 
           <CommentsFullBlock
             contentId={videoId}

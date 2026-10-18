@@ -216,6 +216,7 @@ export const VideoPreprocessFormForEdit = component$(
       };
 
       newVideoData.videoId = (store as EditVideoStore)._id;
+      newVideoData.rutubeUrl = store.rutubeUrl; // the server ignores it for non-admins
       editVideoAction.submit(newVideoData);
 
       alertsState.push({
