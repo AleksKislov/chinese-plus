@@ -59,7 +59,7 @@ export default component$(() => {
         </Sidebar>
 
         <MainContent>
-          <div class="columns-1 md:columns-2 gap-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3">
             {posts.value.map((post, ind) => (
               <BlogCard key={ind} post={post} />
             ))}
