@@ -1,0 +1,19 @@
+meta {
+  name: CSV HSK 3.0
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{local_server}}/api/userhsk3words/csv
+  body: none
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}
+
+params:query {
+  ~has_examples: 1
+}

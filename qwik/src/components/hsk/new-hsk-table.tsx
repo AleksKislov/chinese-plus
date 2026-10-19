@@ -8,8 +8,16 @@ import { moreInfoModalId } from '../common/tooltips/word-tooltip';
 export type DisplayCardsStore = { bool: boolean };
 export type PinyinAboveStore = { bool: boolean };
 
+type NewHskTableProps = {
+  hskWords: NewHskWordType[];
+  isLegacyBand?: boolean;
+  // ids of the words in the user's HSK 3.0 list; undefined -> no add/remove buttons
+  userHskWordIds?: string[];
+  isPrivate?: boolean;
+};
+
 export const NewHskTable = component$(
-  ({ hskWords, isLegacyBand }: { hskWords: NewHskWordType[]; isLegacyBand?: boolean }) => {
+  ({ hskWords, isLegacyBand, userHskWordIds, isPrivate }: NewHskTableProps) => {
     const hideBtnsSig = useSignal<string[]>([]);
     const currentWord = useSignal<NewHskWordType | undefined>(undefined);
 
@@ -29,6 +37,8 @@ export const NewHskTable = component$(
                   hideBtnsSig={hideBtnsSig}
                   currentWord={currentWord}
                   isLegacyBand={isLegacyBand}
+                  userSelected={userHskWordIds?.includes(word._id)}
+                  isPrivate={isPrivate}
                 />
               ))}
             </tbody>

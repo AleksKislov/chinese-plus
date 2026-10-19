@@ -7,16 +7,32 @@ type PersonalStatsType = {
   approvedTextsNum: number;
   userWordsTotal: number;
   hsk2Total: number;
+  hsk3Total: number;
 };
 
 export const PersonalStats = component$(
-  ({ finishedTextsTotal, approvedTextsNum, userWordsTotal, hsk2Total }: PersonalStatsType) => {
+  ({
+    finishedTextsTotal,
+    approvedTextsNum,
+    userWordsTotal,
+    hsk2Total,
+    hsk3Total,
+  }: PersonalStatsType) => {
     return (
       <div class="card mr-3">
         <div class="stats shadow">
           <div class="stat">
             <div class="stat-figure text-secondary">{academicCapBigSvg}</div>
-            <div class="stat-title">Выбрано слов HSK</div>
+            <div class="stat-title">Выбрано слов</div>
+            <div class="stat-value">
+              {hsk3Total} / {CONSTANTS.users.vocabSize}
+            </div>
+            <div class="stat-desc">HSK 3.0</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-figure text-secondary">{academicCapBigSvg}</div>
+            <div class="stat-title">Выбрано слов</div>
             <div class="stat-value">
               {hsk2Total} / {CONSTANTS.users.vocabSize}
             </div>
@@ -25,7 +41,7 @@ export const PersonalStats = component$(
 
           <div class="stat">
             <div class="stat-figure text-secondary">{archiveBigSvg}</div>
-            <div class="stat-title">Выбрано лексики</div>
+            <div class="stat-title">Выбрано слов</div>
             <div class="stat-value">
               {userWordsTotal} / {CONSTANTS.users.vocabSize}
             </div>

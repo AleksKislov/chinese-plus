@@ -26,6 +26,10 @@ import YANDEX_ADS from '~/misc/consts/ads';
 import { BannerAds } from '~/components/common/ads/sidebar-ads';
 import OUR_ADS from '~/misc/consts/our-ads';
 import { OurAds } from '~/components/common/ads/our-ads';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { useGetUserHsk3WordIds } from '~/misc/loaders/user-hsk3-loaders';
+
+export { useGetUserHsk3WordIds } from '~/misc/loaders/user-hsk3-loaders';
 
 export type NewHskWordType = {
   _id: ObjectId;
@@ -53,6 +57,7 @@ export default component$(() => {
 
   const loc = useLocation();
   const hskWords = getHskWords();
+  const userHskWordIds = useGetUserHsk3WordIds();
 
   // useComputed$ re-derives when the level / ?pg= changes; a plain const in the component
   // body is computed once, leaving the H1 and breadcrumbs on the first level.
@@ -71,6 +76,8 @@ export default component$(() => {
       <PageTitle txt={seo.value.h1} />
 
       <FlexRow>
+        <Alerts />
+
         <Sidebar>
           <TableCard level={loc.params.lvl || '1'} isOldHsk={false} isForTests={false} />
           <CsvCard level={loc.params.lvl || '1'} isOldHsk={false} isPrivate={false} />
@@ -100,7 +107,10 @@ export default component$(() => {
             isOldHsk={false}
           />
 
-          <NewHskTable hskWords={hskWords?.value || []} />
+          <NewHskTable
+            hskWords={hskWords?.value || []}
+            userHskWordIds={userHskWordIds.value || []}
+          />
         </MainContent>
       </FlexRow>
     </>

@@ -23,6 +23,11 @@ async function getById(req, res) {
 
   if (!text) return res.status(404).json({ msg: 'Text not found' });
 
+  // FE makes the page title unique when several approved texts share it (SEO)
+  const sameTitleCount = text.isApproved
+    ? await Text.countDocuments({ title: text.title, isApproved: 1 })
+    : 0;
+
   if (text.pages?.length) {
     const pages = text.pages.map((page) => {
       const origTxt = page.chinese_arr.join('');
@@ -39,14 +44,20 @@ async function getById(req, res) {
       return withoutOriginTxt ? pageContent : { ...pageContent, origintext: page.origintext };
     });
 
-    return res.json({ ...text.toObject(), pages, origParagsLen: [0], uniqCharsTotal: 0 });
+    return res.json({
+      ...text.toObject(),
+      pages,
+      origParagsLen: [0],
+      uniqCharsTotal: 0,
+      sameTitleCount,
+    });
   }
 
   const origTxt = text.chinese_arr.join('');
   const origParagsLen = origTxt.split('\n').map((parag) => countZnChars(parag));
   const uniqCharsTotal = countUniqChars(origTxt);
 
-  return res.json({ ...text.toObject(), origParagsLen, uniqCharsTotal });
+  return res.json({ ...text.toObject(), origParagsLen, uniqCharsTotal, sameTitleCount });
 }
 
 module.exports = { getById };

@@ -32,6 +32,7 @@ export type TextContent = {
 export type TextFromDB = TextCardInfo &
   TextContent & {
     pages: (TextContent & { _id: ObjectId })[];
+    sameTitleCount?: number; // approved texts with this title
   };
 
 export type TooltipParagraph = TooltipSegment[]; // Tooltip data for one paragraph
@@ -75,6 +76,8 @@ export const useGetText = routeLoader$(
     const visitorId = getOrSetVisitorId(requestEvent);
     const textFromDb = await getTextFromDB(getIdFromParam(params.id), true, visitorId);
     if (!textFromDb) throw redirect(302, '/read/texts');
+    // Unapproved texts are shown only under /read/unapproved-texts/ (noindex).
+    if (!textFromDb.isApproved) throw redirect(302, `/read/unapproved-texts/${textFromDb._id}`);
 
     const canonicalId = withSlug(textFromDb._id, textFromDb.title);
     if (params.id !== canonicalId) {
@@ -119,6 +122,46 @@ export function getChineseArr(textFromDb: TextFromDB, curPage: number): string[]
   }
   // Fallback to root chinese_arr if pages aren't used or curPage is invalid
   return textFromDb.chinese_arr || [];
+}
+
+export function getTranslationArr(textFromDb: TextFromDB, curPage: number): string[] {
+  if (textFromDb.pages && textFromDb.pages.length > curPage && curPage >= 0) {
+    return textFromDb.pages[curPage]?.translation || [];
+  }
+  return textFromDb.translation || [];
+}
+
+const CN_PUNCTUATION = /[\n。，！？；：、,.!?;:]/;
+
+// Opening words of the Chinese text, up to the first punctuation mark
+function getChineseOpening(words: string[], maxLen = 16): string {
+  let opening = '';
+  for (const word of words) {
+    if (CN_PUNCTUATION.test(word)) {
+      if (opening) return opening;
+      continue;
+    }
+    if ((opening + word).length > maxLen) return opening ? opening + '…' : word.slice(0, maxLen);
+    opening += word;
+  }
+  return opening;
+}
+
+// First paragraphs of the translation, enough for the meta description
+function getTranslationStart(paragraphs: string[], minLen = 200): string {
+  let start = '';
+  for (const parag of paragraphs) {
+    if (start.length >= minLen) break;
+    start += ' ' + parag;
+  }
+  return start.replace(/\s+/g, ' ').trim();
+}
+
+function truncate(str: string, maxLen: number): string {
+  if (str.length <= maxLen) return str;
+  const cut = str.slice(0, maxLen);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > maxLen / 2 ? cut.slice(0, lastSpace) : cut).replace(/[\s,.;:—-]+$/, '') + '…';
 }
 
 export default component$(() => {
@@ -208,8 +251,23 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const textInfo = resolveValue(useGetText);
-  const title = `${textInfo.title} — текст на китайском с переводом | Chinese+`;
-  const description = `Текст на китайском языке с переводом: ${textInfo.description}`;
+  const { curPage } = textInfo;
+  // Many texts share a title ("Описание задания из игры World of Warcraft"), so add the
+  // Chinese opening to tell them apart; the description gets the start of the translation.
+  const chineseOpening =
+    (textInfo.sameTitleCount || 0) > 1 ? getChineseOpening(getChineseArr(textInfo, curPage)) : '';
+  const pageSuffix = curPage > 0 ? ` — стр. ${curPage + 1}` : '';
+  const title = `${textInfo.title}${
+    chineseOpening ? `: ${chineseOpening}` : ''
+  }${pageSuffix} — текст на китайском с переводом | Chinese+`;
+
+  const desc = textInfo.description?.trim();
+  const translationStart = getTranslationStart(getTranslationArr(textInfo, curPage));
+  const descPrefix =
+    desc && desc !== textInfo.title ? `${textInfo.title}. ${truncate(desc, 100)}` : textInfo.title;
+  const description = translationStart
+    ? `${descPrefix}: «${truncate(translationStart, 120)}» Текст на китайском с переводом.`
+    : `Текст на китайском языке с переводом: ${descPrefix}`;
   const url =
     CONST_URLS.siteUrl +
     getContentPath(WHERE.text, textInfo._id, false, undefined, undefined, textInfo.title);

@@ -6,115 +6,118 @@ type CsvCardProps = {
   isOldHsk: boolean;
   isPrivate: boolean;
   isLegacyBand?: boolean;
+  isUserHsk3?: boolean; // with isPrivate: the user's HSK 3.0 list (not the dictionary words)
 };
 
-export const CsvCard = component$(({ level, isOldHsk, isPrivate, isLegacyBand }: CsvCardProps) => {
-  const isNotHsk = level === null && isPrivate && !isOldHsk;
-  const nonPrivateHsk = isOldHsk ? 'lexicon/csv/' : 'newhskwords/csv/';
-  const privateHsk = isOldHsk ? 'words/csv' : 'userwords/csv';
-  const urlPath = isPrivate ? privateHsk : nonPrivateHsk + (level || '1');
+export const CsvCard = component$(
+  ({ level, isOldHsk, isPrivate, isLegacyBand, isUserHsk3 }: CsvCardProps) => {
+    const isNotHsk = level === null && isPrivate && !isOldHsk && !isUserHsk3;
+    const nonPrivateHsk = isOldHsk ? 'lexicon/csv/' : 'newhskwords/csv/';
+    const privateHsk = isOldHsk ? 'words/csv' : isUserHsk3 ? 'userhsk3words/csv' : 'userwords/csv';
+    const urlPath = isPrivate ? privateHsk : nonPrivateHsk + (level || '1');
 
-  const versionQuery = isLegacyBand && !isPrivate && !isOldHsk ? '?version=2021' : '';
-  const plainCsvLink = `https://chineseplus.club/api/${urlPath}${versionQuery}`;
+    const versionQuery = isLegacyBand && !isPrivate && !isOldHsk ? '?version=2021' : '';
+    const plainCsvLink = `https://chineseplus.club/api/${urlPath}${versionQuery}`;
 
-  const hskType = isNotHsk ? '' : `HSK${isOldHsk ? '2' : '3'}.0`;
+    const hskType = isNotHsk ? '' : `HSK${isOldHsk ? '2' : '3'}.0`;
 
-  const downloadCsv = (isHtml: boolean, hasExamples: boolean) =>
-    $(async () => {
-      try {
-        const sep = plainCsvLink.includes('?') ? '&' : '?';
-        const link = isHtml ? `${plainCsvLink}${sep}is_html=1` : plainCsvLink;
-        const csvLink = hasExamples
-          ? `${link}${link.includes('?') ? '&' : '?'}has_examples=1`
-          : link;
-        console.log({ csvLink });
-        const response = await fetch(csvLink, {
-          // @ts-ignore
-          headers: {
-            'x-auth-token': Cookies.get('token'),
-          },
-        });
+    const downloadCsv = (isHtml: boolean, hasExamples: boolean) =>
+      $(async () => {
+        try {
+          const sep = plainCsvLink.includes('?') ? '&' : '?';
+          const link = isHtml ? `${plainCsvLink}${sep}is_html=1` : plainCsvLink;
+          const csvLink = hasExamples
+            ? `${link}${link.includes('?') ? '&' : '?'}has_examples=1`
+            : link;
+          console.log({ csvLink });
+          const response = await fetch(csvLink, {
+            // @ts-ignore
+            headers: {
+              'x-auth-token': Cookies.get('token'),
+            },
+          });
 
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
 
-        const hskStr = isNotHsk
-          ? 'words'
-          : `${hskType}${isLegacyBand ? '_2021' : ''}${level ? `_lvl_${level}` : ''}`;
-        const fileName = `${isPrivate ? 'user_' : ''}${hskStr}${isHtml ? '_html' : ''}${
-          hasExamples ? '_examples' : ''
-        }`;
+          const hskStr = isNotHsk
+            ? 'words'
+            : `${hskType}${isLegacyBand ? '_2021' : ''}${level ? `_lvl_${level}` : ''}`;
+          const fileName = `${isPrivate ? 'user_' : ''}${hskStr}${isHtml ? '_html' : ''}${
+            hasExamples ? '_examples' : ''
+          }`;
 
-        // Create a temporary link and trigger download
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = `${fileName.toLowerCase()}.csv`;
-        document.body.appendChild(a);
-        a.click();
+          // Create a temporary link and trigger download
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          a.download = `${fileName.toLowerCase()}.csv`;
+          document.body.appendChild(a);
+          a.click();
 
-        // Clean up
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      } catch (error) {
-        console.error('Download failed:', error);
-      }
-    });
+          // Clean up
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+        } catch (error) {
+          console.error('Download failed:', error);
+        }
+      });
 
-  return (
-    <div class="card bg-primary text-primary-content my-3">
-      <div class="card-body">
-        <h2 class="card-title">
-          CSV-файл {hskType} {level ? `ур. ${level === '789' ? '7-9' : level}` : ''}
-        </h2>
-        {isOldHsk ? (
-          <>
-            <p>
-              <button
-                type="button"
-                class="badge bg-warning text-warning-content link-hover cursor-pointer"
-                onClick$={downloadCsv(false, false)}
-              >
-                Скачать
-              </button>{' '}
-              обычный CSV
-            </p>
-            <p>
-              <button
-                type="button"
-                class="badge bg-warning text-warning-content link-hover cursor-pointer"
-                onClick$={downloadCsv(true, false)}
-              >
-                Скачать
-              </button>{' '}
-              CSV с HTML (для ANKI)
-            </p>
-          </>
-        ) : (
-          <>
-            <p>
-              <button
-                type="button"
-                class="badge bg-warning text-warning-content link-hover cursor-pointer"
-                onClick$={downloadCsv(true, false)}
-              >
-                Скачать
-              </button>{' '}
-              CSV с HTML без примеров (для ANKI)
-            </p>
-            <p>
-              <button
-                type="button"
-                class="badge bg-warning text-warning-content link-hover cursor-pointer"
-                onClick$={downloadCsv(true, true)}
-              >
-                Скачать
-              </button>{' '}
-              CSV с HTML и примерами (для ANKI)
-            </p>
-          </>
-        )}
+    return (
+      <div class="card bg-primary text-primary-content my-3">
+        <div class="card-body">
+          <h2 class="card-title">
+            CSV-файл {hskType} {level ? `ур. ${level === '789' ? '7-9' : level}` : ''}
+          </h2>
+          {isOldHsk ? (
+            <>
+              <p>
+                <button
+                  type="button"
+                  class="badge bg-warning text-warning-content link-hover cursor-pointer"
+                  onClick$={downloadCsv(false, false)}
+                >
+                  Скачать
+                </button>{' '}
+                обычный CSV
+              </p>
+              <p>
+                <button
+                  type="button"
+                  class="badge bg-warning text-warning-content link-hover cursor-pointer"
+                  onClick$={downloadCsv(true, false)}
+                >
+                  Скачать
+                </button>{' '}
+                CSV с HTML (для ANKI)
+              </p>
+            </>
+          ) : (
+            <>
+              <p>
+                <button
+                  type="button"
+                  class="badge bg-warning text-warning-content link-hover cursor-pointer"
+                  onClick$={downloadCsv(true, false)}
+                >
+                  Скачать
+                </button>{' '}
+                CSV с HTML без примеров (для ANKI)
+              </p>
+              <p>
+                <button
+                  type="button"
+                  class="badge bg-warning text-warning-content link-hover cursor-pointer"
+                  onClick$={downloadCsv(true, true)}
+                >
+                  Скачать
+                </button>{' '}
+                CSV с HTML и примерами (для ANKI)
+              </p>
+            </>
+          )}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);

@@ -82,6 +82,8 @@ export const useGetVideo = routeLoader$(
     const visitorId = getOrSetVisitorId(requestEvent);
     const videoFromDb = await getVideoFromDB(getIdFromParam(params.id), visitorId);
     if (!videoFromDb) throw redirect(302, '/watch/videos');
+    // Unapproved videos are shown only under /watch/unapproved-videos/ (noindex).
+    if (!videoFromDb.isApproved) throw redirect(302, `/watch/unapproved-videos/${videoFromDb._id}`);
 
     const canonicalId = withSlug(videoFromDb._id, videoFromDb.title);
     if (params.id !== canonicalId) {

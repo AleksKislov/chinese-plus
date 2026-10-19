@@ -69,6 +69,7 @@ export default component$(() => {
 export const head: DocumentHead = {
   title: 'Chinese+ Тексты на китайском с переводом',
   meta: [
+    { name: 'robots', content: 'noindex, follow' },
     {
       name: 'description',
       content:

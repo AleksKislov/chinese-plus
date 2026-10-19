@@ -61,6 +61,7 @@ app.use('/api/lexicon', require('./routes/api/lexicon'));
 app.use('/api/newhskwords', require('./routes/api/newhskwords'));
 app.use('/api/words', require('./routes/api/words'));
 app.use('/api/userwords', require('./routes/api/userwords'));
+app.use('/api/userhsk3words', require('./routes/api/userhsk3words'));
 app.use('/api/dictionary', require('./routes/api/dictionary'));
 app.use('/api/comments', require('./routes/api/comments'));
 app.use('/api/texts', require('./routes/api/texts'));

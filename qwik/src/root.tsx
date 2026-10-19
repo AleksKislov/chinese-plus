@@ -36,6 +36,7 @@ export interface User {
   readTodayNum: number;
   readTodayMap: ReadTodayMap;
   hsk2WordsTotal: number;
+  hsk3WordsTotal: number;
   role?: 'admin' | 'moderator';
   newAvatar?: NewAvatar;
   bio: string;
@@ -77,6 +78,7 @@ export default component$(() => {
     wordsMap: {},
     wordsCount: 0,
     hsk2WordsTotal: 0,
+    hsk3WordsTotal: 0,
     readDailyGoal: 0,
     readTodayNum: 0,
     readTodayMap: {},

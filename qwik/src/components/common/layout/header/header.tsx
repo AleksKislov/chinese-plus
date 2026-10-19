@@ -18,6 +18,7 @@ export default component$(() => {
   const isMobile = useSignal(false);
   const isDrawerOpen = useSignal(false);
   const userHskWordsTotal = userState.hsk2WordsTotal;
+  const userHsk3WordsTotal = userState.hsk3WordsTotal;
   const userWordsTotal = userState.wordsCount;
 
   useVisibleTask$(() => {
@@ -171,7 +172,11 @@ export default component$(() => {
                 class="dropdown-content z-[3] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content"
               >
                 {userState.name ? (
-                  <AuthMenu hskWordsTotal={userHskWordsTotal} wordsTotal={userWordsTotal} />
+                  <AuthMenu
+                    hskWordsTotal={userHskWordsTotal}
+                    hsk3WordsTotal={userHsk3WordsTotal}
+                    wordsTotal={userWordsTotal}
+                  />
                 ) : (
                   unAuthMenu
                 )}

@@ -53,6 +53,17 @@ export const useGetUserHsk2WordsTotal = routeLoader$(async ({ cookie }): Promise
   return res?.length || 0;
 });
 
+export const useGetUserHsk3WordsTotal = routeLoader$(async ({ cookie }): Promise<number> => {
+  const token = getTokenFromCookie(cookie);
+  if (!token) return 0;
+  const res: { count: number } | null = await ApiService.get(
+    '/api/userhsk3words/count',
+    token,
+    null,
+  );
+  return res?.count || 0;
+});
+
 // Lightweight - just the chinese strings, used app-wide for the "is this word known"
 // lookup (reader highlighting) and the header word count. The full word list (with
 // pinyin/translation/dictWordId) is fetched separately by the /me/words page only.
@@ -81,6 +92,7 @@ export default component$(() => {
   const userState = useContext(userContext);
   const user = useGetUser();
   const hsk2WordsTotal = useGetUserHsk2WordsTotal();
+  const hsk3WordsTotal = useGetUserHsk3WordsTotal();
   const userWords = useGetUserWords();
   const beVersion = useGetBackendVersion();
   const feConfigs = useFeConfigs();
@@ -111,6 +123,12 @@ export default component$(() => {
     track(() => hsk2WordsTotal.value);
     if (hsk2WordsTotal.value === undefined) return;
     userState.hsk2WordsTotal = hsk2WordsTotal.value;
+  });
+
+  useTask$(({ track }) => {
+    track(() => hsk3WordsTotal.value);
+    if (hsk3WordsTotal.value === undefined) return;
+    userState.hsk3WordsTotal = hsk3WordsTotal.value;
   });
 
   useTask$(({ track }) => {

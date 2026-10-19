@@ -161,6 +161,7 @@ export const head: DocumentHead = ({ resolveValue }) => {
     title,
     meta: [
       { name: 'description', content: description },
+      ...(postInfo.isApproved ? [] : [{ name: 'robots', content: 'noindex, follow' }]),
       { property: 'og:title', content: title },
       { property: 'og:description', content: description },
       { property: 'og:type', content: 'article' },
