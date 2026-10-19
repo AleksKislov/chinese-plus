@@ -295,10 +295,8 @@ export const head: DocumentHead = ({ resolveValue }) => {
         property: 'og:url',
         content: url,
       },
-      {
-        property: 'og:image',
-        content: textInfo.pic_url,
-      },
+      // no picture -> no tag, so RouterHead adds the default image
+      ...(textInfo.pic_url ? [{ property: 'og:image', content: textInfo.pic_url }] : []),
       {
         name: 'twitter:card',
         content: 'text_image_' + textInfo._id,

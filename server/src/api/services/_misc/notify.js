@@ -49,28 +49,36 @@ class Notify {
   }
 
   static vkPublic(message, link) {
-    const data = qs.stringify({
-      v: '5.131',
-      owner_id: vkChannelId,
-      access_token: vkToken,
-      message,
-      // wall.post adds a link preview (og:image, title) only for a URL passed in attachments
-      attachments: link,
-    });
+    const post = (attachments) =>
+      axios({
+        method: 'post',
+        url: 'https://api.vk.com/method/wall.post',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        data: qs.stringify({
+          v: '5.131',
+          owner_id: vkChannelId,
+          access_token: vkToken,
+          message,
+          attachments,
+        }),
+      });
 
-    const config = {
-      method: 'post',
-      url: 'https://api.vk.com/method/wall.post',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      data,
-    };
-
-    axios(config)
+    // wall.post adds a link preview (og:image, title) only for a URL passed in attachments,
+    // but VK rejects the whole post when it doesn't like the page's image (error 100,
+    // "link_photo_sizing_rule. No photo given") - then post again without the preview.
+    // An error in the body means nothing was posted, so the retry can't duplicate the post.
+    post(link)
       .then((res) => {
         // VK API returns HTTP 200 even on failure, with the error in the response body
-        if (res.data?.error) {
-          logger.error({ err: res.data.error }, 'Notify.vkPublic failed');
-        }
+        if (!res.data?.error) return;
+        if (!link) return logger.error({ err: res.data.error }, 'Notify.vkPublic failed');
+
+        logger.warn({ err: res.data.error }, 'Notify.vkPublic: link preview rejected, retrying');
+        return post(undefined).then((retryRes) => {
+          if (retryRes.data?.error) {
+            logger.error({ err: retryRes.data.error }, 'Notify.vkPublic failed');
+          }
+        });
       })
       .catch((err) =>
         logger.error({ err: err.response?.data || err.message }, 'Notify.vkPublic failed'),

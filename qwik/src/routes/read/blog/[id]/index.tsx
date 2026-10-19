@@ -153,6 +153,7 @@ export const head: DocumentHead = ({ resolveValue }) => {
   const postInfo = resolveValue(useGetBlogPost);
   const title = `${postInfo.title} | Блог Chinese+`;
   const description = getPreviewText(postInfo.content) || postInfo.title;
+  const coverImage = getCoverImage(postInfo.content);
   const url =
     CONST_URLS.siteUrl +
     getContentPath(WHERE.blog, postInfo._id, false, undefined, undefined, postInfo.title);
@@ -166,7 +167,9 @@ export const head: DocumentHead = ({ resolveValue }) => {
       { property: 'og:description', content: description },
       { property: 'og:type', content: 'article' },
       { property: 'og:url', content: url },
-      { property: 'og:image', content: getCoverImage(postInfo.content) },
+      // no cover -> no tag, so RouterHead adds the default image (an empty og:image made
+      // VK reject posts with a link preview: "link_photo_sizing_rule. No photo given")
+      ...(coverImage ? [{ property: 'og:image', content: coverImage }] : []),
     ],
   };
 };
