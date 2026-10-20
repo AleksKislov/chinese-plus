@@ -15,12 +15,21 @@ export type ChapterPage = {
   ind: number;
 };
 
+export type BookPart = {
+  ind: number;
+  title: {
+    ru?: string;
+    cn?: string;
+  };
+};
+
 export type BookChapter = {
   _id: ObjectId;
   title: {
     ru: string;
     cn: string;
   };
+  part?: BookPart; // volume, only for books split into volumes
   length: number;
   pages: ChapterPage[];
 };

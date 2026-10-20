@@ -84,4 +84,4 @@ const getPage = (belongsTo, ind, paragTxt, bookId) => {
   };
 };
 
-module.exports = { createPages };
+module.exports = { createPages, getPages };
