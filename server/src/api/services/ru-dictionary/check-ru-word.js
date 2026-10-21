@@ -1,5 +1,6 @@
 const axios = require('axios');
 const RussianWord = require('../../../models/RussianWord');
+const { RU_COLLATION } = RussianWord;
 
 /**
  * @desc when an exact match isn't found, ask the spellcheck API for
@@ -20,10 +21,10 @@ async function checkRuWord(text) {
   }
 
   const values = replacements.map((r) => r.value);
-  const foundDocs = await RussianWord.find({ ru: { $in: values } }, 'ru');
-  const foundValues = new Set(foundDocs.map((d) => d.ru));
+  const foundDocs = await RussianWord.find({ ru: { $in: values } }, 'ru').collation(RU_COLLATION);
+  const foundValues = new Set(foundDocs.map((d) => d.ru.toLowerCase()));
 
-  return values.map((value) => ({ value, canBeFound: foundValues.has(value) }));
+  return values.map((value) => ({ value, canBeFound: foundValues.has(value.toLowerCase()) }));
 }
 
 module.exports = { checkRuWord };

@@ -233,6 +233,10 @@ export const startChars: MenuItemProps = {
       href: '/watch/characters-lessons',
       text: 'Уроки иероглифики',
     },
+    {
+      href: '/names/',
+      text: 'Имя на китайском',
+    },
   ],
 };
 

@@ -49,6 +49,7 @@ import {
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
 import { Breadcrumbs, truncateCrumb } from '~/components/common/layout/breadcrumbs';
+import { nameUrl } from '~/components/names/types';
 
 export const useGetRuWord = routeLoader$(async ({ params }): Promise<RuWord | null> => {
   if (!isRussian(params.word)) return null;
@@ -292,6 +293,16 @@ export default component$(() => {
                   )}
 
                   <SearchRuResult ruWord={ruWord.value} showExamples={showExamples.value} />
+
+                  {ruWord.value.nameSlug && (
+                    <Link
+                      prefetch="js"
+                      href={nameUrl(ruWord.value.nameSlug)}
+                      class="btn btn-outline btn-primary btn-sm mt-3"
+                    >
+                      Это имя: как пишется по-китайски, значение иероглифов →
+                    </Link>
+                  )}
                 </>
               )}
             </div>
