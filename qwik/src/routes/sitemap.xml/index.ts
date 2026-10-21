@@ -26,6 +26,7 @@ const STATIC_PATHS = [
   '/read/books',
   '/read/blog',
   '/dictionary',
+  '/segment',
   '/watch/videos',
   '/watch/phonetics-lessons',
   '/watch/characters-lessons',

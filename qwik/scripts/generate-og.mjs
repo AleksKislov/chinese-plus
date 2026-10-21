@@ -164,6 +164,14 @@ images['names'] = {
   glyph: '名',
 };
 
+// Segmenter - segmentOgImage in src/routes/segment/index.tsx.
+images['segment'] = {
+  kicker: 'Сегментация китайского текста',
+  big: 'Сегментатор',
+  sub: 'Слова · пиньинь · перевод по клику',
+  glyph: '词',
+};
+
 images['chineseplus'] = {
   kicker: 'Китайский язык онлайн',
   big: 'Chinese+',
