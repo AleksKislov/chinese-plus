@@ -6,6 +6,7 @@ import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
 import { NameCharCard } from '~/components/names/name-char-card';
+import { sheetUrl } from '~/components/propisi/types';
 import {
   type NameResponse,
   type NameVariant,
@@ -130,6 +131,13 @@ export default component$(() => {
               <NameCharCard key={ind} char={char} id={`name-char-${ind}`} />
             ))}
           </div>
+          <Link
+            prefetch="js"
+            href={sheetUrl({ kind: 'chars', chars: main.cn })}
+            class="btn btn-outline btn-primary btn-sm mt-4"
+          >
+            Распечатать пропись для имени {main.cn} →
+          </Link>
         </div>
       </div>
 

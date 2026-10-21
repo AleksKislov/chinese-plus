@@ -237,6 +237,10 @@ export const startChars: MenuItemProps = {
       href: '/names/',
       text: 'Имя на китайском',
     },
+    {
+      href: '/propisi/',
+      text: 'Прописи иероглифов',
+    },
   ],
 };
 

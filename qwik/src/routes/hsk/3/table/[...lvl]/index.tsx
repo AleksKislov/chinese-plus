@@ -21,6 +21,7 @@ import { MainContent } from '~/components/common/layout/main-content';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
 import { CsvCard } from '~/components/hsk/csv-card';
+import { PropisiLinkCard } from '~/components/propisi/propisi-link-card';
 import { configContext } from '~/root';
 import YANDEX_ADS from '~/misc/consts/ads';
 import { BannerAds } from '~/components/common/ads/sidebar-ads';
@@ -83,6 +84,7 @@ export default component$(() => {
           <CsvCard level={loc.params.lvl || '1'} isOldHsk={false} isPrivate={false} />
           <PhoneticsLinkCard />
           <CharactersLinkCard />
+          <PropisiLinkCard version="3" level={loc.params.lvl || '1'} />
           <HskExamsLinkCard version="new" level={loc.params.lvl || '1'} />
         </Sidebar>
 

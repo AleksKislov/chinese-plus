@@ -10,6 +10,12 @@ import { type HskVersion, examsPath } from '~/components/hsk/exams/levels';
 import { WORD_LEVELS, type WordsPage, wordsPageUrl } from '~/components/hsk/words-seo';
 import { grammarLevelUrl, grammarTopicUrl } from '~/components/grammar/types';
 import { type NameListItem, nameUrl, namesHubUrl } from '~/components/names/types';
+import {
+  type HskSheetVersion,
+  HSK_SHEET_LEVELS,
+  hskSheetPath,
+  propisiUrl,
+} from '~/components/propisi/types';
 
 type GrammarSlug = { slug: string; level: string; updatedAt?: string };
 
@@ -188,6 +194,12 @@ export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => 
     })),
     { loc: `${CONST_URLS.siteUrl}${namesHubUrl}` },
     ...names.map((n) => ({ loc: `${CONST_URLS.siteUrl}${nameUrl(n.slug)}` })),
+    { loc: `${CONST_URLS.siteUrl}${propisiUrl}` },
+    ...(Object.keys(HSK_SHEET_LEVELS) as HskSheetVersion[]).flatMap((v) =>
+      HSK_SHEET_LEVELS[v].map((level) => ({
+        loc: `${CONST_URLS.siteUrl}${hskSheetPath(v, level)}`,
+      })),
+    ),
   ];
 
   headers.set('Content-Type', 'application/xml; charset=utf-8');

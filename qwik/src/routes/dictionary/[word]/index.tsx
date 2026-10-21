@@ -1,6 +1,7 @@
 import {
   $,
   component$,
+  useComputed$,
   useContext,
   useOnDocument,
   useSignal,
@@ -30,6 +31,7 @@ import { ApiService } from '~/misc/actions/request';
 import { alertsContext, userContext } from '~/root';
 import { getWordsForTooltips } from '~/routes/read/texts/[id]';
 import HanziWriter from 'hanzi-writer';
+import { sheetUrl } from '~/components/propisi/types';
 import { stripRuMarkup } from '~/misc/helpers/translation';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { Loader } from '~/components/common/ui/loader';
@@ -99,6 +101,12 @@ export default component$(() => {
   const { isAdmin } = useContext(userContext);
   const showExamples = useSignal(true);
   const showHandwriting = useSignal(false);
+
+  // Chinese queries only (the loader skips Russian, pinyin and * patterns); long texts get no link
+  const sheetChars = useComputed$(() => {
+    const han = [...(loc.params.word || '')].filter((ch) => /\p{Script=Han}/u.test(ch));
+    return loadTranslation.value && han.length <= 12 ? han.join('') : '';
+  });
 
   useVisibleTask$(({ track }) => {
     const word = track(() => loc.params.word);
@@ -226,6 +234,15 @@ export default component$(() => {
             </div>
 
             <div id={CHAR_SVG_DIV_ID} class="flex mt-3"></div>
+            {sheetChars.value && (
+              <Link
+                prefetch="js"
+                href={sheetUrl({ kind: 'chars', chars: sheetChars.value })}
+                class="link link-hover link-secondary text-sm"
+              >
+                Распечатать пропись для {sheetChars.value} →
+              </Link>
+            )}
             <div>
               {words.value && !ruWord.value && words.value.length === 1 && (
                 <>

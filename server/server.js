@@ -78,6 +78,7 @@ app.use('/api/grammar', require('./routes/api/grammar'));
 app.use('/api/hsk-exams', require('./routes/api/hsk-exams'));
 app.use('/api/ru-dictionary', require('./routes/api/ru-dictionary'));
 app.use('/api/names', require('./routes/api/names'));
+app.use('/api/writing-sheets', require('./routes/api/writing-sheets'));
 
 // glcoud services routes
 app.use('/gcloud/youtube', require('./routes/gcloud/youtube'));

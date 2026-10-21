@@ -1,6 +1,7 @@
 import { component$ } from '@builder.io/qwik';
 import { Link, type DocumentHead } from '@builder.io/qwik-city';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
+import { PropisiLinkCard } from '~/components/propisi/propisi-link-card';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { Sidebar } from '~/components/common/layout/sidebar';
@@ -259,6 +260,7 @@ export default component$(() => {
             </div>
           </div>
           <CharactersLinkCard />
+          <PropisiLinkCard />
         </Sidebar>
         <MainContent>
           <div class="prose mb-3">

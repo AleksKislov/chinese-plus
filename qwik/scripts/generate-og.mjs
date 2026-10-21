@@ -172,6 +172,14 @@ images['segment'] = {
   glyph: '词',
 };
 
+// Writing sheets - propisiOgImage in src/components/propisi/types.ts.
+images['propisi'] = {
+  kicker: 'Китайские иероглифы',
+  big: 'Прописи',
+  sub: 'Сетка · порядок черт · пиньинь · PDF',
+  glyph: '写',
+};
+
 images['chineseplus'] = {
   kicker: 'Китайский язык онлайн',
   big: 'Chinese+',
