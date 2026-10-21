@@ -5,7 +5,7 @@ import { PageTitle } from '~/components/common/layout/title';
 import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
-import { type NameListItem, nameUrl, namesHubUrl } from '~/components/names/types';
+import { type NameListItem, nameUrl, namesHubUrl, namesOgImage } from '~/components/names/types';
 
 export const useNames = routeLoader$(async (): Promise<NameListItem[]> => {
   return await ApiService.get('/api/names', undefined, []);
@@ -38,7 +38,20 @@ const NameList = component$(({ names }: { names: NameListItem[] }) => (
           <span class="font-bold">{n.name}</span> — {n.cn}{' '}
           <span class="opacity-60 text-sm">{n.py}</span>
         </Link>
-        {n.short.length > 0 && <span class="opacity-60 text-sm"> ({n.short.join(', ')})</span>}
+        {n.short.length > 0 && (
+          <span class="text-sm">
+            {' ('}
+            {n.short.map((s, ind) => (
+              <span key={s.slug}>
+                {ind > 0 && ', '}
+                <Link prefetch="js" href={nameUrl(s.slug)} class="link link-hover opacity-70">
+                  {s.name}
+                </Link>
+              </span>
+            ))}
+            {')'}
+          </span>
+        )}
       </li>
     ))}
   </ul>
@@ -51,9 +64,11 @@ export default component$(() => {
   // filtering only: the list is already loaded on the server
   const filtered = useComputed$(() => {
     const q = query.value.trim().toLowerCase().replace(/ё/g, 'е');
-    if (!q) return names.value;
+    // short forms have pages too, but are listed next to their full names
+    const full = names.value.filter((n) => n.kind === 'full');
+    if (!q) return full;
     const matches = (s: string) => s.toLowerCase().replace(/ё/g, 'е').startsWith(q);
-    return names.value.filter((n) => matches(n.name) || n.short.some(matches));
+    return full.filter((n) => matches(n.name) || n.short.some((s) => matches(s.name)));
   });
 
   const male = filtered.value.filter((n) => n.gender === 'm');
@@ -64,9 +79,9 @@ export default component$(() => {
       <Breadcrumbs items={[{ name: 'Имя на китайском' }]} />
       <PageTitle txt="Имя на китайском" />
       <p class="mb-4 max-w-3xl">
-        Как пишутся русские имена иероглифами: устоявшиеся варианты из словаря, пиньинь, значение
-        каждого иероглифа и порядок черт. Уменьшительные формы (Саша, Маша, Женя) — на странице
-        полного имени.
+        Как пишутся русские имена по-китайски: перевод имени на китайский иероглифами, устоявшиеся
+        варианты из словаря, пиньинь, значение каждого иероглифа и порядок черт. Уменьшительные
+        формы (Саша, Маша, Женя) — в скобках рядом с полным именем.
       </p>
 
       <input
@@ -130,9 +145,9 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = () => {
-  const title = 'Имя на китайском — как пишутся русские имена иероглифами | Chinese+';
+  const title = 'Имя на китайском — как пишутся русские имена по-китайски иероглифами | Chinese+';
   const description =
-    'Русские имена на китайском: Александр, Мария, Денис, Анастасия и другие. Написание иероглифами, пиньинь, значение каждого иероглифа и порядок черт.';
+    'Русские имена на китайском: как будет Александр, Мария, Денис, Анастасия по-китайски. Перевод имени на китайский иероглифами, пиньинь, значение каждого иероглифа и порядок черт.';
   const url = `${CONST_URLS.siteUrl}${namesHubUrl}`;
   return {
     title,
@@ -141,6 +156,7 @@ export const head: DocumentHead = () => {
       { property: 'og:title', content: title },
       { property: 'og:description', content: description },
       { property: 'og:url', content: url },
+      { property: 'og:image', content: `${CONST_URLS.siteUrl}${namesOgImage}` },
     ],
     links: [{ rel: 'canonical', href: url }],
   };

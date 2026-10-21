@@ -261,6 +261,9 @@ async function run() {
 
   const names = [];
   const missing = { names: [], short: [] };
+  const fullSlugs = new Map(people.map((p) => [p.name, slugify(p.name)]));
+  // short form -> the full names it belongs to ("Саша" -> Александр, Александра)
+  const shortOf = new Map();
   for (const person of people) {
     const variants = variantsByName.get(person.name);
     if (!variants.length) {
@@ -274,17 +277,39 @@ async function run() {
         missing.short.push(`${shortName} (${person.name})`);
         continue;
       }
+      // a short form that is also a full name in the list ("Ян") links to that name's page
+      const slug = fullSlugs.get(shortName) || slugify(shortName);
       short.push({
         name: shortName,
+        slug,
         variants: await Promise.all(shortVariants.map((cn) => toVariant(cn, false))),
       });
+      if (!fullSlugs.has(shortName)) {
+        if (!shortOf.has(shortName)) shortOf.set(shortName, []);
+        shortOf.get(shortName).push(person);
+      }
     }
     names.push({
+      kind: 'full',
       slug: slugify(person.name),
       name: person.name,
       gender: person.gender,
       variants: await Promise.all(variants.map((cn) => toVariant(cn, true))),
       short,
+    });
+  }
+
+  // short forms get their own pages too: "Саша на китайском" is searched on its own
+  for (const [shortName, fullNames] of shortOf) {
+    const genders = [...new Set(fullNames.map((p) => p.gender))];
+    names.push({
+      kind: 'short',
+      slug: slugify(shortName),
+      name: shortName,
+      gender: genders.length > 1 ? 'mf' : genders[0],
+      of: fullNames.map((p) => ({ slug: fullSlugs.get(p.name), name: p.name })),
+      variants: await Promise.all(variantsByName.get(shortName).map((cn) => toVariant(cn, true))),
+      short: [],
     });
   }
 
@@ -297,7 +322,7 @@ async function run() {
   writeJson('missing-names.json', missing);
 
   console.log(
-    `${names.length} names written, missing: ${missing.names.length} names, ${missing.short.length} short forms`,
+    `${names.length} names written (${shortOf.size} short forms), missing: ${missing.names.length} names, ${missing.short.length} short forms`,
   );
   const withoutPinyin = names.flatMap((n) => n.variants).filter((v) => !v.py);
   if (withoutPinyin.length) console.log('no pinyin:', withoutPinyin.map((v) => v.cn).join(', '));

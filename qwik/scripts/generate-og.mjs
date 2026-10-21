@@ -1,6 +1,6 @@
 /**
  * Renders the 1200x630 social preview images into public/img/og/: the site-wide
- * fallback (chineseplus.png, used by RouterHead) and the HSK exam, word list and grammar pages (names match ogImagePath() in
+ * fallback (chineseplus.png, used by RouterHead), the names pages and the HSK exam, word list and grammar pages (names match ogImagePath() in
  * src/components/hsk/exams/levels.ts and getWordsSeo() in src/components/hsk/words-seo.ts).
  * Re-run after adding a level or changing the copy:
  *
@@ -155,6 +155,14 @@ for (const lvl of ['1', '2', '3', '4', '5', '6', '789']) {
     glyph: '法',
   };
 }
+
+// Names - namesOgImage in src/components/names/types.ts, shared by /names/ and every name page.
+images['names'] = {
+  kicker: 'Русские имена по-китайски',
+  big: 'Имя',
+  sub: 'Иероглифы · пиньинь · значение · порядок черт',
+  glyph: '名',
+};
 
 images['chineseplus'] = {
   kicker: 'Китайский язык онлайн',

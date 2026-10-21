@@ -5,21 +5,12 @@ const lower = (s) => s.toLowerCase().replace(/ё/g, 'е');
 
 const BY_SLUG = new Map(NAMES.map((n) => [n.slug, n]));
 
-// full names and short forms ("Саша") -> slugs of the full names' pages
-const SLUGS_BY_NAME = new Map();
-for (const n of NAMES) {
-  for (const name of [n.name, ...n.short.map((s) => s.name)]) {
-    const key = lower(name);
-    if (!SLUGS_BY_NAME.has(key)) SLUGS_BY_NAME.set(key, []);
-    SLUGS_BY_NAME.get(key).push(n.slug);
-  }
-}
+// full names and short forms ("Саша") each have their own page
+const SLUG_BY_NAME = new Map(NAMES.map((n) => [lower(n.name), n.slug]));
 
-/** "александр" -> "aleksandr"; a full name wins over a short form of another name */
+/** "александр" -> "aleksandr", "саша" -> "sasha" */
 function findNameSlug(word) {
-  const slugs = SLUGS_BY_NAME.get(lower(word || ''));
-  if (!slugs) return null;
-  return slugs.find((slug) => lower(BY_SLUG.get(slug).name) === lower(word)) || slugs[0];
+  return SLUG_BY_NAME.get(lower(word || '')) || null;
 }
 
 module.exports = { NAMES, BY_SLUG, findNameSlug };

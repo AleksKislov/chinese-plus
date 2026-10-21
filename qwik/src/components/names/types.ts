@@ -9,12 +9,17 @@ export type NameVariant = {
   warn?: string[]; // characters with a bad meaning
 };
 
+// 'mf': a short form of both a male and a female name (Саша, Женя)
+export type NameGender = 'm' | 'f' | 'mf';
+
 export type RuName = {
+  kind: 'full' | 'short';
   slug: string;
   name: string;
-  gender: 'm' | 'f';
+  gender: NameGender;
+  of?: { slug: string; name: string }[]; // short forms only: the full names
   variants: NameVariant[];
-  short: { name: string; variants: NameVariant[] }[];
+  short: { name: string; slug: string; variants: NameVariant[] }[];
 };
 
 export type NameLink = { slug: string; name: string; cn: string };
@@ -22,14 +27,16 @@ export type NameLink = { slug: string; name: string; cn: string };
 export type NameResponse = { name: RuName; prev: NameLink | null; next: NameLink | null };
 
 export type NameListItem = {
+  kind: 'full' | 'short';
   slug: string;
   name: string;
-  gender: 'm' | 'f';
+  gender: NameGender;
   cn: string;
   py: string;
-  short: string[];
+  short: { name: string; slug: string }[];
 };
 
 export const namesHubUrl = '/names/';
 export const nameUrl = (slug: string) => `/names/${slug}/`;
+export const namesOgImage = '/img/og/names.png';
 export const dictionaryUrl = (word: string) => `/dictionary/${encodeURIComponent(word)}`;

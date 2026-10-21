@@ -8,10 +8,12 @@ import CONST_URLS from '~/misc/consts/urls';
 import { NameCharCard } from '~/components/names/name-char-card';
 import {
   type NameResponse,
+  type NameVariant,
   type RuName,
   dictionaryUrl,
   nameUrl,
   namesHubUrl,
+  namesOgImage,
 } from '~/components/names/types';
 
 export const useName = routeLoader$(async ({ params, status }): Promise<NameResponse | null> => {
@@ -23,18 +25,28 @@ export const useName = routeLoader$(async ({ params, status }): Promise<NameResp
   return res;
 });
 
-const genderLabel = (name: RuName) => (name.gender === 'm' ? 'мужское имя' : 'женское имя');
+const fullNames = (name: RuName) => (name.of || []).map((o) => o.name).join(' и ');
+
+const kindLabel = (name: RuName) => {
+  if (name.kind === 'short') return `уменьшительная форма имени ${fullNames(name)}`;
+  return name.gender === 'm' ? 'мужское имя' : 'женское имя';
+};
+
+const variantsText = (variants: NameVariant[], sep = ', ') =>
+  variants.map((v) => `${v.cn} (${v.py})`).join(sep);
 
 const nameFaq = (name: RuName) => {
   const [main, ...others] = name.variants;
-  const faq = [
+  return [
     {
       q: `Как пишется имя ${name.name} на китайском?`,
       a: `${name.name} на китайском пишется ${main.cn} (${main.py}).${
-        others.length
-          ? ` Также встречаются варианты: ${others.map((v) => `${v.cn} (${v.py})`).join(', ')}.`
-          : ''
+        others.length ? ` Также встречаются варианты: ${variantsText(others)}.` : ''
       }`,
+    },
+    {
+      q: `Как будет ${name.name} по-китайски?`,
+      a: `${name.name} по-китайски — ${main.cn}, на пиньине ${main.py}. Это перевод имени иероглифами по звучанию: так имя ${name.name} пишут в словарях и переводах.`,
     },
     {
       q: `Что означают иероглифы имени ${name.name}?`,
@@ -44,12 +56,15 @@ const nameFaq = (name: RuName) => {
         .map((c) => `${c.ch} (${c.py}) — ${c.meaning || 'используется в транскрипции'}`)
         .join('; ')}.`,
     },
+    {
+      q: `Какое китайское имя выбрать, если меня зовут ${name.name}?`,
+      a: `${main.cn} — это транскрипция, она звучит как «${name.name}» и подходит для документов, тату и подписи. Китайское имя в полном смысле составляют отдельно: фамилия из одного иероглифа и имя из одного-двух, часто созвучное с русским. Его обычно выбирают вместе с преподавателем или друзьями-китайцами.`,
+    },
     ...name.short.map((s) => ({
       q: `Как будет ${s.name} на китайском?`,
-      a: `${s.name} на китайском — ${s.variants.map((v) => `${v.cn} (${v.py})`).join(' или ')}.`,
+      a: `${s.name} на китайском — ${variantsText(s.variants, ' или ')}.`,
     })),
   ];
-  return faq;
 };
 
 export default component$(() => {
@@ -79,7 +94,7 @@ export default component$(() => {
       <div class="card bg-base-100 border border-primary mb-6">
         <div class="card-body">
           <div class="text-sm opacity-70">
-            {genderLabel(name)} {name.name} иероглифами
+            {kindLabel(name)} · как пишется {name.name} по-китайски
           </div>
           <div class="flex flex-wrap items-baseline gap-x-4">
             <Link prefetch="js" href={dictionaryUrl(main.cn)} class="text-5xl link link-hover">
@@ -87,6 +102,24 @@ export default component$(() => {
             </Link>
             <span class="text-2xl">{main.py}</span>
           </div>
+          <p class="max-w-3xl">
+            Перевод имени {name.name} на китайский — {main.cn}, читается «{main.py}». Это
+            устоявшаяся транскрипция: так имя {name.name} записывают иероглифами в словарях и
+            переводах.
+          </p>
+          {name.of && (
+            <p>
+              Полное имя:{' '}
+              {name.of.map((o, ind) => (
+                <span key={o.slug}>
+                  {ind > 0 && ', '}
+                  <Link prefetch="js" href={nameUrl(o.slug)} class="link link-primary">
+                    {o.name}
+                  </Link>
+                </span>
+              ))}
+            </p>
+          )}
 
           <h2 class="text-xl font-bold mt-4">Иероглифы и порядок черт</h2>
           <p class="text-sm opacity-70">
@@ -133,16 +166,10 @@ export default component$(() => {
             <ul>
               {name.short.map((s) => (
                 <li key={s.name}>
-                  <b>{s.name}</b> на китайском —{' '}
-                  {s.variants.map((v, ind) => (
-                    <span key={v.cn}>
-                      {ind > 0 && ' или '}
-                      <Link prefetch="js" href={dictionaryUrl(v.cn)}>
-                        {v.cn}
-                      </Link>{' '}
-                      ({v.py})
-                    </span>
-                  ))}
+                  <Link prefetch="js" href={nameUrl(s.slug)}>
+                    <b>{s.name}</b> на китайском
+                  </Link>{' '}
+                  — {variantsText(s.variants, ' или ')}
                 </li>
               ))}
             </ul>
@@ -217,11 +244,14 @@ export const head: DocumentHead = ({ resolveValue }) => {
 
   const { name } = data;
   const main = name.variants[0];
-  const shortPart = name.short.length
-    ? ` Как будет ${name.short.map((s) => s.name).join(', ')} по-китайски.`
-    : '';
-  const title = `${name.name} на китайском — ${main.cn}: как пишется имя иероглифами | Chinese+`;
-  const description = `Как пишется имя ${name.name} на китайском: ${main.cn} (${main.py}). Значение каждого иероглифа, порядок черт и другие варианты написания.${shortPart}`;
+  const extra =
+    name.kind === 'short'
+      ? ` Уменьшительное от ${fullNames(name)}.`
+      : name.short.length
+      ? ` Как будет ${name.short.map((s) => s.name).join(', ')} по-китайски.`
+      : '';
+  const title = `${name.name} на китайском — ${main.cn}: как пишется имя по-китайски | Chinese+`;
+  const description = `Как пишется имя ${name.name} на китайском и как будет ${name.name} по-китайски: ${main.cn} (${main.py}). Перевод имени иероглифами, значение каждого знака и порядок черт.${extra}`;
   const url = `${CONST_URLS.siteUrl}${nameUrl(name.slug)}`;
   return {
     title,
@@ -231,6 +261,7 @@ export const head: DocumentHead = ({ resolveValue }) => {
       { property: 'og:description', content: description },
       { property: 'og:type', content: 'article' },
       { property: 'og:url', content: url },
+      { property: 'og:image', content: `${CONST_URLS.siteUrl}${namesOgImage}` },
     ],
     links: [{ rel: 'canonical', href: url }],
   };

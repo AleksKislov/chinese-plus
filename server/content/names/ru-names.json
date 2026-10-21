@@ -1,5 +1,6 @@
 [
   {
+    "kind": "full",
     "slug": "agata",
     "name": "Агата",
     "gender": "f",
@@ -29,6 +30,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "aleksandr",
     "name": "Александр",
     "gender": "m",
@@ -89,6 +91,7 @@
     "short": [
       {
         "name": "Саша",
+        "slug": "sasha",
         "variants": [
           {
             "cn": "萨沙",
@@ -102,6 +105,7 @@
       },
       {
         "name": "Шура",
+        "slug": "shura",
         "variants": [
           {
             "cn": "舒拉",
@@ -112,6 +116,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "aleksandra",
     "name": "Александра",
     "gender": "f",
@@ -208,6 +213,7 @@
     "short": [
       {
         "name": "Саша",
+        "slug": "sasha",
         "variants": [
           {
             "cn": "萨沙",
@@ -222,6 +228,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "aleksey",
     "name": "Алексей",
     "gender": "m",
@@ -334,6 +341,7 @@
     "short": [
       {
         "name": "Лёша",
+        "slug": "lyosha",
         "variants": [
           {
             "cn": "廖沙",
@@ -344,6 +352,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "alyona",
     "name": "Алёна",
     "gender": "f",
@@ -394,6 +403,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "alina",
     "name": "Алина",
     "gender": "f",
@@ -444,6 +454,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "alisa",
     "name": "Алиса",
     "gender": "f",
@@ -536,6 +547,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "alla",
     "name": "Алла",
     "gender": "f",
@@ -581,6 +593,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "anastasiya",
     "name": "Анастасия",
     "gender": "f",
@@ -661,6 +674,7 @@
     "short": [
       {
         "name": "Настя",
+        "slug": "nastya",
         "variants": [
           {
             "cn": "纳斯佳",
@@ -675,6 +689,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "anatoliy",
     "name": "Анатолий",
     "gender": "m",
@@ -735,6 +750,7 @@
     "short": [
       {
         "name": "Толя",
+        "slug": "tolya",
         "variants": [
           {
             "cn": "托利亚",
@@ -745,6 +761,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "angelina",
     "name": "Ангелина",
     "gender": "f",
@@ -779,6 +796,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "andrey",
     "name": "Андрей",
     "gender": "m",
@@ -829,6 +847,7 @@
     "short": [
       {
         "name": "Андрюша",
+        "slug": "andryusha",
         "variants": [
           {
             "cn": "安德留沙",
@@ -839,6 +858,48 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "andryusha",
+    "name": "Андрюша",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "andrey",
+        "name": "Андрей"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "安德留沙",
+        "py": "āndéliúshā",
+        "chars": [
+          {
+            "ch": "安",
+            "py": "ān",
+            "meaning": "спокойствие, мир; безопасный"
+          },
+          {
+            "ch": "德",
+            "py": "dé",
+            "meaning": "добродетель, мораль; Германия (德国)"
+          },
+          {
+            "ch": "留",
+            "py": "liú",
+            "meaning": "оставаться, сохранять"
+          },
+          {
+            "ch": "沙",
+            "py": "shā",
+            "meaning": "песок; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "anzhelika",
     "name": "Анжелика",
     "gender": "f",
@@ -873,6 +934,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "anna",
     "name": "Анна",
     "gender": "f",
@@ -929,6 +991,7 @@
     "short": [
       {
         "name": "Аня",
+        "slug": "anya",
         "variants": [
           {
             "cn": "阿尼亚",
@@ -939,6 +1002,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "anton",
     "name": "Антон",
     "gender": "m",
@@ -963,6 +1027,7 @@
     "short": [
       {
         "name": "Тоша",
+        "slug": "tosha",
         "variants": [
           {
             "cn": "托沙",
@@ -973,6 +1038,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "antonina",
     "name": "Антонина",
     "gender": "f",
@@ -1007,6 +1073,7 @@
     "short": [
       {
         "name": "Тоня",
+        "slug": "tonya",
         "variants": [
           {
             "cn": "托尼娅",
@@ -1017,6 +1084,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "anya",
+    "name": "Аня",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "anna",
+        "name": "Анна"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "阿尼亚",
+        "py": "āníyà",
+        "chars": [
+          {
+            "ch": "阿",
+            "py": "ā",
+            "meaning": "приставка в ласковых обращениях; в именах — «а»"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "arina",
     "name": "Арина",
     "gender": "f",
@@ -1046,6 +1150,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "arkadiy",
     "name": "Аркадий",
     "gender": "m",
@@ -1158,6 +1263,7 @@
     "short": [
       {
         "name": "Аркаша",
+        "slug": "arkasha",
         "variants": [
           {
             "cn": "阿尔卡沙",
@@ -1168,6 +1274,48 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "arkasha",
+    "name": "Аркаша",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "arkadiy",
+        "name": "Аркадий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "阿尔卡沙",
+        "py": "ā'ěrkǎshā",
+        "chars": [
+          {
+            "ch": "阿",
+            "py": "ā",
+            "meaning": "приставка в ласковых обращениях; в именах — «а»"
+          },
+          {
+            "ch": "尔",
+            "py": "ěr",
+            "meaning": "ты (книжн.); в именах — «р»"
+          },
+          {
+            "ch": "卡",
+            "py": "kǎ",
+            "meaning": "карта, карточка"
+          },
+          {
+            "ch": "沙",
+            "py": "shā",
+            "meaning": "песок; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "arseniy",
     "name": "Арсений",
     "gender": "m",
@@ -1202,6 +1350,7 @@
     "short": [
       {
         "name": "Сеня",
+        "slug": "senya",
         "variants": [
           {
             "cn": "谢尼亚",
@@ -1212,6 +1361,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "artyom",
     "name": "Артём",
     "gender": "m",
@@ -1246,6 +1396,7 @@
     "short": [
       {
         "name": "Тёма",
+        "slug": "tyoma",
         "variants": [
           {
             "cn": "乔马",
@@ -1256,6 +1407,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "artur",
     "name": "Артур",
     "gender": "m",
@@ -1333,6 +1485,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "bogdan",
     "name": "Богдан",
     "gender": "m",
@@ -1383,6 +1536,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "boris",
     "name": "Борис",
     "gender": "m",
@@ -1433,6 +1587,7 @@
     "short": [
       {
         "name": "Боря",
+        "slug": "borya",
         "variants": [
           {
             "cn": "鲍里亚",
@@ -1443,6 +1598,79 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "borya",
+    "name": "Боря",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "boris",
+        "name": "Борис"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "鲍里亚",
+        "py": "bàolǐyà",
+        "chars": [
+          {
+            "ch": "鲍",
+            "py": "bào",
+            "meaning": "фамилия Бао; в именах — «бо»"
+          },
+          {
+            "ch": "里",
+            "py": "lǐ",
+            "meaning": "внутри; деревня; ли (мера длины)"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "vadik",
+    "name": "Вадик",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "vadim",
+        "name": "Вадим"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "瓦季克",
+        "py": "wǎjìkè",
+        "chars": [
+          {
+            "ch": "瓦",
+            "py": "wǎ",
+            "meaning": "черепица; ватт"
+          },
+          {
+            "ch": "季",
+            "py": "jì",
+            "meaning": "сезон, время года"
+          },
+          {
+            "ch": "克",
+            "py": "kè",
+            "meaning": "суметь, одолеть; грамм"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "vadim",
     "name": "Вадим",
     "gender": "m",
@@ -1488,6 +1716,7 @@
     "short": [
       {
         "name": "Вадик",
+        "slug": "vadik",
         "variants": [
           {
             "cn": "瓦季克",
@@ -1498,6 +1727,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "valentin",
     "name": "Валентин",
     "gender": "m",
@@ -1569,6 +1799,7 @@
     "short": [
       {
         "name": "Валя",
+        "slug": "valya",
         "variants": [
           {
             "cn": "瓦利亚",
@@ -1579,6 +1810,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "valentina",
     "name": "Валентина",
     "gender": "f",
@@ -1665,6 +1897,7 @@
     "short": [
       {
         "name": "Валя",
+        "slug": "valya",
         "variants": [
           {
             "cn": "瓦利亚",
@@ -1675,6 +1908,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "valera",
+    "name": "Валера",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "valeriy",
+        "name": "Валерий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "瓦列拉",
+        "py": "wǎlièlā",
+        "chars": [
+          {
+            "ch": "瓦",
+            "py": "wǎ",
+            "meaning": "черепица; ватт"
+          },
+          {
+            "ch": "列",
+            "py": "liè",
+            "meaning": "ряд; выстраивать в ряд"
+          },
+          {
+            "ch": "拉",
+            "py": "lā",
+            "meaning": "тянуть; в именах — «ла»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "valeriy",
     "name": "Валерий",
     "gender": "m",
@@ -1704,6 +1974,7 @@
     "short": [
       {
         "name": "Валера",
+        "slug": "valera",
         "variants": [
           {
             "cn": "瓦列拉",
@@ -1714,6 +1985,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "valeriya",
     "name": "Валерия",
     "gender": "f",
@@ -1748,6 +2020,7 @@
     "short": [
       {
         "name": "Лера",
+        "slug": "lera",
         "variants": [
           {
             "cn": "列拉",
@@ -1758,6 +2031,83 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "valya",
+    "name": "Валя",
+    "gender": "mf",
+    "of": [
+      {
+        "slug": "valentin",
+        "name": "Валентин"
+      },
+      {
+        "slug": "valentina",
+        "name": "Валентина"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "瓦利亚",
+        "py": "wǎlìyà",
+        "chars": [
+          {
+            "ch": "瓦",
+            "py": "wǎ",
+            "meaning": "черепица; ватт"
+          },
+          {
+            "ch": "利",
+            "py": "lì",
+            "meaning": "польза, выгода; острый"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "vanya",
+    "name": "Ваня",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "ivan",
+        "name": "Иван"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "万尼亚",
+        "py": "wànníyà",
+        "chars": [
+          {
+            "ch": "万",
+            "py": "wàn",
+            "meaning": "десять тысяч; бесчисленный"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "varvara",
     "name": "Варвара",
     "gender": "f",
@@ -1813,6 +2163,7 @@
     "short": [
       {
         "name": "Варя",
+        "slug": "varya",
         "variants": [
           {
             "cn": "瓦里亚",
@@ -1823,6 +2174,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "varya",
+    "name": "Варя",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "varvara",
+        "name": "Варвара"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "瓦里亚",
+        "py": "wǎlǐyà",
+        "chars": [
+          {
+            "ch": "瓦",
+            "py": "wǎ",
+            "meaning": "черепица; ватт"
+          },
+          {
+            "ch": "里",
+            "py": "lǐ",
+            "meaning": "внутри; деревня; ли (мера длины)"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "vasiliy",
     "name": "Василий",
     "gender": "m",
@@ -1852,6 +2240,7 @@
     "short": [
       {
         "name": "Вася",
+        "slug": "vasya",
         "variants": [
           {
             "cn": "瓦夏",
@@ -1862,6 +2251,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "vasilisa",
     "name": "Василиса",
     "gender": "f",
@@ -1896,6 +2286,38 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "vasya",
+    "name": "Вася",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "vasiliy",
+        "name": "Василий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "瓦夏",
+        "py": "wǎxià",
+        "chars": [
+          {
+            "ch": "瓦",
+            "py": "wǎ",
+            "meaning": "черепица; ватт"
+          },
+          {
+            "ch": "夏",
+            "py": "xià",
+            "meaning": "лето"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "veniamin",
     "name": "Вениамин",
     "gender": "m",
@@ -1951,6 +2373,7 @@
     "short": [
       {
         "name": "Веня",
+        "slug": "venya",
         "variants": [
           {
             "cn": "韦尼亚",
@@ -1961,6 +2384,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "venya",
+    "name": "Веня",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "veniamin",
+        "name": "Вениамин"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "韦尼亚",
+        "py": "wéiníyà",
+        "chars": [
+          {
+            "ch": "韦",
+            "py": "wéi",
+            "meaning": "выделанная кожа; в именах — «ве»"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "vera",
     "name": "Вера",
     "gender": "f",
@@ -2001,6 +2461,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "veronika",
     "name": "Вероника",
     "gender": "f",
@@ -2061,6 +2522,7 @@
     "short": [
       {
         "name": "Ника",
+        "slug": "nika",
         "variants": [
           {
             "cn": "妮卡",
@@ -2071,6 +2533,38 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "vika",
+    "name": "Вика",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "viktoriya",
+        "name": "Виктория"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "维卡",
+        "py": "wéikǎ",
+        "chars": [
+          {
+            "ch": "维",
+            "py": "wéi",
+            "meaning": "поддерживать, сохранять"
+          },
+          {
+            "ch": "卡",
+            "py": "kǎ",
+            "meaning": "карта, карточка"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "viktor",
     "name": "Виктор",
     "gender": "m",
@@ -2121,6 +2615,7 @@
     "short": [
       {
         "name": "Витя",
+        "slug": "vitya",
         "variants": [
           {
             "cn": "维佳",
@@ -2131,6 +2626,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "viktoriya",
     "name": "Виктория",
     "gender": "f",
@@ -2165,6 +2661,7 @@
     "short": [
       {
         "name": "Вика",
+        "slug": "vika",
         "variants": [
           {
             "cn": "维卡",
@@ -2175,6 +2672,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "violetta",
     "name": "Виолетта",
     "gender": "f",
@@ -2209,6 +2707,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "vitaliy",
     "name": "Виталий",
     "gender": "m",
@@ -2238,6 +2737,7 @@
     "short": [
       {
         "name": "Виталик",
+        "slug": "vitalik",
         "variants": [
           {
             "cn": "维塔利克",
@@ -2248,6 +2748,115 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "vitalik",
+    "name": "Виталик",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "vitaliy",
+        "name": "Виталий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "维塔利克",
+        "py": "wéitǎlìkè",
+        "chars": [
+          {
+            "ch": "维",
+            "py": "wéi",
+            "meaning": "поддерживать, сохранять"
+          },
+          {
+            "ch": "塔",
+            "py": "tǎ",
+            "meaning": "башня, пагода"
+          },
+          {
+            "ch": "利",
+            "py": "lì",
+            "meaning": "польза, выгода; острый"
+          },
+          {
+            "ch": "克",
+            "py": "kè",
+            "meaning": "суметь, одолеть; грамм"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "vitya",
+    "name": "Витя",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "viktor",
+        "name": "Виктор"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "维佳",
+        "py": "wéijiā",
+        "chars": [
+          {
+            "ch": "维",
+            "py": "wéi",
+            "meaning": "поддерживать, сохранять"
+          },
+          {
+            "ch": "佳",
+            "py": "jiā",
+            "meaning": "прекрасный, хороший"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "vlad",
+    "name": "Влад",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "vladislav",
+        "name": "Владислав"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "弗拉德",
+        "py": "fúlādé",
+        "chars": [
+          {
+            "ch": "弗",
+            "py": "fú",
+            "meaning": "не (книжн.); в именах передаёт «в» или «ф»"
+          },
+          {
+            "ch": "拉",
+            "py": "lā",
+            "meaning": "тянуть; в именах — «ла»"
+          },
+          {
+            "ch": "德",
+            "py": "dé",
+            "meaning": "добродетель, мораль; Германия (德国)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "vladimir",
     "name": "Владимир",
     "gender": "m",
@@ -2287,6 +2896,7 @@
     "short": [
       {
         "name": "Вова",
+        "slug": "vova",
         "variants": [
           {
             "cn": "沃瓦",
@@ -2296,6 +2906,7 @@
       },
       {
         "name": "Володя",
+        "slug": "volodya",
         "variants": [
           {
             "cn": "沃洛佳",
@@ -2306,6 +2917,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "vladislav",
     "name": "Владислав",
     "gender": "m",
@@ -2386,6 +2998,7 @@
     "short": [
       {
         "name": "Влад",
+        "slug": "vlad",
         "variants": [
           {
             "cn": "弗拉德",
@@ -2396,6 +3009,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "vladislava",
     "name": "Владислава",
     "gender": "f",
@@ -2440,6 +3054,74 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "vova",
+    "name": "Вова",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "vladimir",
+        "name": "Владимир"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "沃瓦",
+        "py": "wòwǎ",
+        "chars": [
+          {
+            "ch": "沃",
+            "py": "wò",
+            "meaning": "плодородный; орошать"
+          },
+          {
+            "ch": "瓦",
+            "py": "wǎ",
+            "meaning": "черепица; ватт"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "volodya",
+    "name": "Володя",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "vladimir",
+        "name": "Владимир"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "沃洛佳",
+        "py": "wòluòjiā",
+        "chars": [
+          {
+            "ch": "沃",
+            "py": "wò",
+            "meaning": "плодородный; орошать"
+          },
+          {
+            "ch": "洛",
+            "py": "luò",
+            "meaning": "река Ло; в именах — «ло»"
+          },
+          {
+            "ch": "佳",
+            "py": "jiā",
+            "meaning": "прекрасный, хороший"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "vsevolod",
     "name": "Всеволод",
     "gender": "m",
@@ -2479,6 +3161,7 @@
     "short": [
       {
         "name": "Сева",
+        "slug": "seva",
         "variants": [
           {
             "cn": "谢瓦",
@@ -2489,6 +3172,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "vyacheslav",
     "name": "Вячеслав",
     "gender": "m",
@@ -2533,20 +3217,18 @@
     "short": [
       {
         "name": "Слава",
+        "slug": "slava",
         "variants": [
           {
-            "cn": "美誉",
-            "py": "měiyù"
-          },
-          {
-            "cn": "荣名",
-            "py": "róngmíng"
+            "cn": "斯拉瓦",
+            "py": "sīlāwǎ"
           }
         ]
       }
     ]
   },
   {
+    "kind": "full",
     "slug": "galina",
     "name": "Галина",
     "gender": "f",
@@ -2576,6 +3258,7 @@
     "short": [
       {
         "name": "Галя",
+        "slug": "galya",
         "variants": [
           {
             "cn": "加利亚",
@@ -2590,6 +3273,95 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "galya",
+    "name": "Галя",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "galina",
+        "name": "Галина"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "加利亚",
+        "py": "jiālìyà",
+        "chars": [
+          {
+            "ch": "加",
+            "py": "jiā",
+            "meaning": "прибавлять; Канада (加拿大)"
+          },
+          {
+            "ch": "利",
+            "py": "lì",
+            "meaning": "польза, выгода; острый"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      },
+      {
+        "cn": "嘎利娅",
+        "py": "gálìyà",
+        "chars": [
+          {
+            "ch": "嘎",
+            "py": "gá",
+            "meaning": "звукоподражание; в именах — «га»"
+          },
+          {
+            "ch": "利",
+            "py": "lì",
+            "meaning": "польза, выгода; острый"
+          },
+          {
+            "ch": "娅",
+            "py": "yà",
+            "meaning": "в женских именах передаёт звук «я»; исходное значение — свой, свояк"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "gena",
+    "name": "Гена",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "gennadiy",
+        "name": "Геннадий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "根纳",
+        "py": "gēnnà",
+        "chars": [
+          {
+            "ch": "根",
+            "py": "gēn",
+            "meaning": "корень; основа"
+          },
+          {
+            "ch": "纳",
+            "py": "nà",
+            "meaning": "принимать; вносить"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "gennadiy",
     "name": "Геннадий",
     "gender": "m",
@@ -2619,6 +3391,7 @@
     "short": [
       {
         "name": "Гена",
+        "slug": "gena",
         "variants": [
           {
             "cn": "根纳",
@@ -2629,6 +3402,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "georgiy",
     "name": "Георгий",
     "gender": "m",
@@ -2689,6 +3463,7 @@
     "short": [
       {
         "name": "Жора",
+        "slug": "zhora",
         "variants": [
           {
             "cn": "若拉",
@@ -2699,6 +3474,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "german",
     "name": "Герман",
     "gender": "m",
@@ -2765,6 +3541,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "gleb",
     "name": "Глеб",
     "gender": "m",
@@ -2794,6 +3571,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "grigoriy",
     "name": "Григорий",
     "gender": "m",
@@ -2880,6 +3658,7 @@
     "short": [
       {
         "name": "Гриша",
+        "slug": "grisha",
         "variants": [
           {
             "cn": "格里沙",
@@ -2890,6 +3669,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "grisha",
+    "name": "Гриша",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "grigoriy",
+        "name": "Григорий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "格里沙",
+        "py": "gélǐshā",
+        "chars": [
+          {
+            "ch": "格",
+            "py": "gé",
+            "meaning": "клетка, ячейка; стиль, характер"
+          },
+          {
+            "ch": "里",
+            "py": "lǐ",
+            "meaning": "внутри; деревня; ли (мера длины)"
+          },
+          {
+            "ch": "沙",
+            "py": "shā",
+            "meaning": "песок; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "david",
     "name": "Давид",
     "gender": "m",
@@ -2951,6 +3767,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "daniil",
     "name": "Даниил",
     "gender": "m",
@@ -2996,6 +3813,7 @@
     "short": [
       {
         "name": "Даня",
+        "slug": "danya",
         "variants": [
           {
             "cn": "达尼亚",
@@ -3006,6 +3824,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "danya",
+    "name": "Даня",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "daniil",
+        "name": "Даниил"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "达尼亚",
+        "py": "dáníyà",
+        "chars": [
+          {
+            "ch": "达",
+            "py": "dá",
+            "meaning": "достигать, добиваться"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "darina",
     "name": "Дарина",
     "gender": "f",
@@ -3035,6 +3890,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "darya",
     "name": "Дарья",
     "gender": "f",
@@ -3127,20 +3983,49 @@
     "short": [
       {
         "name": "Даша",
+        "slug": "dasha",
         "variants": [
           {
             "cn": "达莎",
             "py": "dáshā"
-          },
-          {
-            "cn": "㙮莎",
-            "py": "dāshā"
           }
         ]
       }
     ]
   },
   {
+    "kind": "short",
+    "slug": "dasha",
+    "name": "Даша",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "darya",
+        "name": "Дарья"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "达莎",
+        "py": "dáshā",
+        "chars": [
+          {
+            "ch": "达",
+            "py": "dá",
+            "meaning": "достигать, добиваться"
+          },
+          {
+            "ch": "莎",
+            "py": "shā",
+            "meaning": "осока; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "demid",
     "name": "Демид",
     "gender": "m",
@@ -3170,6 +4055,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "denis",
     "name": "Денис",
     "gender": "m",
@@ -3220,6 +4106,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "diana",
     "name": "Диана",
     "gender": "f",
@@ -3249,6 +4136,70 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "dima",
+    "name": "Дима",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "dmitriy",
+        "name": "Дмитрий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "季马",
+        "py": "jìmǎ",
+        "chars": [
+          {
+            "ch": "季",
+            "py": "jì",
+            "meaning": "сезон, время года"
+          },
+          {
+            "ch": "马",
+            "py": "mǎ",
+            "meaning": "лошадь, конь"
+          }
+        ]
+      },
+      {
+        "cn": "季玛",
+        "py": "jìmǎ",
+        "chars": [
+          {
+            "ch": "季",
+            "py": "jì",
+            "meaning": "сезон, время года"
+          },
+          {
+            "ch": "玛",
+            "py": "mǎ",
+            "meaning": "агат (玛瑙)"
+          }
+        ]
+      },
+      {
+        "cn": "吉玛",
+        "py": "jímǎ",
+        "chars": [
+          {
+            "ch": "吉",
+            "py": "jí",
+            "meaning": "счастье, удача"
+          },
+          {
+            "ch": "玛",
+            "py": "mǎ",
+            "meaning": "агат (玛瑙)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "dmitriy",
     "name": "Дмитрий",
     "gender": "m",
@@ -3304,6 +4255,7 @@
     "short": [
       {
         "name": "Дима",
+        "slug": "dima",
         "variants": [
           {
             "cn": "季马",
@@ -3321,6 +4273,7 @@
       },
       {
         "name": "Митя",
+        "slug": "mitya",
         "variants": [
           {
             "cn": "米嘉",
@@ -3331,6 +4284,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "eva",
     "name": "Ева",
     "gender": "f",
@@ -3371,6 +4325,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "evgeniy",
     "name": "Евгений",
     "gender": "m",
@@ -3478,6 +4433,7 @@
     "short": [
       {
         "name": "Женя",
+        "slug": "zhenya",
         "variants": [
           {
             "cn": "热尼亚",
@@ -3492,6 +4448,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "evgeniya",
     "name": "Евгения",
     "gender": "f",
@@ -3562,6 +4519,7 @@
     "short": [
       {
         "name": "Женя",
+        "slug": "zhenya",
         "variants": [
           {
             "cn": "热尼亚",
@@ -3576,6 +4534,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "egor",
     "name": "Егор",
     "gender": "m",
@@ -3605,6 +4564,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "ekaterina",
     "name": "Екатерина",
     "gender": "f",
@@ -3644,6 +4604,7 @@
     "short": [
       {
         "name": "Катя",
+        "slug": "katya",
         "variants": [
           {
             "cn": "卡佳",
@@ -3654,6 +4615,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "elena",
     "name": "Елена",
     "gender": "f",
@@ -3741,6 +4703,7 @@
     "short": [
       {
         "name": "Лена",
+        "slug": "lena",
         "variants": [
           {
             "cn": "列娜",
@@ -3751,6 +4714,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "elizaveta",
     "name": "Елизавета",
     "gender": "f",
@@ -3816,6 +4780,7 @@
     "short": [
       {
         "name": "Лиза",
+        "slug": "liza",
         "variants": [
           {
             "cn": "莉扎",
@@ -3830,6 +4795,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "elisey",
     "name": "Елисей",
     "gender": "m",
@@ -3859,6 +4825,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "eseniya",
     "name": "Есения",
     "gender": "f",
@@ -3893,6 +4860,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "efim",
     "name": "Ефим",
     "gender": "m",
@@ -3922,6 +4890,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "zhanna",
     "name": "Жанна",
     "gender": "f",
@@ -3946,6 +4915,99 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "zhenya",
+    "name": "Женя",
+    "gender": "mf",
+    "of": [
+      {
+        "slug": "evgeniy",
+        "name": "Евгений"
+      },
+      {
+        "slug": "evgeniya",
+        "name": "Евгения"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "热尼亚",
+        "py": "rèníyà",
+        "chars": [
+          {
+            "ch": "热",
+            "py": "rè",
+            "meaning": "горячий; жара"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      },
+      {
+        "cn": "热尼娅",
+        "py": "rèníyà",
+        "chars": [
+          {
+            "ch": "热",
+            "py": "rè",
+            "meaning": "горячий; жара"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "娅",
+            "py": "yà",
+            "meaning": "в женских именах передаёт звук «я»; исходное значение — свой, свояк"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "zhora",
+    "name": "Жора",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "georgiy",
+        "name": "Георгий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "若拉",
+        "py": "ruòlā",
+        "chars": [
+          {
+            "ch": "若",
+            "py": "ruò",
+            "meaning": "как, подобно; если (книжн.)"
+          },
+          {
+            "ch": "拉",
+            "py": "lā",
+            "meaning": "тянуть; в именах — «ла»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "zakhar",
     "name": "Захар",
     "gender": "m",
@@ -3975,6 +5037,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "zlata",
     "name": "Злата",
     "gender": "f",
@@ -4004,6 +5067,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "zoya",
     "name": "Зоя",
     "gender": "f",
@@ -4028,6 +5092,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "ivan",
     "name": "Иван",
     "gender": "m",
@@ -4068,6 +5133,7 @@
     "short": [
       {
         "name": "Ваня",
+        "slug": "vanya",
         "variants": [
           {
             "cn": "万尼亚",
@@ -4078,6 +5144,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "igor",
     "name": "Игорь",
     "gender": "m",
@@ -4123,6 +5190,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "ilya",
     "name": "Илья",
     "gender": "m",
@@ -4194,6 +5262,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "inna",
     "name": "Инна",
     "gender": "f",
@@ -4234,6 +5303,54 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "ira",
+    "name": "Ира",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "irina",
+        "name": "Ирина"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "伊拉",
+        "py": "yīlā",
+        "chars": [
+          {
+            "ch": "伊",
+            "py": "yī",
+            "meaning": "он, она (книжн.); в именах — «и»"
+          },
+          {
+            "ch": "拉",
+            "py": "lā",
+            "meaning": "тянуть; в именах — «ла»"
+          }
+        ]
+      },
+      {
+        "cn": "依拉",
+        "py": "yīlā",
+        "chars": [
+          {
+            "ch": "依",
+            "py": "yī",
+            "meaning": "полагаться, опираться"
+          },
+          {
+            "ch": "拉",
+            "py": "lā",
+            "meaning": "тянуть; в именах — «ла»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "irina",
     "name": "Ирина",
     "gender": "f",
@@ -4305,6 +5422,7 @@
     "short": [
       {
         "name": "Ира",
+        "slug": "ira",
         "variants": [
           {
             "cn": "伊拉",
@@ -4319,6 +5437,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "karina",
     "name": "Карина",
     "gender": "f",
@@ -4369,6 +5488,38 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "katya",
+    "name": "Катя",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "ekaterina",
+        "name": "Екатерина"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "卡佳",
+        "py": "kǎjiā",
+        "chars": [
+          {
+            "ch": "卡",
+            "py": "kǎ",
+            "meaning": "карта, карточка"
+          },
+          {
+            "ch": "佳",
+            "py": "jiā",
+            "meaning": "прекрасный, хороший"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "kira",
     "name": "Кира",
     "gender": "f",
@@ -4393,6 +5544,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "kirill",
     "name": "Кирилл",
     "gender": "m",
@@ -4422,6 +5574,43 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "kolya",
+    "name": "Коля",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "nikolay",
+        "name": "Николай"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "科利亚",
+        "py": "kēlìyà",
+        "chars": [
+          {
+            "ch": "科",
+            "py": "kē",
+            "meaning": "наука; отдел"
+          },
+          {
+            "ch": "利",
+            "py": "lì",
+            "meaning": "польза, выгода; острый"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "konstantin",
     "name": "Константин",
     "gender": "m",
@@ -4482,6 +5671,7 @@
     "short": [
       {
         "name": "Костя",
+        "slug": "kostya",
         "variants": [
           {
             "cn": "科斯佳",
@@ -4492,6 +5682,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "kostya",
+    "name": "Костя",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "konstantin",
+        "name": "Константин"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "科斯佳",
+        "py": "kēsījiā",
+        "chars": [
+          {
+            "ch": "科",
+            "py": "kē",
+            "meaning": "наука; отдел"
+          },
+          {
+            "ch": "斯",
+            "py": "sī",
+            "meaning": "этот (книжн.); в именах — «с»"
+          },
+          {
+            "ch": "佳",
+            "py": "jiā",
+            "meaning": "прекрасный, хороший"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "kristina",
     "name": "Кристина",
     "gender": "f",
@@ -4588,6 +5815,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "kseniya",
     "name": "Ксения",
     "gender": "f",
@@ -4648,6 +5876,7 @@
     "short": [
       {
         "name": "Ксюша",
+        "slug": "ksyusha",
         "variants": [
           {
             "cn": "克秀莎",
@@ -4658,6 +5887,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "ksyusha",
+    "name": "Ксюша",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "kseniya",
+        "name": "Ксения"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "克秀莎",
+        "py": "kèxiùshā",
+        "chars": [
+          {
+            "ch": "克",
+            "py": "kè",
+            "meaning": "суметь, одолеть; грамм"
+          },
+          {
+            "ch": "秀",
+            "py": "xiù",
+            "meaning": "изящный, красивый; выдающийся"
+          },
+          {
+            "ch": "莎",
+            "py": "shā",
+            "meaning": "осока; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "larisa",
     "name": "Лариса",
     "gender": "f",
@@ -4708,6 +5974,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "lev",
     "name": "Лев",
     "gender": "m",
@@ -4732,6 +5999,7 @@
     "short": [
       {
         "name": "Лёва",
+        "slug": "lyova",
         "variants": [
           {
             "cn": "廖瓦",
@@ -4742,6 +6010,105 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "lyova",
+    "name": "Лёва",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "lev",
+        "name": "Лев"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "廖瓦",
+        "py": "liáowǎ",
+        "chars": [
+          {
+            "ch": "廖",
+            "py": "liáo",
+            "meaning": "фамилия Ляо; в именах — «лё»"
+          },
+          {
+            "ch": "瓦",
+            "py": "wǎ",
+            "meaning": "черепица; ватт"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "lena",
+    "name": "Лена",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "elena",
+        "name": "Елена"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "列娜",
+        "py": "liènà",
+        "chars": [
+          {
+            "ch": "列",
+            "py": "liè",
+            "meaning": "ряд; выстраивать в ряд"
+          },
+          {
+            "ch": "娜",
+            "py": "nà",
+            "meaning": "изящная, грациозная; в женских именах — «на»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "lyonya",
+    "name": "Лёня",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "leonid",
+        "name": "Леонид"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "廖尼亚",
+        "py": "liáoníyà",
+        "chars": [
+          {
+            "ch": "廖",
+            "py": "liáo",
+            "meaning": "фамилия Ляо; в именах — «лё»"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "leonid",
     "name": "Леонид",
     "gender": "m",
@@ -4828,6 +6195,7 @@
     "short": [
       {
         "name": "Лёня",
+        "slug": "lyonya",
         "variants": [
           {
             "cn": "廖尼亚",
@@ -4838,6 +6206,100 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "lera",
+    "name": "Лера",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "valeriya",
+        "name": "Валерия"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "列拉",
+        "py": "lièlā",
+        "chars": [
+          {
+            "ch": "列",
+            "py": "liè",
+            "meaning": "ряд; выстраивать в ряд"
+          },
+          {
+            "ch": "拉",
+            "py": "lā",
+            "meaning": "тянуть; в именах — «ла»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "lyosha",
+    "name": "Лёша",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "aleksey",
+        "name": "Алексей"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "廖沙",
+        "py": "liáoshā",
+        "chars": [
+          {
+            "ch": "廖",
+            "py": "liáo",
+            "meaning": "фамилия Ляо; в именах — «лё»"
+          },
+          {
+            "ch": "沙",
+            "py": "shā",
+            "meaning": "песок; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "lida",
+    "name": "Лида",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "lidiya",
+        "name": "Лидия"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "莉达",
+        "py": "lìdá",
+        "chars": [
+          {
+            "ch": "莉",
+            "py": "lì",
+            "meaning": "жасмин (茉莉)"
+          },
+          {
+            "ch": "达",
+            "py": "dá",
+            "meaning": "достигать, добиваться"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "lidiya",
     "name": "Лидия",
     "gender": "f",
@@ -4867,6 +6329,7 @@
     "short": [
       {
         "name": "Лида",
+        "slug": "lida",
         "variants": [
           {
             "cn": "莉达",
@@ -4877,6 +6340,54 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "liza",
+    "name": "Лиза",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "elizaveta",
+        "name": "Елизавета"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "莉扎",
+        "py": "lìzā",
+        "chars": [
+          {
+            "ch": "莉",
+            "py": "lì",
+            "meaning": "жасмин (茉莉)"
+          },
+          {
+            "ch": "扎",
+            "py": "zā",
+            "meaning": "колоть; в именах — «за»"
+          }
+        ]
+      },
+      {
+        "cn": "莉莎",
+        "py": "lìshā",
+        "chars": [
+          {
+            "ch": "莉",
+            "py": "lì",
+            "meaning": "жасмин (茉莉)"
+          },
+          {
+            "ch": "莎",
+            "py": "shā",
+            "meaning": "осока; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "liliya",
     "name": "Лилия",
     "gender": "f",
@@ -4906,6 +6417,38 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "lyuba",
+    "name": "Люба",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "lyubov",
+        "name": "Любовь"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "柳芭",
+        "py": "liǔbā",
+        "chars": [
+          {
+            "ch": "柳",
+            "py": "liǔ",
+            "meaning": "ива"
+          },
+          {
+            "ch": "芭",
+            "py": "bā",
+            "meaning": "банан (芭蕉); балет (芭蕾)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "lyubov",
     "name": "Любовь",
     "gender": "f",
@@ -4935,6 +6478,7 @@
     "short": [
       {
         "name": "Люба",
+        "slug": "lyuba",
         "variants": [
           {
             "cn": "柳芭",
@@ -4945,6 +6489,38 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "lyuda",
+    "name": "Люда",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "lyudmila",
+        "name": "Людмила"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "柳达",
+        "py": "liǔdá",
+        "chars": [
+          {
+            "ch": "柳",
+            "py": "liǔ",
+            "meaning": "ива"
+          },
+          {
+            "ch": "达",
+            "py": "dá",
+            "meaning": "достигать, добиваться"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "lyudmila",
     "name": "Людмила",
     "gender": "f",
@@ -4979,6 +6555,7 @@
     "short": [
       {
         "name": "Люда",
+        "slug": "lyuda",
         "variants": [
           {
             "cn": "柳达",
@@ -4988,6 +6565,7 @@
       },
       {
         "name": "Мила",
+        "slug": "mila",
         "variants": [
           {
             "cn": "米拉",
@@ -4998,6 +6576,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "mayya",
     "name": "Майя",
     "gender": "f",
@@ -5022,6 +6601,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "makar",
     "name": "Макар",
     "gender": "m",
@@ -5051,6 +6631,43 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "maks",
+    "name": "Макс",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "maksim",
+        "name": "Максим"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "马克斯",
+        "py": "mǎkèsī",
+        "chars": [
+          {
+            "ch": "马",
+            "py": "mǎ",
+            "meaning": "лошадь, конь"
+          },
+          {
+            "ch": "克",
+            "py": "kè",
+            "meaning": "суметь, одолеть; грамм"
+          },
+          {
+            "ch": "斯",
+            "py": "sī",
+            "meaning": "этот (книжн.); в именах — «с»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "maksim",
     "name": "Максим",
     "gender": "m",
@@ -5111,6 +6728,7 @@
     "short": [
       {
         "name": "Макс",
+        "slug": "maks",
         "variants": [
           {
             "cn": "马克斯",
@@ -5121,6 +6739,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "margarita",
     "name": "Маргарита",
     "gender": "f",
@@ -5217,6 +6836,7 @@
     "short": [
       {
         "name": "Рита",
+        "slug": "rita",
         "variants": [
           {
             "cn": "丽塔",
@@ -5227,6 +6847,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "marina",
     "name": "Марина",
     "gender": "f",
@@ -5319,6 +6940,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "mariya",
     "name": "Мария",
     "gender": "f",
@@ -5411,6 +7033,7 @@
     "short": [
       {
         "name": "Маша",
+        "slug": "masha",
         "variants": [
           {
             "cn": "玛莎",
@@ -5421,6 +7044,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "mark",
     "name": "Марк",
     "gender": "m",
@@ -5482,6 +7106,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "matvey",
     "name": "Матвей",
     "gender": "m",
@@ -5511,6 +7136,69 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "masha",
+    "name": "Маша",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "mariya",
+        "name": "Мария"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "玛莎",
+        "py": "mǎshā",
+        "chars": [
+          {
+            "ch": "玛",
+            "py": "mǎ",
+            "meaning": "агат (玛瑙)"
+          },
+          {
+            "ch": "莎",
+            "py": "shā",
+            "meaning": "осока; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "mila",
+    "name": "Мила",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "lyudmila",
+        "name": "Людмила"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "米拉",
+        "py": "mǐlā",
+        "chars": [
+          {
+            "ch": "米",
+            "py": "mǐ",
+            "meaning": "рис; метр"
+          },
+          {
+            "ch": "拉",
+            "py": "lā",
+            "meaning": "тянуть; в именах — «ла»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "milana",
     "name": "Милана",
     "gender": "f",
@@ -5540,6 +7228,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "miron",
     "name": "Мирон",
     "gender": "m",
@@ -5564,6 +7253,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "miroslava",
     "name": "Мирослава",
     "gender": "f",
@@ -5603,6 +7293,38 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "mitya",
+    "name": "Митя",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "dmitriy",
+        "name": "Дмитрий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "米嘉",
+        "py": "mǐjiā",
+        "chars": [
+          {
+            "ch": "米",
+            "py": "mǐ",
+            "meaning": "рис; метр"
+          },
+          {
+            "ch": "嘉",
+            "py": "jiā",
+            "meaning": "прекрасный, превосходный"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "mikhail",
     "name": "Михаил",
     "gender": "m",
@@ -5663,6 +7385,7 @@
     "short": [
       {
         "name": "Миша",
+        "slug": "misha",
         "variants": [
           {
             "cn": "米沙",
@@ -5673,6 +7396,38 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "misha",
+    "name": "Миша",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "mikhail",
+        "name": "Михаил"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "米沙",
+        "py": "mǐshā",
+        "chars": [
+          {
+            "ch": "米",
+            "py": "mǐ",
+            "meaning": "рис; метр"
+          },
+          {
+            "ch": "沙",
+            "py": "shā",
+            "meaning": "песок; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "nadezhda",
     "name": "Надежда",
     "gender": "f",
@@ -5733,6 +7488,7 @@
     "short": [
       {
         "name": "Надя",
+        "slug": "nadya",
         "variants": [
           {
             "cn": "娜佳",
@@ -5747,6 +7503,59 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "nadya",
+    "name": "Надя",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "nadezhda",
+        "name": "Надежда"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "娜佳",
+        "py": "nàjiā",
+        "chars": [
+          {
+            "ch": "娜",
+            "py": "nà",
+            "meaning": "изящная, грациозная; в женских именах — «на»"
+          },
+          {
+            "ch": "佳",
+            "py": "jiā",
+            "meaning": "прекрасный, хороший"
+          }
+        ]
+      },
+      {
+        "cn": "纳迪娅",
+        "py": "nàdíyà",
+        "chars": [
+          {
+            "ch": "纳",
+            "py": "nà",
+            "meaning": "принимать; вносить"
+          },
+          {
+            "ch": "迪",
+            "py": "dí",
+            "meaning": "наставлять, направлять"
+          },
+          {
+            "ch": "娅",
+            "py": "yà",
+            "meaning": "в женских именах передаёт звук «я»; исходное значение — свой, свояк"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "nazar",
     "name": "Назар",
     "gender": "m",
@@ -5776,6 +7585,64 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "nastya",
+    "name": "Настя",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "anastasiya",
+        "name": "Анастасия"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "纳斯佳",
+        "py": "nàsījiā",
+        "chars": [
+          {
+            "ch": "纳",
+            "py": "nà",
+            "meaning": "принимать; вносить"
+          },
+          {
+            "ch": "斯",
+            "py": "sī",
+            "meaning": "этот (книжн.); в именах — «с»"
+          },
+          {
+            "ch": "佳",
+            "py": "jiā",
+            "meaning": "прекрасный, хороший"
+          }
+        ]
+      },
+      {
+        "cn": "娜斯佳",
+        "py": "nàsījiā",
+        "chars": [
+          {
+            "ch": "娜",
+            "py": "nà",
+            "meaning": "изящная, грациозная; в женских именах — «на»"
+          },
+          {
+            "ch": "斯",
+            "py": "sī",
+            "meaning": "этот (книжн.); в именах — «с»"
+          },
+          {
+            "ch": "佳",
+            "py": "jiā",
+            "meaning": "прекрасный, хороший"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "natalya",
     "name": "Наталья",
     "gender": "f",
@@ -5836,6 +7703,7 @@
     "short": [
       {
         "name": "Наташа",
+        "slug": "natasha",
         "variants": [
           {
             "cn": "娜塔莎",
@@ -5850,6 +7718,64 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "natasha",
+    "name": "Наташа",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "natalya",
+        "name": "Наталья"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "娜塔莎",
+        "py": "nàtǎshā",
+        "chars": [
+          {
+            "ch": "娜",
+            "py": "nà",
+            "meaning": "изящная, грациозная; в женских именах — «на»"
+          },
+          {
+            "ch": "塔",
+            "py": "tǎ",
+            "meaning": "башня, пагода"
+          },
+          {
+            "ch": "莎",
+            "py": "shā",
+            "meaning": "осока; в именах — «ша»"
+          }
+        ]
+      },
+      {
+        "cn": "娜达莎",
+        "py": "nàdáshā",
+        "chars": [
+          {
+            "ch": "娜",
+            "py": "nà",
+            "meaning": "изящная, грациозная; в женских именах — «на»"
+          },
+          {
+            "ch": "达",
+            "py": "dá",
+            "meaning": "достигать, добиваться"
+          },
+          {
+            "ch": "莎",
+            "py": "shā",
+            "meaning": "осока; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "nelli",
     "name": "Нелли",
     "gender": "f",
@@ -5874,6 +7800,38 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "nika",
+    "name": "Ника",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "veronika",
+        "name": "Вероника"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "妮卡",
+        "py": "nīkǎ",
+        "chars": [
+          {
+            "ch": "妮",
+            "py": "nī",
+            "meaning": "девочка (ласк.)"
+          },
+          {
+            "ch": "卡",
+            "py": "kǎ",
+            "meaning": "карта, карточка"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "nikita",
     "name": "Никита",
     "gender": "m",
@@ -5903,6 +7861,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "nikolay",
     "name": "Николай",
     "gender": "m",
@@ -5995,6 +7954,7 @@
     "short": [
       {
         "name": "Коля",
+        "slug": "kolya",
         "variants": [
           {
             "cn": "科利亚",
@@ -6005,6 +7965,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "nina",
     "name": "Нина",
     "gender": "f",
@@ -6045,6 +8006,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "oksana",
     "name": "Оксана",
     "gender": "f",
@@ -6079,6 +8041,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "oleg",
     "name": "Олег",
     "gender": "m",
@@ -6129,6 +8092,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "olesya",
     "name": "Олеся",
     "gender": "f",
@@ -6210,6 +8174,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "olga",
     "name": "Ольга",
     "gender": "f",
@@ -6302,6 +8267,7 @@
     "short": [
       {
         "name": "Оля",
+        "slug": "olya",
         "variants": [
           {
             "cn": "奥利亚",
@@ -6312,6 +8278,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "olya",
+    "name": "Оля",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "olga",
+        "name": "Ольга"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "奥利亚",
+        "py": "àolìyà",
+        "chars": [
+          {
+            "ch": "奥",
+            "py": "ào",
+            "meaning": "глубокий, сокровенный; Австрия (奥地利)"
+          },
+          {
+            "ch": "利",
+            "py": "lì",
+            "meaning": "польза, выгода; острый"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "ostap",
     "name": "Остап",
     "gender": "m",
@@ -6346,6 +8349,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "pavel",
     "name": "Павел",
     "gender": "m",
@@ -6428,6 +8432,7 @@
     "short": [
       {
         "name": "Паша",
+        "slug": "pasha",
         "variants": [
           {
             "cn": "巴沙",
@@ -6442,6 +8447,54 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "pasha",
+    "name": "Паша",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "pavel",
+        "name": "Павел"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "巴沙",
+        "py": "bāshā",
+        "chars": [
+          {
+            "ch": "巴",
+            "py": "bā",
+            "meaning": "надеяться; Париж (巴黎)"
+          },
+          {
+            "ch": "沙",
+            "py": "shā",
+            "meaning": "песок; в именах — «ша»"
+          }
+        ]
+      },
+      {
+        "cn": "帕沙",
+        "py": "pàshā",
+        "chars": [
+          {
+            "ch": "帕",
+            "py": "pà",
+            "meaning": "платок"
+          },
+          {
+            "ch": "沙",
+            "py": "shā",
+            "meaning": "песок; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "pyotr",
     "name": "Пётр",
     "gender": "m",
@@ -6508,6 +8561,7 @@
     "short": [
       {
         "name": "Петя",
+        "slug": "petya",
         "variants": [
           {
             "cn": "佩佳",
@@ -6518,6 +8572,38 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "petya",
+    "name": "Петя",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "pyotr",
+        "name": "Пётр"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "佩佳",
+        "py": "pèijiā",
+        "chars": [
+          {
+            "ch": "佩",
+            "py": "pèi",
+            "meaning": "носить (на поясе); восхищаться"
+          },
+          {
+            "ch": "佳",
+            "py": "jiā",
+            "meaning": "прекрасный, хороший"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "platon",
     "name": "Платон",
     "gender": "m",
@@ -6547,6 +8633,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "polina",
     "name": "Полина",
     "gender": "f",
@@ -6639,6 +8726,7 @@
     "short": [
       {
         "name": "Поля",
+        "slug": "polya",
         "variants": [
           {
             "cn": "波利亚",
@@ -6649,6 +8737,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "polya",
+    "name": "Поля",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "polina",
+        "name": "Полина"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "波利亚",
+        "py": "pōlìyà",
+        "chars": [
+          {
+            "ch": "波",
+            "py": "pō",
+            "meaning": "волна"
+          },
+          {
+            "ch": "利",
+            "py": "lì",
+            "meaning": "польза, выгода; острый"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "raisa",
     "name": "Раиса",
     "gender": "f",
@@ -6678,6 +8803,7 @@
     "short": [
       {
         "name": "Рая",
+        "slug": "raya",
         "variants": [
           {
             "cn": "拉娅",
@@ -6688,6 +8814,38 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "raya",
+    "name": "Рая",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "raisa",
+        "name": "Раиса"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "拉娅",
+        "py": "lāyà",
+        "chars": [
+          {
+            "ch": "拉",
+            "py": "lā",
+            "meaning": "тянуть; в именах — «ла»"
+          },
+          {
+            "ch": "娅",
+            "py": "yà",
+            "meaning": "в женских именах передаёт звук «я»; исходное значение — свой, свояк"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "regina",
     "name": "Регина",
     "gender": "f",
@@ -6717,6 +8875,69 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "rita",
+    "name": "Рита",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "margarita",
+        "name": "Маргарита"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "丽塔",
+        "py": "lìtǎ",
+        "chars": [
+          {
+            "ch": "丽",
+            "py": "lì",
+            "meaning": "красивый, прекрасный"
+          },
+          {
+            "ch": "塔",
+            "py": "tǎ",
+            "meaning": "башня, пагода"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "roma",
+    "name": "Рома",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "roman",
+        "name": "Роман"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "罗马",
+        "py": "luómǎ",
+        "chars": [
+          {
+            "ch": "罗",
+            "py": "luó",
+            "meaning": "сеть; в именах — «ро», «ло»"
+          },
+          {
+            "ch": "马",
+            "py": "mǎ",
+            "meaning": "лошадь, конь"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "roman",
     "name": "Роман",
     "gender": "m",
@@ -6741,6 +8962,7 @@
     "short": [
       {
         "name": "Рома",
+        "slug": "roma",
         "variants": [
           {
             "cn": "罗马",
@@ -6751,6 +8973,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "rostislav",
     "name": "Ростислав",
     "gender": "m",
@@ -6795,6 +9018,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "ruslan",
     "name": "Руслан",
     "gender": "m",
@@ -6845,6 +9069,43 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "savva",
+    "name": "Савва",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "saveliy",
+        "name": "Савелий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "萨夫瓦",
+        "py": "sàfūwǎ",
+        "chars": [
+          {
+            "ch": "萨",
+            "py": "sà",
+            "meaning": "в именах — «са»; бодхисаттва (菩萨)"
+          },
+          {
+            "ch": "夫",
+            "py": "fū",
+            "meaning": "муж; мужчина"
+          },
+          {
+            "ch": "瓦",
+            "py": "wǎ",
+            "meaning": "черепица; ватт"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "saveliy",
     "name": "Савелий",
     "gender": "m",
@@ -6874,6 +9135,7 @@
     "short": [
       {
         "name": "Савва",
+        "slug": "savva",
         "variants": [
           {
             "cn": "萨夫瓦",
@@ -6884,6 +9146,94 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "sasha",
+    "name": "Саша",
+    "gender": "mf",
+    "of": [
+      {
+        "slug": "aleksandr",
+        "name": "Александр"
+      },
+      {
+        "slug": "aleksandra",
+        "name": "Александра"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "萨沙",
+        "py": "sàshā",
+        "chars": [
+          {
+            "ch": "萨",
+            "py": "sà",
+            "meaning": "в именах — «са»; бодхисаттва (菩萨)"
+          },
+          {
+            "ch": "沙",
+            "py": "shā",
+            "meaning": "песок; в именах — «ша»"
+          }
+        ]
+      },
+      {
+        "cn": "莎莎",
+        "py": "shāshā",
+        "chars": [
+          {
+            "ch": "莎",
+            "py": "shā",
+            "meaning": "осока; в именах — «ша»"
+          },
+          {
+            "ch": "莎",
+            "py": "shā",
+            "meaning": "осока; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "sveta",
+    "name": "Света",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "svetlana",
+        "name": "Светлана"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "斯韦塔",
+        "py": "sīwéitǎ",
+        "chars": [
+          {
+            "ch": "斯",
+            "py": "sī",
+            "meaning": "этот (книжн.); в именах — «с»"
+          },
+          {
+            "ch": "韦",
+            "py": "wéi",
+            "meaning": "выделанная кожа; в именах — «ве»"
+          },
+          {
+            "ch": "塔",
+            "py": "tǎ",
+            "meaning": "башня, пагода"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "svetlana",
     "name": "Светлана",
     "gender": "f",
@@ -6954,6 +9304,7 @@
     "short": [
       {
         "name": "Света",
+        "slug": "sveta",
         "variants": [
           {
             "cn": "斯韦塔",
@@ -6964,6 +9315,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "svyatoslav",
     "name": "Святослав",
     "gender": "m",
@@ -7013,6 +9365,69 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "seva",
+    "name": "Сева",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "vsevolod",
+        "name": "Всеволод"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "谢瓦",
+        "py": "xièwǎ",
+        "chars": [
+          {
+            "ch": "谢",
+            "py": "xiè",
+            "meaning": "благодарить (谢谢 — спасибо)"
+          },
+          {
+            "ch": "瓦",
+            "py": "wǎ",
+            "meaning": "черепица; ватт"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "syoma",
+    "name": "Сёма",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "semyon",
+        "name": "Семён"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "肖马",
+        "py": "xiàomǎ",
+        "chars": [
+          {
+            "ch": "肖",
+            "py": "xiào",
+            "meaning": "похожий; в именах — «сё»"
+          },
+          {
+            "ch": "马",
+            "py": "mǎ",
+            "meaning": "лошадь, конь"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "semyon",
     "name": "Семён",
     "gender": "m",
@@ -7037,6 +9452,7 @@
     "short": [
       {
         "name": "Сёма",
+        "slug": "syoma",
         "variants": [
           {
             "cn": "肖马",
@@ -7047,6 +9463,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "senya",
+    "name": "Сеня",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "arseniy",
+        "name": "Арсений"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "谢尼亚",
+        "py": "xièníyà",
+        "chars": [
+          {
+            "ch": "谢",
+            "py": "xiè",
+            "meaning": "благодарить (谢谢 — спасибо)"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "sergey",
     "name": "Сергей",
     "gender": "m",
@@ -7076,6 +9529,7 @@
     "short": [
       {
         "name": "Серёжа",
+        "slug": "seryozha",
         "variants": [
           {
             "cn": "谢廖扎",
@@ -7090,6 +9544,100 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "seryozha",
+    "name": "Серёжа",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "sergey",
+        "name": "Сергей"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "谢廖扎",
+        "py": "xièliàozhà",
+        "chars": [
+          {
+            "ch": "谢",
+            "py": "xiè",
+            "meaning": "благодарить (谢谢 — спасибо)"
+          },
+          {
+            "ch": "廖",
+            "py": "liào",
+            "meaning": "фамилия Ляо; в именах — «лё»"
+          },
+          {
+            "ch": "扎",
+            "py": "zhà",
+            "meaning": "колоть; в именах — «за»"
+          }
+        ]
+      },
+      {
+        "cn": "谢廖沙",
+        "py": "xièliáoshā",
+        "chars": [
+          {
+            "ch": "谢",
+            "py": "xiè",
+            "meaning": "благодарить (谢谢 — спасибо)"
+          },
+          {
+            "ch": "廖",
+            "py": "liáo",
+            "meaning": "фамилия Ляо; в именах — «лё»"
+          },
+          {
+            "ch": "沙",
+            "py": "shā",
+            "meaning": "песок; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "slava",
+    "name": "Слава",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "vyacheslav",
+        "name": "Вячеслав"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "斯拉瓦",
+        "py": "sīlāwǎ",
+        "chars": [
+          {
+            "ch": "斯",
+            "py": "sī",
+            "meaning": "этот (книжн.); в именах — «с»"
+          },
+          {
+            "ch": "拉",
+            "py": "lā",
+            "meaning": "тянуть; в именах — «ла»"
+          },
+          {
+            "ch": "瓦",
+            "py": "wǎ",
+            "meaning": "черепица; ватт"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "snezhana",
     "name": "Снежана",
     "gender": "f",
@@ -7124,6 +9672,68 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "sonya",
+    "name": "Соня",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "sofiya",
+        "name": "София"
+      },
+      {
+        "slug": "sofya",
+        "name": "Софья"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "索尼亚",
+        "py": "suǒníyà",
+        "chars": [
+          {
+            "ch": "索",
+            "py": "suǒ",
+            "meaning": "верёвка; искать"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      },
+      {
+        "cn": "索尼娅",
+        "py": "suǒníyà",
+        "chars": [
+          {
+            "ch": "索",
+            "py": "suǒ",
+            "meaning": "верёвка; искать"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "娅",
+            "py": "yà",
+            "meaning": "в женских именах передаёт звук «я»; исходное значение — свой, свояк"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "sofiya",
     "name": "София",
     "gender": "f",
@@ -7174,6 +9784,7 @@
     "short": [
       {
         "name": "Соня",
+        "slug": "sonya",
         "variants": [
           {
             "cn": "索尼亚",
@@ -7188,6 +9799,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "sofya",
     "name": "Софья",
     "gender": "f",
@@ -7217,6 +9829,7 @@
     "short": [
       {
         "name": "Соня",
+        "slug": "sonya",
         "variants": [
           {
             "cn": "索尼亚",
@@ -7231,6 +9844,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "stanislav",
     "name": "Станислав",
     "gender": "m",
@@ -7275,6 +9889,7 @@
     "short": [
       {
         "name": "Стас",
+        "slug": "stas",
         "variants": [
           {
             "cn": "斯塔斯",
@@ -7285,6 +9900,79 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "stas",
+    "name": "Стас",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "stanislav",
+        "name": "Станислав"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "斯塔斯",
+        "py": "sītǎsī",
+        "chars": [
+          {
+            "ch": "斯",
+            "py": "sī",
+            "meaning": "этот (книжн.); в именах — «с»"
+          },
+          {
+            "ch": "塔",
+            "py": "tǎ",
+            "meaning": "башня, пагода"
+          },
+          {
+            "ch": "斯",
+            "py": "sī",
+            "meaning": "этот (книжн.); в именах — «с»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "styopa",
+    "name": "Стёпа",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "stepan",
+        "name": "Степан"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "斯乔帕",
+        "py": "sīqiáopà",
+        "chars": [
+          {
+            "ch": "斯",
+            "py": "sī",
+            "meaning": "этот (книжн.); в именах — «с»"
+          },
+          {
+            "ch": "乔",
+            "py": "qiáo",
+            "meaning": "высокий (о дереве)"
+          },
+          {
+            "ch": "帕",
+            "py": "pà",
+            "meaning": "платок"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "stepan",
     "name": "Степан",
     "gender": "m",
@@ -7314,6 +10002,7 @@
     "short": [
       {
         "name": "Стёпа",
+        "slug": "styopa",
         "variants": [
           {
             "cn": "斯乔帕",
@@ -7324,6 +10013,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "stefaniya",
     "name": "Стефания",
     "gender": "f",
@@ -7363,6 +10053,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "taisiya",
     "name": "Таисия",
     "gender": "f",
@@ -7397,6 +10088,7 @@
     "short": [
       {
         "name": "Тася",
+        "slug": "tasya",
         "variants": [
           {
             "cn": "塔夏",
@@ -7407,6 +10099,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "tamara",
     "name": "Тамара",
     "gender": "f",
@@ -7436,6 +10129,111 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "tanya",
+    "name": "Таня",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "tatyana",
+        "name": "Татьяна"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "塔尼亚",
+        "py": "tǎníyà",
+        "chars": [
+          {
+            "ch": "塔",
+            "py": "tǎ",
+            "meaning": "башня, пагода"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      },
+      {
+        "cn": "丹娘",
+        "py": "dānniáng",
+        "chars": [
+          {
+            "ch": "丹",
+            "py": "dān",
+            "meaning": "алый, красный; пилюля"
+          },
+          {
+            "ch": "娘",
+            "py": "niáng",
+            "meaning": "девушка; мать"
+          }
+        ]
+      },
+      {
+        "cn": "达尼亚",
+        "py": "dáníyà",
+        "chars": [
+          {
+            "ch": "达",
+            "py": "dá",
+            "meaning": "достигать, добиваться"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "tasya",
+    "name": "Тася",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "taisiya",
+        "name": "Таисия"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "塔夏",
+        "py": "tǎxià",
+        "chars": [
+          {
+            "ch": "塔",
+            "py": "tǎ",
+            "meaning": "башня, пагода"
+          },
+          {
+            "ch": "夏",
+            "py": "xià",
+            "meaning": "лето"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "tatyana",
     "name": "Татьяна",
     "gender": "f",
@@ -7548,6 +10346,7 @@
     "short": [
       {
         "name": "Таня",
+        "slug": "tanya",
         "variants": [
           {
             "cn": "塔尼亚",
@@ -7566,6 +10365,69 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "tyoma",
+    "name": "Тёма",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "artyom",
+        "name": "Артём"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "乔马",
+        "py": "qiáomǎ",
+        "chars": [
+          {
+            "ch": "乔",
+            "py": "qiáo",
+            "meaning": "высокий (о дереве)"
+          },
+          {
+            "ch": "马",
+            "py": "mǎ",
+            "meaning": "лошадь, конь"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "tima",
+    "name": "Тима",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "timofey",
+        "name": "Тимофей"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "季马",
+        "py": "jìmǎ",
+        "chars": [
+          {
+            "ch": "季",
+            "py": "jì",
+            "meaning": "сезон, время года"
+          },
+          {
+            "ch": "马",
+            "py": "mǎ",
+            "meaning": "лошадь, конь"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "timofey",
     "name": "Тимофей",
     "gender": "m",
@@ -7616,6 +10478,7 @@
     "short": [
       {
         "name": "Тима",
+        "slug": "tima",
         "variants": [
           {
             "cn": "季马",
@@ -7626,6 +10489,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "timur",
     "name": "Тимур",
     "gender": "m",
@@ -7655,6 +10519,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "tikhon",
     "name": "Тихон",
     "gender": "m",
@@ -7679,6 +10544,110 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "tolya",
+    "name": "Толя",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "anatoliy",
+        "name": "Анатолий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "托利亚",
+        "py": "tuōlìyà",
+        "chars": [
+          {
+            "ch": "托",
+            "py": "tuō",
+            "meaning": "поддерживать; поручать"
+          },
+          {
+            "ch": "利",
+            "py": "lì",
+            "meaning": "польза, выгода; острый"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "tonya",
+    "name": "Тоня",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "antonina",
+        "name": "Антонина"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "托尼娅",
+        "py": "tuōníyà",
+        "chars": [
+          {
+            "ch": "托",
+            "py": "tuō",
+            "meaning": "поддерживать; поручать"
+          },
+          {
+            "ch": "尼",
+            "py": "ní",
+            "meaning": "в иностранных словах — «ни»; также буддийская монахиня"
+          },
+          {
+            "ch": "娅",
+            "py": "yà",
+            "meaning": "в женских именах передаёт звук «я»; исходное значение — свой, свояк"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "tosha",
+    "name": "Тоша",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "anton",
+        "name": "Антон"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "托沙",
+        "py": "tuōshā",
+        "chars": [
+          {
+            "ch": "托",
+            "py": "tuō",
+            "meaning": "поддерживать; поручать"
+          },
+          {
+            "ch": "沙",
+            "py": "shā",
+            "meaning": "песок; в именах — «ша»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "ulyana",
     "name": "Ульяна",
     "gender": "f",
@@ -7713,6 +10682,7 @@
     "short": [
       {
         "name": "Уля",
+        "slug": "ulya",
         "variants": [
           {
             "cn": "乌利亚",
@@ -7723,6 +10693,43 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "ulya",
+    "name": "Уля",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "ulyana",
+        "name": "Ульяна"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "乌利亚",
+        "py": "wūlìyà",
+        "chars": [
+          {
+            "ch": "乌",
+            "py": "wū",
+            "meaning": "в именах — «у»; ворона, чёрный (книжн.)"
+          },
+          {
+            "ch": "利",
+            "py": "lì",
+            "meaning": "польза, выгода; острый"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "fyodor",
     "name": "Фёдор",
     "gender": "m",
@@ -7778,6 +10785,7 @@
     "short": [
       {
         "name": "Федя",
+        "slug": "fedya",
         "variants": [
           {
             "cn": "费佳",
@@ -7788,6 +10796,38 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "fedya",
+    "name": "Федя",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "fyodor",
+        "name": "Фёдор"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "费佳",
+        "py": "fèijiā",
+        "chars": [
+          {
+            "ch": "费",
+            "py": "fèi",
+            "meaning": "расходы, плата"
+          },
+          {
+            "ch": "佳",
+            "py": "jiā",
+            "meaning": "прекрасный, хороший"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "filipp",
     "name": "Филипп",
     "gender": "m",
@@ -7854,6 +10894,38 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "shura",
+    "name": "Шура",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "aleksandr",
+        "name": "Александр"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "舒拉",
+        "py": "shūlā",
+        "chars": [
+          {
+            "ch": "舒",
+            "py": "shū",
+            "meaning": "свободный, удобный; в именах — «шу»"
+          },
+          {
+            "ch": "拉",
+            "py": "lā",
+            "meaning": "тянуть; в именах — «ла»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "evelina",
     "name": "Эвелина",
     "gender": "f",
@@ -7888,6 +10960,43 @@
     "short": []
   },
   {
+    "kind": "short",
+    "slug": "edik",
+    "name": "Эдик",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "eduard",
+        "name": "Эдуард"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "埃季克",
+        "py": "āijìkè",
+        "chars": [
+          {
+            "ch": "埃",
+            "py": "āi",
+            "meaning": "в именах — «э»; Египет (埃及)"
+          },
+          {
+            "ch": "季",
+            "py": "jì",
+            "meaning": "сезон, время года"
+          },
+          {
+            "ch": "克",
+            "py": "kè",
+            "meaning": "суметь, одолеть; грамм"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "eduard",
     "name": "Эдуард",
     "gender": "m",
@@ -7917,6 +11026,7 @@
     "short": [
       {
         "name": "Эдик",
+        "slug": "edik",
         "variants": [
           {
             "cn": "埃季克",
@@ -7927,6 +11037,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "elina",
     "name": "Элина",
     "gender": "f",
@@ -7956,6 +11067,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "elvira",
     "name": "Эльвира",
     "gender": "f",
@@ -7990,6 +11102,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "emiliya",
     "name": "Эмилия",
     "gender": "f",
@@ -8024,6 +11137,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "emil",
     "name": "Эмиль",
     "gender": "m",
@@ -8116,6 +11230,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "erik",
     "name": "Эрик",
     "gender": "m",
@@ -8166,6 +11281,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "yuliya",
     "name": "Юлия",
     "gender": "f",
@@ -8258,6 +11374,7 @@
     "short": [
       {
         "name": "Юля",
+        "slug": "yulya",
         "variants": [
           {
             "cn": "尤利亚",
@@ -8268,6 +11385,74 @@
     ]
   },
   {
+    "kind": "short",
+    "slug": "yulya",
+    "name": "Юля",
+    "gender": "f",
+    "of": [
+      {
+        "slug": "yuliya",
+        "name": "Юлия"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "尤利亚",
+        "py": "yóulìyà",
+        "chars": [
+          {
+            "ch": "尤",
+            "py": "yóu",
+            "meaning": "особенно; выдающийся"
+          },
+          {
+            "ch": "利",
+            "py": "lì",
+            "meaning": "польза, выгода; острый"
+          },
+          {
+            "ch": "亚",
+            "py": "yà",
+            "meaning": "Азия; второй (亚军 — второе место)"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "short",
+    "slug": "yura",
+    "name": "Юра",
+    "gender": "m",
+    "of": [
+      {
+        "slug": "yuriy",
+        "name": "Юрий"
+      }
+    ],
+    "variants": [
+      {
+        "cn": "尤拉",
+        "py": "yóulā",
+        "chars": [
+          {
+            "ch": "尤",
+            "py": "yóu",
+            "meaning": "особенно; выдающийся"
+          },
+          {
+            "ch": "拉",
+            "py": "lā",
+            "meaning": "тянуть; в именах — «ла»"
+          }
+        ]
+      }
+    ],
+    "short": []
+  },
+  {
+    "kind": "full",
     "slug": "yuriy",
     "name": "Юрий",
     "gender": "m",
@@ -8308,6 +11493,7 @@
     "short": [
       {
         "name": "Юра",
+        "slug": "yura",
         "variants": [
           {
             "cn": "尤拉",
@@ -8318,6 +11504,7 @@
     ]
   },
   {
+    "kind": "full",
     "slug": "yakov",
     "name": "Яков",
     "gender": "m",
@@ -8389,6 +11576,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "yan",
     "name": "Ян",
     "gender": "m",
@@ -8408,6 +11596,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "yana",
     "name": "Яна",
     "gender": "f",
@@ -8432,6 +11621,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "yaroslav",
     "name": "Ярослав",
     "gender": "m",
@@ -8502,6 +11692,7 @@
     "short": []
   },
   {
+    "kind": "full",
     "slug": "yaroslava",
     "name": "Ярослава",
     "gender": "f",
