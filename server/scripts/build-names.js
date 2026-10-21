@@ -8,6 +8,9 @@
  *                                                   // found in the dictionary; py is optional
  *     meanings: { "娅": "..." }                // replaces a character's short meaning
  *   }
+ * - content/names/char-meanings.json  { "亚": "Азия; второй" }: curated meanings of the characters
+ *   used in names, the common meaning first; the dictionary's first meaning is only a fallback
+ *   ("亚" -> "уступать, быть хуже") for characters missing here, which the script lists
  *
  * Variants come from the dictionary: the ru -> cn entry of the name (russianwords) gives the order,
  * and a variant is kept only if its cn -> ru entry (dictionaries) names it as a name ("имя"), so
@@ -183,6 +186,8 @@ async function run() {
       .map((v) => [v.cn, v.py]),
   );
   const overrideMeanings = overrides.meanings || {};
+  const charMeanings = readJson('char-meanings.json', {});
+  const uncurated = new Set();
 
   const MONGO_DB = process.env.MONGO_IN_CONTAINER
     ? process.env.CONTAINER_MONGO_DB
@@ -229,6 +234,11 @@ async function run() {
     byChinese.set(d.chinese, d);
   }
 
+  const dictMeaning = (ch) => {
+    uncurated.add(ch);
+    return shortMeaning(byChinese.get(ch)?.russian, byChinese);
+  };
+
   const toVariant = async (cn, withChars) => {
     // "shāshā,sāsā" -> the first reading
     const dictPy = (byChinese.get(cn)?.pinyin || '').split(/[,;]/)[0].replace(/\s+/g, '');
@@ -242,7 +252,7 @@ async function run() {
         [...cn].map(async (ch, i) => ({
           ch,
           py: syllables.length === cn.length ? syllables[i] : await mdbgPinyin(ch),
-          meaning: overrideMeanings[ch] ?? shortMeaning(byChinese.get(ch)?.russian, byChinese),
+          meaning: overrideMeanings[ch] ?? charMeanings[ch] ?? dictMeaning(ch),
         })),
       );
     }
@@ -291,6 +301,9 @@ async function run() {
   );
   const withoutPinyin = names.flatMap((n) => n.variants).filter((v) => !v.py);
   if (withoutPinyin.length) console.log('no pinyin:', withoutPinyin.map((v) => v.cn).join(', '));
+  if (uncurated.size) {
+    console.log(`no curated meaning (add to char-meanings.json): ${[...uncurated].join(' ')}`);
+  }
   const warned = names.filter((n) => n.variants.some((v) => v.warn));
   if (warned.length) console.log('bad characters in:', warned.map((n) => n.name).join(', '));
 }
