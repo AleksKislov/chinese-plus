@@ -1,18 +1,22 @@
-import { component$ } from '@builder.io/qwik';
+import { type JSXOutput, component$ } from '@builder.io/qwik';
 import { FeatureCard } from './feature-card';
-import { Link } from '@builder.io/qwik-city';
-import {
-  academicCapExtraBigSvg,
-  bookExtraBigSvg,
-  graphExtraBigSvg,
-  listExtraBigSvg,
-} from '../common/media/svg';
+import { academicCapExtraBigSvg, bookExtraBigSvg, graphExtraBigSvg } from '../common/media/svg';
 import { WordTooltip, moreInfoModalId } from '../common/tooltips/word-tooltip';
 import { MoreInfoModal } from '../common/modals/more-info-modal';
 
-export const featuresArr = [
+type FeatureLink = { href: string; text: string };
+
+export type Feature = {
+  title: string;
+  pic: JSXOutput;
+  desc: string;
+  links: FeatureLink[];
+  animatedChar?: boolean; // pic is the stroke animation container
+};
+
+export const featuresArr: Feature[] = [
   {
-    title: 'Всплывающий перевод',
+    title: 'Читаем и смотрим',
     pic: (
       <span class="text-4xl">
         <WordTooltip
@@ -28,118 +32,69 @@ export const featuresArr = [
         />
       </span>
     ),
-    desc: (
-      <p>
-        Все{' '}
-        <Link prefetch="js" href="/read/texts" class="link link-secondary">
-          тексты
-        </Link>
-        ,{' '}
-        <Link prefetch="js" href="/read/books" class="link link-secondary">
-          книги
-        </Link>{' '}
-        и{' '}
-        <Link prefetch="js" href="/watch/videos" class="link link-secondary">
-          видео
-        </Link>{' '}
-        с параллельным переводом и переводом каждого слова. Кликните на{' '}
-        <span class="text-secondary">我</span>
-      </p>
-    ),
+    desc: 'Тексты, книги и видео с параллельным переводом. Кликните на любое слово — например, на 我 — и увидите перевод.',
+    links: [
+      { href: '/read/texts', text: 'Тексты с переводом' },
+      { href: '/read/books', text: 'Книги' },
+      { href: '/watch/videos', text: 'Видео с субтитрами' },
+      { href: '/segment', text: 'Сегментатор текста' },
+    ],
   },
   {
-    title: 'Делимся текстами и видео',
-    pic: bookExtraBigSvg,
-    desc: (
-      <p>
-        Пользователи регулярно добавляют новые{' '}
-        <Link prefetch="js" href="/read/texts" class="link link-secondary">
-          тексты
-        </Link>{' '}
-        и{' '}
-        <Link prefetch="js" href="/watch/videos" class="link link-secondary">
-          видео
-        </Link>
-        . Поделитесь и Вы своими переводами
-      </p>
-    ),
-  },
-  {
-    title: 'Личный вокабуляр',
-    pic: listExtraBigSvg,
-    desc: (
-      <p>
-        Любые слова из лексики{' '}
-        <Link prefetch="js" href="/hsk/2/table" class="link link-secondary">
-          HSK
-        </Link>
-        ,{' '}
-        <Link prefetch="js" href="/read/texts" class="link link-secondary">
-          текстов
-        </Link>{' '}
-        или{' '}
-        <Link prefetch="js" href="/dictionary" class="link link-secondary">
-          словаря
-        </Link>{' '}
-        можно добавить в личный вокабуляр и повторять отдельно
-      </p>
-    ),
-  },
-  {
-    title: 'Ценное для начинающих',
+    title: 'Подготовка к HSK',
     pic: academicCapExtraBigSvg,
-    desc: (
-      <p>
-        Рекомендации{' '}
-        <Link prefetch="js" href="/start/how-to-start" class="link link-secondary">
-          с чего начать
-        </Link>
-        , озвучка{' '}
-        <Link prefetch="js" href="/hsk/2/table" class="link link-secondary">
-          HSK
-        </Link>
-        -лексики и{' '}
-        <Link prefetch="js" href="/start/pinyin-chart" class="link link-secondary">
-          пиньиня
-        </Link>{' '}
-        (плюс{' '}
-        <Link prefetch="js" href="/start/pinyin-tests" class="link link-secondary">
-          тесты
-        </Link>
-        ), уроки по{' '}
-        <Link prefetch="js" href="/watch/phonetics-lessons" class="link link-secondary">
-          фонетике
-        </Link>{' '}
-        и{' '}
-        <Link prefetch="js" href="/watch/characters-lessons" class="link link-secondary">
-          иероглифике
-        </Link>
-      </p>
-    ),
+    desc: 'Слова HSK 3.0 и HSK 2.0 с озвучкой и тестами, грамматика по уровням и экзамены HSK онлайн.',
+    links: [
+      { href: '/hsk/3/table', text: 'Слова HSK 3.0' },
+      { href: '/hsk/2/table', text: 'Слова HSK 2.0' },
+      { href: '/hsk/3/tests', text: 'Тесты на слова' },
+      { href: '/hsk/grammar/', text: 'Грамматика HSK' },
+      { href: '/hsk/exams/', text: 'Экзамены HSK' },
+    ],
   },
   {
     title: 'Словарь с анимацией',
     pic: <div id="showCharDiv"></div>,
-
-    desc: (
-      <p>
-        Каждый иероглиф в{' '}
-        <Link prefetch="js" href="/dictionary" class="link link-secondary">
-          словаре
-        </Link>{' '}
-        снабжен анимированным порядком написания черт иероглифа
-      </p>
-    ),
+    animatedChar: true,
+    desc: 'Поиск по иероглифам, пиньиню, русским словам и шаблону со *, рукописный ввод. У каждого иероглифа — порядок черт, у слов HSK — уровень.',
+    links: [
+      { href: '/dictionary', text: 'Китайско-русский словарь' },
+      { href: '/hsk/3/search', text: 'Поиск по словам HSK' },
+    ],
   },
   {
-    title: 'Дневник чтения',
+    title: 'С чего начать',
+    pic: bookExtraBigSvg,
+    desc: 'Пошаговый план для начинающих, произношение и тоны с озвучкой носителем и тестами.',
+    links: [
+      { href: '/start/how-to-start', text: 'С чего начать' },
+      { href: '/start/pinyin-chart', text: 'Таблица пиньиня' },
+      { href: '/start/pinyin-tests', text: 'Тесты на пиньинь' },
+      { href: '/start/tones-practice', text: 'Практика тонов' },
+      { href: '/watch/phonetics-lessons', text: 'Уроки фонетики' },
+    ],
+  },
+  {
+    title: 'Иероглифы',
+    pic: <span class="text-5xl leading-none">写</span>,
+    desc: 'Черты и ключи, уроки иероглифики, прописи с сеткой 田字格 для печати и русские имена по-китайски.',
+    links: [
+      { href: '/start/strokes', text: 'Черты' },
+      { href: '/start/radicals', text: 'Таблица ключей' },
+      { href: '/watch/characters-lessons', text: 'Уроки иероглифики' },
+      { href: '/propisi/', text: 'Прописи иероглифов' },
+      { href: '/names/', text: 'Имя на китайском' },
+    ],
+  },
+  {
+    title: 'Личный кабинет',
     pic: graphExtraBigSvg,
-    desc: (
-      <p>
-        Ставьте себе суточные цели, отмечайте сколько иероглифов прочитано, следите за графиком
-        "успеваемости"
-      </p>
-    ),
+    desc: 'После регистрации: личный словарик для повторения слов, дневник чтения с суточной целью и свои тексты и видео для других учеников.',
+    links: [
+      { href: '/me/words', text: 'Мой словарик' },
+      { href: '/me', text: 'Дневник чтения' },
+      { href: '/create', text: 'Добавить текст или видео' },
+    ],
   },
 ];
 
@@ -147,8 +102,8 @@ export const Features = component$(() => {
   return (
     <>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {featuresArr.map((feat, ind) => (
-          <FeatureCard key={ind} title={feat.title} ind={ind} />
+        {featuresArr.map((_, ind) => (
+          <FeatureCard key={ind} ind={ind} />
         ))}
       </div>
       <MoreInfoModal

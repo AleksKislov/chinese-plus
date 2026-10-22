@@ -1,28 +1,23 @@
 import { component$ } from '@builder.io/qwik';
 import CONST_URLS from '~/misc/consts/urls';
+import { getRutubeEmbedUrl } from '~/misc/helpers/content/rutube';
 
-// Self-hosted (Yandex Object Storage) instead of a YouTube embed: YouTube is heavily
-// throttled/unreachable without a VPN for a large share of our Russian audience, which made
-// this hero video effectively broken for them.
+// Rutube instead of YouTube: YouTube is heavily throttled/unreachable without a VPN for a large
+// share of our Russian audience. The iframe loads lazily - the video is below the feature cards,
+// so the heavy player doesn't slow down the first screen.
 export const LandingVideo = component$(() => {
   return (
-    <div class="grid grid-cols-6 my-6">
-      <div></div>
-
-      <div class="lg:col-span-4 col-span-6">
-        <div class="aspect-w-16 aspect-h-9">
-          <video
-            class="rounded-lg shadow-lg w-full h-full"
-            controls
-            preload="metadata"
-            poster={CONST_URLS.landingVideoPoster}
-          >
-            <source src={CONST_URLS.landingVideoUrl} type="video/mp4" />
-          </video>
-        </div>
+    <div class="my-8 mx-auto w-full max-w-2xl">
+      <div class="aspect-w-16 aspect-h-9">
+        <iframe
+          src={getRutubeEmbedUrl(CONST_URLS.landingRutubeId)}
+          title="Как устроен Chinese+"
+          loading="lazy"
+          allow="clipboard-write; autoplay; fullscreen; encrypted-media; picture-in-picture"
+          allowFullscreen
+          class="rounded-lg shadow-lg w-full h-full border-0"
+        />
       </div>
-
-      <div></div>
     </div>
   );
 });
