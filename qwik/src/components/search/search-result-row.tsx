@@ -5,15 +5,17 @@ import { moreInfoModalId } from '../common/tooltips/word-tooltip';
 import { HideBtnsEnum } from '../hsk/hide-buttons';
 import { Link } from '@builder.io/qwik-city';
 import { OwnWordBtn } from '../common/tooltips/own-word-btn';
+import { HskLevelBadge } from '../hsk/hsk-level-badge';
 
 type SearchResultRowType = {
   word: string | DictWord;
   hideBtnsSig: Signal<string[]>;
   currentWord: Signal<DictWord | undefined>;
+  hskLevel?: string;
 };
 
 export const SearchResultRow = component$(
-  ({ word, hideBtnsSig, currentWord }: SearchResultRowType) => {
+  ({ word, hideBtnsSig, currentWord, hskLevel }: SearchResultRowType) => {
     const chinese = typeof word === 'string' ? word : word.chinese;
     const tradChinese = typeof word === 'string' ? undefined : word.tradChinese;
     const showTrad = tradChinese && tradChinese !== chinese;
@@ -27,6 +29,7 @@ export const SearchResultRow = component$(
                 <h2 class="w-24">{chinese}</h2>
                 {showTrad && <div class="text-sm opacity-60">{tradChinese}</div>}
               </Link>
+              {hskLevel && <HskLevelBadge level={hskLevel} />}
             </td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.py) && (

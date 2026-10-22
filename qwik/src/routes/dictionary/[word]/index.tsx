@@ -52,6 +52,7 @@ import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
 import { Breadcrumbs, truncateCrumb } from '~/components/common/layout/breadcrumbs';
 import { nameUrl } from '~/components/names/types';
+import { type HskLevels, HskLevelBadge } from '~/components/hsk/hsk-level-badge';
 
 export const useGetRuWord = routeLoader$(async ({ params }): Promise<RuWord | null> => {
   if (!isRussian(params.word)) return null;
@@ -86,6 +87,20 @@ export const useLoadTranslation = routeLoader$(
   },
 );
 
+const singleChinese = (word: string | DictWord) => (typeof word === 'string' ? word : word.chinese);
+
+// HSK 3.0 levels of every chinese word the page shows (search result, wildcard and pinyin lists)
+export const useGetHskLevels = routeLoader$(async ({ resolveValue }): Promise<HskLevels> => {
+  const lists = await Promise.all([
+    resolveValue(useLoadTranslation),
+    resolveValue(useGetWildcardWords),
+    resolveValue(useGetPinyinWords),
+  ]);
+  const chinese = lists.flatMap((list) => list || []).map(singleChinese);
+  if (!chinese.length) return {};
+  return ApiService.post('/api/newhskwords/levels', [...new Set(chinese)], undefined, {});
+});
+
 export default component$(() => {
   const CHAR_SVG_DIV_ID = 'showCharDiv';
   const loc = useLocation();
@@ -94,6 +109,7 @@ export default component$(() => {
   const ruWord = useGetRuWord();
   const wildcardWords = useGetWildcardWords();
   const pinyinWords = useGetPinyinWords();
+  const hskLevels = useGetHskLevels();
   const words = useSignal<(string | DictWord)[] | null>(null);
   const input = useSignal(loc.params.word || '');
 
@@ -251,6 +267,11 @@ export default component$(() => {
                       <OwnWordBtn word={words.value[0] as DictWord} />
                       <div class={'mx-1'}></div>
                       <EditWordBtn />
+                      {hskLevels.value[singleChinese(words.value[0])] && (
+                        <div class="ml-2 self-center">
+                          <HskLevelBadge level={hskLevels.value[singleChinese(words.value[0])]} />
+                        </div>
+                      )}
                     </div>
 
                     <ShowHideBtn showExamples={showExamples} />
@@ -279,11 +300,11 @@ export default component$(() => {
               )}
 
               {words.value && words.value.length > 1 && (
-                <SearchResutlTable words={words.value || []} />
+                <SearchResutlTable words={words.value || []} hskLevels={hskLevels.value} />
               )}
 
               {wildcardWords.value && wildcardWords.value.length > 0 && (
-                <SearchResutlTable words={wildcardWords.value} />
+                <SearchResutlTable words={wildcardWords.value} hskLevels={hskLevels.value} />
               )}
 
               {wildcardWords.value && wildcardWords.value.length === 0 && (
@@ -291,7 +312,7 @@ export default component$(() => {
               )}
 
               {pinyinWords.value && pinyinWords.value.length > 0 && (
-                <SearchResutlTable words={pinyinWords.value} />
+                <SearchResutlTable words={pinyinWords.value} hskLevels={hskLevels.value} />
               )}
 
               {pinyinWords.value && pinyinWords.value.length === 0 && (
