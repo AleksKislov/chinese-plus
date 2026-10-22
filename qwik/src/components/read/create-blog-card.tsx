@@ -12,6 +12,13 @@ export const CreateBlogCard = component$(() => {
           Есть что рассказать или показать про Китай, кит. язык или наш сайт (баг или пожелание)?
           Делитесь тут
         </p>
+        <p class="text-sm opacity-80">
+          Новые посты сначала проходят проверку здесь:{' '}
+          <Link prefetch="js" href="/read/unapproved-blog/" class="link link-hover link-secondary">
+            «На проверке»
+          </Link>
+          .
+        </p>
         <div class="card-actions justify-end">
           <div class={loggedIn ? '' : 'tooltip tooltip-info tooltip-bottom'} data-tip="Нужно войти">
             <Link prefetch="js" href="/create/blog">

@@ -92,7 +92,7 @@ export default component$(() => {
                   </li>
                   <MenuItemNew name={watch.name} links={watch.links} />
                   <MenuLink href="/dictionary" text="Словарь" />
-                  <MenuItemNew name={blog.name} links={blog.links} />
+                  <MenuLink href="/read/blog/" text="Блог" />
                   {/* <MenuLink href="/heroes" text="Герои клуба" /> */}
                   {/* <MenuLink href="/donate" text="Донат и цели" /> */}
                   <ThemeChanger />
@@ -130,7 +130,7 @@ export default component$(() => {
 
                 <MenuLink href="/dictionary" text="Словарь" />
                 {/* <MenuItem name={ourClub.name} links={ourClub.links} /> */}
-                <MenuItem name={blog.name} links={blog.links} />
+                <MenuLink href="/read/blog/" text="Блог" />
 
                 <ThemeChanger />
               </ul>
@@ -293,20 +293,6 @@ export const read: MenuItemProps = {
     },
     {
       href: '/read/unapproved-texts',
-      text: 'На проверке',
-    },
-  ],
-};
-
-export const blog: MenuItemProps = {
-  name: 'Блог',
-  links: [
-    {
-      href: '/read/blog',
-      text: 'Все посты',
-    },
-    {
-      href: '/read/unapproved-blog',
       text: 'На проверке',
     },
   ],
