@@ -1,0 +1,11 @@
+{
+  "name": "chineseplus-extension",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "export-dict": "cd ../server && node scripts/export-extension-dict.js",
+    "build": "node scripts/build.mjs",
+    "build:dev": "node scripts/build.mjs --no-zip"
+  }
+}

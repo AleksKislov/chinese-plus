@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "ChinesePlus — китайско-русский словарь при наведении",
+  "short_name": "ChinesePlus",
+  "version": "0.1.0",
+  "description": "Наведите курсор на китайское слово на любом сайте — пиньинь и перевод на русский. Словарь работает офлайн.",
+  "homepage_url": "https://www.chineseplus.club",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "ChinesePlus",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "permissions": ["storage", "cookies"],
+  "host_permissions": ["https://chineseplus.club/*", "https://www.chineseplus.club/*"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "all_frames": true,
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "toggle": {
+      "suggested_key": { "default": "Alt+Shift+Z" },
+      "description": "Включить или выключить перевод при наведении"
+    }
+  }
+}

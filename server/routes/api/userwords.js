@@ -69,10 +69,13 @@ router.post('/:wordId', auth, async (req, res) => {
     wordId: req.params.wordId,
   };
 
-  const word = new UserDictWord(newWord);
-
   try {
-    await word.save();
+    // upsert: adding a word that is already in the vocab (e.g. from the extension) is a no-op
+    const word = await UserDictWord.findOneAndUpdate(
+      newWord,
+      { $setOnInsert: newWord },
+      { upsert: true, new: true },
+    );
 
     return res.json(word);
   } catch (err) {
