@@ -4,11 +4,10 @@ import {
   type SheetChar,
   type SheetGrid,
   type SheetOptions,
-  CELL_MM,
   ORDER_CELL_MM,
   SHEET_PADDING_MM,
   SHEET_WIDTH_MM,
-  cellsPerRow,
+  cellMm,
 } from './types';
 
 // hanzi-writer stroke paths per char; null - no stroke data, the char is drawn with a font
@@ -57,15 +56,22 @@ const CharSvg = ({ cell, x }: { cell: NonNullable<Cell>; x: number }) => (
 );
 
 // a row of cells as one svg, 100 units per cell, so neighbours share their borders
-const GridRow = ({ cells, cellMm, grid }: { cells: Cell[]; cellMm: number; grid: SheetGrid }) => {
+// line widths are set in mm, so small and brush-size cells print the same lines
+const GridRow = ({ cells, sizeMm, grid }: { cells: Cell[]; sizeMm: number; grid: SheetGrid }) => {
   const width = cells.length * 100;
-  const dashed = { stroke: GRID_COLOR, 'stroke-width': 0.8, 'stroke-dasharray': '4 3' };
-  const solid = { stroke: GRID_COLOR, 'stroke-width': 1.4 };
+  const unit = 100 / sizeMm; // svg units per mm
+  const dashed = {
+    stroke: GRID_COLOR,
+    'stroke-width': 0.15 * unit,
+    'stroke-dasharray': `${0.8 * unit} ${0.6 * unit}`,
+  };
+  const solid = { stroke: GRID_COLOR, 'stroke-width': 0.25 * unit };
+  const inset = 0.125 * unit;
 
   return (
     <svg
       viewBox={`0 0 ${width} 100`}
-      style={{ width: `${cells.length * cellMm}mm`, height: `${cellMm}mm` }}
+      style={{ width: `${cells.length * sizeMm}mm`, height: `${sizeMm}mm` }}
       class="block"
     >
       {grid !== 'kou' && <line x1={0} y1={50} x2={width} y2={50} {...dashed} />}
@@ -83,7 +89,14 @@ const GridRow = ({ cells, cellMm, grid }: { cells: Cell[]; cellMm: number; grid:
           {i > 0 && <line x1={i * 100} y1={0} x2={i * 100} y2={100} {...solid} />}
         </g>
       ))}
-      <rect x={0.7} y={0.7} width={width - 1.4} height={98.6} fill="none" {...solid} />
+      <rect
+        x={inset}
+        y={inset}
+        width={width - 2 * inset}
+        height={100 - 2 * inset}
+        fill="none"
+        {...solid}
+      />
       {cells.map((cell, i) => cell && <CharSvg key={i} cell={cell} x={i * 100} />)}
     </svg>
   );
@@ -102,8 +115,8 @@ type SheetProps = {
 };
 
 export const Sheet = component$(({ chars, strokes, opts, title }: SheetProps) => {
-  const cols = cellsPerRow(opts.size);
-  const cellMm = CELL_MM[opts.size];
+  const cols = opts.cols;
+  const sizeMm = cellMm(cols);
   const orderCols = Math.floor(SHEET_WIDTH_MM / ORDER_CELL_MM);
 
   // on narrow screens the A4 preview is scaled down to fit; print CSS resets zoom to 1
@@ -161,13 +174,13 @@ export const Sheet = component$(({ chars, strokes, opts, title }: SheetProps) =>
                 {opts.order &&
                   chunk(orderCells, orderCols).map((cells, i) => (
                     <div key={i} class="mb-[1.5mm]">
-                      <GridRow cells={cells} cellMm={ORDER_CELL_MM} grid={opts.grid} />
+                      <GridRow cells={cells} sizeMm={ORDER_CELL_MM} grid={opts.grid} />
                     </div>
                   ))}
 
                 {practice.map((cells, i) => (
                   <div key={i} class="mb-[1.5mm]">
-                    <GridRow cells={cells} cellMm={cellMm} grid={opts.grid} />
+                    <GridRow cells={cells} sizeMm={sizeMm} grid={opts.grid} />
                   </div>
                 ))}
               </div>
@@ -175,7 +188,7 @@ export const Sheet = component$(({ chars, strokes, opts, title }: SheetProps) =>
           })}
 
           <div class="text-[8pt] text-gray-500 mt-[2mm]">
-            chineseplus.club/propisi · порядок черт
+            chineseplus.club/propisi · все для изучения китайского языка
           </div>
         </div>
       </div>
