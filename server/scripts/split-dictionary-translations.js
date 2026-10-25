@@ -9,9 +9,11 @@
  *
  * `senses` is a tree (homonyms -> sections -> numbered senses -> sub-senses), and
  * `examples.senseId` is the position of a node in that tree ('2.1' = senses[1].senses[0],
- * null when the example is not under any sense). See scripts/lib/parse-dsl-translation.js for the full shape.
+ * null when the example is not under any sense). Full shape and the parser:
+ * src/api/services/dictionary/translations/ (shared with the API, which re-syncs
+ * a word's documents when it is edited).
  *
- * Russian search (lang 'ru' only, see scripts/lib/ru-search-terms.js):
+ * Russian search (lang 'ru' only, see translations/ru-search-terms.js):
  *   ruTerms - normalized short glosses, plain index: exact / anchored-prefix lookup
  *   senses[.senses...].text - russian text index ($text, stemmed), partial on lang 'ru':
  *     queries must include { lang: 'ru' } to use it
@@ -44,8 +46,7 @@ require('dotenv').config({
 
 const mongoose = require('mongoose');
 const { connectDB } = require('../src/mongo_db/db');
-const { parseTranslation } = require('./lib/parse-dsl-translation');
-const { buildRuSearch } = require('./lib/ru-search-terms');
+const { buildDocuments } = require('../src/api/services/dictionary/translations/build-documents');
 
 const APPLY = process.argv.includes('--apply');
 const REBUILD = process.argv.includes('--rebuild');
@@ -68,31 +69,6 @@ const WARNING_SAMPLES = 30;
 const RU_TEXT_INDEX_OPTIONS = { default_language: 'russian', language_override: 'textLang' };
 // the parsed tree is at most 5 levels deep (homonym > section > header > sense > sub-sense)
 const SENSE_TEXT_PATHS = [1, 2, 3, 4, 5].map((depth) => `${'senses.'.repeat(depth)}text`);
-
-/** The documents inserted for one `dictionaries` entry. */
-function buildDocuments(doc) {
-  const { lang, senses, examples, warnings } = parseTranslation(doc.russian);
-
-  const translation = {
-    wordId: doc._id,
-    chinese: doc.chinese,
-    lang,
-    senses,
-    exampleCount: examples.length,
-    ...(lang === 'ru' ? buildRuSearch(senses) : {}),
-  };
-  if (warnings.length) translation.parseWarnings = warnings;
-
-  const exampleDocs = examples.map((example, order) => ({
-    wordId: doc._id,
-    chinese: doc.chinese,
-    lang,
-    order,
-    ...example,
-  }));
-
-  return { translation, examples: exampleDocs };
-}
 
 async function prepareTargets(db) {
   const existing = (await db.listCollections({}, { nameOnly: true }).toArray()).map((c) => c.name);

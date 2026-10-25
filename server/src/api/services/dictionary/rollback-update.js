@@ -1,4 +1,5 @@
 const Dictionary = require('../../../models/Dictionary');
+const { syncTranslation } = require('./translations/sync-translation');
 
 async function rollbackUpdate(req, res) {
   const { wordId, prevInd } = req.query;
@@ -16,6 +17,7 @@ async function rollbackUpdate(req, res) {
   }
 
   const editedWord = await Dictionary.findByIdAndUpdate(wordId, { $set: newFields }, { new: true });
+  if (newFields.russian !== undefined) await syncTranslation(editedWord);
   res.json(editedWord);
 }
 

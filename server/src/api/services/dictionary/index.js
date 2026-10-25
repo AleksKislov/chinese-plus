@@ -7,6 +7,7 @@ const { wildcardSearch } = require('./wildcard-search');
 const { pinyinSearch } = require('./pinyin-search');
 const { handwritingSearch } = require('./handwriting-search');
 const { getSitemapWords } = require('./get-sitemap-words');
+const { getTranslation } = require('./get-translation');
 
 module.exports = {
   updateWord: apiDecorator(updateWord),
@@ -16,4 +17,5 @@ module.exports = {
   pinyinSearch: apiDecorator(pinyinSearch),
   handwritingSearch: apiDecorator(handwritingSearch),
   getSitemapWords: apiDecorator(getSitemapWords),
+  getTranslation: apiDecorator(getTranslation),
 };

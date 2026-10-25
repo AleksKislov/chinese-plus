@@ -53,6 +53,10 @@ import CONST_URLS from '~/misc/consts/urls';
 import { Breadcrumbs, truncateCrumb } from '~/components/common/layout/breadcrumbs';
 import { nameUrl } from '~/components/names/types';
 import { type HskLevels, HskLevelBadge } from '~/components/hsk/hsk-level-badge';
+import {
+  type DictTranslationResponse,
+  translationToText,
+} from '~/components/common/translation/types';
 
 export const useGetRuWord = routeLoader$(async ({ params }): Promise<RuWord | null> => {
   if (!isRussian(params.word)) return null;
@@ -89,6 +93,19 @@ export const useLoadTranslation = routeLoader$(
 
 const singleChinese = (word: string | DictWord) => (typeof word === 'string' ? word : word.chinese);
 
+// parsed translation + examples of a single found word (null: falls back to the DSL markup)
+export const useGetParsedTranslation = routeLoader$(
+  async ({ resolveValue }): Promise<DictTranslationResponse | null> => {
+    const words = await resolveValue(useLoadTranslation);
+    if (!words || words.length !== 1 || typeof words[0] === 'string') return null;
+    return ApiService.get(
+      `/api/dictionary/translation/${String(words[0]._id)}?examples=true`,
+      undefined,
+      null,
+    );
+  },
+);
+
 // HSK 3.0 levels of every chinese word the page shows (search result, wildcard and pinyin lists)
 export const useGetHskLevels = routeLoader$(async ({ resolveValue }): Promise<HskLevels> => {
   const lists = await Promise.all([
@@ -110,6 +127,7 @@ export default component$(() => {
   const wildcardWords = useGetWildcardWords();
   const pinyinWords = useGetPinyinWords();
   const hskLevels = useGetHskLevels();
+  const parsedTranslation = useGetParsedTranslation();
   const words = useSignal<(string | DictWord)[] | null>(null);
   const input = useSignal(loc.params.word || '');
 
@@ -282,6 +300,12 @@ export default component$(() => {
                         ? 'перевод отсутствует или не найден :('
                         : words.value[0].russian
                     }
+                    parsed={
+                      typeof words.value[0] !== 'string' &&
+                      parsedTranslation.value?.translation?.wordId === String(words.value[0]._id)
+                        ? parsedTranslation.value
+                        : null
+                    }
                     py={(words.value[0] as DictWord).pinyin}
                     tradChinese={
                       typeof words.value[0] !== 'string' &&
@@ -365,6 +389,7 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue, params }) => {
   const cnTranslation = resolveValue(useLoadTranslation);
+  const parsedTranslation = resolveValue(useGetParsedTranslation);
   const ruWord = resolveValue(useGetRuWord);
   const word = params.word;
   const url = `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(word)}/`;
@@ -396,9 +421,10 @@ export const head: DocumentHead = ({ resolveValue, params }) => {
     const title = `${wordObj.chinese}${hasTrad ? ' / ' + wordObj.tradChinese : ''} (${
       wordObj.pinyin
     }) — перевод с китайского на русский | Chinese+`;
-    const description = `Значение китайского слова ${chineseLabel}: ${stripRuMarkup(
-      wordObj.russian,
-    )}`.slice(0, 300);
+    const meaning = parsedTranslation?.translation
+      ? translationToText(parsedTranslation.translation.senses)
+      : stripRuMarkup(wordObj.russian);
+    const description = `Значение китайского слова ${chineseLabel}: ${meaning}`.slice(0, 300);
 
     return {
       title,

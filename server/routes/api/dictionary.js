@@ -17,6 +17,7 @@ const {
   pinyinSearch,
   handwritingSearch,
   getSitemapWords,
+  getTranslation,
 } = require('../../src/api/services/dictionary');
 
 /**
@@ -117,6 +118,13 @@ router.post('/allwords', async (req, res) => {
  * @access    Public
  */
 router.get('/sitemap-words', cacheRoute('dictionary-sitemap', { ttl: TTL.DAY }), getSitemapWords);
+
+/**
+ * @route     GET api/dictionary/translation/:wordId?examples=true
+ * @desc      Parsed translation of a word (dictionarytranslations), with its examples when asked
+ * @access    Public
+ */
+router.get('/translation/:wordId', getTranslation);
 
 /**
  * @route     POST api/dictionary/wildcardSearch
