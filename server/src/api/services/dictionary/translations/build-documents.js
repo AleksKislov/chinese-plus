@@ -2,9 +2,9 @@ const { parseTranslation } = require('./parse-dsl');
 const { buildRuSearch } = require('./ru-search-terms');
 
 /**
- * The `dictionarytranslations` document and `dictionaryexamples` documents for one
- * `dictionaries` entry, built from its DSL markup in `russian`.
- * Used by the migration script and when a word is edited, so both stay identical.
+ * The `dictionarytranslations` document and `dictionaryexamples` documents for one dictionary
+ * entry, built from its DSL markup (`russian`, kept in deprecated_dictionary_russian).
+ * Used by the migration script and when a word is added.
  */
 function buildDocuments(word) {
   const { lang, senses, examples, warnings } = parseTranslation(word.russian);

@@ -3,11 +3,19 @@ const router = express.Router();
 const Hanzi = require('./dict/dictionary');
 const mdbg = require('mdbg');
 const nodejieba = require('nodejieba');
-const { getAllWords, getWordsForParag, shortenTranslation } = require('./services');
+const { getAllWords, getWordsForParag } = require('./services');
 const auth = require('../../middleware/auth');
 const { cacheRoute, TTL } = require('../../src/cache');
 
 const Dictionary = require('../../src/models/Dictionary');
+const { attachSenses } = require('../../src/api/services/dictionary/translations/attach-senses');
+const { normalizeRu } = require('../../src/api/services/dictionary/translations/ru-search-terms');
+const {
+  buildDocuments,
+} = require('../../src/api/services/dictionary/translations/build-documents');
+const DictionaryTranslation = require('../../src/models/DictionaryTranslation');
+const DictionaryExample = require('../../src/models/DictionaryExample');
+const DeprecatedDictionaryRussian = require('../../src/models/DeprecatedDictionaryRussian');
 
 const {
   updateWord,
@@ -20,9 +28,12 @@ const {
   getTranslation,
 } = require('../../src/api/services/dictionary');
 
+const RU_SEARCH_LIMIT = 100;
+
 /**
  * @route     GET api/dictionary?word=...
- * @desc      get chinese word from dictionary
+ * @desc      get chinese word from dictionary; a russian word is looked up in the glosses
+ *            of the parsed translations (ruTerms)
  * @access    Public
  */
 router.get('/', async (req, res) => {
@@ -31,11 +42,21 @@ router.get('/', async (req, res) => {
 
   try {
     if (word.match(/[\wа-я]+/gi)) {
-      re = new RegExp('[\\s|\\]](' + word + ')');
-      lexicon = await Dictionary.find({ russian: { $regex: re, $options: 'gm' } });
+      const found = await DictionaryTranslation.find({ ruTerms: normalizeRu(word) }, { wordId: 1 })
+        .limit(RU_SEARCH_LIMIT)
+        .lean();
+      lexicon = await attachSenses(
+        await Dictionary.find({ _id: { $in: found.map((t) => t.wordId) } })
+          .select('-russian')
+          .lean(),
+      );
     } else {
       re = new RegExp('^(' + word + ')');
-      lexicon = await Dictionary.find({ chinese: { $regex: re, $options: 'i' } });
+      lexicon = await attachSenses(
+        await Dictionary.find({ chinese: { $regex: re, $options: 'i' } })
+          .select('-russian')
+          .lean(),
+      );
     }
 
     res.json(lexicon);
@@ -73,7 +94,8 @@ router.get('/editedWords', getEditedWords);
 
 /**
  * @route     POST api/dictionary
- * @desc      Add one word to dictionary
+ * @desc      Add one word to dictionary; its DSL markup in `russian` is parsed into
+ *            dictionarytranslations / dictionaryexamples and kept in deprecated_dictionary_russian
  * @access    Private
  */
 router.post('/', auth, async (req, res) => {
@@ -84,7 +106,18 @@ router.post('/', auth, async (req, res) => {
       return res.send(`The word ${req.body.chinese} already inserted`);
     }
 
-    await new Dictionary(req.body).save();
+    const { russian, ...fields } = req.body;
+    const word = await new Dictionary(fields).save();
+    if (russian) {
+      const { translation, examples } = buildDocuments({
+        _id: word._id,
+        chinese: word.chinese,
+        russian,
+      });
+      await DeprecatedDictionaryRussian.create({ _id: word._id, chinese: word.chinese, russian });
+      await DictionaryTranslation.collection.insertOne(translation);
+      if (examples.length) await DictionaryExample.collection.insertMany(examples);
+    }
     res.send('Data inserted');
   } catch (err) {
     console.log(err);
@@ -97,15 +130,8 @@ router.post('/', auth, async (req, res) => {
  * @access    Public
  */
 router.post('/allwords', async (req, res) => {
-  const { isShortRu } = req.query;
   try {
-    const words = await getAllWords(req.body);
-    if (isShortRu) {
-      for (let i = 0; i < words.length; i++) {
-        words[i].russian = shortenTranslation(words[i].russian);
-      }
-    }
-    res.json(words);
+    res.json(await attachSenses(await getAllWords(req.body).lean()));
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -162,14 +188,9 @@ router.post('/wordsForParag', auth, async (req, res) => {
 // @todo сделать в виде одного запроса
 router.post('/allWordsForVideo', async (req, res) => {
   try {
-    const promises = req.body.map((arr) => getAllWords(arr));
+    const promises = req.body.map((arr) => getAllWords(arr).lean());
     const segmentedSubs = await Promise.all(promises);
-    for (let i = 0; i < segmentedSubs.length; i++) {
-      const words = segmentedSubs[i];
-      for (let k = 0; k < words.length; k++) {
-        words[k].russian = shortenTranslation(words[k].russian);
-      }
-    }
+    await attachSenses(segmentedSubs.flat());
     res.json(segmentedSubs);
   } catch (err) {
     console.error(err.message);
@@ -235,10 +256,7 @@ router.get('/certain/:word', async (req, res) => {
   // console.log(word);
   try {
     if (word === 'eng') {
-      re = new RegExp(/^[\p{Latin}\p{Common}]+$/);
-      lexicon = await Dictionary.find({
-        russian: { $regex: re, $options: 'g' },
-      }).countDocuments();
+      lexicon = await DictionaryTranslation.countDocuments({ lang: 'en' });
     } else if (word === 'pinyin') {
       re = new RegExp(/ --| _/);
       lexicon = await Dictionary.find({

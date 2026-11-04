@@ -20,7 +20,7 @@ const downloadOldHskCsv = async (req, res) => {
     pinyin: x.pinyin,
     russian: x.translation,
   }));
-  const csv = getDictWordsCsv(mapped, false, isHtml);
+  const csv = await getDictWordsCsv(mapped, false, isHtml);
 
   res.setHeader(
     'Content-disposition',

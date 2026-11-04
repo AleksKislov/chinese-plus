@@ -42,6 +42,7 @@ const mdbg = require('mdbg');
 const { split: splitPinyin } = require('pinyin-split');
 const { connectDB } = require('../src/mongo_db/db');
 const Dictionary = require('../src/models/Dictionary');
+const { findRussian, withRussian } = require('./lib/dictionary-russian');
 const RussianWord = require('../src/models/RussianWord');
 
 const NAMES_DIR = path.join(__dirname, '..', 'content', 'names');
@@ -200,9 +201,7 @@ async function run() {
   ];
   const allNames = [...new Set(people.flatMap((p) => [p.name, ...p.short]))];
 
-  const nameIndex = buildNameIndex(
-    await Dictionary.find({ russian: /имя/ }, 'chinese russian').lean(),
-  );
+  const nameIndex = buildNameIndex(await findRussian({ russian: /имя/ }));
   const ruWords = await RussianWord.find({ ru: { $in: allNames } })
     .collation(RussianWord.RU_COLLATION)
     .lean();
@@ -221,16 +220,18 @@ async function run() {
   const allVariants = [...new Set([...variantsByName.values()].flat())];
   const allChars = [...new Set(allVariants.flatMap((cn) => [...cn]))];
 
-  const dictDocs = await Dictionary.find(
-    { chinese: { $in: [...allVariants, ...allChars] } },
-    'chinese pinyin russian',
-  ).lean();
+  const dictDocs = await withRussian(
+    await Dictionary.find(
+      { chinese: { $in: [...allVariants, ...allChars] } },
+      'chinese pinyin',
+    ).lean(),
+  );
   const byChinese = new Map(dictDocs.map((d) => [d.chinese, d]));
   // "see 茉莉" references of the characters, for shortMeaning
   const refs = dictDocs
     .flatMap((d) => [...(d.russian || '').matchAll(/\[ref\]([^[]+)\[\/ref\]/g)].map((m) => m[1]))
     .filter((cn) => !byChinese.has(cn));
-  for (const d of await Dictionary.find({ chinese: { $in: refs } }, 'chinese russian').lean()) {
+  for (const d of await findRussian({ chinese: { $in: refs } })) {
     byChinese.set(d.chinese, d);
   }
 

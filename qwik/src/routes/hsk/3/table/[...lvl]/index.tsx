@@ -29,6 +29,7 @@ import OUR_ADS from '~/misc/consts/our-ads';
 import { OurAds } from '~/components/common/ads/our-ads';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { useGetUserHsk3WordIds } from '~/misc/loaders/user-hsk3-loaders';
+import { type TranslationNode } from '~/components/common/translation/types';
 
 export { useGetUserHsk3WordIds } from '~/misc/loaders/user-hsk3-loaders';
 
@@ -37,7 +38,9 @@ export type NewHskWordType = {
   id: number;
   cn: string;
   py: string;
-  ru: string;
+  ru?: string; // DSL markup, only for words without a parsed translation (`senses`)
+  senses?: TranslationNode[];
+  dictId?: ObjectId; // dictionary entry, for the full translation
   lvl: string;
   audio?: string; // 2026 list: path under myAudioURL, absent if there is no audio yet
 };

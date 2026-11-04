@@ -1,6 +1,7 @@
 import { component$, createContextId, useContextProvider, useStore } from '@builder.io/qwik';
 import { QwikCityProvider, RouterOutlet, ServiceWorkerRegister } from '@builder.io/qwik-city';
 import { RouterHead } from './components/router-head/router-head';
+import { type TranslationNode } from './components/common/translation/types';
 
 // plain import (not ?inline + useStyles$): emitted as a separate, cacheable CSS file
 // instead of ~150KB of CSS inlined into every SSR'd HTML page
@@ -16,7 +17,7 @@ export type UserWord = {
   _id: ObjectId;
   chinese: string;
   pinyin: string;
-  translation: string;
+  senses?: TranslationNode[];
   date: ISODate;
   dictWordId: ObjectId;
 };

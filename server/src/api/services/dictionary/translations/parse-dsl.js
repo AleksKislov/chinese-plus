@@ -48,10 +48,10 @@ const CYRILLIC_RE = /[а-яё]/i;
 const CJK_RE = /[㐀-鿿豈-﫿]/;
 const CJK_GLOBAL_RE = /[㐀-鿿豈-﫿]/g;
 const LATIN_RE = /[a-z]/i;
-const PINYIN_RE =
-  /^[a-zA-ZāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüêÜĀÁǍÀĒÉĚÈĪÍǏÌŌÓǑÒŪÚǓÙ'’\-\s,;]+$/;
+const PINYIN_LETTER_RE = /[a-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüê]/i;
+const PINYIN_RE = /^[a-zA-ZāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüêÜĀÁǍÀĒÉĚÈĪÍǏÌŌÓǑÒŪÚǓÙ'’\-\s,;]+$/;
 const ROMAN_RE = /^\s*(I{1,3}|IV|VI{0,3}|IX|X)(?![a-zA-Z])\s*(.*)$/s;
-const SECTION_RE = /^\s*([А-ЯЁ])\s*$/;
+const SECTION_RE = /^\s*([А-ЯЁ])\.?\s*$/;
 const NUM_RE = /^\s*\(?(\d+)\)\s*/;
 const SUB_RE = /^\s*([а-яё])\)\s*/;
 const SEPARATOR_RE = /^\s*-{3,}\s*$/;
@@ -59,11 +59,12 @@ const SEPARATOR_RE = /^\s*-{3,}\s*$/;
 // `header` is a line with labels only ("[m1][p]сущ.[/p][/m]") that groups the senses below it
 const RANK = { homonym: 1, section: 2, header: 2.5, num: 3, sub: 4, plain: 5 };
 
-const unescape = (s) => s.replace(new RegExp(ESC_OPEN, 'g'), '[').replace(new RegExp(ESC_CLOSE, 'g'), ']');
+const unescape = (s) =>
+  s.replace(new RegExp(ESC_OPEN, 'g'), '[').replace(new RegExp(ESC_CLOSE, 'g'), ']');
 const squash = (s) => s.replace(/\s+/g, ' ');
 const isPinyin = (s) => {
   const t = s.trim();
-  return t.length > 0 && t.length <= 60 && LATIN_RE.test(t) && PINYIN_RE.test(t);
+  return t.length > 0 && t.length <= 60 && PINYIN_LETTER_RE.test(t) && PINYIN_RE.test(t);
 };
 
 /** Splits the raw string into tokens: { tag, close, arg } | { text }. */
@@ -211,11 +212,16 @@ function buildText(segs) {
   return rich ? { text, content: trimmed } : { text };
 }
 
-/** Parses one non-example line into a node with marker / pinyin / labels / text. */
+/**
+ * Parses one non-example line into a node with marker / pinyin / labels / text.
+ * A homonym line may also open a section ("[b]I[/b] [p]гл.[/p] [b]А[/b] ..."): it is returned
+ * as `section`, a child of the homonym that takes the line's labels and text.
+ */
 function parseLine(segsIn) {
   const segs = normalizeSegments(segsIn);
   const node = {};
   let markerType = null;
+  let section = null;
   const labels = [];
 
   while (segs.length) {
@@ -234,10 +240,18 @@ function parseLine(segsIn) {
         else segs.shift();
         continue;
       }
-      const section = s.value.match(SECTION_RE);
-      if (section) {
+      const sectionMatch = s.value.match(SECTION_RE);
+      if (sectionMatch) {
         markerType = 'section';
-        node.marker = section[1];
+        node.marker = sectionMatch[1];
+        segs.shift();
+        continue;
+      }
+    }
+    if (markerType === 'homonym' && !section && s.type === 'strong') {
+      const sectionMatch = s.value.match(SECTION_RE);
+      if (sectionMatch) {
+        section = { kind: 'section', marker: sectionMatch[1] };
         segs.shift();
         continue;
       }
@@ -260,7 +274,12 @@ function parseLine(segsIn) {
       continue;
     }
     // "[b]III[/b] –[b]de[/b]"
-    if (markerType === 'homonym' && !node.pinyin && s.type === 'text' && /^\s*[–-]\s*$/.test(s.value)) {
+    if (
+      markerType === 'homonym' &&
+      !node.pinyin &&
+      s.type === 'text' &&
+      /^\s*[–-]\s*$/.test(s.value)
+    ) {
       segs.shift();
       continue;
     }
@@ -278,12 +297,13 @@ function parseLine(segsIn) {
     break;
   }
 
-  if (labels.length) node.labels = labels;
-  Object.assign(node, buildText(segs));
+  const target = section || node;
+  if (labels.length) target.labels = labels;
+  Object.assign(target, buildText(segs));
   if (markerType === 'homonym' || markerType === 'section') node.kind = markerType;
   if (!markerType && !node.text && node.labels) markerType = 'header';
   if (markerType === 'header') node.kind = 'section';
-  return { node, rank: RANK[markerType || 'plain'] };
+  return { node, rank: RANK[markerType || 'plain'], section };
 }
 
 /** Splits an example into the chinese part and its translation. */
@@ -344,7 +364,8 @@ function parseExample(segsIn, warnings, lang) {
   if (labels.filter(Boolean).length) example.labels = labels.filter(Boolean);
 
   // "在民在旗? [b]zàimínzàiqí[/b]? Вы китаец" -> drop punctuation left from the pinyin
-  if (trSegs.length) trSegs[0] = { ...trSegs[0], value: trSegs[0].value.replace(/^[\s?？!！,，.。;；:：]+/, '') };
+  if (trSegs.length)
+    trSegs[0] = { ...trSegs[0], value: trSegs[0].value.replace(/^[\s?？!！,，.。;；:：]+/, '') };
   const tr = buildText(trSegs);
   example.translation = tr.text || '';
   if (tr.content) example.content = tr.content;
@@ -412,7 +433,7 @@ function parseTranslation(raw) {
         continue;
       }
 
-      const { node, rank } = parseLine(part.segs);
+      const { node, rank, section } = parseLine(part.segs);
       if (!node.text && !node.marker && !node.labels && !node.pinyin) continue;
 
       // labels / pinyin right under an empty homonym or section describe it ("[b]I[/b]" + "[p]сущ.[/p]")
@@ -439,12 +460,14 @@ function parseTranslation(raw) {
       } else {
         while (stack.length) {
           const t = stack[stack.length - 1];
-          const sameLevelSection = rank === RANK.header && t.rank === RANK.section && t.level >= line.level;
+          const sameLevelSection =
+            rank === RANK.header && t.rank === RANK.section && t.level >= line.level;
           if (t.rank < rank && !sameLevelSection) break;
           stack.pop();
         }
       }
       attach(node, rank, line.level);
+      if (section) attach(section, RANK.section, line.level);
     }
   }
 
@@ -465,7 +488,8 @@ function parseTranslation(raw) {
 
   const checkLeftovers = (list) => {
     for (const n of list) {
-      if (n.text && LEFTOVER_TAG_RE.test(n.text)) warnings.push(`leftover tag in: ${n.text.slice(0, 60)}`);
+      if (n.text && LEFTOVER_TAG_RE.test(n.text))
+        warnings.push(`leftover tag in: ${n.text.slice(0, 60)}`);
       if (n.senses) checkLeftovers(n.senses);
     }
   };
@@ -476,11 +500,21 @@ function parseTranslation(raw) {
 }
 
 // node ids are only used for examples.senseId and are not stored: the path is the node's position
-const KEY_ORDER = ['kind', 'marker', 'pinyin', 'labels', 'text', 'content', 'exampleCount', 'senses'];
+const KEY_ORDER = [
+  'kind',
+  'marker',
+  'pinyin',
+  'labels',
+  'text',
+  'content',
+  'exampleCount',
+  'senses',
+];
 function orderKeys(list) {
   return list.map((n) => {
     const out = {};
-    for (const k of KEY_ORDER) if (n[k] !== undefined) out[k] = k === 'senses' ? orderKeys(n[k]) : n[k];
+    for (const k of KEY_ORDER)
+      if (n[k] !== undefined) out[k] = k === 'senses' ? orderKeys(n[k]) : n[k];
     return out;
   });
 }

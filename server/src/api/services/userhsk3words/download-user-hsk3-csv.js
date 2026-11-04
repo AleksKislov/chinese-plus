@@ -14,10 +14,10 @@ const downloadUserHsk3Csv = async (req, res) => {
   const mapped = allWords.map((x) => ({
     chinese: x.cn,
     pinyin: x.py,
-    russian: x.ru,
+    wordId: x.dictId,
   }));
 
-  const csv = getDictWordsCsv(mapped, hasExamples, true);
+  const csv = await getDictWordsCsv(mapped, hasExamples, true);
 
   const filename = `hsk_v3_user_words_${hasExamples ? 'with' : 'no'}_examples.csv`;
   res.setHeader('Content-disposition', `attachment; filename=${filename}`);

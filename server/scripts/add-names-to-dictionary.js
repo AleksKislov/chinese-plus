@@ -28,6 +28,11 @@ const mongoose = require('mongoose');
 const { connectDB } = require('../src/mongo_db/db');
 const Dictionary = require('../src/models/Dictionary');
 const RussianWord = require('../src/models/RussianWord');
+const DeprecatedDictionaryRussian = require('../src/models/DeprecatedDictionaryRussian');
+const DictionaryTranslation = require('../src/models/DictionaryTranslation');
+const DictionaryExample = require('../src/models/DictionaryExample');
+const { buildDocuments } = require('../src/api/services/dictionary/translations/build-documents');
+const { withRussian } = require('./lib/dictionary-russian');
 
 const APPLY = process.argv.includes('--apply');
 const NAMES_DIR = path.join(__dirname, '..', 'content', 'names');
@@ -70,10 +75,12 @@ async function run() {
   const variants = Object.values(overrides).flat();
   const allCn = [...new Set(variants.map((v) => v.cn))];
   const allChars = [...new Set(allCn.flatMap((cn) => [...cn]))];
-  const docs = await Dictionary.find(
-    { chinese: { $in: [...allCn, ...allChars] } },
-    'chinese tradChinese russian',
-  ).lean();
+  const docs = await withRussian(
+    await Dictionary.find(
+      { chinese: { $in: [...allCn, ...allChars] } },
+      'chinese tradChinese',
+    ).lean(),
+  );
   const byChinese = new Map(docs.map((d) => [d.chinese, d]));
   const toTrad = (cn) =>
     [...cn]
@@ -143,7 +150,20 @@ async function run() {
   if (report.length) console.log(`\nleft as is:\n  ${report.join('\n  ')}`);
 
   if (APPLY) {
-    if (newDict.length) await Dictionary.insertMany(newDict);
+    if (newDict.length) {
+      // the markup goes to deprecated_dictionary_russian, parsed into the translation collections
+      const inserted = await Dictionary.insertMany(newDict.map(({ russian, ...word }) => word));
+      const words = inserted.map((w, i) => ({
+        _id: w._id,
+        chinese: w.chinese,
+        russian: newDict[i].russian,
+      }));
+      await DeprecatedDictionaryRussian.insertMany(words);
+      const built = words.map((w) => buildDocuments(w));
+      await DictionaryTranslation.collection.insertMany(built.map((b) => b.translation));
+      const examples = built.flatMap((b) => b.examples);
+      if (examples.length) await DictionaryExample.collection.insertMany(examples);
+    }
     if (newRu.length) await RussianWord.insertMany(newRu);
     console.log(`\ninserted ${newDict.length} dictionary words, ${newRu.length} russian words`);
   }

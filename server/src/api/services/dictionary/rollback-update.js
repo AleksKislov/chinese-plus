@@ -1,6 +1,6 @@
 const Dictionary = require('../../../models/Dictionary');
-const { syncTranslation } = require('./translations/sync-translation');
 
+// only pinyin is rolled back: translations are not editable for now (see update-word.js)
 async function rollbackUpdate(req, res) {
   const { wordId, prevInd } = req.query;
   const wordToEdit = await Dictionary.findById(wordId);
@@ -9,7 +9,6 @@ async function rollbackUpdate(req, res) {
   const prev = wordToEdit.previous[prevInd];
   const prevArr = [...wordToEdit.previous];
   if (prev) {
-    newFields.russian = prev.russian;
     newFields.pinyin = prev.pinyin;
     prevArr.splice(+prevInd, 1);
     newFields.previous = prevArr;
@@ -17,7 +16,6 @@ async function rollbackUpdate(req, res) {
   }
 
   const editedWord = await Dictionary.findByIdAndUpdate(wordId, { $set: newFields }, { new: true });
-  if (newFields.russian !== undefined) await syncTranslation(editedWord);
   res.json(editedWord);
 }
 

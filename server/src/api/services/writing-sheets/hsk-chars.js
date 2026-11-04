@@ -1,6 +1,7 @@
 const Lexicon = require('../../../models/Lexicon');
 const Hskword2025 = require('../../../models/Hskword2025');
 const Dictionary = require('../../../models/Dictionary');
+const { findSenses } = require('../dictionary/translations/attach-senses');
 const { splitWordPinyin, isNeutral, HAN_RE } = require('./pinyin');
 
 // '2' - old HSK 2.0 (lexicons), '3' - HSK 3.0 (2025 syllabus)
@@ -70,45 +71,51 @@ const plainSyllable = (syl) =>
     .normalize('NFC')
     .toLowerCase();
 
-// polyphones list each reading under its own [b]II dōu[/b] heading - start from the right one
-const fromReading = (russian, reading) => {
-  if (!reading) return russian;
-  const heading = [...russian.matchAll(/\[b\]([^[]*)\[\/b\]/g)].find((m) =>
-    m[1]
-      .toLowerCase()
-      .split(/[\s,;]+/)
-      .includes(reading),
-  );
-  return heading ? russian.slice(heading.index) : russian;
-};
+// polyphones list each reading under its own pinyin (a homonym or a sense): start at the first
+// node with the reading's pinyin, take the first sense with russian text outside comments /
+// labels; from the beginning when nothing is found after the reading
+const glossFromSenses = (senses, reading) => {
+  const nodes = [];
+  const flatten = (list) =>
+    list.forEach((n) => {
+      nodes.push(n);
+      if (n.senses) flatten(n.senses);
+    });
+  flatten(senses);
 
-const cleanSense = (block) => {
-  const text = block
-    .replace(/\[(i|c|p|b|ref|com)\][\s\S]*?\[\/\1\]/g, ' ')
-    .replace(/\[[^\]]*\]/g, ' ')
-    .replace(/(^|\s)(\d+|[а-я])\)/g, ' ')
-    .replace(/\([^()а-яё]*\)/gi, ' ')
-    .replace(/\([^)]*$/, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  if (/[а-яё]/i.test(text)) return text;
-  // a sense that is only a note: [i]указывает на порядковое значение...[/i]
-  const note = block.match(/^\s*\d+\)\s*\[i\]([^[]*)\[\/i\]/);
-  return note ? note[1].trim() : '';
-};
+  const start = reading
+    ? nodes.findIndex((n) =>
+        (n.pinyin || '')
+          .toLowerCase()
+          .split(/[\s,;]+/)
+          .includes(reading),
+      )
+    : -1;
 
-// [m1][b]I[/b] [p]сущ.[/p][/m][m2]1) хороший; приятный; ... -> 'хороший'
-const shortGloss = (russian, reading) => {
-  const txt = fromReading(
-    (russian || '').replace(/\[ex\][\s\S]*?\[\/ex\]/g, ' ').replace(/\\\[[^\]]*\\\]/g, ''),
-    reading,
-  );
-  const sense =
-    txt
-      .split(/\[m\d\]/)
-      .map(cleanSense)
-      .find(Boolean) || '';
-  return firstMeanings(sense.split(/[;:]/)[0]);
+  const firstGloss = (list) => {
+    for (const node of list) {
+      const parts = node.content || [{ type: 'text', value: node.text || '' }];
+      const plain = parts
+        .map((x) => (x.type === 'text' || x.type === 'strong' ? x.value : ' '))
+        .join('')
+        .replace(/\[[^\]]*\]/g, '')
+        .replace(/\([^()а-яё]*\)/gi, ' ')
+        .replace(/\([^)]*$/, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      // a section letter left in the text: "1) [p]гл.[/p] [b] А[/b]"
+      if (/[а-яё]/i.test(plain) && !/^[А-ЯЁ]\.?$/.test(plain)) {
+        return firstMeanings(plain.split(/[;:]/)[0]);
+      }
+      // a sense that is only a note: 1) [i]указывает на порядковое значение...[/i]
+      if (/^\d+$/.test(node.marker || '') && parts[0].type === 'comment') {
+        return firstMeanings(parts[0].value.trim().split(/[;:]/)[0]);
+      }
+    }
+    return '';
+  };
+
+  return (start > 0 && firstGloss(nodes.slice(start))) || firstGloss(nodes);
 };
 
 // 'и (союз), с (кем-либо); гармония' -> 'и, с', '(частица, выражает ...)' -> 'частица, выражает ...'
@@ -141,9 +148,10 @@ const firstMeanings = (txt) => {
 const withDictInfo = async (chars) => {
   const query = { $in: chars.map((x) => x.ch) };
   const [entries, words] = await Promise.all([
-    Dictionary.find({ chinese: query }, { _id: 0, chinese: 1, pinyin: 1, russian: 1 }).lean(),
+    Dictionary.find({ chinese: query }, { chinese: 1, pinyin: 1 }).lean(),
     Lexicon.find({ chinese: query }, { _id: 0, chinese: 1, pinyin: 1, translation: 1 }).lean(),
   ]);
+  const sensesById = await findSenses(entries.map((e) => e._id));
 
   return chars.map(({ ch, py }) => {
     const options = entries.filter((e) => e.chinese === ch);
@@ -157,9 +165,12 @@ const withDictInfo = async (chars) => {
     const word = words.find(
       (w) => w.chinese === ch && plainSyllable(w.pinyin) === plainSyllable(reading),
     );
+    const senses = entry && sensesById.get(String(entry._id));
     const ru = word
       ? firstMeanings(word.translation.split(';')[0])
-      : shortGloss(entry?.russian, reading);
+      : senses
+        ? glossFromSenses(senses, reading)
+        : '';
     return { ch, py: reading, ru };
   });
 };

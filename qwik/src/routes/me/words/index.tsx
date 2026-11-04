@@ -8,7 +8,7 @@ import { TypingGame } from '~/components/games/typing-game';
 import { SearchResutlTable } from '~/components/search/search-result-table';
 import { type UserWord } from '~/root';
 import { PrivateWordsCard } from '~/components/me/words/private-words-card';
-import { parseRussian } from '~/misc/helpers/translation';
+import { translationTextHtml } from '~/misc/helpers/translation';
 import { ApiService } from '~/misc/actions/request';
 import { getTokenFromCookie } from '~/misc/actions/auth';
 import { routeLoader$, type DocumentHead, type RequestEvent } from '@builder.io/qwik-city';
@@ -46,29 +46,29 @@ export default component$(() => {
 
         <MainContent>
           <CalligraphyGame
-            words={userWords.value.map(({ chinese, pinyin, translation }) => ({
+            words={userWords.value.map(({ chinese, pinyin, senses }) => ({
               level: '',
               id: 1,
               chinese,
               pinyin,
-              translation: parseRussian(translation, false),
+              translation: translationTextHtml({ senses }),
             }))}
           />
           <TypingGame
-            words={userWords.value.map(({ chinese, pinyin, translation }) => ({
+            words={userWords.value.map(({ chinese, pinyin, senses }) => ({
               level: '',
               id: 1,
               chinese,
               pinyin,
-              translation: parseRussian(translation, false),
+              translation: translationTextHtml({ senses }),
             }))}
           />
           <SearchResutlTable
-            words={userWords.value.map(({ chinese, pinyin, translation, dictWordId }) => ({
+            words={userWords.value.map(({ chinese, pinyin, senses, dictWordId }) => ({
               _id: dictWordId,
               chinese,
               pinyin,
-              russian: translation,
+              senses,
               previous: [],
             }))}
           />

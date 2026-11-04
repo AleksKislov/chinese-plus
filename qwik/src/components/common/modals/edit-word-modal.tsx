@@ -2,19 +2,19 @@ import { $, component$, useContext, useSignal, useTask$ } from '@builder.io/qwik
 import { globalAction$, z, zod$ } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
 import { alertsContext } from '~/root';
-// import { markUpRuText } from "~/misc/helpers/translation";
 
+// translations are not editable for now (they come from the parsed dictionarytranslations),
+// only pinyin can be changed
 export const useEditWord = globalAction$((body, ev) => {
   const token = ev.cookie.get('token')?.value;
   return ApiService.put(`/api/dictionary/updateWord`, body, token, {});
-}, zod$({ id: z.string(), pinyin: z.string(), russian: z.string() }));
+}, zod$({ id: z.string(), pinyin: z.string() }));
 
 export const EditWordModal = component$(
   ({ word, modalId }: { word: DictWord; modalId: string }) => {
     const editWord = useEditWord();
-    const { chinese, pinyin, russian } = word || {};
+    const { chinese, pinyin } = word || {};
     const newPinyin = useSignal(pinyin || '');
-    const newRussian = useSignal(russian || '');
     const alertsState = useContext(alertsContext);
 
     useTask$(({ track }) => {
@@ -22,22 +22,13 @@ export const EditWordModal = component$(
       newPinyin.value = pinyin || '';
     });
 
-    useTask$(({ track }) => {
-      track(() => russian);
-      newRussian.value = russian || '';
-    });
-
     const submitEdition = $(async () => {
       const newPy = newPinyin.value.trim();
-      const newRu = newRussian.value.trim();
 
       if (!newPy) {
         return alertsState.push({ text: 'Пиньинь не может быть пустым', bg: 'alert-error' });
       }
-      if (!newRu) {
-        return alertsState.push({ text: 'Перевод не может быть пустым', bg: 'alert-error' });
-      }
-      await editWord.submit({ id: word._id, pinyin: newPy, russian: newRu });
+      await editWord.submit({ id: String(word._id), pinyin: newPy });
       location.reload();
     });
 
@@ -69,19 +60,8 @@ export const EditWordModal = component$(
               />
             </div>
 
-            <div class="form-control w-full max-w-xs">
-              <label class="label">
-                <span class="label-text">Перевод</span>
-              </label>
-              <textarea
-                placeholder="Новый перевод"
-                class="textarea textarea-bordered w-full max-w-xs"
-                value={newRussian.value}
-                onKeyUp$={(e) => {
-                  newRussian.value = (e.target as HTMLTextAreaElement).value;
-                }}
-              />
-            </div>
+            <div class="text-sm opacity-70 mt-2">Редактирование перевода временно отключено</div>
+
             <div class="modal-action">
               <label for={modalId} class="btn btn-info btn-outline btn-sm" onClick$={submitEdition}>
                 Отредактировать

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 /**
- * Parsed translation of a `dictionaries` entry (its DSL markup in `russian`).
+ * Parsed translation of a `dictionaries` entry (from its DSL markup, now in
+ * deprecated_dictionary_russian).
  * Shape of `senses`: src/api/services/dictionary/translations/parse-dsl.js.
  * Filled by scripts/split-dictionary-translations.js, which also creates the indexes
  * (including the russian text index), so none are declared here.
@@ -16,11 +17,11 @@ const DictionaryTranslationSchema = new mongoose.Schema(
     ruTerms: { type: [String], default: undefined },
     parseWarnings: { type: [String], default: undefined },
   },
-  { autoIndex: false, versionKey: false }
+  { autoIndex: false, versionKey: false },
 );
 
 module.exports = mongoose.model(
   'DictionaryTranslation',
   DictionaryTranslationSchema,
-  'dictionarytranslations'
+  'dictionarytranslations',
 );

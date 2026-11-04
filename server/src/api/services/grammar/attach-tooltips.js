@@ -1,4 +1,5 @@
-const { getAllWords, shortenTranslation } = require('../../../../routes/api/services');
+const { getAllWords } = require('../../../../routes/api/services');
+const { attachSenses } = require('../dictionary/translations/attach-senses');
 
 // adds `segments` (dictionary word objects or plain strings) to every example
 async function attachTooltips(topics) {
@@ -7,10 +8,9 @@ async function attachTooltips(topics) {
     t.rules.forEach((r) => r.examples.forEach((ex) => ex.words.forEach((w) => allWords.add(w)))),
   );
 
-  const dictWords = await getAllWords([...allWords]).lean();
+  const dictWords = await attachSenses(await getAllWords([...allWords]).lean());
   const byChinese = new Map();
   dictWords.forEach((w) => {
-    w.russian = shortenTranslation(w.russian);
     if (!byChinese.has(w.chinese)) byChinese.set(w.chinese, w);
   });
 

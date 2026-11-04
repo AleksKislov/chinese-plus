@@ -7,7 +7,7 @@ const downloadUserDictWordsCsv = async (req, res) => {
   const hasExamples = Boolean(has_examples);
 
   const allWords = await UserDictWord.find({ user: req.user.id })
-    .populate('wordId', ['chinese', 'russian', 'pinyin'])
+    .populate('wordId', ['chinese', 'pinyin'])
     .sort({ date: -1 });
 
   if (!allWords.length) {
@@ -16,11 +16,11 @@ const downloadUserDictWordsCsv = async (req, res) => {
 
   const mapped = allWords.map((word) => ({
     chinese: word.wordId.chinese,
-    russian: word.wordId.russian,
     pinyin: word.wordId.pinyin,
+    wordId: word.wordId._id,
   }));
 
-  const csv = getDictWordsCsv(mapped, hasExamples, true);
+  const csv = await getDictWordsCsv(mapped, hasExamples, true);
 
   const filename = `user_dict_words_${hasExamples ? 'with' : 'no'}_examples.csv`;
   res.setHeader('Content-disposition', `attachment; filename=${filename}`);

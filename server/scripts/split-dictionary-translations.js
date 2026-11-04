@@ -1,6 +1,8 @@
 /**
- * One-off migration: parse the DSL markup in `dictionaries.russian` into JSON and
- * split it into two new collections. `dictionaries` itself is never modified.
+ * One-off migration: parse the DSL markup of the dictionary entries into JSON and split it into
+ * two new collections. The markup is read from `deprecated_dictionary_russian` once
+ * scripts/move-russian-to-deprecated.js has moved it there, else from `dictionaries.russian`.
+ * Neither source is modified.
  *
  *   dictionarytranslations - one document per dictionary word:
  *     { wordId, chinese, lang, senses: [Node], exampleCount, ruTerms?, parseWarnings? }
@@ -10,8 +12,7 @@
  * `senses` is a tree (homonyms -> sections -> numbered senses -> sub-senses), and
  * `examples.senseId` is the position of a node in that tree ('2.1' = senses[1].senses[0],
  * null when the example is not under any sense). Full shape and the parser:
- * src/api/services/dictionary/translations/ (shared with the API, which re-syncs
- * a word's documents when it is edited).
+ * src/api/services/dictionary/translations/.
  *
  * Russian search (lang 'ru' only, see translations/ru-search-terms.js):
  *   ruTerms - normalized short glosses, plain index: exact / anchored-prefix lookup
@@ -40,7 +41,7 @@ require('dotenv').config({
     __dirname,
     '..',
     'config',
-    process.env.NODE_ENV === 'development' ? '.env.dev' : '.env.prod'
+    process.env.NODE_ENV === 'development' ? '.env.dev' : '.env.prod',
   ),
 });
 
@@ -58,7 +59,8 @@ const LIMIT = Number(argValue('limit') || 0);
 const WORDS = argValue('word') ? argValue('word').split(',') : null;
 const TARGET_DB = argValue('target-db');
 
-const SOURCE = 'dictionaries';
+const DEPRECATED = 'deprecated_dictionary_russian';
+const DICTIONARIES = 'dictionaries';
 const TRANSLATIONS = 'dictionarytranslations';
 const EXAMPLES = 'dictionaryexamples';
 const BATCH_SIZE = 1000;
@@ -95,11 +97,13 @@ async function createIndexes(db) {
       ...RU_TEXT_INDEX_OPTIONS,
     },
   ]);
-  await db.collection(EXAMPLES).createIndexes([
-    { key: { wordId: 1, order: 1 } },
-    { key: { chinese: 1 } },
-    { key: { translation: 'text' }, name: 'translation_text', ...RU_TEXT_INDEX_OPTIONS },
-  ]);
+  await db
+    .collection(EXAMPLES)
+    .createIndexes([
+      { key: { wordId: 1, order: 1 } },
+      { key: { chinese: 1 } },
+      { key: { translation: 'text' }, name: 'translation_text', ...RU_TEXT_INDEX_OPTIONS },
+    ]);
 }
 
 async function run() {
@@ -110,13 +114,21 @@ async function run() {
   const { db } = mongoose.connection;
   const targetDb = TARGET_DB ? mongoose.connection.client.db(TARGET_DB) : db;
 
+  // the deprecated copy once the markup is moved out of `dictionaries` (it holds all of it from
+  // the first step of the move on; a few names added before the move do not make it the source)
+  const [moved, notMoved] = await Promise.all([
+    db.collection(DEPRECATED).estimatedDocumentCount(),
+    db.collection(DICTIONARIES).countDocuments({ russian: { $exists: true } }),
+  ]);
+  const SOURCE = moved && moved >= notMoved ? DEPRECATED : DICTIONARIES;
+
   const query = WORDS ? { chinese: { $in: WORDS } } : {};
   const total = WORDS
     ? await db.collection(SOURCE).countDocuments(query)
     : await db.collection(SOURCE).estimatedDocumentCount();
   console.log(
-    `${APPLY ? 'APPLYING' : 'DRY RUN'} - ~${total} dictionary entries${LIMIT ? `, limited to ${LIMIT}` : ''}` +
-      `${APPLY ? `, writing to ${targetDb.databaseName}` : ''}`
+    `${APPLY ? 'APPLYING' : 'DRY RUN'} - ~${total} entries from ${SOURCE}${LIMIT ? `, limited to ${LIMIT}` : ''}` +
+      `${APPLY ? `, writing to ${targetDb.databaseName}` : ''}`,
   );
   if (APPLY) await prepareTargets(targetDb);
 
@@ -162,7 +174,9 @@ async function run() {
     if (translation.parseWarnings) {
       stats.withWarnings += 1;
       if (warningSamples.length < WARNING_SAMPLES) {
-        warningSamples.push(`${doc.chinese} (${doc._id}): ${translation.parseWarnings.join(' | ')}`);
+        warningSamples.push(
+          `${doc.chinese} (${doc._id}): ${translation.parseWarnings.join(' | ')}`,
+        );
       }
     }
 

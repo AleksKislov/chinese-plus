@@ -6,7 +6,7 @@ import { AudioPlayer } from './audio-player';
 import { Paragraph } from './paragraph';
 import { type Addressee, type CommentIdToReply, WHERE } from '../common/comments/comment-form';
 import { EditWordModal } from '../common/modals/edit-word-modal';
-import { MoreInfoModal } from '../common/modals/more-info-modal';
+import { MoreInfoModal, toMoreInfoWord } from '../common/modals/more-info-modal';
 import { EditChineseArrModal } from '../common/modals/edit-chinese-arr-modal';
 import { configContext, userContext } from '~/root';
 import { FontSizeBtns } from '../common/content-cards/content-page-card';
@@ -137,17 +137,7 @@ export const TextMainContent = component$(
         {!currentWord.value ? null : (
           <div>
             <EditWordModal word={currentWord.value} modalId={editWordModalId} />
-            <MoreInfoModal
-              word={{
-                _id: currentWord.value._id,
-                cn: currentWord.value.chinese,
-                py: currentWord.value.pinyin,
-                ru: currentWord.value.russian,
-                lvl: 'unknown',
-                id: 0,
-              }}
-              modalId={moreInfoModalId}
-            />
+            <MoreInfoModal word={toMoreInfoWord(currentWord.value)} modalId={moreInfoModalId} />
           </div>
         )}
 

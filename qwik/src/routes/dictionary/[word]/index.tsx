@@ -32,7 +32,6 @@ import { alertsContext, userContext } from '~/root';
 import { getWordsForTooltips } from '~/routes/read/texts/[id]';
 import HanziWriter from 'hanzi-writer';
 import { sheetUrl } from '~/components/propisi/types';
-import { stripRuMarkup } from '~/misc/helpers/translation';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { Loader } from '~/components/common/ui/loader';
 import { SearchRuResult } from '~/components/search/search-ru-result';
@@ -57,6 +56,7 @@ import {
   type DictTranslationResponse,
   translationToText,
 } from '~/components/common/translation/types';
+import { type ParsedWordTranslation } from '~/components/common/translation/dict-word-translation';
 
 export const useGetRuWord = routeLoader$(async ({ params }): Promise<RuWord | null> => {
   if (!isRussian(params.word)) return null;
@@ -92,6 +92,19 @@ export const useLoadTranslation = routeLoader$(
 );
 
 const singleChinese = (word: string | DictWord) => (typeof word === 'string' ? word : word.chinese);
+
+// full parsed translation of the found word, else the trimmed one it came with from the search
+// (null: the DSL markup is rendered, the word is not migrated)
+const wordParsed = (
+  word: string | DictWord,
+  loaded: DictTranslationResponse | null,
+): ParsedWordTranslation | null => {
+  if (typeof word === 'string') return null;
+  if (loaded?.translation && loaded.translation.wordId === String(word._id)) {
+    return { senses: loaded.translation.senses, examples: loaded.examples };
+  }
+  return word.senses?.length ? { senses: word.senses, examples: [] } : null;
+};
 
 // parsed translation + examples of a single found word (null: falls back to the DSL markup)
 export const useGetParsedTranslation = routeLoader$(
@@ -298,14 +311,9 @@ export default component$(() => {
                     ru={
                       typeof words.value[0] === 'string'
                         ? 'перевод отсутствует или не найден :('
-                        : words.value[0].russian
+                        : undefined
                     }
-                    parsed={
-                      typeof words.value[0] !== 'string' &&
-                      parsedTranslation.value?.translation?.wordId === String(words.value[0]._id)
-                        ? parsedTranslation.value
-                        : null
-                    }
+                    parsed={wordParsed(words.value[0], parsedTranslation.value)}
                     py={(words.value[0] as DictWord).pinyin}
                     tradChinese={
                       typeof words.value[0] !== 'string' &&
@@ -421,9 +429,8 @@ export const head: DocumentHead = ({ resolveValue, params }) => {
     const title = `${wordObj.chinese}${hasTrad ? ' / ' + wordObj.tradChinese : ''} (${
       wordObj.pinyin
     }) — перевод с китайского на русский | Chinese+`;
-    const meaning = parsedTranslation?.translation
-      ? translationToText(parsedTranslation.translation.senses)
-      : stripRuMarkup(wordObj.russian);
+    const parsed = wordParsed(wordObj, parsedTranslation);
+    const meaning = parsed ? translationToText(parsed.senses) : '';
     const description = `Значение китайского слова ${chineseLabel}: ${meaning}`.slice(0, 300);
 
     return {

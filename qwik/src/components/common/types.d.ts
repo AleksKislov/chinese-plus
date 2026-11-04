@@ -15,7 +15,8 @@ type DictWord = {
   tradChinese?: string; // e.g. "煥", traditional writing, when it differs
   pinyin: string; // e.g. ' xuàn',
   cleanPinyin?: string; // e.g. 'xuan', accent-free latin pinyin
-  russian: string; // e.g. " [m1]1) я; мой[/m]"
+  // parsed translation (trimmed in lists), see components/common/translation/types.ts
+  senses?: import('./translation/types').TranslationNode[];
 };
 
 type NewAvatar = {

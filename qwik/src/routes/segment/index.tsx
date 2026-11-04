@@ -12,7 +12,7 @@ import {
   moreInfoModalId,
 } from '~/components/common/tooltips/word-tooltip';
 import { EditWordModal } from '~/components/common/modals/edit-word-modal';
-import { MoreInfoModal } from '~/components/common/modals/more-info-modal';
+import { MoreInfoModal, toMoreInfoWord } from '~/components/common/modals/more-info-modal';
 import { SEGMENTER_ENUM, type SEGMENTER_VERSION } from '../dictionary';
 import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 import { JsonLd } from '~/components/common/seo/json-ld';
@@ -232,17 +232,7 @@ export default component$(() => {
           {!currentWord.value ? null : (
             <div>
               <EditWordModal word={currentWord.value} modalId={editWordModalId} />
-              <MoreInfoModal
-                word={{
-                  _id: currentWord.value._id,
-                  cn: currentWord.value.chinese,
-                  py: currentWord.value.pinyin,
-                  ru: currentWord.value.russian,
-                  lvl: 'unknown',
-                  id: 0,
-                }}
-                modalId={moreInfoModalId}
-              />
+              <MoreInfoModal word={toMoreInfoWord(currentWord.value)} modalId={moreInfoModalId} />
             </div>
           )}
         </MainContent>

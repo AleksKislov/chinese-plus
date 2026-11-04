@@ -1,37 +1,31 @@
 const Dictionary = require('../../../models/Dictionary');
 const { Notify } = require('../_misc');
-const { syncTranslation } = require('./translations/sync-translation');
 
+// translations (dictionarytranslations) are not editable until editing of the parsed translation
+// is implemented; only pinyin can be changed
 async function updateWord(req, res) {
-  const { pinyin, russian, id } = req.body;
+  const { pinyin, id } = req.body;
 
-  if ((!pinyin && !russian) || !id) throw new Error('no info or id to update');
+  if (!pinyin || !id) throw new Error('no pinyin or id to update');
 
   const wordToEdit = await Dictionary.findById(id);
 
-  const newFields = {};
-  if (isOkToEdit(pinyin, wordToEdit.pinyin)) {
-    newFields.pinyin = pinyin;
-  }
-  if (isOkToEdit(russian, wordToEdit.russian)) {
-    newFields.russian = russian;
-  }
-
-  if (!newFields.pinyin && !newFields.russian) throw new Error('nothing new to update');
+  if (!isOkToEdit(pinyin, wordToEdit.pinyin)) throw new Error('nothing new to update');
 
   const newDate = new Date().toISOString();
-  newFields.edited = true;
-  newFields.updatedAt = newDate;
-  newFields.previous = wordToEdit.previous;
+  const newFields = {
+    pinyin,
+    edited: true,
+    updatedAt: newDate,
+    previous: wordToEdit.previous,
+  };
   newFields.previous.unshift({
-    russian: wordToEdit.russian,
     pinyin: wordToEdit.pinyin,
     editor: req.user.id,
     date: newDate,
   });
 
   const editedWord = await Dictionary.findByIdAndUpdate(id, { $set: newFields }, { new: true });
-  if (newFields.russian) await syncTranslation(editedWord);
   Notify.admin(`Изменено слово: ${wordToEdit.chinese}`);
 
   res.json(editedWord);
@@ -51,7 +45,6 @@ function isOkToEdit(newField, oldField) {
 //   "_id" : ObjectId("5f0477a4172f4114b21d362e"),
 //   "chinese" : "二连浩特",
 //   "pinyin" : " èrliánhàotè",
-//   "russian" : " [m1]Эрэн-Хото [i](городской уезд автономного района Внутренняя Монголия КНР)[/i][/m]",
 //   "date" : ISODate("2020-07-07T13:24:52.276Z"),
 //   "__v" : 0
 // }

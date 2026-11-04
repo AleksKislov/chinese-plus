@@ -24,7 +24,7 @@ import {
 import { getBookPageComments } from '~/misc/actions/get-content-comments';
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { EditWordModal } from '~/components/common/modals/edit-word-modal';
-import { MoreInfoModal } from '~/components/common/modals/more-info-modal';
+import { MoreInfoModal, toMoreInfoWord } from '~/components/common/modals/more-info-modal';
 import { editWordModalId, moreInfoModalId } from '~/components/common/tooltips/word-tooltip';
 import { ReadResultCard } from '~/components/me/read-result-card';
 import { EditBtn } from '~/components/common/content-cards/edit-btn';
@@ -127,17 +127,7 @@ export default component$(() => {
           {!currentWord.value ? null : (
             <div>
               <EditWordModal word={currentWord.value} modalId={editWordModalId} />
-              <MoreInfoModal
-                word={{
-                  _id: currentWord.value._id,
-                  cn: currentWord.value.chinese,
-                  py: currentWord.value.pinyin,
-                  ru: currentWord.value.russian,
-                  lvl: 'unknown',
-                  id: 0,
-                }}
-                modalId={moreInfoModalId}
-              />
+              <MoreInfoModal word={toMoreInfoWord(currentWord.value)} modalId={moreInfoModalId} />
             </div>
           )}
 

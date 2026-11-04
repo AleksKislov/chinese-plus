@@ -32,9 +32,10 @@ const downloadNewHskCsv = async (req, res) => {
     chinese: x.cn,
     pinyin: x.py,
     russian: x.ru,
+    wordId: x.dictId,
   }));
 
-  const csv = getDictWordsCsv(mapped, hasExamples, true);
+  const csv = await getDictWordsCsv(mapped, hasExamples, true);
 
   const filename = `hsk_v3${version === '2021' ? '_2021' : ''}_lvl_${hskLevel}_${hasExamples ? 'with' : 'no'}_examples.csv`;
   res.setHeader('Content-disposition', `attachment; filename=${filename}`);
