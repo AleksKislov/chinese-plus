@@ -1,8 +1,12 @@
 import { component$, Slot } from '@builder.io/qwik';
-import { type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
+import { type DocumentHead, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
 import { ApiService } from '~/misc/actions/request';
 import { type BookCardInfo } from '..';
+import { getBookUrl } from '~/misc/helpers/content/get-book-url';
+import { JsonLd } from '~/components/common/seo/json-ld';
+import CONST_URLS from '~/misc/consts/urls';
+import { type Crumb, truncateCrumb } from '~/components/common/layout/breadcrumbs';
 
 export type ChapterPage = {
   length: number;
@@ -11,12 +15,21 @@ export type ChapterPage = {
   ind: number;
 };
 
+export type BookPart = {
+  ind: number;
+  title: {
+    ru?: string;
+    cn?: string;
+  };
+};
+
 export type BookChapter = {
   _id: ObjectId;
   title: {
     ru: string;
     cn: string;
   };
+  part?: BookPart; // volume, only for books split into volumes
   length: number;
   pages: ChapterPage[];
 };
@@ -34,11 +47,36 @@ export const useGetBookContents = routeLoader$(({ params }): Promise<BookContent
 export default component$(() => {
   const bookLoader = useGetBookContents();
 
-  const { book } = bookLoader.value;
+  const loc = useLocation();
+
+  const { book, contents } = bookLoader.value;
+
+  // One trail for the whole book section: the book page itself, or book › chapter
+  // when a chapter is open (the chapter route renders inside this layout).
+  const chapter = loc.params.chapter_id
+    ? contents.find((c) => c._id === loc.params.chapter_id)
+    : undefined;
+  const bookTitle = truncateCrumb(book.title.ru);
+  const crumbs: Crumb[] = [
+    { name: 'Книги', href: '/read/books/' },
+    chapter ? { name: bookTitle, href: getBookUrl(book) + '/' } : { name: bookTitle },
+    ...(chapter ? [{ name: truncateCrumb(chapter.title.ru) }] : []),
+  ];
 
   return (
     <>
-      <ContentPageHead title={book.title.ru + ' | ' + book.title.cn} path="/read/books" />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Book',
+          name: book.title.ru,
+          alternateName: book.title.cn,
+          description: book.about,
+          image: book.picUrl,
+          author: { '@type': 'Person', name: book.author.name.ru },
+        }}
+      />
+      <ContentPageHead title={book.title.ru + ' | ' + book.title.cn} crumbs={crumbs} />
       <Slot />
     </>
   );
@@ -46,22 +84,25 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const bookInfo = resolveValue(useGetBookContents);
+  const title = `${bookInfo.book.title.ru} — книга на китайском с переводом | Chinese+`;
+  const description = `Книга на китайском языке с переводом: ${bookInfo.book.about}`;
 
+  // Keyed so a chapter page's head (rendered inside this layout) replaces these
+  // instead of adding a second description/og tag.
   return {
-    title: `Chinese+ ${bookInfo.book.title.ru}`,
+    title,
     meta: [
+      { key: 'description', name: 'description', content: description },
+      { key: 'og:title', property: 'og:title', content: title },
+      { key: 'og:description', property: 'og:description', content: description },
+      { key: 'og:type', property: 'og:type', content: 'book' },
       {
-        name: 'description',
-        content: `Книга на китайском языке с переводом: ${bookInfo.book.about}`,
+        key: 'og:url',
+        property: 'og:url',
+        content: CONST_URLS.siteUrl + getBookUrl(bookInfo.book) + '/',
       },
-      {
-        name: 'twitter:card',
-        content: 'book_image_' + bookInfo.book._id,
-      },
-      {
-        name: 'twitter:image',
-        content: bookInfo.book.picUrl,
-      },
+      { key: 'og:image', property: 'og:image', content: bookInfo.book.picUrl },
+      { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     ],
   };
 };

@@ -1,0 +1,17 @@
+User-agent: *
+Disallow: /me
+Disallow: /me/
+Disallow: /users/
+Disallow: /login
+Disallow: /register
+Disallow: /password-reset
+Disallow: /login_success
+Disallow: /create
+Disallow: /create/
+Disallow: /edit/
+Disallow: /read/unapproved-texts
+Disallow: /read/unapproved-blog
+Disallow: /watch/unapproved-videos
+
+Sitemap: https://www.chineseplus.club/sitemap.xml
+Sitemap: https://www.chineseplus.club/sitemap-dictionary.xml

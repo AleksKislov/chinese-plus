@@ -7,6 +7,7 @@ import { PageTitle } from '~/components/common/layout/title';
 import { ReadResultCard } from '~/components/me/read-result-card';
 import { BookCard } from '~/components/read/book-card';
 import { ApiService } from '~/misc/actions/request';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export type BookAuthor = {
   _id: ObjectId;
@@ -41,6 +42,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Книги' }]} />
       <PageTitle txt={'Книги на китайском языке'} />
       <FlexRow>
         <Sidebar>
@@ -69,7 +71,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Книги на китайском с переводом',
+  title: 'Книги на китайском с переводом — читать онлайн | Chinese+',
   meta: [
     {
       name: 'description',

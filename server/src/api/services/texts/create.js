@@ -4,6 +4,7 @@ const Hanzi = require('../../../../routes/api/dict/dictionary');
 
 const Text = require('../../../models/Text');
 const { shortUserInfoFields } = require('../../consts');
+const { invalidateTag } = require('../../../cache');
 
 async function createTxt(req, res) {
   const errors = validationResult(req);
@@ -53,6 +54,7 @@ async function createTxt(req, res) {
   const text = await newText.save();
   const resultTxt = await Text.findById(text._id).populate('user', shortUserInfoFields);
 
+  invalidateTag('texts');
   Notify.admin(`New TEXT from ${resultTxt.user.name}. Title: ${title}`);
   return res.json(resultTxt);
 }

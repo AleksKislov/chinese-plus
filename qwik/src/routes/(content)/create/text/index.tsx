@@ -13,7 +13,7 @@ import { OtherTextFields } from '~/components/create-edit/other-text-fields';
 import { TextPreprocessForm } from '~/components/create-edit/text-preprocess-form';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { getWordsForTooltips, type TextFromDB } from '~/routes/read/texts/[id]';
-import { segmenter, type SEGMENTER_VERSION } from '~/routes/search';
+import { segmenter, type SEGMENTER_VERSION } from '~/routes/dictionary';
 import { parseTextWords } from '~/misc/helpers/content';
 
 export type ThemePicType = {
@@ -48,7 +48,12 @@ export const onGet = async ({ cookie, redirect }: RequestEvent) => {
 export const useGetPics = globalAction$(async (param, ev): Promise<ThemePicType[]> => {
   const token = getTokenFromCookie(ev.cookie);
   if (!token) return [];
-  return ApiService.get('/api/translation/unsplash/' + param.picTheme, token, []);
+  const orientation = param.orientation || 'portrait';
+  return ApiService.get(
+    `/api/translation/unsplash/${param.picTheme}?orientation=${orientation}`,
+    token,
+    [],
+  );
 });
 
 export const usePublishText = routeAction$(async (params, ev): Promise<TextFromDB | null> => {

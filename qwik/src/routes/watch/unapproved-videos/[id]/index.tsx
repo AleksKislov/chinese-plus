@@ -9,6 +9,7 @@ import { MainContent } from '~/components/common/layout/main-content';
 import YTframeLoader from 'youtube-iframe';
 import { YoutubeService } from '~/misc/actions/youtube-service';
 import CONSTANTS from '~/misc/consts/consts';
+import CONST_URLS from '~/misc/consts/urls';
 import { ContentPageCard } from '~/components/common/content-cards/content-page-card';
 import {
   type Addressee,
@@ -16,11 +17,12 @@ import {
   WHERE,
 } from '~/components/common/comments/comment-form';
 import { Subs } from '~/components/watch/subs';
-import { parseVideoWords } from '~/misc/helpers/content';
+import { getContentPath, parseVideoWords } from '~/misc/helpers/content';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { getContentComments } from '~/misc/actions/get-content-comments';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
+import { truncateCrumb } from '~/components/common/layout/breadcrumbs';
 import {
   type TooltipSubs,
   type VideoFromDB,
@@ -37,11 +39,27 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
   return getContentComments(WHERE.video, params.id);
 });
 
-export const useGetVideo = routeLoader$(async ({ params }): Promise<VideoFromDB & TooltipSubs> => {
-  const videoFromDb = await getVideoFromDB(params.id);
-  const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
-  return { ...videoFromDb, tooltipSubs };
-});
+export const useGetVideo = routeLoader$(
+  async ({ params, redirect }): Promise<VideoFromDB & TooltipSubs> => {
+    const videoFromDb = await getVideoFromDB(params.id);
+    if (!videoFromDb) throw redirect(302, '/watch/unapproved-videos');
+    if (videoFromDb.isApproved) {
+      throw redirect(
+        302,
+        getContentPath(
+          WHERE.video,
+          videoFromDb._id,
+          false,
+          undefined,
+          undefined,
+          videoFromDb.title,
+        ),
+      );
+    }
+    const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
+    return { ...videoFromDb, tooltipSubs };
+  },
+);
 
 type YTPlayer = {
   player: {
@@ -95,7 +113,10 @@ export default component$(() => {
   useVisibleTask$(() => {
     if (!ytSig.player.playerInfo) {
       YTframeLoader.load((YT) => {
-        const ytPlayer = new YT.Player(YtPlayerId, { videoId: source });
+        const ytPlayer = new YT.Player(YtPlayerId, {
+          videoId: source,
+          playerVars: { origin: CONST_URLS.siteUrl },
+        });
         ytSig.player = noSerialize(ytPlayer);
       });
     }
@@ -117,12 +138,21 @@ export default component$(() => {
 
   return (
     <>
-      <ContentPageHead title={title} hits={hits} path="/watch/unapproved-videos" />
+      <ContentPageHead
+        title={title}
+        hits={hits}
+        crumbs={[
+          { name: 'Видео', href: '/watch/videos/' },
+          { name: 'На проверке', href: '/watch/unapproved-videos/' },
+          { name: truncateCrumb(title) },
+        ]}
+      />
 
       <FlexRow>
         <Sidebar>
           <ContentPageCard
             isApproved={false}
+            title={title}
             desc={desc}
             length={length}
             tags={tags}
@@ -172,6 +202,7 @@ export default component$(() => {
 export const head: DocumentHead = {
   title: 'Chinese+ Китайские видео с субтитрами',
   meta: [
+    { name: 'robots', content: 'noindex, follow' },
     {
       name: 'description',
       content:

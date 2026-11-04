@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* top progress bar while a client navigation is in flight (routes/layout.tsx) */
+@keyframes nav-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(0.9);
+  }
+}
+.nav-progress {
+  pointer-events: none;
+  transform-origin: left;
+  /* 150ms delay: fast navigations don't flash the bar */
+  animation: nav-progress 5s cubic-bezier(0.1, 0.7, 0.3, 1) 150ms both;
+}

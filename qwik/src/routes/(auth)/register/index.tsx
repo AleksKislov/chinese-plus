@@ -48,7 +48,7 @@ export default component$(() => {
         <Alerts />
         <div class="mb-3">
           Есть аккаунт?{' '}
-          <Link href="/login" class="link link-primary">
+          <Link prefetch="js" href="/login" class="link link-primary">
             Залогиньтесь
           </Link>
         </div>

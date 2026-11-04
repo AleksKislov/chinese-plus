@@ -69,6 +69,20 @@ const CONSTANTS = {
     documentary: 'документальное',
     news: 'новости',
   },
+  blogCategories: {
+    general: 'Общее',
+    personal: 'Личный опыт',
+    study: 'Обучение',
+    culture: 'Культура',
+    club_news: 'Новости клуба',
+    mini_post: 'Мини-пост',
+    literature_poetry: 'Литература и поэзия',
+    suggestion_bug: 'Предложения и баги',
+    history: 'История',
+    it_stuff: 'IT',
+    food: 'Еда',
+    travel: 'Путешествия',
+  },
   commentLength: 900,
   commentEmojis: [
     '🔥',
@@ -87,7 +101,18 @@ const CONSTANTS = {
     '🤷‍',
   ],
   hskInfo: {
+    // HSK 3.0, 2026 edition
     bandSize: {
+      '1': 300,
+      '2': 200,
+      '3': 500,
+      '4': 1000,
+      '5': 1600,
+      '6': 1800,
+      '7-8-9': 5560,
+    },
+    // HSK 3.0, previous (2021) word list
+    bandSizeOld: {
       '1': 500,
       '2': 772,
       '3': 973,
@@ -106,8 +131,13 @@ const CONSTANTS = {
     },
   },
   maxWordsPerPage: 200,
+  maxThemePicRequests: 5,
   users: {
     vocabSize: 300,
+  },
+  admin: {
+    id: '5f301a8f0aa547478da68c18',
+    name: 'admin',
   },
   CONTENT: {
     video: 'video',

@@ -1,14 +1,10 @@
-import {
-  component$,
-  useStyles$,
-  createContextId,
-  useContextProvider,
-  useStore,
-} from '@builder.io/qwik';
+import { component$, createContextId, useContextProvider, useStore } from '@builder.io/qwik';
 import { QwikCityProvider, RouterOutlet, ServiceWorkerRegister } from '@builder.io/qwik-city';
 import { RouterHead } from './components/router-head/router-head';
 
-import globalStyles from './global.css?inline';
+// plain import (not ?inline + useStyles$): emitted as a separate, cacheable CSS file
+// instead of ~150KB of CSS inlined into every SSR'd HTML page
+import './global.css';
 
 export const IsLightThemeCookieName = 'isLightTheme';
 
@@ -34,13 +30,16 @@ export interface User {
   email: string;
   finishedTexts: string[];
   seenVideos: string[];
-  words: UserWord[];
+  wordsMap: Record<string, boolean>;
+  wordsCount: number;
   readDailyGoal: number;
   readTodayNum: number;
   readTodayMap: ReadTodayMap;
   hsk2WordsTotal: number;
+  hsk3WordsTotal: number;
   role?: 'admin' | 'moderator';
   newAvatar?: NewAvatar;
+  bio: string;
 }
 
 export interface Config {
@@ -67,7 +66,6 @@ export const alertsContext = createContextId<Alert[]>('alerts-context');
 export const configContext = createContextId<Config[]>('config-context');
 
 export default component$(() => {
-  useStyles$(globalStyles);
   const userState = useStore<User>({
     _id: '',
     name: '',
@@ -77,13 +75,16 @@ export default component$(() => {
     email: '',
     finishedTexts: [],
     seenVideos: [],
-    words: [],
+    wordsMap: {},
+    wordsCount: 0,
     hsk2WordsTotal: 0,
+    hsk3WordsTotal: 0,
     readDailyGoal: 0,
     readTodayNum: 0,
     readTodayMap: {},
     role: undefined,
     newAvatar: undefined,
+    bio: '',
   });
   const alertsState = useStore<Alert[]>([]);
   const configState = useStore<Config[]>([]);
@@ -95,30 +96,53 @@ export default component$(() => {
   return (
     <QwikCityProvider>
       <head>
-        <meta charSet="utf-8" />
+        <meta charset="utf-8" />
+        <meta name="yandex-verification" content="d38c47d88e5dda70" />
         {/* <link rel='manifest' href='/manifest.json' /> */}
+        {/*
+          Metrika + ads scripts are added only after window "load": async scripts still
+          hold the load event, and mc.yandex.ru / yandex.ru are slow or hang from China,
+          which kept the tab spinner going after the page was ready. ym() calls and
+          yaContextCb callbacks are queued until the scripts arrive.
+        */}
         <script
           dangerouslySetInnerHTML={`
-                (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-                m[i].l=1*new Date();
-                for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-                k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-                (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+                window.ym = window.ym || function () { (window.ym.a = window.ym.a || []).push(arguments); };
+                window.ym.l = 1 * new Date();
+                window.yaContextCb = window.yaContextCb || [];
 
                 ym(48737867, "init", {
-                      clickmap:true,
-                      trackLinks:true,
-                      accurateTrackBounce:true
-                });            
+                  clickmap: true,
+                  trackLinks: true,
+                  accurateTrackBounce: true
+                });
+
+                (function () {
+                  function addScript(src) {
+                    for (var j = 0; j < document.scripts.length; j++) {
+                      if (document.scripts[j].src === src) return;
+                    }
+                    var s = document.createElement("script");
+                    s.async = true;
+                    s.src = src;
+                    document.head.appendChild(s);
+                  }
+                  function loadYandex() {
+                    addScript("https://mc.yandex.ru/metrika/tag.js");
+                    addScript("https://yandex.ru/ads/system/context.js");
+                  }
+                  if (document.readyState === "complete") {
+                    loadYandex();
+                  } else {
+                    window.addEventListener("load", loadYandex, { once: true });
+                  }
+                })();
             `}
         />
-        {/* <script>window.yaContextCb=window.yaContextCb||[]</script> */}
-        <script dangerouslySetInnerHTML={`window.yaContextCb=window.yaContextCb||[]`}></script>
-        <script src="https://yandex.ru/ads/system/context.js" async></script>
 
         <RouterHead />
       </head>
-      <body lang="en" class="text-neutral-content">
+      <body class="text-neutral-content">
         <noscript>
           <div>
             <img

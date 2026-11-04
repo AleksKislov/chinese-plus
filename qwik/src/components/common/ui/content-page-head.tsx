@@ -1,23 +1,19 @@
 import { component$ } from '@builder.io/qwik';
-import { MainContent } from '../layout/main-content';
-import { Sidebar } from '../layout/sidebar';
 import { PageTitle } from '../layout/title';
-import { BackBtn } from './back-btn';
+import { Breadcrumbs, type Crumb } from '../layout/breadcrumbs';
 
 type ContentPageHeadProps = {
-  path: string;
   title: string;
   hits?: number;
+  // Breadcrumb trail after "Главная" - it also serves as the way back to the section.
+  crumbs: Crumb[];
 };
 
-export const ContentPageHead = component$(({ path, title, hits }: ContentPageHeadProps) => (
-  <div class={'flex flex-col md:flex-row'}>
-    <Sidebar noAds={true}>
-      <BackBtn path={path} />
-    </Sidebar>
-
-    <MainContent>
+export const ContentPageHead = component$(({ title, hits, crumbs }: ContentPageHeadProps) => (
+  <>
+    <Breadcrumbs items={crumbs} />
+    <div class="mb-6">
       <PageTitle txt={title} hits={hits} hSizeSm={true} />
-    </MainContent>
-  </div>
+    </div>
+  </>
 ));

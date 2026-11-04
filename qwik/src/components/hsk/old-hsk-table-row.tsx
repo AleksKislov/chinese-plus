@@ -1,7 +1,7 @@
 import { component$, $, useSignal, useContext, type Signal } from '@builder.io/qwik';
 import CONST_URLS from '~/misc/consts/urls';
 import CONSTANTS from '~/misc/consts/consts';
-import type { OldHskWordType, UserOldHskWordType } from '~/routes/hsk/2/table';
+import type { OldHskWordType, UserOldHskWordType } from '~/routes/hsk/2/table/[...lvl]';
 import Cookies from 'js-cookie';
 import { ApiService } from '~/misc/actions/request';
 import { alertsContext } from '~/root';

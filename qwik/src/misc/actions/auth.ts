@@ -20,6 +20,7 @@ export interface UserFromDB {
   read_today_num?: number;
   read_today_arr: {};
   newAvatar?: { type: string; background: string; seed: string };
+  bio?: string;
 }
 
 export function logout() {

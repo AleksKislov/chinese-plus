@@ -1,0 +1,210 @@
+import { component$, useStore, useTask$, $, useComputed$ } from '@builder.io/qwik';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { HskExamsLinkCard } from '~/components/hsk/exams-link-card';
+import { MainContent } from '~/components/common/layout/main-content';
+import { PageTitle } from '~/components/common/layout/title';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
+import {
+  getWordsLevel,
+  getWordsPage,
+  getWordsSeo,
+  wordsHead,
+  wordsLevelOnGet,
+} from '~/components/hsk/words-seo';
+import { TableCard } from '~/components/hsk/table-card';
+import { type DocumentHead, routeLoader$, useLocation } from '@builder.io/qwik-city';
+import { type NewHskWordType } from '../../table/[...lvl]';
+import { ApiService } from '~/misc/actions/request';
+import { playSvg } from '~/components/common/media/svg';
+import CONST_URLS from '~/misc/consts/urls';
+import { TypingGame } from '~/components/games/typing-game';
+
+import {
+  type TestWord,
+  type QuestionType,
+  type QuestionStore,
+  type AnswerStore,
+  collectOptions,
+  checkAnswers,
+  QuestKinds,
+} from '../../../2/tests/[...lvl]';
+
+import { parseRussian } from '~/misc/helpers/translation';
+import { CalligraphyGame } from '~/components/games/calligraphy-game';
+
+// get 150 words
+// /hsk/…/{lvl}/ - redirects old ?lvl= links and /1/, 404s unknown levels.
+export const onGet = wordsLevelOnGet('new');
+
+export const getTestWords = routeLoader$(async (ev): Promise<TestWord[]> => {
+  const lvl = ev.params.lvl || '1';
+  const res = await ApiService.get(`/api/newhskwords/all?hsk_level=${lvl}`, undefined, []);
+  return res.map(({ cn: chinese, lvl: level, py: pinyin, id, ru, audio }: NewHskWordType) => ({
+    id,
+    audio,
+    level,
+    chinese,
+    pinyin,
+    translation: parseRussian(ru, false),
+  }));
+});
+
+export default component$(() => {
+  const QUEST_NUM = 5;
+  const OPTIONS_NUM = 5;
+
+  const loc = useLocation();
+  const testWords = getTestWords();
+
+  const questionStore = useStore<QuestionStore>({ chars: null, pinyin: null, audio: null });
+  const answerStore = useStore<AnswerStore>({ chars: {}, pinyin: {}, audio: {} });
+
+  useTask$(({ track }) => {
+    track(() => testWords.value);
+    for (const key in QuestKinds) {
+      if (Object.prototype.hasOwnProperty.call(QuestKinds, key)) {
+        questionStore[key as QuestionType] = null;
+        answerStore[key as QuestionType] = {};
+      }
+    }
+    questionStore.chars = testWords.value.slice(0, QUEST_NUM);
+    questionStore.pinyin = testWords.value.slice(QUEST_NUM, QUEST_NUM * 2);
+    // not every 2026 word has audio yet
+    questionStore.audio = testWords.value
+      .slice(QUEST_NUM * 2)
+      .filter((w) => w.audio)
+      .slice(0, QUEST_NUM);
+
+    return () => {
+      for (const key in QuestKinds) {
+        if (Object.prototype.hasOwnProperty.call(QuestKinds, key)) {
+          questionStore[key as QuestionType] = null;
+          answerStore[key as QuestionType] = {};
+        }
+      }
+    };
+  });
+
+  const setAnswer = $((e: Event, answerId: number, qType: QuestionType) => {
+    const tgt = e.target as HTMLInputElement;
+    answerStore[qType][answerId] = answerId === +tgt.value;
+  });
+
+  const questions = [
+    {
+      type: QuestKinds.chars,
+      title: 'иероглифов',
+    },
+    {
+      type: QuestKinds.pinyin,
+      title: 'пиньиня',
+    },
+    {
+      type: QuestKinds.audio,
+      title: 'аудио',
+    },
+  ];
+
+  const getQuestionBtn = (word: TestWord, type: QuestionType) => {
+    if (type === QuestKinds.audio) return playSvg;
+    if (type === QuestKinds.pinyin) return <div class={'lowercase'}>{word.pinyin}</div>;
+    return word.chinese;
+  };
+
+  // useComputed$ re-derives when the level / ?pg= changes; a plain const in the component
+  // body is computed once, leaving the H1 and breadcrumbs on the first level.
+  const seo = useComputed$(() =>
+    getWordsSeo({
+      version: 'new',
+      page: 'tests',
+      lvl: getWordsLevel(loc.params, 'new'),
+      pg: getWordsPage(loc.url),
+    }),
+  );
+
+  return (
+    <>
+      <Breadcrumbs items={seo.value.crumbs} />
+      <PageTitle txt={seo.value.h1} />
+      <FlexRow>
+        <Sidebar>
+          <TableCard level={loc.params.lvl || '1'} isOldHsk={false} isForTests={true} />
+          <HskExamsLinkCard version="new" level={loc.params.lvl || '1'} />
+        </Sidebar>
+
+        <MainContent>
+          <CalligraphyGame words={testWords.value} level={loc.params.lvl || '1'} />
+          <TypingGame words={testWords.value} level={loc.params.lvl || '1'} />
+
+          {questions.map(({ type, title }) => (
+            <>
+              <div class="prose mb-2">
+                <h4>Выберите верный перевод для {title}</h4>
+              </div>
+
+              <div class="form-control mb-2">
+                {questionStore[type as QuestionType] &&
+                  questionStore[type as QuestionType]!.map((word) => (
+                    <div class="input-group mb-1 w-full" key={word.id}>
+                      <button
+                        class="btn sm:w-1/12 w-1/4 hover:text-neutral-content"
+                        id={`${type}_${word.id}`}
+                        onClick$={() => {
+                          if (type !== QuestKinds.audio) return;
+                          if (word.audio) playAudio(word.audio);
+                        }}
+                      >
+                        {getQuestionBtn(word, type as QuestionType)}
+                      </button>
+
+                      <select
+                        class="select select-bordered sm:w-11/12 w-3/4"
+                        onChange$={(e) => setAnswer(e, word.id, type as QuestionType)}
+                      >
+                        <option disabled selected>
+                          Выбрать ответ
+                        </option>
+                        {collectOptions(testWords.value, word, OPTIONS_NUM).map((opt, ind) => (
+                          <optgroup label={`${ind + 1}`} key={ind}>
+                            <option
+                              value={opt.id}
+                              key={opt.id}
+                              dangerouslySetInnerHTML={opt.translation}
+                            ></option>
+                          </optgroup>
+                        ))}
+                      </select>
+                    </div>
+                  ))}
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-info btn-sm"
+                onClick$={() =>
+                  checkAnswers(answerStore[type as QuestionType], type as QuestionType)
+                }
+              >
+                Проверить
+              </button>
+              {type !== QuestKinds.audio && <hr class="h-px my-8" />}
+            </>
+          ))}
+        </MainContent>
+      </FlexRow>
+    </>
+  );
+});
+
+export const playAudio = (audioPath: string) => {
+  new Audio(`${CONST_URLS.myAudioURL}${audioPath}`).play();
+};
+
+export const head: DocumentHead = ({ url, params }) =>
+  wordsHead({
+    version: 'new',
+    page: 'tests',
+    lvl: getWordsLevel(params, 'new'),
+    pg: getWordsPage(url),
+  });

@@ -3,12 +3,21 @@ const router = express.Router();
 const Hanzi = require('./dict/dictionary');
 const mdbg = require('mdbg');
 const nodejieba = require('nodejieba');
-const { getAllWords, getWordsForParag } = require('./services');
+const { getAllWords, getWordsForParag, shortenTranslation } = require('./services');
 const auth = require('../../middleware/auth');
+const { cacheRoute, TTL } = require('../../src/cache');
 
 const Dictionary = require('../../src/models/Dictionary');
 
-const { updateWord, rollbackUpdate, getEditedWords } = require('../../src/api/services/dictionary');
+const {
+  updateWord,
+  rollbackUpdate,
+  getEditedWords,
+  wildcardSearch,
+  pinyinSearch,
+  handwritingSearch,
+  getSitemapWords,
+} = require('../../src/api/services/dictionary');
 
 /**
  * @route     GET api/dictionary?word=...
@@ -102,15 +111,34 @@ router.post('/allwords', async (req, res) => {
   }
 });
 
-function shortenTranslation(txt) {
-  if (!txt) return '';
-  txt = txt.replace(/\[\*\]\[ex\].*?\[\/ex\]\[\/\*\]/g, '').replaceAll('[m3][/m]', '');
-  if (txt.length > 400) {
-    const ind = txt.slice(200, txt.length).indexOf('[m2]');
-    txt = txt.slice(0, ind + 200);
-  }
-  return txt;
-}
+/**
+ * @route     GET api/dictionary/sitemap-words
+ * @desc      HSK words that have a dictionary entry, for sitemap-dictionary.xml
+ * @access    Public
+ */
+router.get('/sitemap-words', cacheRoute('dictionary-sitemap', { ttl: TTL.DAY }), getSitemapWords);
+
+/**
+ * @route     POST api/dictionary/wildcardSearch
+ * @desc      Find chinese words of a fixed length matching a pattern, "?" as a single-char wildcard
+ * @access    Public
+ */
+router.post('/wildcardSearch', wildcardSearch);
+
+/**
+ * @route     POST api/dictionary/pinyinSearch
+ * @desc      Find chinese words by (accent-free) pinyin, matched against cleanPinyin
+ * @access    Public
+ */
+router.post('/pinyinSearch', pinyinSearch);
+
+/**
+ * @route     POST api/dictionary/handwritingSearch
+ * @desc      Recognize hand-drawn strokes into candidate chinese characters
+ *            (proxies Google's unofficial handwriting input API)
+ * @access    Public
+ */
+router.post('/handwritingSearch', handwritingSearch);
 
 router.post('/wordsForParag', auth, async (req, res) => {
   const userId = req.user?.id;

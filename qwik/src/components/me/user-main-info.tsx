@@ -26,7 +26,7 @@ export const UserMainInfo = component$(
       <div class="flex">
         {isPrivate ? (
           <div class="tooltip tooltip-info tooltip-bottom mr-4" data-tip="Сменить аватар">
-            <Link class="avatar" href={'/me/avatar'}>
+            <Link prefetch="js" class="avatar" href={'/me/avatar'}>
               {name && <BigAvatar userName={name} newAvatar={newAvatar} />}
             </Link>
           </div>
@@ -47,7 +47,7 @@ export const UserMainInfo = component$(
               </span>
             </div>
             {isPrivate ? (
-              <Link href={'/users/' + id}>
+              <Link prefetch="js" href={'/users/' + id}>
                 <button class="btn btn-xs btn-warning">Мой контент</button>
               </Link>
             ) : (
@@ -60,7 +60,7 @@ export const UserMainInfo = component$(
                   <button
                     class="btn btn-xs btn-warning"
                     onClick$={() => {
-                      navigator.clipboard.writeText(` @@[${id}]{${name}}@@, `);
+                      navigator.clipboard.writeText(` @[${id}]{${name}}@, `);
                       alertsState.push({
                         bg: 'alert-info',
                         text: 'ID скопировано',

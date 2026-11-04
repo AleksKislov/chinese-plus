@@ -34,14 +34,7 @@ export const OwnWordBtn = component$(({ word }: { word: DictWord }) => {
 
   let isUserWord = false;
   if (typeof word !== 'string') {
-    try {
-      isUserWord =
-        loggedIn &&
-        Array.isArray(userState.words) &&
-        userState.words?.some((w) => w.chinese === word.chinese);
-    } catch (error) {
-      console.error('Error checking user words:', error);
-    }
+    isUserWord = loggedIn && Boolean(userState.wordsMap[word.chinese]);
   }
 
   return (
@@ -56,7 +49,8 @@ export const OwnWordBtn = component$(({ word }: { word: DictWord }) => {
             onClick$={() => {
               const wordId = word._id;
               delUserWord.submit({ wordId });
-              userState.words = userState.words.filter((w) => w.dictWordId !== wordId);
+              delete userState.wordsMap[word.chinese];
+              userState.wordsCount = Math.max(0, userState.wordsCount - 1);
               alertsState.push({
                 bg: 'alert-info',
                 text: 'Слово удалено из вашего словарика',
@@ -78,17 +72,8 @@ export const OwnWordBtn = component$(({ word }: { word: DictWord }) => {
                 });
               }
               addUserWord.submit({ wordId: word._id });
-              userState.words = [
-                ...userState.words,
-                {
-                  _id: '0',
-                  date: '',
-                  chinese: word.chinese,
-                  translation: word.russian,
-                  pinyin: word.pinyin,
-                  dictWordId: word._id,
-                },
-              ];
+              userState.wordsMap[word.chinese] = true;
+              userState.wordsCount += 1;
               alertsState.push({
                 bg: 'alert-success',
                 text: 'Слово добавлено в ваш словарик',

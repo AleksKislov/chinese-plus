@@ -1,0 +1,601 @@
+/**
+ * Import HSK mock exams authored as JSON into the hskexams collection.
+ *
+ * Exams are written by hand (or generated offline) under server/content/hsk-exams
+ * and imported with this script. Every exam is upserted on its `slug`, so the
+ * workflow for fixing a mistake is: edit the JSON, re-run the script, done - the
+ * existing document is overwritten in place and never duplicated.
+ *
+ * Pictures and audio are produced separately. This script does not upload media;
+ * it validates the content, records the hasAudio/hasImage flags, and can emit a
+ * manifest listing every media file still to be generated, what to generate it
+ * from (the TTS script or the image prompt) and the exact Object Storage key to
+ * upload it to - see src/api/services/hsk-exams/media-paths.js.
+ *
+ * Usage:
+ *   node scripts/import-hsk-exams.js                                   # dry run, all exams
+ *   node scripts/import-hsk-exams.js --apply
+ *   node scripts/import-hsk-exams.js --dir=content/hsk-exams/new/1 --apply
+ *   node scripts/import-hsk-exams.js --slug=new-1-exam-1 --apply       # just one exam
+ *   node scripts/import-hsk-exams.js --apply --publish                 # also set isApproved
+ *   node scripts/import-hsk-exams.js --media-manifest=media-todo.json  # what's left to generate
+ *   node scripts/import-hsk-exams.js --validate-only                   # no DB needed
+ *
+ * A dry run parses and validates everything and prints exactly what would change,
+ * so it is always safe to run first. --validate-only goes further and never opens
+ * a DB connection at all, which is the fast loop to use while writing content.
+ */
+const path = require('path');
+const fs = require('fs');
+
+require('dotenv').config({
+  path: path.join(
+    __dirname,
+    '..',
+    'config',
+    process.env.NODE_ENV === 'development' ? '.env.dev' : '.env.prod'
+  ),
+});
+
+const mongoose = require('mongoose');
+const { connectDB } = require('../src/mongo_db/db');
+const HskExam = require('../src/models/HskExam');
+const {
+  getSectionAudioKey,
+  getQuestionAudioKey,
+  getQuestionImageKey,
+  getBankImageKey,
+  getPartBankImageKey,
+  getOptionImageKey,
+  getExampleAudioKey,
+  getExampleImageKey,
+  getExampleOptionImageKey,
+} = require('../src/api/services/hsk-exams/media-paths');
+
+const DEFAULT_DIR = path.join(__dirname, '..', 'content', 'hsk-exams');
+
+const APPLY = process.argv.includes('--apply');
+const PUBLISH = process.argv.includes('--publish');
+// Validate + emit the media manifest without ever touching Mongo.
+const VALIDATE_ONLY = process.argv.includes('--validate-only');
+
+const getArg = (name) => {
+  const arg = process.argv.find((a) => a.startsWith(`--${name}=`));
+  return arg ? arg.split('=').slice(1).join('=') : null;
+};
+
+const DIR = getArg('dir') ? path.resolve(process.cwd(), getArg('dir')) : DEFAULT_DIR;
+const ONLY_SLUG = getArg('slug');
+const MANIFEST_PATH = getArg('media-manifest');
+
+const SECTION_TYPES = ['listening', 'reading', 'writing'];
+// Question types answered from the part-level bank rather than their own options.
+const BANK_ANSWER_TYPES = [
+  'listening-picture-match',
+  'reading-picture-match',
+  'reading-sentence-match',
+  'reading-fill-blank',
+];
+// Question types graded against free text rather than a label.
+const FREE_TEXT_TYPES = ['writing-sentence-order', 'writing-character'];
+// Answered by ordering the question's own options; the key is the labels in
+// order ('BCA'), so it is checked as a permutation rather than one label.
+const ORDER_TYPES = ['reading-sentence-order'];
+// Not auto-graded: writing-picture-sentence keeps a sample sentence in
+// correctAnswer, shown after checking.
+const UNGRADED_TYPES = ['writing-essay', 'writing-picture-sentence'];
+
+/** Recursively collect every .json file under a directory. */
+function findJsonFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  return entries.flatMap((entry) => {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) return findJsonFiles(full);
+    return entry.isFile() && entry.name.endsWith('.json') ? [full] : [];
+  });
+}
+
+/**
+ * Checks one question-shaped item - a real question or a worked example
+ * (part.examples reuses the exact same shape, see HskExam.js) - against its
+ * questionType's answer rules. Shared so an example is held to the same bar
+ * as the real question it demonstrates: a bad example is just as broken as a
+ * bad question.
+ */
+function validateQuestionLike(q, qLoc, { bankLabels, sectionType, at, errors, warnings }) {
+  if (!q.questionType) {
+    errors.push(at(`${qLoc}.questionType: required`));
+    return;
+  }
+
+  (q.options || []).forEach((o, oInd) => {
+    if (!o.label) errors.push(at(`${qLoc}.options[${oInd}].label: required`));
+    if (o.hasImage && !o.imagePrompt)
+      errors.push(at(`${qLoc}.options[${oInd}].imagePrompt: required when hasImage is true`));
+  });
+
+  const optionLabels = (q.options || []).map((o) => o.label);
+  const usesBank = BANK_ANSWER_TYPES.includes(q.questionType);
+  const validLabels = usesBank ? bankLabels : optionLabels;
+
+  if (UNGRADED_TYPES.includes(q.questionType)) {
+    // essays have no key - nothing to check
+    if (q.questionType === 'writing-picture-sentence' && !q.promptCn)
+      errors.push(at(`${qLoc}.promptCn: required - the word the sentence must use`));
+  } else if (ORDER_TYPES.includes(q.questionType)) {
+    const key = [...(q.correctAnswer || '')].sort().join('');
+    if (!q.correctAnswer || key !== [...optionLabels].sort().join(''))
+      errors.push(
+        at(
+          `${qLoc}.correctAnswer "${q.correctAnswer}" must use every option label ` +
+            `[${optionLabels.join(', ')}] exactly once`
+        )
+      );
+  } else if (FREE_TEXT_TYPES.includes(q.questionType)) {
+    if (!q.correctAnswer) errors.push(at(`${qLoc}.correctAnswer: required`));
+  } else if (!q.correctAnswer) {
+    errors.push(at(`${qLoc}.correctAnswer: required`));
+  } else if (!validLabels.includes(q.correctAnswer)) {
+    errors.push(
+      at(
+        `${qLoc}.correctAnswer "${q.correctAnswer}" is not one of the ` +
+          `${usesBank ? 'part bank' : 'question option'} labels ` +
+          `[${validLabels.join(', ') || 'none'}]`
+      )
+    );
+  }
+
+  if (usesBank && !bankLabels.length)
+    errors.push(at(`${qLoc}: type "${q.questionType}" needs a non-empty bank on this part`));
+  if (
+    !usesBank &&
+    !optionLabels.length &&
+    !FREE_TEXT_TYPES.includes(q.questionType) &&
+    !UNGRADED_TYPES.includes(q.questionType)
+  )
+    errors.push(at(`${qLoc}.options: required for type "${q.questionType}"`));
+
+  // A transcript is only needed to synthesise the audio and to reveal the
+  // script after grading. An exam whose audio already exists (a real paper's
+  // recording, rather than TTS) is perfectly importable without one, so this
+  // is a warning rather than a hard error.
+  if (sectionType === 'listening' && q.hasAudio && !q.ttsText)
+    warnings.push(at(`${qLoc}.ttsText: missing - cannot generate TTS or show the transcript`));
+  if (q.hasImage && !q.imagePrompt)
+    errors.push(at(`${qLoc}.imagePrompt: required when hasImage is true`));
+}
+
+/**
+ * Validates one parsed exam. Returns { errors, warnings }: errors abort the
+ * import, warnings are printed and imported anyway. Everything is checked in one
+ * pass so a bad file reports all of its problems at once instead of one per re-run.
+ */
+function validateExam(exam, file) {
+  const errors = [];
+  const warnings = [];
+  const at = (loc) => `${path.basename(file)} ${loc}`;
+
+  if (!exam || typeof exam !== 'object')
+    return { errors: [`${path.basename(file)}: not a JSON object`], warnings: [] };
+  if (!['old', 'new'].includes(exam.version))
+    errors.push(at(`version: expected "old" or "new", got ${JSON.stringify(exam.version)}`));
+  if (!exam.level) errors.push(at('level: required'));
+  if (!exam.slug) errors.push(at('slug: required'));
+  else if (!/^[a-z0-9-]+$/.test(exam.slug))
+    errors.push(at(`slug "${exam.slug}": only lowercase letters, digits and dashes`));
+  if (!Array.isArray(exam.sections) || !exam.sections.length)
+    errors.push(at('sections: required, at least one'));
+
+  (exam.sections || []).forEach((section, sInd) => {
+    const sLoc = `sections[${sInd}]`;
+    if (!SECTION_TYPES.includes(section.type))
+      errors.push(at(`${sLoc}.type: expected one of ${SECTION_TYPES.join('/')}`));
+    if (!Array.isArray(section.parts) || !section.parts.length)
+      errors.push(at(`${sLoc}.parts: required, at least one`));
+
+    if (section.hasAudio && (section.parts || []).some((p) => (p.questions || []).some((q) => q.hasAudio)))
+      errors.push(
+        at(
+          `${sLoc}: has section-level audio AND per-question audio - use one or the other`
+        )
+      );
+
+    (section.parts || []).forEach((part, pInd) => {
+      const pLoc = `${sLoc}.parts[${pInd}]`;
+      const bankLabels = (part.bank || []).map((b) => b.label);
+      const dupBank = bankLabels.filter((l, i) => bankLabels.indexOf(l) !== i);
+      if (dupBank.length) errors.push(at(`${pLoc}.bank: duplicate labels ${dupBank.join(', ')}`));
+      (part.bank || []).forEach((b, bInd) => {
+        if (!b.label) errors.push(at(`${pLoc}.bank[${bInd}].label: required`));
+        if (b.hasImage && !b.imagePrompt)
+          errors.push(at(`${pLoc}.bank[${bInd}].imagePrompt: required when hasImage is true`));
+        if (!b.hasImage && !part.bankHasImage && !b.textCn && !b.textRu)
+          errors.push(at(`${pLoc}.bank[${bInd}]: needs textCn/textRu or hasImage`));
+      });
+
+      if (part.bankHasImage && !part.bankImagePrompt)
+        errors.push(at(`${pLoc}.bankImagePrompt: required when bankHasImage is true`));
+      if (part.bankHasImage && (part.bank || []).some((b) => b.hasImage))
+        errors.push(
+          at(`${pLoc}: has bankHasImage AND per-entry bank pictures - use one or the other`)
+        );
+
+      if (!Array.isArray(part.questions) || !part.questions.length)
+        errors.push(at(`${pLoc}.questions: required, at least one`));
+
+      const ctxCommon = { bankLabels, sectionType: section.type, at, errors, warnings };
+
+      (part.examples || []).forEach((ex, exInd) => {
+        validateQuestionLike(ex, `${pLoc}.examples[${exInd}]`, ctxCommon);
+      });
+
+      (part.questions || []).forEach((q, qInd) => {
+        validateQuestionLike(q, `${pLoc}.questions[${qInd}]`, ctxCommon);
+      });
+    });
+  });
+
+  return { errors, warnings };
+}
+
+/**
+ * Maps one question-shaped item (a real question or a worked example) into the
+ * schema's QuestionSchema shape. `number` is only ever assigned to real
+ * questions - an example never gets a printed number and never advances the
+ * running count, matching how the real paper numbers only the graded items.
+ */
+function mapQuestionLike(q, ind, number) {
+  return {
+    ind,
+    number,
+    questionType: q.questionType,
+    promptCn: q.promptCn ?? null,
+    promptRu: q.promptRu ?? null,
+    pinyin: q.pinyin ?? null,
+    ttsText: q.ttsText ?? null,
+    hasAudio: Boolean(q.hasAudio),
+    audioStartSec: q.audioStartSec ?? null,
+    hasImage: Boolean(q.hasImage),
+    imagePrompt: q.imagePrompt ?? null,
+    options: (q.options || []).map((o) => ({
+      label: o.label,
+      textCn: o.textCn ?? null,
+      textRu: o.textRu ?? null,
+      pinyin: o.pinyin ?? null,
+      hasImage: Boolean(o.hasImage),
+      imagePrompt: o.imagePrompt ?? null,
+    })),
+    correctAnswer: q.correctAnswer ?? null,
+    explanationRu: q.explanationRu ?? null,
+  };
+}
+
+/**
+ * Normalises a validated exam into the shape the Mongoose model expects, filling
+ * in the indexes and running question numbers so the JSON does not have to
+ * repeat them by hand.
+ */
+function toDocument(exam) {
+  const sections = exam.sections.map((section) => {
+    let runningNumber = 1;
+    return {
+      type: section.type,
+      titleCn: section.titleCn ?? null,
+      titleRu: section.titleRu ?? null,
+      durationMinutes: section.durationMinutes ?? null,
+      hasAudio: Boolean(section.hasAudio),
+      parts: section.parts.map((part, pInd) => ({
+        ind: part.ind ?? pInd,
+        instructionCn: part.instructionCn ?? null,
+        instructionRu: part.instructionRu ?? null,
+        bank: (part.bank || []).map((b) => ({
+          label: b.label,
+          textCn: b.textCn ?? null,
+          textRu: b.textRu ?? null,
+          pinyin: b.pinyin ?? null,
+          hasImage: Boolean(b.hasImage),
+          imagePrompt: b.imagePrompt ?? null,
+        })),
+        bankHasImage: Boolean(part.bankHasImage),
+        bankImagePrompt: part.bankImagePrompt ?? null,
+        passageCn: part.passageCn ?? null,
+        passageRu: part.passageRu ?? null,
+        examples: (part.examples || []).map((ex, exInd) => mapQuestionLike(ex, ex.ind ?? exInd, null)),
+        questions: part.questions.map((q, qInd) =>
+          mapQuestionLike(q, q.ind ?? qInd, q.number ?? runningNumber++)
+        ),
+      })),
+    };
+  });
+
+  return {
+    version: exam.version,
+    level: String(exam.level),
+    slug: exam.slug,
+    title: { cn: exam.title?.cn ?? null, ru: exam.title?.ru ?? null },
+    descriptionRu: exam.descriptionRu ?? null,
+    ind: exam.ind ?? 0,
+    durationMinutes: exam.durationMinutes ?? null,
+    sections,
+    updatedAt: new Date(),
+  };
+}
+
+// Speaker markers used in listening transcripts, as printed on a real paper.
+const SPEAKERS = { '\u7537': 'male', '\u5973': 'female', '\u95ee': 'narrator' };
+
+/**
+ * Splits a listening transcript into per-speaker lines.
+ *
+ * A dialogue script reads "\u5973\uff1a\u4f60\u597d \u7537\uff1a\u6211\u53eb\u738b\u660e\u3002 \u95ee\uff1a..." - those \u7537/\u5973/\u95ee markers are
+ * transcript convention and must NOT be spoken. Feeding ttsText to TTS verbatim
+ * would read them out; render these lines with the matching voice instead and
+ * concatenate. Returns null when the script has no markers (single narrator).
+ */
+function splitTtsLines(text) {
+  if (!text) return null;
+  const parts = text
+    .split(/(?=[\u7537\u5973\u95ee]\uff1a)/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (!parts.some((p) => /^[\u7537\u5973\u95ee]\uff1a/.test(p))) return null;
+  return parts.map((p) => {
+    const m = p.match(/^([\u7537\u5973\u95ee])\uff1a\s*([\s\S]*)$/);
+    return m
+      ? { speaker: SPEAKERS[m[1]], text: m[2].trim() }
+      : { speaker: 'narrator', text: p };
+  });
+}
+
+/**
+ * Every media file this exam expects, with the source to generate it from and
+ * the storage key to upload it to. `pending` marks the ones not yet generated.
+ */
+function collectMedia(exam) {
+  const items = [];
+  exam.sections.forEach((section) => {
+    if (section.hasAudio) {
+      items.push({
+        kind: 'audio',
+        key: getSectionAudioKey({
+          version: exam.version,
+          level: String(exam.level),
+          slug: exam.slug,
+          sectionType: section.type,
+        }),
+        ttsText: null,
+        ttsLines: null,
+        note: `full ${section.type} section recording (instructions, examples, questions, pauses)`,
+      });
+    }
+    section.parts.forEach((part, pInd) => {
+      const ctx = {
+        version: exam.version,
+        level: String(exam.level),
+        slug: exam.slug,
+        sectionType: section.type,
+        partInd: part.ind ?? pInd,
+      };
+
+      if (part.bankHasImage) {
+        items.push({
+          kind: 'image',
+          key: getPartBankImageKey(ctx),
+          prompt: part.bankImagePrompt ?? null,
+          note: `combined bank picture (all letters) of ${section.type} part ${ctx.partInd}`,
+        });
+      }
+
+      (part.bank || []).forEach((b) => {
+        if (!b.hasImage) return;
+        items.push({
+          kind: 'image',
+          key: getBankImageKey(ctx, b.label),
+          prompt: b.imagePrompt ?? null,
+          note: `bank ${b.label} of ${section.type} part ${ctx.partInd}`,
+        });
+      });
+
+      (part.examples || []).forEach((ex, exInd) => {
+        const ind = ex.ind ?? exInd;
+        if (ex.hasAudio) {
+          items.push({
+            kind: 'audio',
+            key: getExampleAudioKey(ctx, ind),
+            ttsText: ex.ttsText ?? null,
+            ttsLines: splitTtsLines(ex.ttsText),
+            note: `${section.type} part ${ctx.partInd} example ${ind}`,
+          });
+        }
+        if (ex.hasImage) {
+          items.push({
+            kind: 'image',
+            key: getExampleImageKey(ctx, ind),
+            prompt: ex.imagePrompt ?? null,
+            note: `${section.type} part ${ctx.partInd} example ${ind}`,
+          });
+        }
+        (ex.options || []).forEach((o) => {
+          if (!o.hasImage) return;
+          items.push({
+            kind: 'image',
+            key: getExampleOptionImageKey(ctx, ind, o.label),
+            prompt: o.imagePrompt ?? null,
+            note: `${section.type} part ${ctx.partInd} example ${ind} option ${o.label}`,
+          });
+        });
+      });
+
+      part.questions.forEach((q, qInd) => {
+        const ind = q.ind ?? qInd;
+        if (q.hasAudio) {
+          items.push({
+            kind: 'audio',
+            key: getQuestionAudioKey(ctx, ind),
+            ttsText: q.ttsText ?? null,
+            // Present only for dialogues: render each line with its own voice
+            // rather than speaking the 男/女/问 markers out loud.
+            ttsLines: splitTtsLines(q.ttsText),
+            note: `${section.type} part ${ctx.partInd} question ${ind}`,
+          });
+        }
+        if (q.hasImage) {
+          items.push({
+            kind: 'image',
+            key: getQuestionImageKey(ctx, ind),
+            prompt: q.imagePrompt ?? null,
+            note: `${section.type} part ${ctx.partInd} question ${ind}`,
+          });
+        }
+        (q.options || []).forEach((o) => {
+          if (!o.hasImage) return;
+          items.push({
+            kind: 'image',
+            key: getOptionImageKey(ctx, ind, o.label),
+            prompt: o.imagePrompt ?? null,
+            note: `${section.type} part ${ctx.partInd} question ${ind} option ${o.label}`,
+          });
+        });
+      });
+    });
+  });
+  return items;
+}
+
+async function run() {
+  if (APPLY && VALIDATE_ONLY) {
+    console.error('--apply and --validate-only are mutually exclusive.');
+    process.exit(1);
+  }
+
+  const files = findJsonFiles(DIR).sort();
+  if (!files.length) {
+    console.error(`No .json exam files found under ${DIR}`);
+    process.exit(1);
+  }
+
+  const parsed = [];
+  const allErrors = [];
+  const allWarnings = [];
+
+  for (const file of files) {
+    let exam;
+    try {
+      exam = JSON.parse(fs.readFileSync(file, 'utf8'));
+    } catch (err) {
+      allErrors.push(`${path.basename(file)}: invalid JSON - ${err.message}`);
+      continue;
+    }
+    if (ONLY_SLUG && exam.slug !== ONLY_SLUG) continue;
+
+    const { errors, warnings } = validateExam(exam, file);
+    allWarnings.push(...warnings);
+    if (errors.length) allErrors.push(...errors);
+    else parsed.push({ file, exam });
+  }
+
+  if (ONLY_SLUG && !parsed.length && !allErrors.length) {
+    console.error(`No exam with slug "${ONLY_SLUG}" found under ${DIR}`);
+    process.exit(1);
+  }
+
+  const dupes = parsed
+    .map(({ exam }) => exam.slug)
+    .filter((s, i, arr) => arr.indexOf(s) !== i);
+  if (dupes.length) allErrors.push(`Duplicate slugs across files: ${[...new Set(dupes)].join(', ')}`);
+
+  if (allErrors.length) {
+    console.error(`\nValidation failed with ${allErrors.length} problem(s):`);
+    allErrors.forEach((e) => console.error(`  - ${e}`));
+    console.error('\nNothing was imported. Fix the content and re-run.');
+    process.exit(1);
+  }
+
+  if (allWarnings.length) {
+    console.warn(`\n${allWarnings.length} warning(s):`);
+    allWarnings.forEach((w) => console.warn(`  ! ${w}`));
+    console.warn('');
+  }
+
+  const mode = VALIDATE_ONLY ? 'VALIDATE ONLY' : APPLY ? 'APPLYING' : 'DRY RUN';
+  console.log(`${mode} - ${parsed.length} valid exam(s) from ${DIR}\n`);
+
+  if (!VALIDATE_ONLY) {
+    const MONGO_DB = process.env.MONGO_IN_CONTAINER
+      ? process.env.CONTAINER_MONGO_DB
+      : process.env.MONGO_DB;
+    await connectDB(MONGO_DB);
+  }
+
+  const manifest = [];
+  let created = 0;
+  let updated = 0;
+
+  for (const { file, exam } of parsed) {
+    const doc = toDocument(exam);
+    const media = collectMedia(exam);
+    const pendingAudio = media.filter((m) => m.kind === 'audio').length;
+    const pendingImages = media.filter((m) => m.kind === 'image').length;
+    const questionCount = doc.sections.reduce(
+      (sum, s) => sum + s.parts.reduce((n, p) => n + p.questions.length, 0),
+      0
+    );
+
+    const existing = VALIDATE_ONLY
+      ? null
+      : await HskExam.findOne({ slug: doc.slug }).select('_id').lean();
+    const action = VALIDATE_ONLY ? 'ok' : existing ? 'update' : 'create';
+    if (existing) updated++;
+    else created++;
+
+    console.log(
+      `  [${action}] ${doc.slug}  (${doc.version} HSK ${doc.level}, ` +
+        `${doc.sections.length} section(s), ${questionCount} question(s), ` +
+        `${pendingAudio} audio + ${pendingImages} image file(s) expected)  <- ${path.basename(file)}`
+    );
+
+    manifest.push({ slug: doc.slug, media });
+
+    if (APPLY) {
+      const update = { ...doc };
+      if (PUBLISH) update.isApproved = true;
+      await HskExam.findOneAndUpdate(
+        { slug: doc.slug },
+        // $set replaces sections wholesale, so removing a question from the JSON
+        // actually removes it on re-import. $setOnInsert keeps isApproved/date
+        // from being reset every time an already-published exam is corrected.
+        { $set: update, $setOnInsert: { date: new Date(), ...(PUBLISH ? {} : { isApproved: false }) } },
+        { upsert: true, setDefaultsOnInsert: true }
+      );
+    }
+  }
+
+  if (VALIDATE_ONLY) {
+    console.log(`\nAll ${parsed.length} exam(s) valid. No DB connection was opened.`);
+  } else {
+    console.log(
+      `\n${APPLY ? 'Imported' : 'Would import'}: ${created} new, ${updated} updated.` +
+        (PUBLISH
+          ? ' (published: isApproved=true)'
+          : ' (left unpublished - pass --publish to publish)')
+    );
+  }
+
+  if (MANIFEST_PATH) {
+    const out = path.resolve(process.cwd(), MANIFEST_PATH);
+    fs.writeFileSync(out, JSON.stringify(manifest, null, 2), 'utf8');
+    const total = manifest.reduce((n, m) => n + m.media.length, 0);
+    console.log(`Media manifest written to ${out} (${total} file(s) to generate).`);
+  }
+
+  if (!APPLY && !VALIDATE_ONLY)
+    console.log('Dry run only - no writes made. Re-run with --apply to persist.');
+
+  if (!VALIDATE_ONLY) await mongoose.disconnect();
+}
+
+run().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

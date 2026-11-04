@@ -2,16 +2,19 @@ import { component$ } from '@builder.io/qwik';
 import { routeLoader$, type DocumentHead } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
+import { PinyinChartLinkCard } from '~/components/common/content-cards/pinyin-chart-link-card';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
 import { VideoLessonCard } from '~/components/watch/video-lesson-card';
 import { ApiService } from '~/misc/actions/request';
 import { WHERE } from '~/components/common/comments/comment-form';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export type VideoLessonInfo = {
   _id: ObjectId;
   title: string;
   source: string;
+  rutubeSource?: string; // rutube id, optional alternative player
   hits: number;
   tags: string[];
   category: 'phonetics' | 'characters';
@@ -31,6 +34,7 @@ export default component$(() => {
   const videos = getVideos().value;
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Уроки фонетики' }]} />
       <PageTitle txt={'Уроки фонетики китайского языка'} />
       <FlexRow>
         <Sidebar>
@@ -43,6 +47,7 @@ export default component$(() => {
               </p>
             </div>
           </div>
+          <PinyinChartLinkCard />
         </Sidebar>
 
         <MainContent>
@@ -56,7 +61,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Видео уроки фонетики китайского языка',
+  title: 'Видеоуроки фонетики китайского языка с носителем | Chinese+',
   meta: [
     {
       name: 'description',

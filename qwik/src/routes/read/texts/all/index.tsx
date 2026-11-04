@@ -23,6 +23,7 @@ import { AllContentTable } from '~/components/read/all-content-table';
 import { Loader } from '~/components/common/ui/loader';
 import { MarkedFilter } from '~/components/common/ui/marked-filter';
 import { userContext } from '~/root';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export const useGetTextsNumInfo = routeLoader$(getTextsNumInfo);
 
@@ -125,6 +126,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Тексты', href: '/read/texts/' }, { name: 'Весь список' }]} />
       <PageTitle txt={'Тексты на китайском языке'} />
       <FlexRow>
         <Sidebar>
@@ -208,7 +210,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Тексты на китайском с переводом',
+  title: 'Все тексты на китайском с переводом — полный список | Chinese+',
   meta: [
     {
       name: 'description',

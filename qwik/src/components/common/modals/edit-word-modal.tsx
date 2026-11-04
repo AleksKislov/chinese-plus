@@ -14,6 +14,7 @@ export const EditWordModal = component$(
     const editWord = useEditWord();
     const { chinese, pinyin, russian } = word || {};
     const newPinyin = useSignal(pinyin || '');
+    const newRussian = useSignal(russian || '');
     const alertsState = useContext(alertsContext);
 
     useTask$(({ track }) => {
@@ -21,13 +22,22 @@ export const EditWordModal = component$(
       newPinyin.value = pinyin || '';
     });
 
+    useTask$(({ track }) => {
+      track(() => russian);
+      newRussian.value = russian || '';
+    });
+
     const submitEdition = $(async () => {
       const newPy = newPinyin.value.trim();
+      const newRu = newRussian.value.trim();
 
       if (!newPy) {
         return alertsState.push({ text: 'Пиньинь не может быть пустым', bg: 'alert-error' });
       }
-      await editWord.submit({ id: word._id, pinyin: newPy, russian });
+      if (!newRu) {
+        return alertsState.push({ text: 'Перевод не может быть пустым', bg: 'alert-error' });
+      }
+      await editWord.submit({ id: word._id, pinyin: newPy, russian: newRu });
       location.reload();
     });
 
@@ -44,8 +54,6 @@ export const EditWordModal = component$(
               <div class={'text-2xl mr-2'}>Редактировать слово: {chinese}</div>
             </div>
 
-            <small class={'text-error'}>Пока можно редактировать только пиньинь</small>
-
             <div class="form-control w-full max-w-xs">
               <label class="label">
                 <span class="label-text">Пиньинь</span>
@@ -57,6 +65,20 @@ export const EditWordModal = component$(
                 value={newPinyin.value}
                 onKeyUp$={(e) => {
                   newPinyin.value = (e.target as HTMLInputElement).value;
+                }}
+              />
+            </div>
+
+            <div class="form-control w-full max-w-xs">
+              <label class="label">
+                <span class="label-text">Перевод</span>
+              </label>
+              <textarea
+                placeholder="Новый перевод"
+                class="textarea textarea-bordered w-full max-w-xs"
+                value={newRussian.value}
+                onKeyUp$={(e) => {
+                  newRussian.value = (e.target as HTMLTextAreaElement).value;
                 }}
               />
             </div>

@@ -1,4 +1,4 @@
-import { $, component$, noSerialize, useSignal, useTask$, useVisibleTask$ } from '@builder.io/qwik';
+import { $, component$, noSerialize, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 import CONST_URLS from '~/misc/consts/urls';
 import { pauseSvg, playSvg } from '../common/media/svg';
 
@@ -32,18 +32,22 @@ export const AudioPlayer = component$(({ textId }: { textId: ObjectId }) => {
     }, 1000);
   });
 
-  useTask$(({ track, cleanup }) => {
+  useVisibleTask$(({ track, cleanup }) => {
     const audio = track(() => audioPlayer.value);
+    if (!audio) return;
 
     const id = setInterval(() => {
-      const curTime = audio?.currentTime;
+      const curTime = audio.currentTime;
       currentTime.value = getTrackTime(curTime);
-      progress.value = Math.ceil(((curTime || 0) / (audio?.duration || 1)) * 100);
-      if (progress.value >= 100) stopAudio();
+      progress.value = Math.min(100, Math.ceil((curTime / (audio.duration || 1)) * 100));
     }, 200);
+
+    const onEnded = () => stopAudio();
+    audio.addEventListener('ended', onEnded);
 
     cleanup(() => {
       clearInterval(id);
+      audio.removeEventListener('ended', onEnded);
       stopAudio();
     });
   });

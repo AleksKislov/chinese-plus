@@ -3,6 +3,7 @@ import { CommentsBlockTitle } from './comments-block-title';
 import { type Addressee, CommentForm, type CommentIdToReply, type WhereType } from './comment-form';
 import { CommentsBlock } from './comments-block';
 import { type CommentType } from './comment-card';
+import CONSTANTS from '~/misc/consts/consts';
 
 type CommentsFullBlockProps = {
   contentId: ObjectId;
@@ -11,10 +12,33 @@ type CommentsFullBlockProps = {
   commentIdToReply: CommentIdToReply;
   addressees: Signal<Addressee[]>;
   comments: CommentType[];
+  author?: Addressee; // content author, addressable even if they haven't commented yet
+};
+
+// who can be @-mentioned: admin (always, everywhere), everyone in this
+// comment thread, plus the content's author
+const getMentionCandidates = (comments: CommentType[], author?: Addressee): Addressee[] => {
+  const candidates = new Map<string, Addressee>();
+  candidates.set(CONSTANTS.admin.id, { id: CONSTANTS.admin.id, name: CONSTANTS.admin.name });
+  if (author) candidates.set(author.id, author);
+  comments.forEach(({ user }) => {
+    if (!candidates.has(user._id)) candidates.set(user._id, { id: user._id, name: user.name });
+  });
+  return Array.from(candidates.values());
 };
 
 export const CommentsFullBlock = component$(
-  ({ contentId, where, path, commentIdToReply, addressees, comments }: CommentsFullBlockProps) => {
+  ({
+    contentId,
+    where,
+    path,
+    commentIdToReply,
+    addressees,
+    comments,
+    author,
+  }: CommentsFullBlockProps) => {
+    const mentionCandidates = getMentionCandidates(comments, author);
+
     return (
       <div class={'mt-2'}>
         <CommentsBlockTitle />
@@ -29,6 +53,7 @@ export const CommentsFullBlock = component$(
           path={path}
           commentIdToReply={commentIdToReply}
           addressees={addressees}
+          mentionCandidates={mentionCandidates}
         />
       </div>
     );

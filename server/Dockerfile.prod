@@ -13,7 +13,7 @@ COPY package*.json ./
 
 RUN npm ci --only=production --build-from-source
 
-FROM node:20-bookworm
+FROM node:20-bookworm-slim
 WORKDIR /app
 
 COPY --from=builder /app/node_modules ./node_modules

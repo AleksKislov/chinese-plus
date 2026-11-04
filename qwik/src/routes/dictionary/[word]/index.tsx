@@ -1,0 +1,444 @@
+import {
+  $,
+  component$,
+  useComputed$,
+  useContext,
+  useOnDocument,
+  useSignal,
+  useVisibleTask$,
+} from '@builder.io/qwik';
+import {
+  type DocumentHead,
+  Link,
+  routeLoader$,
+  useLocation,
+  useNavigate,
+} from '@builder.io/qwik-city';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { MainContent } from '~/components/common/layout/main-content';
+import { PageTitle } from '~/components/common/layout/title';
+import { searchSvg } from '~/components/common/media/svg';
+import { EditWordModal } from '~/components/common/modals/edit-word-modal';
+import { ShowHideBtn } from '~/components/common/modals/show-hide-btn';
+import { EditWordBtn } from '~/components/common/tooltips/edit-word-btn';
+import { OwnWordBtn } from '~/components/common/tooltips/own-word-btn';
+import { editWordModalId } from '~/components/common/tooltips/word-tooltip';
+import { DictWordTranslation } from '~/components/common/translation/dict-word-translation';
+import { SearchResutlTable } from '~/components/search/search-result-table';
+import { HandwritingInput } from '~/components/search/handwriting-input';
+import { ApiService } from '~/misc/actions/request';
+import { alertsContext, userContext } from '~/root';
+import { getWordsForTooltips } from '~/routes/read/texts/[id]';
+import HanziWriter from 'hanzi-writer';
+import { sheetUrl } from '~/components/propisi/types';
+import { stripRuMarkup } from '~/misc/helpers/translation';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { Loader } from '~/components/common/ui/loader';
+import { SearchRuResult } from '~/components/search/search-ru-result';
+import {
+  getChineseWordsArr,
+  HanziWriterSettings,
+  isChinese,
+  isPinyin,
+  isRussian,
+  isValidWildcardPattern,
+  isWildcardPattern,
+  WILDCARD_MAX_LENGTH,
+  WILDCARD_CHAR,
+  type RuWord,
+} from '~/routes/dictionary';
+import { JsonLd } from '~/components/common/seo/json-ld';
+import CONST_URLS from '~/misc/consts/urls';
+import { Breadcrumbs, truncateCrumb } from '~/components/common/layout/breadcrumbs';
+import { nameUrl } from '~/components/names/types';
+import { type HskLevels, HskLevelBadge } from '~/components/hsk/hsk-level-badge';
+
+export const useGetRuWord = routeLoader$(async ({ params }): Promise<RuWord | null> => {
+  if (!isRussian(params.word)) return null;
+  return ApiService.get('/api/ru-dictionary/' + params.word);
+});
+
+export const useGetWildcardWords = routeLoader$(async ({ params }): Promise<DictWord[] | null> => {
+  if (!isWildcardPattern(params.word) || !isValidWildcardPattern(params.word)) return null;
+  return ApiService.post('/api/dictionary/wildcardSearch', { pattern: params.word });
+});
+
+export const useGetPinyinWords = routeLoader$(async ({ params }): Promise<DictWord[] | null> => {
+  if (!isPinyin(params.word)) return null;
+  return ApiService.post('/api/dictionary/pinyinSearch', { pinyin: params.word });
+});
+
+export const useLoadTranslation = routeLoader$(
+  async ({ params }): Promise<(string | DictWord)[] | null> => {
+    if (isWildcardPattern(params.word) || !isChinese(params.word)) return null;
+    const segmentedWords = await getChineseWordsArr(params.word);
+    const wordsWithInfo = await getWordsForTooltips(segmentedWords);
+
+    return segmentedWords.map((word) => {
+      for (let i = 0; i < wordsWithInfo.length; i++) {
+        const info = wordsWithInfo[i] as DictWord;
+        if (info.chinese === word || info.tradChinese === word) {
+          return info;
+        }
+      }
+      return word;
+    });
+  },
+);
+
+const singleChinese = (word: string | DictWord) => (typeof word === 'string' ? word : word.chinese);
+
+// HSK 3.0 levels of every chinese word the page shows (search result, wildcard and pinyin lists)
+export const useGetHskLevels = routeLoader$(async ({ resolveValue }): Promise<HskLevels> => {
+  const lists = await Promise.all([
+    resolveValue(useLoadTranslation),
+    resolveValue(useGetWildcardWords),
+    resolveValue(useGetPinyinWords),
+  ]);
+  const chinese = lists.flatMap((list) => list || []).map(singleChinese);
+  if (!chinese.length) return {};
+  return ApiService.post('/api/newhskwords/levels', [...new Set(chinese)], undefined, {});
+});
+
+export default component$(() => {
+  const CHAR_SVG_DIV_ID = 'showCharDiv';
+  const loc = useLocation();
+  const nav = useNavigate();
+  const loadTranslation = useLoadTranslation();
+  const ruWord = useGetRuWord();
+  const wildcardWords = useGetWildcardWords();
+  const pinyinWords = useGetPinyinWords();
+  const hskLevels = useGetHskLevels();
+  const words = useSignal<(string | DictWord)[] | null>(null);
+  const input = useSignal(loc.params.word || '');
+
+  const alertsState = useContext(alertsContext);
+  const { isAdmin } = useContext(userContext);
+  const showExamples = useSignal(true);
+  const showHandwriting = useSignal(false);
+
+  // Chinese queries only (the loader skips Russian, pinyin and * patterns); long texts get no link
+  const sheetChars = useComputed$(() => {
+    const han = [...(loc.params.word || '')].filter((ch) => /\p{Script=Han}/u.test(ch));
+    return loadTranslation.value && han.length <= 12 ? han.join('') : '';
+  });
+
+  useVisibleTask$(({ track }) => {
+    const word = track(() => loc.params.word);
+    input.value = word || '';
+    words.value = null;
+    setTimeout(() => (words.value = loadTranslation.value));
+  });
+
+  const clearCharDiv = $(() => {
+    const charDiv = document.getElementById(CHAR_SVG_DIV_ID);
+    if (charDiv) charDiv!.innerHTML = '';
+  });
+
+  useVisibleTask$(({ track }) => {
+    track(() => words.value);
+
+    const chars = (words.value || [])
+      .map((word) => {
+        if (typeof word === 'string') return word;
+        return [...word.chinese];
+      })
+      .flat();
+
+    clearCharDiv();
+    setTimeout(() => {
+      chars.forEach((char) => {
+        const writer = HanziWriter.create(CHAR_SVG_DIV_ID, char, HanziWriterSettings);
+        writer.loopCharacterAnimation();
+      });
+    }, 100);
+  });
+
+  const getTranslation = $(() => {
+    clearCharDiv();
+
+    let inputStr = input.value.trim();
+    if (!inputStr) return (input.value = '');
+
+    if (isRussian(inputStr)) {
+      inputStr = inputStr.toLowerCase();
+      input.value = inputStr;
+    }
+
+    if (isWildcardPattern(inputStr)) {
+      if (!isValidWildcardPattern(inputStr)) {
+        alertsState.push({
+          bg: 'alert-error',
+          text: `Шаблон должен содержать от 1 до ${WILDCARD_MAX_LENGTH} китайских иероглифов, "${WILDCARD_CHAR}" заменяет один неизвестный символ`,
+        });
+        return;
+      }
+      nav('/dictionary/' + encodeURIComponent(inputStr));
+    } else if (isChinese(inputStr) || isRussian(inputStr) || isPinyin(inputStr)) {
+      nav('/dictionary/' + encodeURIComponent(inputStr));
+    } else {
+      alertsState.push({
+        bg: 'alert-error',
+        text: 'Поиск только по китайским, русским словам или пиньинь',
+      });
+    }
+  });
+
+  useOnDocument(
+    'keydown',
+    $((e) => {
+      if ((e as KeyboardEvent).key === 'Enter') getTranslation();
+    }),
+  );
+
+  return (
+    <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'DefinedTerm',
+          name: loc.params.word,
+          inDefinedTermSet: `${CONST_URLS.siteUrl}/dictionary`,
+          url: `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(loc.params.word)}`,
+        }}
+      />
+      <Breadcrumbs
+        items={[
+          { name: 'Словарь', href: '/dictionary/' },
+          { name: truncateCrumb(loc.params.word) },
+        ]}
+      />
+      <PageTitle txt={'Китайско-русский словарь: ' + loc.params.word} />
+
+      <FlexRow>
+        <Sidebar noAds={true}></Sidebar>
+        <Alerts />
+        <MainContent>
+          <div class="prose mb-3">
+            <div class="form-control">
+              <div class="input-group w-full">
+                <input
+                  type="text"
+                  placeholder="汉字…"
+                  class="input input-bordered w-full"
+                  value={input.value}
+                  onInput$={(e) => (input.value = (e.target as HTMLInputElement)?.value || '')}
+                />
+                <button
+                  class="btn btn-square"
+                  onClick$={getTranslation}
+                  disabled={loc.isNavigating}
+                >
+                  {loc.isNavigating ? <Loader size="sm" /> : searchSvg}
+                </button>
+              </div>
+              <span class="text-sm opacity-60 mt-1">
+                Используйте "{WILDCARD_CHAR}" вместо неизвестного иероглифа, например "爱
+                {WILDCARD_CHAR}"
+              </span>
+
+              <button
+                type="button"
+                class="link link-hover link-secondary text-sm my-2 text-left w-fit"
+                onClick$={() => (showHandwriting.value = !showHandwriting.value)}
+              >
+                {showHandwriting.value ? 'Скрыть ручной ввод' : 'Ручной ввод иероглифов'}
+              </button>
+
+              {showHandwriting.value && <HandwritingInput />}
+            </div>
+
+            <div id={CHAR_SVG_DIV_ID} class="flex mt-3"></div>
+            {sheetChars.value && (
+              <Link
+                prefetch="js"
+                href={sheetUrl({ kind: 'chars', chars: sheetChars.value })}
+                class="link link-hover link-secondary text-sm"
+              >
+                Распечатать пропись для {sheetChars.value} →
+              </Link>
+            )}
+            <div>
+              {words.value && !ruWord.value && words.value.length === 1 && (
+                <>
+                  <div class={'mt-3 flex justify-between'}>
+                    <div class={'flex'}>
+                      <OwnWordBtn word={words.value[0] as DictWord} />
+                      <div class={'mx-1'}></div>
+                      <EditWordBtn />
+                      {hskLevels.value[singleChinese(words.value[0])] && (
+                        <div class="ml-2 self-center">
+                          <HskLevelBadge level={hskLevels.value[singleChinese(words.value[0])]} />
+                        </div>
+                      )}
+                    </div>
+
+                    <ShowHideBtn showExamples={showExamples} />
+                  </div>
+                  <DictWordTranslation
+                    ru={
+                      typeof words.value[0] === 'string'
+                        ? 'перевод отсутствует или не найден :('
+                        : words.value[0].russian
+                    }
+                    py={(words.value[0] as DictWord).pinyin}
+                    tradChinese={
+                      typeof words.value[0] !== 'string' &&
+                      words.value[0].tradChinese &&
+                      words.value[0].tradChinese !== words.value[0].chinese
+                        ? words.value[0].tradChinese
+                        : undefined
+                    }
+                    showExamples={showExamples.value}
+                  />
+
+                  {isAdmin && (
+                    <EditWordModal word={words.value[0] as DictWord} modalId={editWordModalId} />
+                  )}
+                </>
+              )}
+
+              {words.value && words.value.length > 1 && (
+                <SearchResutlTable words={words.value || []} hskLevels={hskLevels.value} />
+              )}
+
+              {wildcardWords.value && wildcardWords.value.length > 0 && (
+                <SearchResutlTable words={wildcardWords.value} hskLevels={hskLevels.value} />
+              )}
+
+              {wildcardWords.value && wildcardWords.value.length === 0 && (
+                <div class="mt-3">Слов по шаблону не найдено</div>
+              )}
+
+              {pinyinWords.value && pinyinWords.value.length > 0 && (
+                <SearchResutlTable words={pinyinWords.value} hskLevels={hskLevels.value} />
+              )}
+
+              {pinyinWords.value && pinyinWords.value.length === 0 && (
+                <div class="mt-3">Слов с таким пиньинь не найдено</div>
+              )}
+
+              {ruWord.value && (
+                <>
+                  {ruWord.value.word?.ru && (
+                    <div class={'mt-3 flex justify-between'}>
+                      <div class={'flex'}>
+                        <div class="font-bold text-xl text-success">{ruWord.value.word?.ru}</div>
+                      </div>
+                      <ShowHideBtn showExamples={showExamples} />
+                    </div>
+                  )}
+
+                  <SearchRuResult ruWord={ruWord.value} showExamples={showExamples.value} />
+
+                  {ruWord.value.nameSlug && (
+                    <Link
+                      prefetch="js"
+                      href={nameUrl(ruWord.value.nameSlug)}
+                      class="btn btn-outline btn-primary btn-sm mt-3"
+                    >
+                      Это имя: как пишется по-китайски, значение иероглифов →
+                    </Link>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </MainContent>
+        <Sidebar>
+          <div class="card card-compact bg-base-200 mt-3">
+            <div class="card-body">
+              <span class="text-sm">
+                Поиск:
+                <br />- традиционные и упрощённые иероглифы,
+                <br />- пиньинь без тонов ("nihao"), <br />- шаблон со звездочкой "*" вместо
+                неизвестного иероглифа, <br />- ручной ввод мышью или на тачпаде.
+              </span>
+            </div>
+          </div>
+        </Sidebar>
+      </FlexRow>
+    </>
+  );
+});
+
+export const head: DocumentHead = ({ resolveValue, params }) => {
+  const cnTranslation = resolveValue(useLoadTranslation);
+  const ruWord = resolveValue(useGetRuWord);
+  const word = params.word;
+  const url = `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(word)}/`;
+
+  if (isWildcardPattern(word)) {
+    const title = `Слова по шаблону ${word} — китайско-русский словарь | Chinese+`;
+    const description = `Поиск китайских слов по шаблону "${word}" в китайско-русском словаре Chinese+.`;
+
+    return {
+      title,
+      meta: [
+        // One page per possible pattern - endless thin pages, keep them out of the index.
+        { name: 'robots', content: 'noindex, follow' },
+        { name: 'description', content: description },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: url },
+      ],
+    };
+  }
+
+  if (cnTranslation && cnTranslation.length === 1 && typeof cnTranslation[0] !== 'string') {
+    const wordObj = cnTranslation[0];
+    const hasTrad = wordObj.tradChinese && wordObj.tradChinese !== wordObj.chinese;
+    const chineseLabel = hasTrad
+      ? `${wordObj.chinese} (традиционное написание: ${wordObj.tradChinese})`
+      : wordObj.chinese;
+    const title = `${wordObj.chinese}${hasTrad ? ' / ' + wordObj.tradChinese : ''} (${
+      wordObj.pinyin
+    }) — перевод с китайского на русский | Chinese+`;
+    const description = `Значение китайского слова ${chineseLabel}: ${stripRuMarkup(
+      wordObj.russian,
+    )}`.slice(0, 300);
+
+    return {
+      title,
+      meta: [
+        { name: 'description', content: description },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: url },
+      ],
+    };
+  }
+
+  if (ruWord?.word) {
+    const title = `${ruWord.word.ru} по-китайски — ${ruWord.word.cn}, перевод с русского на китайский | Chinese+`;
+    const description = `Как будет "${ruWord.word.ru}" по-китайски: ${ruWord.word.cn}`;
+
+    return {
+      title,
+      meta: [
+        { name: 'description', content: description },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: url },
+      ],
+    };
+  }
+
+  return {
+    title: `${word} — китайско-русский словарь | Chinese+`,
+    meta: [
+      // Not a single dictionary entry (a phrase, pinyin search or unknown word): any
+      // input makes its own URL here, so only real word pages get indexed.
+      { name: 'robots', content: 'noindex, follow' },
+      {
+        name: 'description',
+        content: `Перевод слова "${word}" в китайско-русском словаре Chinese+ с примерами и анимацией написания иероглифов.`,
+      },
+      { property: 'og:url', content: url },
+    ],
+  };
+};

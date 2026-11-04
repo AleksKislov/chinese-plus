@@ -6,10 +6,15 @@ import CONST_URLS from '~/misc/consts/urls';
 import { PageTitle } from '~/components/common/layout/title';
 import { infoAlertSvg } from '~/components/common/media/svg';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
+import { NextStepsCards } from '~/components/start/next-steps-cards';
 import { configContext } from '~/root';
 import YANDEX_ADS from '~/misc/consts/ads';
 import { LentaAds } from '~/components/common/ads/lenta-ads';
 import { BannerAds } from '~/components/common/ads/sidebar-ads';
+import OUR_ADS from '~/misc/consts/our-ads';
+import { OurAds } from '~/components/common/ads/our-ads';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
+import { JsonLd } from '~/components/common/seo/json-ld';
 
 export const initHiglights = () => {
   const tbody = document.querySelector('tbody') as HTMLTableSectionElement;
@@ -45,12 +50,28 @@ export const playAudioFromBtn = (sound: string) => {
   new Audio(`${CONST_URLS.myAudioURL}pinyin/${sound}.mp3`).play();
 };
 
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: 'Что такое пиньинь?',
+    a: 'Пиньинь — официальная система записи китайских слогов латиницей. По нему учат произношение, ищут слова в словарях и набирают иероглифы на клавиатуре.',
+  },
+  {
+    q: 'Как устроен слог в пиньине?',
+    a: 'Слог состоит из инициали (начального согласного), финали (остальной части слога) и тона. В таблице строки — это инициали, столбцы — финали, а на пересечении — слог.',
+  },
+  {
+    q: 'Сколько тонов в китайском языке?',
+    a: 'Четыре тона и нейтральный. Тон обозначается знаком над гласной: mā (1-й), má (2-й), mǎ (3-й), mà (4-й), ma (нейтральный).',
+  },
+];
+
 export default component$(() => {
   useStyles$(styles);
   const configState = useContext(configContext);
 
   const lentaAds = configState.find((x) => x.type === YANDEX_ADS.lenta);
   const bannerAds = configState.find((x) => x.type === YANDEX_ADS.banner);
+  const wideBannerAds = configState.filter((x) => x.type === OUR_ADS.wide_banner)[0];
 
   const consonansts = Object.keys(tableMap);
 
@@ -60,7 +81,14 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Таблица пиньиня с озвучкой' }]} />
       <PageTitle txt={'Таблица пиньиня с озвучкой'} />
+      <div class="prose max-w-none">
+        <p>
+          Все слоги китайского языка в одной таблице: строки — инициали, столбцы — финали. Каждый
+          слог озвучен носителем языка во всех тонах.
+        </p>
+      </div>
 
       <div class="alert mt-3 flex">
         {infoAlertSvg}
@@ -68,7 +96,9 @@ export default component$(() => {
       </div>
 
       <PhoneticsLinkCard />
+      <NextStepsCards />
 
+      {wideBannerAds?.isActive && <OurAds adsInfo={wideBannerAds} />}
       {bannerAds?.isActive && <BannerAds />}
 
       <div class="overflow-x-auto">
@@ -170,18 +200,39 @@ export default component$(() => {
         </table>
       </div>
 
+      <div class="prose max-w-none mt-6">
+        <h2>Как пользоваться таблицей</h2>
+        {FAQ.map(({ q, a }) => (
+          <div key={q}>
+            <h3>{q}</h3>
+            <p>{a}</p>
+          </div>
+        ))}
+      </div>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: FAQ.map(({ q, a }) => ({
+            '@type': 'Question',
+            name: q,
+            acceptedAnswer: { '@type': 'Answer', text: a },
+          })),
+        }}
+      />
+
       {lentaAds?.isActive && <LentaAds />}
     </>
   );
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Таблица пиньиня с озвучкой',
+  title: 'Таблица пиньиня с озвучкой — все слоги китайского языка | Chinese+',
   meta: [
     {
       name: 'description',
       content:
-        'Таблица пиньиня, озвученная носителем китайского языка. Все слоги китайского языка.',
+        'Таблица пиньиня с озвучкой носителем: все слоги китайского языка с инициалями, финалями и тонами. Нажмите на слог, чтобы услышать произношение.',
     },
   ],
 };

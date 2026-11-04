@@ -19,7 +19,17 @@ export const markUpRuText = (text: string, showExamples: boolean = false): strin
 
   const regex = /\[ref\](.+?)\[\/ref\]/;
   for (let i = 0; i < 12; i++) {
-    text = text.replace(regex, `<a href="/search/?q=$1" target="_blank">$1</a>`);
+    text = text.replace(regex, `<a href="/dictionary/$1">$1</a>`);
   }
   return text;
+};
+
+// Plain-text version for use in meta descriptions, where HTML markup isn't valid.
+export const stripRuMarkup = (text: string): string => {
+  if (!text) return '';
+  return text
+    .replace(/\[.*?\]/g, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 };

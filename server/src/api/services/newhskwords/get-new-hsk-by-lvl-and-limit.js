@@ -1,4 +1,4 @@
-const Hskword = require('../../../models/Hskword');
+const { aggregateHskWords } = require('./get-hsk-model');
 
 async function getNewHskByLvlAndLimit(req, res) {
   const WORDS_NUM = 200;
@@ -7,10 +7,10 @@ async function getNewHskByLvlAndLimit(req, res) {
   const start = 0 + limit * WORDS_NUM;
   const end = start + WORDS_NUM + 1;
 
-  const allLexicon = await Hskword.find({
-    lvl,
-    id: { $gt: start, $lt: end },
-  }).sort({ id: 1 });
+  const allLexicon = await aggregateHskWords(req.query.version, [
+    { $match: { lvl, id: { $gt: start, $lt: end } } },
+    { $sort: { id: 1 } },
+  ]);
 
   res.json(allLexicon);
 }

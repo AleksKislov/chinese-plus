@@ -1,7 +1,9 @@
 import { component$, useSignal, useStore } from '@builder.io/qwik';
-import { routeLoader$, useLocation } from '@builder.io/qwik-city';
+import { type DocumentHead, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { ApiService } from '~/misc/actions/request';
+import CONST_URLS from '~/misc/consts/urls';
+import { getBookUrl } from '~/misc/helpers/content/get-book-url';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { getWordsForTooltips, type TooltipParagraph } from '~/routes/read/texts/[id]';
@@ -13,6 +15,7 @@ import { TextHeadBtns } from '~/components/common/read/text-head-btns';
 import { FontSizeBtns } from '~/components/common/content-cards/content-page-card';
 import { BookContentsComponent } from '~/components/books/book-contents';
 import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
+import { SubscribeCta } from '~/components/common/media/subscribe-cta';
 import {
   type Addressee,
   type CommentIdToReply,
@@ -68,6 +71,7 @@ export default component$(() => {
   const pageLoader = useGetBookPage();
   const currentWord = useSignal<DictWord | null>(null);
   const showTranslation = useSignal(false);
+  const showPinyin = useSignal(false);
   const fontSizeSig = useSignal(FontSizeBtns.md);
 
   const addressees = useSignal<Addressee[]>([]);
@@ -97,7 +101,11 @@ export default component$(() => {
             <h3>{getChapterTitle(loc.params.chapter_id)}</h3>
           </div>
 
-          <TextHeadBtns showTranslation={showTranslation} fontSizeSig={fontSizeSig} />
+          <TextHeadBtns
+            showTranslation={showTranslation}
+            fontSizeSig={fontSizeSig}
+            showPinyin={showPinyin}
+          />
 
           {Array.from({ length: Math.max(page.translation.length, tooltipTxt.length) }).map(
             (_, i) => (
@@ -108,8 +116,10 @@ export default component$(() => {
                 translation={page.translation[i] || ''}
                 strLen={page.origParagsLen[i] || 0}
                 ind={i}
+                pageInd={Number(loc.url.searchParams.get('page')) || 0}
                 currentWord={currentWord}
                 showTranslation={showTranslation.value}
+                showPinyin={showPinyin.value}
               />
             ),
           )}
@@ -138,6 +148,8 @@ export default component$(() => {
             isApproved={true}
           />
 
+          <SubscribeCta />
+
           <CommentsFullBlock
             contentId={page._id}
             where={WHERE.book}
@@ -153,3 +165,30 @@ export default component$(() => {
     </>
   );
 });
+
+export const head: DocumentHead = ({ resolveValue, params, url }) => {
+  const { book, contents } = resolveValue(useGetBookContents);
+  const chapter = contents.find((c) => c._id === params.chapter_id);
+  if (!chapter) return {};
+
+  // Every page of a chapter has its own text, so each is its own canonical URL.
+  const page = +(url.searchParams.get('page') || 0);
+  // Chapter links always carry ?page= (the page loader needs it), page 0 included.
+  const path = `${getBookUrl(book)}/${params.chapter_id}/?page=${page}`;
+  const title = `${chapter.title.ru} — ${book.title.ru}${
+    page ? `, стр. ${page + 1}` : ''
+  } | Chinese+`;
+  const description = `${chapter.title.ru} (${chapter.title.cn}) — глава книги «${book.title.ru}» на китайском с переводом и пиньинем.`;
+
+  return {
+    title,
+    links: [{ key: 'canonical', rel: 'canonical', href: CONST_URLS.siteUrl + path }],
+    meta: [
+      { key: 'description', name: 'description', content: description },
+      { key: 'og:title', property: 'og:title', content: title },
+      { key: 'og:description', property: 'og:description', content: description },
+      { key: 'og:type', property: 'og:type', content: 'article' },
+      { key: 'og:url', property: 'og:url', content: CONST_URLS.siteUrl + path },
+    ],
+  };
+};

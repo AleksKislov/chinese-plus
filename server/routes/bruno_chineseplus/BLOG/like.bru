@@ -1,0 +1,15 @@
+meta {
+  name: like
+  type: http
+  seq: 9
+}
+
+put {
+  url: {{local_server}}/api/blogs/like/62b4c4e6290a9d79833dc4f6
+  body: none
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}

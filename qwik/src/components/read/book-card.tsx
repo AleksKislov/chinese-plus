@@ -23,6 +23,7 @@ export const BookCard = component$(({ book }: BookCardProps) => {
         contentId={bookId}
         contentType={WHERE.book}
         picUrl={picUrl}
+        title={book.title.ru}
         book={book}
         isUnapproved={undefined}
       />

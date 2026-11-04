@@ -4,9 +4,9 @@ const util = require('util');
 
 const client = new textToSpeech.TextToSpeechClient();
 
-const writeMP3 = async (word) => {
+const writeMP3 = async (word, outDir = './audio') => {
   const { id, cn, lvl } = word;
-  const outputFile = `./audio/band${lvl}/${id}.mp3`;
+  const outputFile = `${outDir}/band${lvl}/${id}.mp3`;
 
   const request = {
     input: { text: cn },

@@ -17,6 +17,8 @@ const { deleteText } = require('./delete-text');
 const { getMarkedTexts } = require('./get-marked-texts');
 const { editChineseArr } = require('./edit-chinese-arr');
 const { getSimilarTexts } = require('./get-similar-texts');
+const { uploadAudio } = require('./upload-audio');
+const { deleteAudio } = require('./delete-audio');
 
 module.exports = {
   markAsNotRead: apiDecorator(markAsNotRead),
@@ -36,4 +38,6 @@ module.exports = {
   getMarkedTexts: apiDecorator(getMarkedTexts),
   editChineseArr: apiDecorator(editChineseArr),
   getSimilarTexts: apiDecorator(getSimilarTexts),
+  uploadAudio: apiDecorator(uploadAudio),
+  deleteAudio: apiDecorator(deleteAudio),
 };

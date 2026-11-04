@@ -1,4 +1,4 @@
-import { component$, type Signal, useContext, $ } from '@builder.io/qwik';
+import { component$, type Signal, useContext, useSignal, $ } from '@builder.io/qwik';
 import { arrorUturnDown, editSvg, thumbUpSvg } from '../media/svg';
 import { UserDateDiv } from './user-with-date';
 import { userContext } from '~/root';
@@ -24,7 +24,7 @@ export type CommentType = {
     name: string;
   };
   path?: string; // only for books, not in quick yet:
-  destination: 'book_page' | 'text' | 'video' | 'post';
+  destination: 'book_page' | 'text' | 'video' | 'blog';
   date: ISODate;
   pageInfo?: CommentPageInfo; // for book_page comments
 };
@@ -64,14 +64,15 @@ export const CommentCard = component$(
       date,
       text,
       likes,
-      user: { _id: userId, name: userName, newAvatar },
+      user: { _id: userId, name: userName, newAvatar, role },
       destination: contentType,
       post_id: contentId,
       commentIdToReply: replyInfo,
     } = comment;
     const ownsComment = userState._id === userId;
     const canEdit = ownsComment || isAdmin;
-    const isLiked = loggedIn && likes.some((like) => like.user === userState._id);
+    const likesSignal = useSignal(likes);
+    const isLiked = loggedIn && likesSignal.value.some((like) => like.user === userState._id);
 
     const modalId = `edit-modal-${_id}`;
     const href = getContentPath(contentType, contentId, false, comment.pageInfo);
@@ -100,6 +101,7 @@ export const CommentCard = component$(
                 href={`${href}#${getAnchor(replyInfo.commentId)}`}
                 scroll={true}
                 class="ml-1 mt-1 badge badge-xs hover:badge-info"
+                prefetch={false}
               >
                 {`#${getAnchor(replyInfo.commentId)}`}
               </Link>
@@ -110,6 +112,7 @@ export const CommentCard = component$(
               href={`${href}#${anchor}`}
               scroll={true}
               class="float-right mr-2 mt-1 badge badge-xs hover:badge-info"
+              prefetch={false}
             >
               {`#${anchor}`}
             </Link>
@@ -117,11 +120,11 @@ export const CommentCard = component$(
           <div class="card-body">
             <div class="flex">
               <div
-                class="tooltip tooltip-info mr-4"
+                class="tooltip tooltip-info mr-4 [&:has(.role-badge:hover)]:before:hidden [&:has(.role-badge:hover)]:after:hidden"
                 data-tip={ownsComment ? 'Это вы' : 'Обратиться к пользователю'}
               >
                 <div class="avatar cursor-pointer" onClick$={writeToUser}>
-                  <SmallAvatar newAvatar={newAvatar} userName={userName} />
+                  <SmallAvatar newAvatar={newAvatar} userName={userName} role={role} />
                 </div>
               </div>
               <div>
@@ -148,7 +151,7 @@ export const CommentCard = component$(
                 )}
                 <div
                   class="tooltip tooltip-info"
-                  data-tip={getLikeBtnTooltipTxt(likes, 'Никто не лайкал')}
+                  data-tip={getLikeBtnTooltipTxt(likesSignal.value, 'Никто не лайкал')}
                 >
                   <button
                     class={`btn btn-sm lowercase btn-info ${isLiked ? '' : 'btn-outline'} mx-1`}
@@ -156,9 +159,19 @@ export const CommentCard = component$(
                     onClick$={() => {
                       if (!loggedIn || ownsComment) return;
                       addDelLike.submit({ _id });
+                      if (isLiked) {
+                        likesSignal.value = likesSignal.value.filter(
+                          (x) => x.user !== userState._id,
+                        );
+                      } else {
+                        likesSignal.value = [
+                          ...likesSignal.value,
+                          { _id: 'new', user: userState._id, name: userState.name },
+                        ];
+                      }
                     }}
                   >
-                    {thumbUpSvg} {likes.length > 0 && <span>{likes.length}</span>}
+                    {thumbUpSvg} {likesSignal.value.length > 0 && <span>{likesSignal.value.length}</span>}
                   </button>
                 </div>
                 {!ownsComment && !notForReply && (

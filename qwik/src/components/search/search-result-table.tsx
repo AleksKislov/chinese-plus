@@ -3,11 +3,17 @@ import { MoreInfoModal } from '../common/modals/more-info-modal';
 import { moreInfoModalId } from '../common/tooltips/word-tooltip';
 import { HideButtons } from '../hsk/hide-buttons';
 import { SearchResultRow } from './search-result-row';
+import { type HskLevels } from '../hsk/hsk-level-badge';
 
 export type DisplayCardsStore = { bool: boolean };
 export type PinyinAboveStore = { bool: boolean };
 
-export const SearchResutlTable = component$(({ words }: { words: (string | DictWord)[] }) => {
+type SearchResultTableProps = {
+  words: (string | DictWord)[];
+  hskLevels?: HskLevels;
+};
+
+export const SearchResutlTable = component$(({ words, hskLevels }: SearchResultTableProps) => {
   const hideBtnsSig = useSignal<string[]>([]);
   const currentWord = useSignal<DictWord | undefined>(undefined);
 
@@ -26,6 +32,7 @@ export const SearchResutlTable = component$(({ words }: { words: (string | DictW
                 word={word}
                 hideBtnsSig={hideBtnsSig}
                 currentWord={currentWord}
+                hskLevel={hskLevels?.[typeof word === 'string' ? word : word.chinese]}
               />
             ))}
           </tbody>

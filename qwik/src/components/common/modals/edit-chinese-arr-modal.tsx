@@ -56,7 +56,7 @@ export const EditChineseArrModal = component$(
                 </label>
                 <textarea
                   class="textarea textarea-bordered h-24"
-                  placeholder="汉字..."
+                  placeholder="汉字"
                   value={parag}
                   onInput$={(ev) =>
                     (newChineseArr.value[ind] = (ev.target as HTMLInputElement).value)

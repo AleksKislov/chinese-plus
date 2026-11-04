@@ -5,7 +5,7 @@ import { EditWordModal } from '../common/modals/edit-word-modal';
 import { MoreInfoModal } from '../common/modals/more-info-modal';
 import { editWordModalId, moreInfoModalId, WordTooltip } from '../common/tooltips/word-tooltip';
 import { HideBtnsEnum, HideButtons } from '../hsk/hide-buttons';
-import { PlayerState } from '~/routes/watch/videos/[id]';
+import { PlayerState } from './video-players';
 
 type SubsProps = {
   hideBtnsSig: Signal<string[]>;

@@ -7,17 +7,13 @@ export const Footer = component$(({ beVersion }: { beVersion: string }) => {
   return (
     <footer class="footer footer-center gap-6 p-10 rounded bg-base-300 mt-4">
       <div class="flex">
-        <Link class="link link-hover" href="/contacts">
+        <Link prefetch="js" class="link link-hover" href="/contacts">
           Контакты
         </Link>
 
         {/* <Link class="link link-hover" href="/donate">
           Донат и цели
         </Link> */}
-
-        <Link class="link link-hover" href="/feedback">
-          Форум
-        </Link>
       </div>
       <div>
         <div class="grid grid-flow-col gap-2">

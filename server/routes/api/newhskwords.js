@@ -1,10 +1,12 @@
 const router = require('express').Router();
+const { cacheRoute, TTL } = require('../../src/cache');
 
 const {
   getRandomNewHskByLvl,
   getNewHskByLvlAndLimit,
   searchNewHsk,
   downloadNewHskCsv,
+  getHskLevels,
   // getAudio,
 } = require('../../src/api/services/newhskwords');
 
@@ -23,7 +25,7 @@ router.get('/all', getRandomNewHskByLvl);
  * @desc      Get new hsk words by hsk level
  * @access    Public
  */
-router.get('/', getNewHskByLvlAndLimit);
+router.get('/', cacheRoute('hsk-new', { ttl: TTL.DAY }), getNewHskByLvlAndLimit);
 
 /**
  * @route     POST api/newhskwords/search
@@ -31,6 +33,13 @@ router.get('/', getNewHskByLvlAndLimit);
  * @access    Public
  */
 router.post('/search', searchNewHsk);
+
+/**
+ * @route     POST api/newhskwords/levels
+ * @desc      HSK 3.0 level of each of the given chinese words (body: string[]), e.g. for dictionary badges
+ * @access    Public
+ */
+router.post('/levels', getHskLevels);
 
 /**
  * @route     GET api/newhskwords/csv/:hsk_level?is_html=1&has_examples=1

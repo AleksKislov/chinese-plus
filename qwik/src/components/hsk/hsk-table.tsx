@@ -2,7 +2,7 @@ import { component$, useSignal, useStore, useVisibleTask$ } from '@builder.io/qw
 
 import { HideButtons } from './hide-buttons';
 import { OldHskTableRow } from './old-hsk-table-row';
-import type { OldHskWordType, UserOldHskWordType } from '~/routes/hsk/2/table';
+import type { OldHskWordType, UserOldHskWordType } from '~/routes/hsk/2/table/[...lvl]';
 import { TableOrCardsBtns } from './table-or-cards-btns';
 import { FlipCards } from './flip-cards';
 import { FlipCardsButtons } from './flip-cards-btns';

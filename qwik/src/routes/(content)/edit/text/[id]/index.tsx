@@ -23,6 +23,7 @@ export type EditTextStore = NewTextStore & {
   textId: ObjectId;
   isApproved?: 0 | 1;
   audioSrc?: 0 | 1;
+  updateDate?: 0 | 1;
   curPage: number;
 };
 
@@ -66,7 +67,7 @@ export const useEditText = routeAction$(async (params, ev): Promise<{ status: 'd
 });
 
 export default component$(() => {
-  const { isAdmin } = useContext(userContext);
+  const { isAdmin, isModerator } = useContext(userContext);
 
   const {
     _id,
@@ -104,6 +105,7 @@ export default component$(() => {
     length: 0,
     isLongText,
     audioSrc,
+    updateDate: 0,
     curPage,
   });
 
@@ -112,7 +114,7 @@ export default component$(() => {
       <PageTitle txt={'Редактировать текст'} />
       <Alerts />
 
-      <EditTextFields store={store} isAdmin={isAdmin} />
+      <EditTextFields store={store} isAdmin={isAdmin} isModerator={isModerator} />
 
       <EditTextPreprocessForm store={store} />
     </>

@@ -1,4 +1,10 @@
-import { component$, useContext } from '@builder.io/qwik';
+import {
+  component$,
+  useContext,
+  useSignal,
+  useTask$,
+  useVisibleTask$,
+} from '@builder.io/qwik';
 import {
   routeLoader$,
   type RequestEvent,
@@ -9,7 +15,8 @@ import { FlexRow } from '~/components/common/layout/flex-row';
 import { PageTitle } from '~/components/common/layout/title';
 import { ReadResultCard } from '~/components/me/read-result-card';
 import { ApiService } from '~/misc/actions/request';
-import { userContext } from '~/root';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { AlertColorEnum, alertsContext, userContext } from '~/root';
 import { type TextsNumInfo } from '../read/texts';
 import { type ReadStatType, ReadingDiagram } from '~/components/me/reading-diagram';
 import { PersonalStats } from '~/components/me/personal-stats';
@@ -45,6 +52,12 @@ export const markMentionsAsOld = routeAction$((_param, ev) => {
   return ApiService.post('/api/comments/mark_mentions_as_seen', {}, token);
 });
 
+export const useSetBio = routeAction$(async (params, ev): Promise<{ bio: string } | null> => {
+  const token = getTokenFromCookie(ev.cookie);
+  if (!token) return null;
+  return ApiService.post('/api/users/set_my_bio', params, token, null);
+});
+
 export const getReadStats = routeLoader$(async ({ cookie }): Promise<ReadStatType[]> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return [];
@@ -65,6 +78,7 @@ export default component$(() => {
   const newMentions = getNewMentions();
   const textsStats = getTextsStats();
   const readStats = getReadStats();
+  const userState = useContext(userContext);
   const {
     newAvatar,
     name,
@@ -72,14 +86,41 @@ export default component$(() => {
     readDailyGoal,
     readTodayNum,
     hsk2WordsTotal,
-    words,
+    hsk3WordsTotal,
+    wordsCount,
     role,
+    bio,
     _id: userId,
-  } = useContext(userContext);
+  } = userState;
+
+  const alertsState = useContext(alertsContext);
+  const setBio = useSetBio();
+  const bioSignal = useSignal(bio);
+
+  useVisibleTask$(({ track }) => {
+    bioSignal.value = track(() => userState.bio);
+  });
+
+  useTask$(({ track }) => {
+    const result = track(() => setBio.value);
+    if (result === undefined) return;
+
+    if (!result) {
+      alertsState.push({
+        bg: AlertColorEnum.error,
+        text: 'Не удалось сохранить. Попробуйте снова.',
+      });
+      return;
+    }
+
+    userState.bio = result.bio;
+    alertsState.push({ bg: AlertColorEnum.success, text: 'Сохранено!' });
+  });
 
   return (
     <>
       <PageTitle txt={'Личный кабинет'} />
+      <Alerts />
 
       <FlexRow>
         <div class="w-full basis-1/2  mt-3">
@@ -93,13 +134,39 @@ export default component$(() => {
           <PersonalStats
             approvedTextsNum={textsStats.value.approved}
             finishedTextsTotal={finishedTexts.length}
-            userWordsTotal={words.length}
+            userWordsTotal={wordsCount}
             hsk2Total={hsk2WordsTotal}
+            hsk3Total={hsk3WordsTotal}
           />
         </div>
 
         <div class="w-full basis-1/2">
           <ReadResultCard />
+        </div>
+      </FlexRow>
+
+      <FlexRow>
+        <div class="form-control text-base-content w-full">
+          <label class="label">
+            <span class="label-text">
+              Об авторе (показывается под вашими постами в блоге)
+            </span>
+          </label>
+          <textarea
+            maxLength={600}
+            bind:value={bioSignal}
+            placeholder="Расскажите немного о себе..."
+            class="textarea textarea-bordered"
+            rows={4}
+          />
+          <button
+            class="btn btn-sm btn-primary mt-2 self-start"
+            disabled={setBio.isRunning}
+            onClick$={() => setBio.submit({ bio: bioSignal.value })}
+          >
+            {setBio.isRunning && <span class="loading loading-spinner loading-xs mr-1" />}
+            Сохранить
+          </button>
         </div>
       </FlexRow>
 

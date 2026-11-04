@@ -1,0 +1,15 @@
+meta {
+  name: HSK 3.0 user word ids
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{local_server}}/api/userhsk3words/ids
+  body: none
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}

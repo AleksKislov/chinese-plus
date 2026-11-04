@@ -1,8 +1,9 @@
 const { validationResult } = require('express-validator');
-const { Notify } = require('../_misc');
+const { Notify, getUserPrivileges } = require('../_misc');
 
 const Text = require('../../../models/Text');
 const { shortUserInfoFields } = require('../../consts');
+const { invalidateTag } = require('../../../cache');
 
 async function updateTxt(req, res) {
   const errors = validationResult(req);
@@ -26,12 +27,18 @@ async function updateTxt(req, res) {
     isLongText,
     pageToEdit,
     audioSrc,
+    updateDate,
   } = req.body;
 
-  let foundText;
-  if (isApproved) {
-    foundText = await Text.findById(textId);
-    if (!foundText) throw new Error('No text to update');
+  const foundText = await Text.findById(textId);
+  if (!foundText) return res.status(404).json({ msg: 'Text not found' });
+
+  const { isAdmin, isModerator } = await getUserPrivileges(req.user.id);
+  const canModerate = isAdmin || isModerator;
+  const isOwner = foundText.user && foundText.user.toString() === req.user.id;
+
+  if (!canModerate && !(isOwner && !foundText.isApproved)) {
+    return res.status(403).json({ msg: 'Not authorized' });
   }
 
   const isLngTxtEdit = isLongText && Number.isInteger(pageToEdit);
@@ -47,10 +54,11 @@ async function updateTxt(req, res) {
   if (tags) newFields.tags = tags;
   if (pic_url) newFields.pic_url = pic_url;
   if (theme_word) newFields.theme_word = theme_word;
-  if ([0, 1].includes(isApproved)) newFields.isApproved = isApproved;
+  if (canModerate && [0, 1].includes(isApproved)) newFields.isApproved = isApproved;
   if (categoryInd) newFields.categoryInd = categoryInd;
   if (source) newFields.source = source;
-  if (audioSrc) newFields.audioSrc = audioSrc;
+  if (canModerate && audioSrc) newFields.audioSrc = audioSrc;
+  if (canModerate && updateDate) newFields.date = new Date();
   if (isLngTxtEdit) {
     newFields = {
       ...newFields,
@@ -68,10 +76,11 @@ async function updateTxt(req, res) {
     { new: true },
   ).populate('user', shortUserInfoFields);
 
-  if (foundText && !foundText.isApproved && isApproved) {
+  if (!foundText.isApproved && newFields.isApproved) {
     Notify.socialMedia(updatedTxt);
   }
 
+  invalidateTag('texts');
   return res.json({ status: 'done' });
 }
 

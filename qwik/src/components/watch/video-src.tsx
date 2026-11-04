@@ -7,7 +7,7 @@ export const VideoSrc = component$(({ src }: { src: string }) => {
   return (
     <div class={'flex'}>
       <span class="font-bold">Ссылка: </span>
-      <Link href={YoutubeService.getSrcLink(src)} target="_blank">
+      <Link prefetch="js" href={YoutubeService.getSrcLink(src)} target="_blank">
         <div
           onMouseEnter$={() => (mouseIn.value = 1)}
           onMouseOut$={() => (mouseIn.value = 0)}

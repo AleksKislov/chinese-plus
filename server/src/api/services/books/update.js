@@ -1,4 +1,4 @@
-const { getBookChineseArr } = require('../_misc');
+const { getBookChineseArr, countZnChars } = require('../_misc');
 const BookPage = require('../../../models/BookPage');
 
 async function updateBookPage(req, res) {
@@ -12,6 +12,7 @@ async function updateBookPage(req, res) {
 
     newFields.origintext = origintext;
     newFields.chinese_arr = getBookChineseArr(origTxtStr);
+    newFields.length = countZnChars(origTxtStr);
   }
   if (translation) newFields.translation = translation;
 

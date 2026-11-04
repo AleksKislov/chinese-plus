@@ -1,0 +1,87 @@
+import { component$, useSignal } from '@builder.io/qwik';
+import { Link } from '@builder.io/qwik-city';
+import { UserDateDiv } from '../common/comments/user-with-date';
+import { ContentCat } from '../common/content-cards/content-cat';
+import { LikeBtn } from '../common/content-cards/like-btn';
+import { TagsLine } from '../common/content-cards/tags-line';
+import { WHERE } from '../common/comments/comment-form';
+import { EditBtn } from '../common/content-cards/edit-btn';
+import { DeleteContentBtn } from '../common/content-cards/delete-content-btn';
+import { LinkedText } from '../common/linked-text';
+import { SmallAvatar } from '../common/ui/small-avatar';
+
+const NO_BIO_TEXT = 'Автор ничего не написал о себе, но он/она точно хороший человек :)';
+
+type BlogPostCardProps = {
+  postId: ObjectId;
+  tags: string[];
+  userId: ObjectId;
+  userName: string;
+  userAvatar?: NewAvatar;
+  userRole?: UserRole;
+  userBio?: string;
+  date: ISODate;
+  category: string;
+  likes: ContentLike[];
+  isApproved: boolean;
+};
+
+export const BlogPostCard = component$(
+  ({
+    postId,
+    tags,
+    userId,
+    userName,
+    userAvatar,
+    userRole,
+    userBio,
+    date,
+    category,
+    likes,
+    isApproved,
+  }: BlogPostCardProps) => {
+    const likesSignal = useSignal(likes);
+
+    return (
+      <div class="card w-full bg-base-300 mb-3">
+        <div class="card-body">
+          <TagsLine tags={tags} />
+          <div class="flex items-center gap-3">
+            <Link href={`/users/${userId}`} class="avatar" prefetch="js">
+              <SmallAvatar userName={userName} newAvatar={userAvatar} role={userRole} />
+            </Link>
+            <UserDateDiv userId={userId} userName={userName} date={date} ptNum={0} />
+          </div>
+
+          <div class="flex flex-wrap items-center gap-x-6 gap-y-1">
+            <div>
+              <span class={'font-bold'}>Благодарности: </span>
+              <LikeBtn
+                likes={likesSignal}
+                contentType={WHERE.blog}
+                contentId={postId}
+                creatorId={userId}
+              />
+            </div>
+            <ContentCat txt={category} />
+          </div>
+
+          <div class="mt-1">
+            <span class="font-bold">Об авторе: </span>
+            <span class="whitespace-pre-wrap">
+              {userBio ? <LinkedText text={userBio} /> : NO_BIO_TEXT}
+            </span>
+          </div>
+
+          <EditBtn
+            contentType={WHERE.blog}
+            contentId={postId}
+            creatorId={userId}
+            isApproved={isApproved}
+          />
+          <DeleteContentBtn contentType={WHERE.blog} contentId={postId} />
+        </div>
+      </div>
+    );
+  },
+);

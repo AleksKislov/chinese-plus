@@ -4,12 +4,15 @@ import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-l
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { Sidebar } from '~/components/common/layout/sidebar';
+import { PinyinChartLinkCard } from '~/components/common/content-cards/pinyin-chart-link-card';
 import { PageTitle } from '~/components/common/layout/title';
 import { TonesPractice } from '~/components/start/tones-practice/tones-practice';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export default component$(() => {
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Практика тонов' }]} />
       <PageTitle txt={'Практика произнесения тонов'} />
 
       <FlexRow>
@@ -22,6 +25,7 @@ export default component$(() => {
               <p class="text-xs">
                 Для референса взята библиотека:{' '}
                 <Link
+                  prefetch="js"
                   href="https://github.com/sanjirenqunti/sanjirenqunti.github.io"
                   class="link link-hover link-secondary font-bold"
                 >
@@ -31,6 +35,7 @@ export default component$(() => {
             </div>
           </div>
           <PhoneticsLinkCard />
+          <PinyinChartLinkCard />
         </Sidebar>
         <MainContent>
           <TonesPractice />
@@ -41,7 +46,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Практика произнесения тонов',
+  title: 'Практика тонов китайского языка онлайн | Chinese+',
   meta: [
     {
       name: 'description',

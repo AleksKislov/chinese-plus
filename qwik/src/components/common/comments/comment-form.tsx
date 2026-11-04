@@ -7,21 +7,21 @@ import { xMarkSvg } from '../media/svg';
 import { EmojiSelect } from './emoji-select';
 
 export enum WHERE {
-  post = 'post',
   video = 'video',
   text = 'text',
   book = 'book_page',
   phoneticsLesson = 'phoneticsLesson',
   charactersLesson = 'charactersLesson',
+  blog = 'blog',
 }
 
 export type WhereType =
-  | 'post'
   | 'video'
   | 'text'
   | 'book_page'
   | 'phoneticsLesson'
-  | 'charactersLesson';
+  | 'charactersLesson'
+  | 'blog';
 
 export const useAddComment = globalAction$(
   (params, ev) => {
@@ -66,6 +66,7 @@ type CommentFormProps = {
   path?: string; // only for texts and books
   commentIdToReply: CommentIdToReply;
   addressees: Signal<Addressee[]>;
+  mentionCandidates?: Addressee[];
 };
 
 export type CommentIdToReply = {
@@ -80,8 +81,12 @@ export type Addressee = {
 };
 
 export const getAddresseeStr = (add: Addressee): string => {
-  return `@@[${add.id}]{${add.name}}@@`;
+  return `@[${add.id}]{${add.name}}@`;
 };
+
+// accepts both the current single-@ token (@[id]{name}@) and the old
+// double-@ one (@@[id]{name}@@) so previously-typed drafts/links still work
+export const ADDRESSEE_TOKEN_REGEX = /@@\[([^\]]+)\]\{([^}]+)\}@@|@\[([^\]]+)\]\{([^}]+)\}@/g;
 
 export const AddresseeTag = {
   start: `<strong class='text-info'>`,
@@ -89,7 +94,14 @@ export const AddresseeTag = {
 };
 
 export const CommentForm = component$(
-  ({ contentId, where, path, commentIdToReply, addressees }: CommentFormProps) => {
+  ({
+    contentId,
+    where,
+    path,
+    commentIdToReply,
+    addressees,
+    mentionCandidates = [],
+  }: CommentFormProps) => {
     const userState = useContext(userContext);
     const addComment = useAddComment();
     const emoji = useSignal('');
@@ -106,16 +118,13 @@ export const CommentForm = component$(
     const submitPost = $(async () => {
       alreadySubmitted.value = true;
 
-      let text = newText.value;
-      const foundUsers = parseForAddressees(newText.value);
-      if (foundUsers.length) {
-        foundUsers.forEach((user) => {
-          text = text.replace(
-            getAddresseeStr(user),
-            `${AddresseeTag.start}${user.name}${AddresseeTag.end}`,
-          );
-        });
-      }
+      // replaces every mention token (old @@..@@ or new @..@ form) with its
+      // display HTML in one pass, so repeated mentions of the same person
+      // and mixed old/new tokens in the same draft both resolve correctly
+      const text = newText.value.replace(ADDRESSEE_TOKEN_REGEX, (_match, _id1, name1, _id2, name2) => {
+        const name = name1 ?? name2;
+        return `${AddresseeTag.start}${name}${AddresseeTag.end}`;
+      });
 
       await addComment.submit({
         id: contentId,
@@ -163,6 +172,7 @@ export const CommentForm = component$(
                 newText={newText}
                 loggedIn={loggedIn}
                 emoji={emoji}
+                mentionCandidates={mentionCandidates}
               />
             </div>
           </div>
@@ -173,14 +183,21 @@ export const CommentForm = component$(
 );
 
 export const parseForAddressees = (txt: string): Addressee[] => {
-  const resArr = txt.split('@@');
-  const onlyNames = resArr.filter((x) => x[0] === '[' && x[x.length - 1] === '}');
-  const userSet = Array.from(new Set(onlyNames));
-  return userSet.map((x) => {
-    const id = x.slice(1, x.indexOf(']'));
-    const name = x.slice(x.indexOf('{') + 1, x.length - 1);
-    return { id, name };
-  });
+  const found: Addressee[] = [];
+  const seen = new Set<string>();
+
+  let match: RegExpExecArray | null;
+  ADDRESSEE_TOKEN_REGEX.lastIndex = 0;
+  while ((match = ADDRESSEE_TOKEN_REGEX.exec(txt))) {
+    const id = match[1] ?? match[3];
+    const name = match[2] ?? match[4];
+    const key = `${id}:${name}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    found.push({ id, name });
+  }
+
+  return found;
 };
 
 type CommentTextAreaProps = {
@@ -189,10 +206,51 @@ type CommentTextAreaProps = {
   loggedIn: boolean;
   newText: Signal<string>;
   emoji: Signal<string>;
+  mentionCandidates?: Addressee[];
 };
 
+// an "@" preceded by start-of-text/whitespace (not another "@", so it doesn't
+// re-trigger inside an already-inserted @[id]{name}@ token), followed by the query
+const MENTION_TRIGGER_REGEX = /(?:^|\s)@([^\s@]{0,30})$/;
+
 export const CommentTextArea = component$(
-  ({ addressees, commentIdToReply, newText, loggedIn, emoji }: CommentTextAreaProps) => {
+  ({
+    addressees,
+    commentIdToReply,
+    newText,
+    loggedIn,
+    emoji,
+    mentionCandidates = [],
+  }: CommentTextAreaProps) => {
+    const userState = useContext(userContext);
+    const textareaRef = useSignal<HTMLTextAreaElement>();
+    const mentionQuery = useSignal<string | null>(null);
+
+    const mentionOptions =
+      mentionQuery.value === null
+        ? []
+        : mentionCandidates
+            .filter(
+              (c) =>
+                c.id !== userState._id &&
+                c.name.toLowerCase().includes(mentionQuery.value!.toLowerCase()),
+            )
+            .slice(0, 5);
+
+    const selectMention = $((candidate: Addressee) => {
+      const caret = textareaRef.value?.selectionStart ?? newText.value.length;
+      const before = newText.value.slice(0, caret);
+      const after = newText.value.slice(caret);
+
+      const replacedBefore = before.replace(MENTION_TRIGGER_REGEX, (match) => {
+        const leadingChar = match.startsWith('@') ? '' : match[0];
+        return `${leadingChar}${getAddresseeStr(candidate)}, `;
+      });
+
+      newText.value = replacedBefore + after;
+      mentionQuery.value = null;
+    });
+
     const unsetAddressee = $((add: Addressee) => {
       addressees.value = addressees.value.filter((x) => x.id !== add.id);
       newText.value = newText.value.replace(getAddresseeStr(add), '');
@@ -217,7 +275,7 @@ export const CommentTextArea = component$(
 
     useTask$(({ track }) => {
       track(() => newText.value);
-      if (!newText.value.includes('@@')) return;
+      if (!newText.value.includes('@[')) return;
       const found = parseForAddressees(newText.value);
       if (!found.length) return;
 
@@ -251,7 +309,7 @@ export const CommentTextArea = component$(
             </span>
           </label>
         )}
-        <div class="form-control">
+        <div class="form-control relative">
           {commentIdToReply?.commentId && (
             <label class={'label'}>
               <span class={'label-text-alt'}>
@@ -264,15 +322,44 @@ export const CommentTextArea = component$(
             </label>
           )}
 
-          <textarea
-            class={`textarea textarea-bordered`}
-            placeholder="Ваше сообщение"
-            disabled={!loggedIn}
-            value={newText.value}
-            onKeyUp$={(e) => {
-              newText.value = (e.target as HTMLInputElement).value;
-            }}
-          ></textarea>
+          <div class="relative">
+            <textarea
+              ref={textareaRef}
+              class={`textarea textarea-bordered w-full`}
+              placeholder="Ваше сообщение, @ чтобы обратиться к кому-то"
+              disabled={!loggedIn}
+              value={newText.value}
+              onKeyUp$={(e) => {
+                const el = e.target as HTMLTextAreaElement;
+                newText.value = el.value;
+
+                const beforeCaret = el.value.slice(0, el.selectionStart);
+                const match = beforeCaret.match(MENTION_TRIGGER_REGEX);
+                mentionQuery.value = match ? match[1] : null;
+              }}
+              onBlur$={() => {
+                // delay so a click on a dropdown option still registers before it closes
+                setTimeout(() => (mentionQuery.value = null), 150);
+              }}
+            ></textarea>
+
+            {mentionQuery.value !== null && mentionOptions.length > 0 && (
+              <ul class="menu bg-neutral text-neutral-content rounded-box shadow-lg border border-base-content/10 absolute z-10 bottom-full mb-1 w-56 p-1">
+                {mentionOptions.map((c) => (
+                  <li key={c.id}>
+                    <button
+                      type="button"
+                      onMouseDown$={(e) => e.preventDefault()}
+                      onClick$={() => selectMention(c)}
+                    >
+                      {c.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
           <div class="flex justify-between">
             <label class="label">
               <span

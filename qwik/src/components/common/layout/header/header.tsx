@@ -2,11 +2,12 @@ import { component$, useContext, useSignal, useVisibleTask$ } from '@builder.io/
 import { userContext } from '~/root';
 import { Link } from '@builder.io/qwik-city';
 import { MenuItem, type MenuItemProps } from './menu-item';
-import { dropdownArrowBottom, enterSvg, logoSvg } from '../../media/svg';
-import { getNewMentions } from '~/routes/layout';
+import { collapsedMenuSvg, enterSvg, logoSvg } from '../../media/svg';
+import { getNewMentions } from '~/misc/loaders/layout-loaders';
 import { AvatarImg } from '../../media/avatar-img';
 import MenuLink from './menu-link';
 import { MenuItemNew } from './menu-item-new';
+import { MenuDropdownGroup } from './menu-dropdown-group';
 import { ThemeChanger } from './theme-changer';
 import { Brand } from './brand';
 import { AuthMenu } from './auth-menu';
@@ -15,8 +16,10 @@ export default component$(() => {
   const newMentions = getNewMentions();
   const userState = useContext(userContext);
   const isMobile = useSignal(false);
+  const isDrawerOpen = useSignal(false);
   const userHskWordsTotal = userState.hsk2WordsTotal;
-  const userWordsTotal = userState.words.length;
+  const userHsk3WordsTotal = userState.hsk3WordsTotal;
+  const userWordsTotal = userState.wordsCount;
 
   useVisibleTask$(() => {
     isMobile.value = window.innerWidth <= 768;
@@ -28,99 +31,106 @@ export default component$(() => {
         <div class="navbar h-12 flex justify-between">
           <div class="lg:w-full">
             {/* mobile menu */}
-            <div class="dropdown">
-              <label tabIndex={0} class="btn btn-ghost mt-2 lg:hidden">
-                {logoSvg}
-              </label>
-              <ul
-                tabIndex={0}
-                class="dropdown-content z-[1] menu bg-base-200 w-64 rounded-box text-base-content"
-              >
-                <li>
-                  <details class="z-40">
-                    <summary>{read.name}</summary>
-                    <ul class="w-52 bg-base-200">
-                      <MenuItemNew name={'Тексты'} links={read.links} />
-                      <MenuLink href={'/read/books'} text={'Книги'} />
-                      <MenuLink href={'/segment'} text={'Сегментатор'} />
-                    </ul>
-                  </details>
-                </li>
-                <MenuItemNew name={watch.name} links={watch.links} />
-                <li>
-                  <details class="z-40">
-                    <summary>Начинающим</summary>
-                    <ul class="w-52 bg-base-200">
-                      <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
-                      <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
-                      <MenuItemNew name={startChars.name} links={startChars.links} />
-                    </ul>
-                  </details>
-                </li>
-                <li>
-                  <details class="z-40">
-                    <summary>HSK</summary>
-                    <ul class="w-52 bg-base-200">
-                      <MenuItemNew name={hsk2.name} links={hsk2.links} />
-                      <MenuItemNew name={hsk3.name} links={hsk3.links} />
-                    </ul>
-                  </details>
-                </li>
-                <MenuLink href="/search" text="Словарь" />
-                <MenuLink href="/feedback" text="Форум" />
-                {/* <MenuLink href="/heroes" text="Герои клуба" /> */}
-                {/* <MenuLink href="/donate" text="Донат и цели" /> */}
-                <ThemeChanger />
-              </ul>
+            <div class="drawer w-auto lg:hidden">
+              <input
+                id="mobile-menu-drawer"
+                type="checkbox"
+                class="drawer-toggle"
+                checked={isDrawerOpen.value}
+                onChange$={(_, target) => (isDrawerOpen.value = target.checked)}
+              />
+              <div class="drawer-content">
+                <label for="mobile-menu-drawer" class="btn btn-ghost mt-2" aria-label="Меню">
+                  {collapsedMenuSvg}
+                </label>
+              </div>
+              <div class="drawer-side z-50">
+                <label
+                  for="mobile-menu-drawer"
+                  aria-label="Закрыть меню"
+                  class="drawer-overlay"
+                ></label>
+                <ul
+                  class="menu bg-base-200 min-h-full w-72 text-base-content"
+                  onClick$={(event) => {
+                    const target = event.target as HTMLElement;
+                    if (target.closest('a')) {
+                      isDrawerOpen.value = false;
+                    }
+                  }}
+                >
+                  <li>
+                    <details class="z-40">
+                      <summary>Введение</summary>
+                      <ul class="w-52 bg-base-200">
+                        <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
+                        <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
+                        <MenuItemNew name={startChars.name} links={startChars.links} />
+                      </ul>
+                    </details>
+                  </li>
+                  <li>
+                    <details class="z-40">
+                      <summary>HSK</summary>
+                      <ul class="w-52 bg-base-200">
+                        <MenuLink href="/hsk/exams/" text="Экзамены" />
+                        <MenuLink href="/hsk/grammar/" text="Грамматика" />
+                        <MenuItemNew name={hsk3.name} links={hsk3.links} />
+                        <MenuItemNew name={hsk2.name} links={hsk2.links} />
+                      </ul>
+                    </details>
+                  </li>
+                  <li>
+                    <details class="z-40">
+                      <summary>{read.name}</summary>
+                      <ul class="w-52 bg-base-200">
+                        <MenuItemNew name={'Тексты'} links={read.links} />
+                        <MenuLink href={'/read/books'} text={'Книги'} />
+                        <MenuLink href={'/segment'} text={'Сегментатор'} />
+                      </ul>
+                    </details>
+                  </li>
+                  <MenuItemNew name={watch.name} links={watch.links} />
+                  <MenuLink href="/dictionary" text="Словарь" />
+                  <MenuLink href="/read/blog/" text="Блог" />
+                  {/* <MenuLink href="/heroes" text="Герои клуба" /> */}
+                  {/* <MenuLink href="/donate" text="Донат и цели" /> */}
+                  <ThemeChanger />
+                </ul>
+              </div>
             </div>
 
             {/* desctop menu */}
             <div class="hidden lg:flex">
-              <Link class="btn btn-ghost normal-case text-xl mt-2" href="/">
+              <Link prefetch="js" class="btn btn-ghost normal-case text-xl mt-2" href="/">
                 <div>{logoSvg}</div>
                 <Brand />
               </Link>
               <ul class="menu menu-horizontal mt-1">
-                <li tabIndex={0} class="dropdown dropdown-hover hover:text-success">
-                  <label class="my-1 hover:text-secondary">
-                    {read.name}
-                    {dropdownArrowBottom}
-                  </label>
-                  <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content">
-                    <MenuItemNew name={'Тексты'} links={read.links} />
-                    <MenuLink href={'/read/books'} text={'Книги'} />
-                    <MenuLink href={'/segment'} text={'Сегментатор'} />
-                  </ul>
-                </li>
+                <MenuDropdownGroup name="Введение">
+                  <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
+                  <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
+                  <MenuItemNew name={startChars.name} links={startChars.links} />
+                </MenuDropdownGroup>
+
+                <MenuDropdownGroup name="HSK">
+                  <MenuLink href="/hsk/exams/" text="Экзамены" />
+                  <MenuLink href="/hsk/grammar/" text="Грамматика" />
+                  <MenuItemNew name={hsk3.name} links={hsk3.links} />
+                  <MenuItemNew name={hsk2.name} links={hsk2.links} />
+                </MenuDropdownGroup>
+
+                <MenuDropdownGroup name={read.name}>
+                  <MenuItemNew name={'Тексты'} links={read.links} />
+                  <MenuLink href={'/read/books'} text={'Книги'} />
+                  <MenuLink href={'/segment'} text={'Сегментатор'} />
+                </MenuDropdownGroup>
 
                 <MenuItem name={watch.name} links={watch.links} />
 
-                <li tabIndex={0} class="dropdown dropdown-hover hover:text-success">
-                  <label class="my-1 hover:text-secondary">
-                    Начинающим
-                    {dropdownArrowBottom}
-                  </label>
-                  <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content">
-                    <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
-                    <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
-                    <MenuItemNew name={startChars.name} links={startChars.links} />
-                  </ul>
-                </li>
-
-                <li tabIndex={0} class="dropdown dropdown-hover hover:text-success">
-                  <label class="my-1 hover:text-secondary">
-                    HSK
-                    {dropdownArrowBottom}
-                  </label>
-                  <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content">
-                    <MenuItemNew name={hsk2.name} links={hsk2.links} />
-                    <MenuItemNew name={hsk3.name} links={hsk3.links} />
-                  </ul>
-                </li>
-
-                <MenuLink href="/search" text="Словарь" />
+                <MenuLink href="/dictionary" text="Словарь" />
                 {/* <MenuItem name={ourClub.name} links={ourClub.links} /> */}
-                <MenuLink href="/feedback" text="Форум" />
+                <MenuLink href="/read/blog/" text="Блог" />
 
                 <ThemeChanger />
               </ul>
@@ -130,7 +140,8 @@ export default component$(() => {
           {/* brand for mobile */}
           <div class="navbar-center lg:hidden">
             <div class="flex">
-              <Link class="btn btn-ghost normal-case text-2xl" href="/">
+              <Link prefetch="js" class="btn btn-ghost normal-case text-2xl" href="/">
+                <div>{logoSvg}</div>
                 <Brand isMobile={true} />
               </Link>
             </div>
@@ -161,7 +172,11 @@ export default component$(() => {
                 class="dropdown-content z-[3] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content"
               >
                 {userState.name ? (
-                  <AuthMenu hskWordsTotal={userHskWordsTotal} wordsTotal={userWordsTotal} />
+                  <AuthMenu
+                    hskWordsTotal={userHskWordsTotal}
+                    hsk3WordsTotal={userHsk3WordsTotal}
+                    wordsTotal={userWordsTotal}
+                  />
                 ) : (
                   unAuthMenu
                 )}
@@ -217,6 +232,14 @@ export const startChars: MenuItemProps = {
     {
       href: '/watch/characters-lessons',
       text: 'Уроки иероглифики',
+    },
+    {
+      href: '/names/',
+      text: 'Имя на китайском',
+    },
+    {
+      href: '/propisi/',
+      text: 'Прописи иероглифов',
     },
   ],
 };
@@ -276,11 +299,15 @@ export const read: MenuItemProps = {
 };
 
 export const hsk3: MenuItemProps = {
-  name: 'HSK 3.0',
+  name: 'Лексика HSK 3.0',
   links: [
     {
       href: '/hsk/3/table',
       text: 'Таблица',
+    },
+    {
+      href: '/hsk/3/old-table',
+      text: 'Старая таблица',
     },
     {
       href: '/hsk/3/tests',
@@ -294,7 +321,7 @@ export const hsk3: MenuItemProps = {
 };
 
 export const hsk2: MenuItemProps = {
-  name: 'HSK 2.0',
+  name: 'Лексика HSK 2.0',
   links: [
     {
       href: '/hsk/2/table',

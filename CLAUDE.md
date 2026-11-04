@@ -1,0 +1,23 @@
+# Notes for Claude
+
+## Frontend (`qwik/`): API requests must run on the FE server, never in the browser
+
+In production the frontend image is built with `PUBLIC_BASE_URL=http://chin_plus_be:<port>`
+(see `qwik/Dockerfile`): a Docker-internal hostname that only the FE container can resolve.
+Locally it is `http://localhost:10000` (`qwik/.env`), which the browser can reach — so a
+browser-side request works locally and fails only in production.
+
+- Do not call `ApiService` (or `fetch(BASE_URL…)`) from code that runs in the browser:
+  `$()` handlers, `onClick$` and other events, client-side `useTask$` / `useVisibleTask$`.
+- Page data: `routeLoader$`.
+- Data needed after a user action: `globalAction$` / `routeAction$` in `qwik/src/misc/actions/`
+  (e.g. `grammar/get-topic.ts`, `grammar/delete-audio.ts`), called with `action.submit(…)`.
+- When writing or reviewing frontend code, check where every `ApiService` call runs.
+
+## Production setup
+
+- `docker-compose.prod.yml`: BE `chin_plus_be` (port 10000, env from `server/config/.env.prod`),
+  FE `chin_plus_fe`, Mongo `mongo_chin_dev`, DB `contactKeeper`.
+- BE image is built by Jenkins from the git checkout (`Jenkinsfile-be`); `server/config` and
+  `server/audio` are not in the image (`server/.dockerignore`).
+- Dev and prod use the same Yandex bucket (`YA_S3_BUCKET`), so audio files are shared.

@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
-const { isDevelopment } = require('../server');
+const User = require('../src/models/User');
 
-module.exports = function (req, res, next) {
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+module.exports = async function (req, res, next) {
   const token = req.header('x-auth-token');
 
   if (isDevelopment) {
@@ -13,7 +15,15 @@ module.exports = function (req, res, next) {
 
   try {
     const { user } = jwt.verify(token, process.env.JWT_SECRET);
-    if (user.id !== process.env.ADMIN_ID) throw new Error('Not admin!');
+
+    if (user.id === process.env.ADMIN_ID) {
+      req.user = user;
+      return next();
+    }
+
+    const dbUser = await User.findById(user.id).select('role');
+    if (!dbUser || dbUser.role !== 'admin') throw new Error('Not admin!');
+
     req.user = user;
     next();
   } catch (err) {

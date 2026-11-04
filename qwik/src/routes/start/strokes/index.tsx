@@ -1,11 +1,13 @@
 import { component$ } from '@builder.io/qwik';
 import { Link, type DocumentHead } from '@builder.io/qwik-city';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
+import { PropisiLinkCard } from '~/components/propisi/propisi-link-card';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { PageTitle } from '~/components/common/layout/title';
 import { StrokeCard } from '~/components/strokes/stroke-card';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export type StrokeExample = {
   name: string;
@@ -236,7 +238,8 @@ export default component$(() => {
   ];
   return (
     <>
-      <PageTitle txt={'Черты китайских иероглифов'} />
+      <Breadcrumbs items={[{ name: 'Черты' }]} />
+      <PageTitle txt={'Черты китайских иероглифов — простые и сложные'} />
 
       <FlexRow>
         <Sidebar>
@@ -246,13 +249,18 @@ export default component$(() => {
               <p>
                 Познакомились с чертами - переходите знакомиться со следующим понятием в
                 иероглифике:{' '}
-                <Link href="/start/radicals" class="link hover:link-success font-bold">
+                <Link
+                  prefetch="js"
+                  href="/start/radicals"
+                  class="link hover:link-success font-bold"
+                >
                   ключи
                 </Link>
               </p>
             </div>
           </div>
           <CharactersLinkCard />
+          <PropisiLinkCard />
         </Sidebar>
         <MainContent>
           <div class="prose mb-3">
@@ -292,11 +300,12 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Черты китайских иероглифов',
+  title: 'Черты китайских иероглифов — названия и примеры | Chinese+',
   meta: [
     {
       name: 'description',
-      content: 'Черточек, из которых состоят китайские иероглифы, не так уж и много.',
+      content:
+        'Все черты китайских иероглифов (笔画): простые и сложные, с китайскими и русскими названиями, примерами иероглифов и анимацией написания.',
     },
   ],
 };

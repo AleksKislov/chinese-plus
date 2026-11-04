@@ -8,6 +8,7 @@ import { CharactersLinkCard } from '~/components/common/content-cards/characters
 import YANDEX_ADS from '~/misc/consts/ads';
 import { configContext } from '~/root';
 import { BannerAds } from '~/components/common/ads/sidebar-ads';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export default component$(() => {
   const configState = useContext(configContext);
@@ -15,7 +16,8 @@ export default component$(() => {
 
   return (
     <>
-      <PageTitle txt={'Ключи китайских иероглифов'} />
+      <Breadcrumbs items={[{ name: 'Таблица ключей' }]} />
+      <PageTitle txt={'Ключи китайских иероглифов — таблица 214 ключей Канси'} />
 
       <FlexRow>
         <Sidebar noAds={true}>
@@ -2173,12 +2175,12 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Ключи китайских иероглифов',
+  title: 'Ключи китайских иероглифов — таблица 214 ключей Канси | Chinese+',
   meta: [
     {
       name: 'description',
       content:
-        'Таблица ключей (radicals) иероглифов китайского языка. С указанием самых распространенных.',
+        'Таблица 214 ключей китайских иероглифов (ключи Канси) с пиньинем, переводом, числом черт и названиями. Самые частые ключи выделены цветом.',
     },
   ],
 };

@@ -8,8 +8,9 @@ import { ContentPageCard } from '~/components/common/content-cards/content-page-
 import { WHERE } from '~/components/common/comments/comment-form';
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { getContentComments } from '~/misc/actions/get-content-comments';
-import { parseTextWords } from '~/misc/helpers/content';
+import { getContentPath, parseTextWords } from '~/misc/helpers/content';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
+import { truncateCrumb } from '~/components/common/layout/breadcrumbs';
 import {
   getTextFromDB,
   getWordsForTooltips,
@@ -26,13 +27,19 @@ export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => 
 });
 
 export const useGetText = routeLoader$(
-  async ({ params, query }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
+  async ({ params, query, redirect }): Promise<TextFromDB & TooltipText & { curPage: number }> => {
     let curPage = 0;
     const pg = query.get('pg') || '1';
     if (+pg && +pg > 0) curPage = +pg - 1;
 
     const textFromDb = await getTextFromDB(params.id, true);
-    console.log('textFromDb', textFromDb);
+    if (!textFromDb) throw redirect(302, '/read/unapproved-texts');
+    if (textFromDb.isApproved) {
+      throw redirect(
+        302,
+        getContentPath(WHERE.text, textFromDb._id, false, undefined, undefined, textFromDb.title),
+      );
+    }
     let chineseArr = textFromDb.chinese_arr;
     if (textFromDb.pages && textFromDb.pages.length) {
       chineseArr = textFromDb.pages[curPage].chinese_arr;
@@ -65,11 +72,20 @@ export default component$(() => {
 
   return (
     <>
-      <ContentPageHead title={title} hits={hits} path="/read/unapproved-texts" />
+      <ContentPageHead
+        title={title}
+        hits={hits}
+        crumbs={[
+          { name: 'Тексты', href: '/read/texts/' },
+          { name: 'На проверке', href: '/read/unapproved-texts/' },
+          { name: truncateCrumb(title) },
+        ]}
+      />
 
       <FlexRow>
         <Sidebar>
           <ContentPageCard
+            title={title}
             desc={desc}
             length={length}
             tags={tags}
@@ -99,6 +115,7 @@ export default component$(() => {
 export const head: DocumentHead = {
   title: 'Chinese+ Тексты на китайском с переводом',
   meta: [
+    { name: 'robots', content: 'noindex, follow' },
     {
       name: 'description',
       content:

@@ -1,17 +1,18 @@
 import { component$, useContext } from '@builder.io/qwik';
 import { Link, type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
-import { GoogleButton } from '~/components/auth/google-btn';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Features } from '~/components/home/features';
 import { LandingVideo } from '~/components/home/landing-video';
 import { ApiService } from '~/misc/actions/request';
 import { userContext } from '~/root';
-import { type Post } from './(club)/feedback';
-import { PostCard } from '~/components/feedback/post-card';
+import { type BlogCardInfo } from './read/blog';
+import { BlogCard } from '~/components/read/blog-card';
 import { CommentCard, type CommentType } from '~/components/common/comments/comment-card';
+import CONST_URLS from '~/misc/consts/urls';
+import { JsonLd } from '~/components/common/seo/json-ld';
 
-export const getPosts = routeLoader$((): Promise<Post[]> => {
-  return ApiService.get(`/api/posts/infinite?skip=0&tag=`, undefined, []);
+export const getLatestBlogPosts = routeLoader$((): Promise<BlogCardInfo[]> => {
+  return ApiService.get(`/api/blogs?skip=0&limit=5`, undefined, []);
 });
 
 export const getComments = routeLoader$((): Promise<CommentType[]> => {
@@ -21,28 +22,58 @@ export const getComments = routeLoader$((): Promise<CommentType[]> => {
 export default component$(() => {
   const { loggedIn } = useContext(userContext);
   const comments = getComments();
-  const posts = getPosts();
+  const blogPosts = getLatestBlogPosts();
   return (
     <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'Organization',
+              name: 'Chinese+',
+              url: CONST_URLS.siteUrl,
+              logo: `${CONST_URLS.siteUrl}/favicon.svg`,
+              sameAs: [
+                'https://t.me/chineseplusnew',
+                'https://www.youtube.com/c/Buyilehuorg',
+                'https://vk.com/buyilehu',
+              ],
+            },
+            {
+              '@type': 'WebSite',
+              name: 'Chinese+',
+              url: CONST_URLS.siteUrl,
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: `${CONST_URLS.siteUrl}/dictionary/{search_term_string}`,
+                'query-input': 'required name=search_term_string',
+              },
+            },
+          ],
+        }}
+      />
       <div class="text-center mt-8">
         <article class={'prose max-w-none'}>
           <h1>
             Клуб Chinese<span class="text-secondary font-extrabold text-5xl">+</span>
           </h1>
-          <p class="font-semibold -mt-6 mb-5">web-приложение для изучения китайского языка</p>
+          <p class="font-semibold -mt-6 mb-5">
+            Бесплатный сайт для изучения китайского языка: тексты и видео с переводом, слова и
+            грамматика HSK, словарь и прописи
+          </p>
         </article>
       </div>
 
       {!loggedIn && (
         <FlexRow>
-          <div class="flex justify-center w-full mb-3">
-            <Link href="/login" class="btn btn-success btn-sm mr-1">
-              войти
+          <div class="flex flex-col items-center w-full mb-3">
+            <Link prefetch="js" href="/read/texts" class="btn btn-accent mb-2">
+              Учиться бесплатно
             </Link>
-            <GoogleButton />
-            <Link href="/register" class="btn btn-primary btn-sm ml-1">
-              регистрация
-            </Link>
+            <p class="text-xs opacity-60 mb-3">
+              Сайт бесплатный — зарегистрированным пользователям доступно больше возможностей
+            </p>
           </div>
         </FlexRow>
       )}
@@ -69,10 +100,10 @@ export default component$(() => {
 
         <div class="w-full md:w-1/2">
           <div class="prose mb-2">
-            <h3>Свежий фидбэк</h3>
+            <h3>Свежее в блоге</h3>
           </div>
-          {posts.value?.map((post, ind) => (
-            <PostCard post={post} isPostPage={false} key={ind} addressees={null} />
+          {blogPosts.value?.map((post, ind) => (
+            <BlogCard post={post} key={ind} />
           ))}
         </div>
       </FlexRow>
@@ -81,12 +112,29 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Изучать китайский - интересно!',
+  title: 'Китайский язык онлайн бесплатно — тексты, видео, HSK, словарь | Chinese+',
   meta: [
     {
       name: 'description',
       content:
-        'Изучение китайского языка онлайн: уроки, тексты с переводом, видео с субтитрами, пиньинь, лексика HSK, иероглифы, тесты и пр.',
+        'Китайский язык онлайн бесплатно: тексты и видео с переводом, слова, грамматика и экзамены HSK, словарь с порядком черт, пиньинь и прописи иероглифов.',
+    },
+    {
+      property: 'og:title',
+      content: 'Китайский язык онлайн бесплатно — тексты, видео, HSK, словарь | Chinese+',
+    },
+    {
+      property: 'og:description',
+      content:
+        'Китайский язык онлайн бесплатно: тексты и видео с переводом, слова, грамматика и экзамены HSK, словарь с порядком черт, пиньинь и прописи иероглифов.',
+    },
+    {
+      property: 'og:type',
+      content: 'website',
+    },
+    {
+      property: 'og:url',
+      content: CONST_URLS.siteUrl,
     },
   ],
 };

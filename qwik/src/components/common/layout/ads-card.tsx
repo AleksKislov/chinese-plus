@@ -9,6 +9,7 @@ type AdsInfo = {
 export const AdsCard = component$(({ adsInfo }: AdsInfo) => {
   return (
     <Link
+      prefetch="js"
       href={(adsInfo?.link as string) || ''}
       target={'_blank'}
       class="card w-full bg-base-200 mb-3"

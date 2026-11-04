@@ -11,7 +11,7 @@ export const TextSource = component$(
       <div class={'flex'}>
         <span class="font-bold">Источник{isTranslation ? ' перевода' : ''}: </span>
         {validURL(source) ? (
-          <Link href={parseURL(source)?.href} target="_blank">
+          <Link prefetch="js" href={parseURL(source)?.href} target="_blank">
             <div
               onMouseEnter$={() => (mouseIn.value = 1)}
               onMouseOut$={() => (mouseIn.value = 0)}

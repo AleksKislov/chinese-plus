@@ -1,14 +1,32 @@
+const mongoose = require('mongoose');
 const Text = require('../../../models/Text');
 const { shortUserInfoFields } = require('../../consts');
 const { countZnChars, countUniqChars } = require('../_misc');
+const { shouldCountHit } = require('../../../hits');
 
 async function getById(req, res) {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(404).json({ msg: 'Text not found' });
+  }
+
   const withoutOriginTxt = req.query.no_origin === 'true';
-  const text = await Text.findByIdAndUpdate(req.params.id, { $inc: { hits: 1 } }, { new: true })
-    .populate('user', shortUserInfoFields)
-    .select('-name' + (withoutOriginTxt ? ' -origintext' : ''));
+  const selectFields = '-name' + (withoutOriginTxt ? ' -origintext' : '');
+  const countHit = shouldCountHit('text', req.params.id, req.query.vid);
+
+  const text = countHit
+    ? await Text.findByIdAndUpdate(req.params.id, { $inc: { hits: 1 } }, { new: true })
+        .populate('user', shortUserInfoFields)
+        .select(selectFields)
+    : await Text.findById(req.params.id)
+        .populate('user', shortUserInfoFields)
+        .select(selectFields);
 
   if (!text) return res.status(404).json({ msg: 'Text not found' });
+
+  // FE makes the page title unique when several approved texts share it (SEO)
+  const sameTitleCount = text.isApproved
+    ? await Text.countDocuments({ title: text.title, isApproved: 1 })
+    : 0;
 
   if (text.pages?.length) {
     const pages = text.pages.map((page) => {
@@ -26,14 +44,20 @@ async function getById(req, res) {
       return withoutOriginTxt ? pageContent : { ...pageContent, origintext: page.origintext };
     });
 
-    return res.json({ ...text.toObject(), pages, origParagsLen: [0], uniqCharsTotal: 0 });
+    return res.json({
+      ...text.toObject(),
+      pages,
+      origParagsLen: [0],
+      uniqCharsTotal: 0,
+      sameTitleCount,
+    });
   }
 
   const origTxt = text.chinese_arr.join('');
   const origParagsLen = origTxt.split('\n').map((parag) => countZnChars(parag));
   const uniqCharsTotal = countUniqChars(origTxt);
 
-  return res.json({ ...text.toObject(), origParagsLen, uniqCharsTotal });
+  return res.json({ ...text.toObject(), origParagsLen, uniqCharsTotal, sameTitleCount });
 }
 
 module.exports = { getById };

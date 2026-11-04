@@ -2,6 +2,7 @@ const router = require('express').Router();
 const auth = require('../../middleware/auth');
 const { check } = require('express-validator');
 const adminAuth = require('../../middleware/admin-auth');
+const { cacheRoute, TTL } = require('../../src/cache');
 
 const {
   getById,
@@ -19,6 +20,7 @@ const {
   getAllVideoLessons,
   getVideoLessonById,
   deleteVideo,
+  setVideoLessonRutube,
 } = require('../../src/api/services/videos');
 
 /**
@@ -59,9 +61,21 @@ router.post('/unmark_as_seen/:id', auth, markAsSeen);
  */
 router.get('/infinite', getVidsInChunks);
 
-router.get('/all-video-lessons', getAllVideoLessons);
+router.get(
+  '/all-video-lessons',
+  cacheRoute('video-lessons', { ttl: TTL.SHORT }),
+  getAllVideoLessons,
+);
 
 router.get('/video-lessons/:id', getVideoLessonById);
+
+/**
+ * @method  POST
+ * @route   api/videos/video-lessons/:id/rutube
+ * @desc    Set (or clear with '') the Rutube link of a video lesson
+ * @access  Admin
+ */
+router.post('/video-lessons/:id/rutube', adminAuth, setVideoLessonRutube);
 
 // router.post("/create-lesson", async (req, res) => {
 //   const newLesson = new VideoLesson(req.body);

@@ -7,8 +7,8 @@ import {
   useVisibleTask$,
 } from '@builder.io/qwik';
 import { ApiService } from '~/misc/actions/request';
-import { type OldHskWordType } from '~/routes/hsk/2/table';
-import { type NewHskWordType } from '~/routes/hsk/3/table';
+import { type OldHskWordType } from '~/routes/hsk/2/table/[...lvl]';
+import { type NewHskWordType } from '~/routes/hsk/3/table/[...lvl]';
 import { searchSvg } from '../common/media/svg';
 import { globalAction$, z, zod$ } from '@builder.io/qwik-city';
 

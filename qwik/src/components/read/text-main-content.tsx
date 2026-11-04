@@ -16,9 +16,12 @@ import { editWordModalId, moreInfoModalId } from '../common/tooltips/word-toolti
 import { Loader } from '../common/ui/loader';
 import { SimilarTxtImg } from './similar-txt-img';
 import { CommentsFullBlock } from '../common/comments/comments-full-block';
+import { SubscribeCta } from '~/components/common/media/subscribe-cta';
 import { TextHeadBtns } from '../common/read/text-head-btns';
 import { BannerAds } from '../common/ads/sidebar-ads';
 import YANDEX_ADS from '~/misc/consts/ads';
+import { OurAds } from '../common/ads/our-ads';
+import OUR_ADS from '~/misc/consts/our-ads';
 
 type TextMainContentProps = {
   text: TextFromDB & { curPage: number };
@@ -51,13 +54,17 @@ export const TextMainContent = component$(
       curPage,
       audioSrc: hasAudio,
       isApproved,
+      user: textAuthor,
+      level,
     } = text;
 
     const yandexAds = configState.find((x) => x.type === YANDEX_ADS.banner);
+    const mainContentAds = configState.filter((x) => x.type === OUR_ADS.main_content)[0];
 
     const isLongTxt = Boolean(pages && pages.length);
     const currentWord = useSignal<DictWord | null>(null);
     const showTranslation = useSignal(true);
+    const showPinyin = useSignal(level === 1);
 
     const editChineseArrModalId = 'editChineseArrModalId';
 
@@ -65,7 +72,11 @@ export const TextMainContent = component$(
       <MainContent>
         <Alerts />
 
-        <TextHeadBtns showTranslation={showTranslation} fontSizeSig={fontSizeSig} />
+        <TextHeadBtns
+          showTranslation={showTranslation}
+          fontSizeSig={fontSizeSig}
+          showPinyin={showPinyin}
+        />
 
         {isLongTxt && <LongTxtPagination numOfPages={pages.length} curPage={curPage} />}
 
@@ -79,11 +90,14 @@ export const TextMainContent = component$(
             translation={isLongTxt ? pages[curPage].translation[i] : translation[i]}
             strLen={isLongTxt ? pages[curPage].origParagsLen[i] : origParagsLen[i]}
             ind={i}
+            pageInd={isLongTxt ? curPage : undefined}
             currentWord={currentWord}
             showTranslation={showTranslation.value}
+            showPinyin={showPinyin.value}
           />
         ))}
         <div>{restLoading && <Loader />}</div>
+        <div class="my-2"></div>
 
         {isAdmin && (
           <label for={editChineseArrModalId} class={`btn btn-sm btn-outline btn-warning mt-2`}>
@@ -91,6 +105,7 @@ export const TextMainContent = component$(
           </label>
         )}
 
+        {mainContentAds?.isActive && <OurAds adsInfo={mainContentAds} />}
         {yandexAds?.isActive && <BannerAds />}
 
         {isApproved && similarTexts ? (
@@ -107,6 +122,8 @@ export const TextMainContent = component$(
           </>
         ) : null}
 
+        <SubscribeCta />
+
         <CommentsFullBlock
           contentId={textId}
           where={WHERE.text}
@@ -114,6 +131,7 @@ export const TextMainContent = component$(
           commentIdToReply={commentIdToReplyStore}
           addressees={addressees}
           comments={comments}
+          author={{ id: textAuthor._id, name: textAuthor.name }}
         />
 
         {!currentWord.value ? null : (

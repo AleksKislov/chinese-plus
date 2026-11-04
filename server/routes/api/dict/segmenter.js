@@ -1,3 +1,5 @@
+const { MAX_CN_WORD_LEN } = require('./constants');
+
 class LongestMatchSegmenter {
   constructor(dict) {
     // dict should be a function that takes a chinese string as the
@@ -11,7 +13,7 @@ class LongestMatchSegmenter {
    */
   getLongestMatch(str) {
     let i, slice;
-    const maxWordLen = 8;
+    const maxWordLen = MAX_CN_WORD_LEN;
     i = maxWordLen > str.length ? maxWordLen : str.length;
     while (i >= 0) {
       slice = str.substr(0, i);
@@ -41,7 +43,7 @@ class LongestMatchSegmenter {
   }
 
   getLongestMatchFromEnd(str) {
-    const maxLength = Math.min(str.length, 8); // Example: max word length 5
+    const maxLength = Math.min(str.length, MAX_CN_WORD_LEN);
     for (let len = maxLength; len > 0; len--) {
       const substr = str.slice(-len);
       if (this.dict(substr)) return substr;

@@ -6,6 +6,7 @@ import { Sidebar } from '~/components/common/layout/sidebar';
 import { PageTitle } from '~/components/common/layout/title';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export const points = [
   {
@@ -18,11 +19,15 @@ export const points = [
     title: 'Далее - лексика и грамматика',
     txt: (
       <span>
-        Далее можно начать знакомиться с лексикой и грамматикой китайского языка. Лексику можно
-        начинать учить с 1-го уровня{' '}
-        <Link class="link font-bold hover:link-success" href="/hsk/2/table">
-          HSK
-        </Link>
+        Далее можно начать знакомиться с простой{' '}
+        <Link prefetch="js" class="link font-bold hover:link-success" href="/hsk/3/table">
+          лексикой
+        </Link>{' '}
+        и{' '}
+        <Link prefetch="js" class="link font-bold hover:link-success" href="/hsk/grammar/">
+          грамматикой
+        </Link>{' '}
+        китайского языка.
       </span>
     ),
   },
@@ -31,8 +36,8 @@ export const points = [
     title: 'От простого к сложному',
     txt: (
       <span>
-        Одновременно с пунктом 2 можно начинать слушать аудиоуроки и читать простые{' '}
-        <Link class="link font-bold hover:link-success" href="/read/texts">
+        Одновременно можно начинать слушать аудиоуроки и читать простые{' '}
+        <Link prefetch="js" class="link font-bold hover:link-success" href="/read/texts">
           тексты
         </Link>
         , слушать озвучку носителем языка
@@ -46,7 +51,7 @@ export const points = [
       <span>
         По мере увеличения словарного запаса наращивайте свой уровень и переходите к более сложным
         материалам, например, к просмотру{' '}
-        <Link class="link font-bold hover:link-success" href="/watch/videos">
+        <Link prefetch="js" class="link font-bold hover:link-success" href="/watch/videos">
           видео
         </Link>{' '}
         на китайском языке с интерактивными субтитрами.
@@ -58,6 +63,7 @@ export const points = [
 export default component$(() => {
   return (
     <>
+      <Breadcrumbs items={[{ name: 'С чего начать' }]} />
       <PageTitle txt={'С чего начать изучать китайский'} />
 
       <FlexRow>
@@ -94,6 +100,7 @@ export default component$(() => {
                           латинскими буквами с указанием тонов (всего их 4) над гласными - пиньинем.
                           Чтобы разобраться с фонетикой, смотрите{' '}
                           <Link
+                            prefetch="js"
                             class="link font-bold hover:link-success"
                             href="/watch/phonetics-lessons"
                           >
@@ -101,6 +108,7 @@ export default component$(() => {
                           </Link>{' '}
                           с носителем языка. Рекомендуем так же пользоваться нашей{' '}
                           <Link
+                            prefetch="js"
                             class="link font-bold hover:link-success"
                             href="/start/pinyin-chart"
                           >
@@ -121,11 +129,16 @@ export default component$(() => {
                         </div>
                         <div>
                           Сначала нужно узнать из каких вообще{' '}
-                          <Link class="link font-bold hover:link-success" href="/start/strokes">
+                          <Link
+                            prefetch="js"
+                            class="link font-bold hover:link-success"
+                            href="/start/strokes"
+                          >
                             черт
                           </Link>{' '}
                           состоят иероглифы, как их писать. Потом можете посмотреть{' '}
                           <Link
+                            prefetch="js"
                             class="link font-bold hover:link-success"
                             href="/watch/characters-lessons"
                           >
@@ -148,7 +161,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ С чего начать изучать китайский язык',
+  title: 'С чего начать изучать китайский язык | Chinese+',
   meta: [
     {
       name: 'description',

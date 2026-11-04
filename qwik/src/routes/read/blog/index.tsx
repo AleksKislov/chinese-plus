@@ -1,0 +1,91 @@
+import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+import { type DocumentHead, routeAction$ } from '@builder.io/qwik-city';
+import { ApiService } from '~/misc/actions/request';
+
+import { FlexRow } from '~/components/common/layout/flex-row';
+import { Sidebar } from '~/components/common/layout/sidebar';
+import { MainContent } from '~/components/common/layout/main-content';
+import { PageTitle } from '~/components/common/layout/title';
+import { BlogCard } from '~/components/read/blog-card';
+import { CreateBlogCard } from '~/components/read/create-blog-card';
+import { MoreBtnAndLoader } from '~/components/common/ui/more-btn-and-loader';
+import { type BlogBlock } from '~/misc/helpers/content';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
+
+export type BlogCardInfo = {
+  _id: ObjectId;
+  postType: 'simple' | 'article';
+  category: string;
+  tags: string[];
+  hits: number;
+  title: string;
+  content: BlogBlock[];
+  user: ShortUserInfo;
+  isApproved: 1 | 0 | undefined;
+  comments_id: CommentId[];
+  likes: ContentLike[];
+  date: ISODate;
+};
+
+export const getBlogPostsWithSkip = routeAction$((params): Promise<BlogCardInfo[]> => {
+  const { skip, category } = params;
+  const catParam = category ? `&category=${category}` : '';
+  return ApiService.get(`/api/blogs?skip=${skip}${catParam}`, undefined, []);
+});
+
+export default component$(() => {
+  const posts = useSignal<BlogCardInfo[]>([]);
+  const getPosts = getBlogPostsWithSkip();
+  const skipSignal = useSignal(0);
+
+  useVisibleTask$(({ track }) => {
+    const skip = track(() => skipSignal.value);
+    getPosts.submit({ skip, category: '' });
+  });
+
+  useVisibleTask$(({ track }) => {
+    const res = track(() => getPosts.value);
+    if (!res) return;
+    posts.value = [...posts.value, ...res];
+  });
+
+  return (
+    <>
+      <Breadcrumbs items={[{ name: 'Блог' }]} />
+      <PageTitle txt={'Блог Chinese+'} />
+      <FlexRow>
+        <Sidebar>
+          <CreateBlogCard />
+        </Sidebar>
+
+        <MainContent>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3">
+            {posts.value.map((post, ind) => (
+              <BlogCard key={ind} post={post} />
+            ))}
+          </div>
+
+          <MoreBtnAndLoader skipSignal={skipSignal} isLoading={getPosts.isRunning} />
+        </MainContent>
+      </FlexRow>
+    </>
+  );
+});
+
+export const head: DocumentHead = {
+  title: 'Блог о китайском языке | Chinese+',
+  meta: [
+    {
+      name: 'description',
+      content: 'Блог сообщества Chinese+: истории, заметки и мысли об изучении китайского языка.',
+    },
+  ],
+  links: [
+    {
+      rel: 'alternate',
+      type: 'application/rss+xml',
+      title: 'Chinese+ Блог RSS',
+      href: '/read/blog/rss.xml',
+    },
+  ],
+};

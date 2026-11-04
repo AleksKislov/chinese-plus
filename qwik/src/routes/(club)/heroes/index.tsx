@@ -9,6 +9,7 @@ import { MainContent } from '~/components/common/layout/main-content';
 import { AvatarImg } from '~/components/common/media/avatar-img';
 import { Loader } from '~/components/common/ui/loader';
 import { chevronDown, chevronSvg, chevronUp } from '~/components/common/media/svg';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 
 export type ClubHero = {
   userId: ObjectId;
@@ -64,6 +65,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Герои клуба' }]} />
       <PageTitle txt={'Герои клуба Chinese+'} />
       <FlexRow>
         <Sidebar>
@@ -115,7 +117,7 @@ export default component$(() => {
                   {sorted.value.map((hero) => (
                     <tr>
                       <td>
-                        <Link href={'/users/' + hero.userId}>
+                        <Link prefetch="js" href={'/users/' + hero.userId}>
                           <div class="flex">
                             <div class="avatar">
                               <div class="mask mask-squircle w-10 h-10">
@@ -148,7 +150,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Chinese+ Герои клуба',
+  title: 'Герои клуба | Chinese+',
   meta: [
     {
       name: 'description',

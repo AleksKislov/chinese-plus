@@ -1,18 +1,19 @@
 const { LongestMatchSegmenter } = require('./segmenter.js');
+const { logger } = require('../../../src/logger');
 const HANZI_DICT = {};
 const checkIfWordExists = (word) => HANZI_DICT[word];
+const Dictionary = require('../../../src/models/Dictionary');
+const { MAX_CN_WORD_LEN } = require('./constants.js');
 const segmenter = new LongestMatchSegmenter(checkIfWordExists);
-// const nodejieba = require('nodejieba');
 
 /**
- * @description load all chinese words in memory into HANZI_DICT{word: 1}
+ * @description load all chinese words in memory into HANZI_DICT
  * @param {{_id: string}[]} arr
  */
 function fillDict(arr) {
   for (let i = 0; i < arr.length; i++) {
     const word = arr[i]?._id;
     if (word) {
-      // nodejieba.insertWord(word);
       HANZI_DICT[word] = 1;
     }
   }
@@ -20,13 +21,24 @@ function fillDict(arr) {
 
 setTimeout(async () => {
   try {
-    fillDict(await Dictionary.aggregate([{ $group: { _id: '$chinese' } }]));
+    fillDict(
+      await Dictionary.aggregate([
+        {
+          $match: {
+            chinese: { $type: 'string' },
+            $expr: { $lte: [{ $strLenCP: '$chinese' }, MAX_CN_WORD_LEN] },
+          },
+        },
+        { $group: { _id: '$chinese' } },
+      ]),
+    );
   } catch (err) {
-    console.log(err);
+    logger.error({ err }, 'Failed to load HANZI_DICT');
   }
 
-  const used = process.memoryUsage().heapUsed / 1024 / 1024;
-  console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+  const toMb = (bytes) => Math.round((bytes / 1024 / 1024) * 100) / 100;
+  const { heapUsed, rss } = process.memoryUsage();
+  logger.info({ heapUsedMb: toMb(heapUsed), rssMb: toMb(rss) }, 'Dictionary loaded into memory');
 }, 100);
 
 module.exports = segmenter;

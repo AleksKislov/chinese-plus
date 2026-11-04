@@ -104,6 +104,7 @@ export const EditTextPreprocessForm = component$(({ store }: TextPreprocessFormP
       categoryInd,
       isApproved,
       audioSrc,
+      updateDate,
       chineseTextParagraphs,
       translationParagraphs,
       isLongText,
@@ -125,6 +126,7 @@ export const EditTextPreprocessForm = component$(({ store }: TextPreprocessFormP
       translation: translationParagraphs,
       audioSrc, // only for admin to change
       isApproved, // only for admin to change
+      updateDate, // only for admin to change
       // for long texts
       isLongText,
       pageToEdit: curPage,

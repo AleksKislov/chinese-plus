@@ -1,0 +1,19 @@
+meta {
+  name: add user word
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{local_server}}/api/userhsk3words/:wordId
+  body: none
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}
+
+params:path {
+  wordId: 
+}

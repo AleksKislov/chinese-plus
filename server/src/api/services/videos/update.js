@@ -1,8 +1,9 @@
 const { validationResult } = require('express-validator');
-const { Notify } = require('../_misc');
+const { Notify, getUserPrivileges } = require('../_misc');
 
 const Video = require('../../../models/Video');
 const { shortUserInfoFields } = require('../../consts');
+const { parseRutubeUrl } = require('./rutube-id');
 
 async function updateVideo(req, res) {
   const errors = validationResult(req);
@@ -22,12 +23,18 @@ async function updateVideo(req, res) {
     pySubs,
     ruSubs,
     cnSubs,
+    rutubeUrl,
   } = req.body;
 
-  let foundVid;
-  if (isApproved) {
-    foundVid = await Video.findById(videoId);
-    if (!foundVid) throw new Error('No video to update');
+  const foundVid = await Video.findById(videoId);
+  if (!foundVid) return res.status(404).json({ msg: 'Video not found' });
+
+  // same rules as texts: moderators edit anything, owners only their unapproved videos
+  const { isAdmin, isModerator } = await getUserPrivileges(req.user.id);
+  const canModerate = isAdmin || isModerator;
+  const isOwner = foundVid.user?.toString() === req.user.id;
+  if (!canModerate && !(isOwner && !foundVid.isApproved)) {
+    return res.status(403).json({ msg: 'Not authorized' });
   }
 
   let newFields = {};
@@ -37,12 +44,20 @@ async function updateVideo(req, res) {
   if (lvl) newFields.lvl = lvl;
   if (tags) newFields.tags = tags;
   if (category) newFields.category = category;
-  if ([0, 1].includes(isApproved)) newFields.isApproved = isApproved;
+  if (canModerate && [0, 1].includes(isApproved)) newFields.isApproved = isApproved;
   if (source) newFields.source = source;
   if (chineseArr) newFields.chineseArr = chineseArr;
   if (pySubs) newFields.pySubs = pySubs;
   if (ruSubs) newFields.ruSubs = ruSubs;
   if (cnSubs) newFields.cnSubs = cnSubs;
+
+  if (isAdmin && typeof rutubeUrl === 'string') {
+    const rutubeSource = parseRutubeUrl(rutubeUrl);
+    if (rutubeSource === null) {
+      return res.status(400).json({ errors: [{ msg: 'Неверная ссылка на Rutube' }] });
+    }
+    newFields.rutubeSource = rutubeSource; // empty string removes the Rutube player
+  }
 
   const updatedVid = await Video.findByIdAndUpdate(
     videoId,
@@ -50,7 +65,7 @@ async function updateVideo(req, res) {
     { new: true },
   ).populate('user', shortUserInfoFields);
 
-  if (foundVid && !foundVid.isApproved && isApproved) {
+  if (!foundVid.isApproved && newFields.isApproved) {
     Notify.socialMedia(updatedVid);
   }
 

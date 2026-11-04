@@ -2,7 +2,7 @@ const Text = require('../../../models/Text');
 const mongoose = require('mongoose');
 
 async function getSimilarTexts(req, res) {
-  const currentTextId = mongoose.Types.ObjectId(req.query.text_id);
+  const currentTextId = new mongoose.Types.ObjectId(req.query.text_id);
   const level = +req.query.lvl || 1;
   const tags = req.query.tags?.split(',') || [];
   const isApproved = 1;

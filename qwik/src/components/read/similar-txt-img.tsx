@@ -14,7 +14,7 @@ export const SimilarTxtImg = component$(({ txt }: SimilarTxtImgProps) => {
       style={`background-image: url(${txt.picUrl})`}
     >
       <div class="card-body">
-        <a href={getContentPath(WHERE.text, txt._id)}>
+        <a href={getContentPath(WHERE.text, txt._id, false, undefined, undefined, txt.title)}>
           <h2 class="card-title hover:text-secondary mb-1">{txt.title}</h2>
         </a>
         <p class="text-sm text-gray-400">

@@ -9,7 +9,11 @@ import { CountryInfoLine } from '../common/content-cards/country-info-line';
 
 // sidebar card
 export const BookInfoCard = component$(
-  ({ book: { genres, year, author, translationSrc, about, picUrl } }: { book: BookCardInfo }) => {
+  ({
+    book: { genres, year, author, translationSrc, about, picUrl, title },
+  }: {
+    book: BookCardInfo;
+  }) => {
     const imageSrc = useSignal(picUrl);
 
     return (
@@ -19,7 +23,7 @@ export const BookInfoCard = component$(
             src={imageSrc.value}
             width="400"
             height="711"
-            alt="Content pic"
+            alt={title.ru}
             onError$={() => (imageSrc.value = CONST_URLS.defaultTextPic)}
           />
         </figure>

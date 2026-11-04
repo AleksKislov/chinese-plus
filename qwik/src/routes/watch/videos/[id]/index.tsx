@@ -14,7 +14,6 @@ import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { type VideoCardInfo } from '..';
 
-import YTframeLoader from 'youtube-iframe';
 import { YoutubeService } from '~/misc/actions/youtube-service';
 import CONSTANTS from '~/misc/consts/consts';
 import { ContentPageCard } from '~/components/common/content-cards/content-page-card';
@@ -24,18 +23,38 @@ import {
   WHERE,
 } from '~/components/common/comments/comment-form';
 import { Subs } from '~/components/watch/subs';
-import { parseVideoWords } from '~/misc/helpers/content';
+import { getContentPath, parseVideoWords, withSlug } from '~/misc/helpers/content';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { getContentComments } from '~/misc/actions/get-content-comments';
 import { ContentPageHead } from '~/components/common/ui/content-page-head';
 import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
+import { SubscribeCta } from '~/components/common/media/subscribe-cta';
+import { getIdFromParam } from '~/misc/helpers/tools';
+import { JsonLd } from '~/components/common/seo/json-ld';
+import CONST_URLS from '~/misc/consts/urls';
+import { getOrSetVisitorId } from '~/misc/helpers/visitor-id';
+import { truncateCrumb } from '~/components/common/layout/breadcrumbs';
+import {
+  PlayerState,
+  mountRutubePlayer,
+  mountYoutubePlayer,
+  type VideoPlayerApi,
+  type VideoPlayerType,
+} from '~/components/watch/video-players';
+
+import { PlayerSwitch } from '~/components/watch/player-switch';
+import { useVideoPlayerChoice } from '~/misc/loaders/video-player-loaders';
+
+export { PlayerState };
+export { useVideoPlayerChoice } from '~/misc/loaders/video-player-loaders';
 
 export type VideoFromDB = VideoCardInfo & {
   pySubs: string[];
   ruSubs: string[];
   chineseArr: string[][];
   cnSubs: ChineseSub[];
+  rutubeSource?: string; // rutube id, optional alternative player
 };
 
 export type ChineseSub = {
@@ -45,55 +64,48 @@ export type ChineseSub = {
   text: string;
 };
 
-export enum PlayerState {
-  ended = 0,
-  playing = 1,
-  paused = 2,
-  buffering = 3,
-  videoCued = 5,
-}
-
 export type TooltipSubs = {
   tooltipSubs: (DictWord | string)[][];
 };
 
-export const getVideoFromDB = (id: ObjectId): Promise<VideoFromDB> => {
-  return ApiService.get(`/api/videos/${id}`, undefined, null);
+export const getVideoFromDB = (id: ObjectId, visitorId: string): Promise<VideoFromDB> => {
+  return ApiService.get(`/api/videos/${id}?vid=${visitorId}`, undefined, null);
 };
 
 export const getWordsForTooltips = (wordsArr: string[][]) => {
   return ApiService.post('/api/dictionary/allWordsForVideo', wordsArr, undefined, []);
 };
 
-export const useGetVideo = routeLoader$(async ({ params }): Promise<VideoFromDB & TooltipSubs> => {
-  const videoFromDb = await getVideoFromDB(params.id);
-  const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
-  return { ...videoFromDb, tooltipSubs };
-});
+export const useGetVideo = routeLoader$(
+  async (requestEvent): Promise<VideoFromDB & TooltipSubs> => {
+    const { params, redirect } = requestEvent;
+    const visitorId = getOrSetVisitorId(requestEvent);
+    const videoFromDb = await getVideoFromDB(getIdFromParam(params.id), visitorId);
+    if (!videoFromDb) throw redirect(302, '/watch/videos');
+    // Unapproved videos are shown only under /watch/unapproved-videos/ (noindex).
+    if (!videoFromDb.isApproved) throw redirect(302, `/watch/unapproved-videos/${videoFromDb._id}`);
+
+    const canonicalId = withSlug(videoFromDb._id, videoFromDb.title);
+    if (params.id !== canonicalId) {
+      throw redirect(301, `/watch/videos/${canonicalId}`);
+    }
+
+    const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
+    return { ...videoFromDb, tooltipSubs };
+  },
+);
 
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
-  return getContentComments(WHERE.video, params.id);
+  return getContentComments(WHERE.video, getIdFromParam(params.id));
 });
-
-type YTPlayer = {
-  player: {
-    getCurrentTime: NoSerialize<() => number>;
-    getPlayerState: NoSerialize<() => number>;
-
-    pauseVideo: NoSerialize<() => void>;
-    playVideo: NoSerialize<() => void>;
-  };
-};
 
 export default component$(() => {
   const video = useGetVideo();
   const comments = getComments();
-  const YtPlayerId = 'ytPlayerId';
+  const playerChoice = useVideoPlayerChoice();
   const hideBtnsSig = useSignal<string[]>([]);
-  const ytSig = useStore<YTPlayer>({
-    // @ts-ignore
-    player: null,
-  });
+  const playerWrapRef = useSignal<HTMLElement>();
+  const playerApi = useSignal<NoSerialize<VideoPlayerApi>>();
   const subCurrentInd = useSignal(0);
   const curWordInd = useSignal(-1);
   const playerState = useSignal<number>(PlayerState.ended);
@@ -125,35 +137,64 @@ export default component$(() => {
     pySubs,
     chineseArr,
     tooltipSubs,
+    rutubeSource,
   } = video.value;
+
+  // Rutube by default when the video has it: YouTube is throttled for much of our audience
+  const playerType = useSignal<VideoPlayerType>(
+    rutubeSource && playerChoice.value !== 'youtube' ? 'rutube' : 'youtube',
+  );
 
   const mainSub = useSignal(parseVideoWords(chineseArr, tooltipSubs));
 
   useVisibleTask$(({ track }) => {
     track(() => isPaused.value);
-    if (!ytSig.player?.pauseVideo) return;
+    const player = playerApi.value;
+    if (!player) return;
 
     if (isPaused.value && playerState.value === PlayerState.playing) {
-      ytSig.player?.pauseVideo?.();
+      player.pause();
     }
 
-    if (!isPaused.value && playerState.value === PlayerState.paused && ytSig.player.playVideo) {
-      ytSig.player?.playVideo?.();
+    if (!isPaused.value && playerState.value === PlayerState.paused) {
+      player.play();
     }
   });
 
-  useVisibleTask$(() => {
-    if (!ytSig.player) {
-      YTframeLoader.load((YT) => {
-        const ytPlayer = new YT.Player(YtPlayerId, { videoId: source });
+  // (re)mounts the chosen player; switching destroys the previous one
+  useVisibleTask$(({ track, cleanup }) => {
+    const type = track(() => playerType.value);
+    const container = playerWrapRef.value;
+    if (!container) return;
 
-        ytSig.player = noSerialize(ytPlayer) || {};
+    let player: VideoPlayerApi | undefined;
+    let isCleanedUp = false;
+
+    if (type === 'rutube' && rutubeSource) {
+      player = mountRutubePlayer(container, rutubeSource);
+      playerApi.value = noSerialize(player);
+    } else {
+      mountYoutubePlayer(container, source).then((ytPlayer) => {
+        if (isCleanedUp) return ytPlayer.destroy();
+        player = ytPlayer;
+        playerApi.value = noSerialize(ytPlayer);
       });
     }
 
-    setInterval(() => {
-      playerState.value = ytSig.player?.getPlayerState?.() || PlayerState.ended;
-      const curTime = ytSig.player?.getCurrentTime?.() || 0;
+    cleanup(() => {
+      isCleanedUp = true;
+      player?.destroy();
+      playerApi.value = undefined;
+      playerState.value = PlayerState.ended;
+      isPaused.value = false;
+    });
+  });
+
+  useVisibleTask$(({ cleanup }) => {
+    const interval = setInterval(() => {
+      const player = playerApi.value;
+      playerState.value = player?.getPlayerState() ?? PlayerState.ended;
+      const curTime = player?.getCurrentTime() || 0;
 
       const ind = cnSubs.findIndex(({ start, dur }) => {
         return +start < curTime && +start + +dur > curTime;
@@ -166,16 +207,34 @@ export default component$(() => {
       const curInnerTime = curTime - +cnSubs[ind].start;
       curWordInd.value = curInnerTime / secStep;
     }, 100);
+
+    cleanup(() => clearInterval(interval));
   });
 
   return (
     <>
-      <ContentPageHead title={title} hits={hits} path="/watch/videos" />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'VideoObject',
+          name: title,
+          description: desc,
+          thumbnailUrl: YoutubeService.getVideoPicUrl(source),
+          uploadDate: date,
+          embedUrl: `https://www.youtube.com/embed/${source}`,
+        }}
+      />
+      <ContentPageHead
+        title={title}
+        hits={hits}
+        crumbs={[{ name: 'Видео', href: '/watch/videos/' }, { name: truncateCrumb(title) }]}
+      />
 
       <FlexRow>
         <Sidebar>
           <ContentPageCard
             isApproved={true}
+            title={title}
             desc={desc}
             length={length}
             tags={tags}
@@ -194,8 +253,11 @@ export default component$(() => {
         <MainContent>
           <Alerts />
 
+          {rutubeSource && <PlayerSwitch playerType={playerType} />}
+
           <div class="aspect-w-16 aspect-h-9 mb-3">
-            <div class="rounded-lg" id={YtPlayerId}></div>
+            {/* players are mounted here imperatively, see video-players.ts */}
+            <div class="rounded-lg overflow-hidden" ref={playerWrapRef}></div>
           </div>
 
           <Subs
@@ -207,6 +269,8 @@ export default component$(() => {
             playerState={playerState}
             isPaused={isPaused}
           />
+
+          <SubscribeCta />
 
           <CommentsFullBlock
             contentId={videoId}
@@ -224,13 +288,38 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const videoInfo = resolveValue(useGetVideo);
+  const title = `${videoInfo.title} — видео на китайском с субтитрами и переводом | Chinese+`;
+  const description = `Видео на китайском языке с переводом и субтитрами: ${videoInfo.desc}`;
+  const url =
+    CONST_URLS.siteUrl +
+    getContentPath(WHERE.video, videoInfo._id, false, undefined, undefined, videoInfo.title);
 
   return {
-    title: `Chinese+ Китайское видео с переводом: ${videoInfo.title}`,
+    title,
     meta: [
       {
         name: 'description',
-        content: `Видео на китайском языке с переводом и субтитрами: ${videoInfo.desc}`,
+        content: description,
+      },
+      {
+        property: 'og:title',
+        content: title,
+      },
+      {
+        property: 'og:description',
+        content: description,
+      },
+      {
+        property: 'og:type',
+        content: 'video.other',
+      },
+      {
+        property: 'og:url',
+        content: url,
+      },
+      {
+        property: 'og:image',
+        content: YoutubeService.getVideoPicUrl(videoInfo.source),
       },
       {
         name: 'twitter:card',

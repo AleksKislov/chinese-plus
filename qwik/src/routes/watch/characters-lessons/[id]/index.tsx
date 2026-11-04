@@ -7,6 +7,8 @@ import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 
 import { YoutubeService } from '~/misc/actions/youtube-service';
+import { JsonLd } from '~/components/common/seo/json-ld';
+import CONST_URLS from '~/misc/consts/urls';
 import { ContentPageCard } from '~/components/common/content-cards/content-page-card';
 import {
   type Addressee,
@@ -20,18 +22,41 @@ import { ContentPageHead } from '~/components/common/ui/content-page-head';
 import { VideoLessonCategory } from '~/components/watch/video-lesson-card';
 import { type VideoLessonInfo } from '../../phonetics-lessons';
 import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
+import { getIdFromParam } from '~/misc/helpers/tools';
+import { withSlug } from '~/misc/helpers/content';
+import { getOrSetVisitorId } from '~/misc/helpers/visitor-id';
+import { truncateCrumb } from '~/components/common/layout/breadcrumbs';
+import { LessonVideoPlayer } from '~/components/watch/lesson-video-player';
+import { useVideoPlayerChoice } from '~/misc/loaders/video-player-loaders';
+
+export { useVideoPlayerChoice } from '~/misc/loaders/video-player-loaders';
 
 export const getComments = routeLoader$(({ params }): Promise<CommentType[]> => {
-  return getContentComments(WHERE.charactersLesson, params.id);
+  return getContentComments(WHERE.charactersLesson, getIdFromParam(params.id));
 });
 
-export const getVideo = routeLoader$(({ params }): Promise<VideoLessonInfo> => {
-  return ApiService.get(`/api/videos/video-lessons/${params.id}`, undefined, null);
+export const getVideo = routeLoader$(async (requestEvent): Promise<VideoLessonInfo> => {
+  const { params, redirect } = requestEvent;
+  const visitorId = getOrSetVisitorId(requestEvent);
+  const video = await ApiService.get(
+    `/api/videos/video-lessons/${getIdFromParam(params.id)}?vid=${visitorId}`,
+    undefined,
+    null,
+  );
+  if (!video) throw redirect(302, '/watch/characters-lessons');
+
+  const canonicalId = withSlug(video._id, video.title);
+  if (params.id !== canonicalId) {
+    throw redirect(301, `/watch/characters-lessons/${canonicalId}`);
+  }
+
+  return video;
 });
 
 export default component$(() => {
   const video = getVideo();
   const comments = getComments();
+  const playerChoice = useVideoPlayerChoice();
 
   const addressees = useSignal<Addressee[]>([]);
   const commentIdToReplyStore = useStore<CommentIdToReply>({
@@ -44,6 +69,7 @@ export default component$(() => {
     _id: videoId,
     title,
     source,
+    rutubeSource,
     date,
     hits,
     tags,
@@ -56,12 +82,31 @@ export default component$(() => {
 
   return (
     <>
-      <ContentPageHead title={title} hits={hits} path="/watch/characters-lessons" />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'VideoObject',
+          name: title,
+          description: desc,
+          thumbnailUrl: YoutubeService.getVideoPicUrl(source),
+          uploadDate: date,
+          embedUrl: `https://www.youtube.com/embed/${source}`,
+        }}
+      />
+      <ContentPageHead
+        title={title}
+        hits={hits}
+        crumbs={[
+          { name: 'Уроки иероглифики', href: '/watch/characters-lessons/' },
+          { name: truncateCrumb(title) },
+        ]}
+      />
 
       <FlexRow>
         <Sidebar>
           <ContentPageCard
             isApproved={true}
+            title={title}
             desc={desc}
             tags={tags}
             userId={userId}
@@ -79,16 +124,12 @@ export default component$(() => {
         <MainContent>
           <Alerts />
 
-          <div class="aspect-w-16 aspect-h-9 mb-3">
-            <iframe
-              class="rounded-lg shadow-lg"
-              width="560"
-              height="315"
-              src={`https://www.youtube.com/embed/${source}?si=lXAKe7vNBOaFKz6D&amp;controls=0`}
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            ></iframe>
-          </div>
+          <LessonVideoPlayer
+            lessonId={videoId}
+            source={source}
+            rutubeSource={rutubeSource}
+            playerChoice={playerChoice.value}
+          />
 
           <CommentsFullBlock
             contentId={videoId}
@@ -106,14 +147,22 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const videoInfo = resolveValue(getVideo);
+  const title = `${videoInfo.title} — урок китайской иероглифики | Chinese+`;
+  const description = `Видео-урок китайской иероглифики: ${videoInfo.desc}`;
+  const url = `${CONST_URLS.siteUrl}/watch/characters-lessons/${withSlug(
+    videoInfo._id,
+    videoInfo.title,
+  )}/`;
 
   return {
-    title: `Chinese+ Китайская иероглифика: ${videoInfo.title}`,
+    title,
     meta: [
-      {
-        name: 'description',
-        content: `Видео-урок китайской иероглифики: ${videoInfo.desc}`,
-      },
+      { name: 'description', content: description },
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: description },
+      { property: 'og:type', content: 'video.other' },
+      { property: 'og:url', content: url },
+      { property: 'og:image', content: YoutubeService.getVideoPicUrl(videoInfo.source) },
     ],
   };
 };

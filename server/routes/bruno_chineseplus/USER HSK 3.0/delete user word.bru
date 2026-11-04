@@ -1,0 +1,19 @@
+meta {
+  name: delete user word
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{local_server}}/api/userhsk3words/:wordId
+  body: none
+  auth: none
+}
+
+headers {
+  x-auth-token: {{authToken}}
+}
+
+params:path {
+  wordId: 
+}

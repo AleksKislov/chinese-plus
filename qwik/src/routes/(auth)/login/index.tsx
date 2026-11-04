@@ -103,7 +103,7 @@ export default component$(() => {
         <Alerts />
         <div class="mb-3">
           Нет аккаунта?{' '}
-          <Link href="/register" class="link link-primary">
+          <Link prefetch="js" href="/register" class="link link-primary">
             Зарегистрируйтесь
           </Link>
         </div>

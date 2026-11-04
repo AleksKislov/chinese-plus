@@ -3,6 +3,7 @@ const { translateRuText } = require('./translateRuText');
 const { getAllWords } = require('./getAllWords');
 const { getWordsForParag } = require('./getWordsForParag');
 const { encodeJWT } = require('./encodeJWT');
+const { shortenTranslation } = require('./shortenTranslation');
 
 module.exports = {
   encodeJWT,
@@ -11,4 +12,5 @@ module.exports = {
   fetchReading,
   translateRuText,
   getWordsForParag,
+  shortenTranslation,
 };

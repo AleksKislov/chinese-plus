@@ -1,5 +1,5 @@
-import { markUpRuText } from './mark-up-ru-text';
+import { markUpRuText, stripRuMarkup } from './mark-up-ru-text';
 import { parseRussian } from './parse-russian';
 // import { sanitizer } from "./sanitizer";
 
-export { parseRussian, markUpRuText };
+export { parseRussian, markUpRuText, stripRuMarkup };

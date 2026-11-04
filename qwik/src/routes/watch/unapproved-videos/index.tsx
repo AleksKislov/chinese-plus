@@ -5,6 +5,7 @@ import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
+import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 import { VideoCard } from '~/components/watch/video-card';
 import { type VideoCardInfo } from '../videos';
 import { routeAction$, type DocumentHead } from '@builder.io/qwik-city';
@@ -32,6 +33,7 @@ export default component$(() => {
 
   return (
     <>
+      <Breadcrumbs items={[{ name: 'Видео', href: '/watch/videos/' }, { name: 'На проверке' }]} />
       <PageTitle txt={'Видео на проверке'} />
       <FlexRow>
         <Sidebar>
@@ -58,6 +60,7 @@ export default component$(() => {
 export const head: DocumentHead = {
   title: 'Chinese+ Видео на китайском с субтитрами',
   meta: [
+    { name: 'robots', content: 'noindex, follow' },
     {
       name: 'description',
       content:
