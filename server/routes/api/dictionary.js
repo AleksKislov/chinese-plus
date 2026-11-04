@@ -5,27 +5,27 @@ const mdbg = require('mdbg');
 const nodejieba = require('nodejieba');
 const { getAllWords, getWordsForParag } = require('./services');
 const auth = require('../../middleware/auth');
+const moderatorAuth = require('../../middleware/moderator-auth');
 const { cacheRoute, TTL } = require('../../src/cache');
 
 const Dictionary = require('../../src/models/Dictionary');
 const { attachSenses } = require('../../src/api/services/dictionary/translations/attach-senses');
 const { normalizeRu } = require('../../src/api/services/dictionary/translations/ru-search-terms');
-const {
-  buildDocuments,
-} = require('../../src/api/services/dictionary/translations/build-documents');
 const DictionaryTranslation = require('../../src/models/DictionaryTranslation');
-const DictionaryExample = require('../../src/models/DictionaryExample');
-const DeprecatedDictionaryRussian = require('../../src/models/DeprecatedDictionaryRussian');
 
 const {
   updateWord,
-  rollbackUpdate,
   getEditedWords,
   wildcardSearch,
   pinyinSearch,
   handwritingSearch,
   getSitemapWords,
   getTranslation,
+  getWordForEdit,
+  editWord,
+  deleteWordTranslation,
+  addWord,
+  rollbackWord,
 } = require('../../src/api/services/dictionary');
 
 const RU_SEARCH_LIMIT = 100;
@@ -68,7 +68,7 @@ router.get('/', async (req, res) => {
 
 /**
  * @route     GET api/dictionary/editedWords
- * @desc      get words with previously edited values
+ * @desc      get words edited by admins and moderators (their history: dictionaryrevisions)
  * @access    Public
  */
 router.get('/editedWords', getEditedWords);
@@ -91,38 +91,6 @@ router.get('/editedWords', getEditedWords);
 //       console.log(error);
 //     });
 // });
-
-/**
- * @route     POST api/dictionary
- * @desc      Add one word to dictionary; its DSL markup in `russian` is parsed into
- *            dictionarytranslations / dictionaryexamples and kept in deprecated_dictionary_russian
- * @access    Private
- */
-router.post('/', auth, async (req, res) => {
-  try {
-    const alreadyExists = await Dictionary.find({ chinese: req.body.chinese });
-
-    if (alreadyExists && alreadyExists[0]) {
-      return res.send(`The word ${req.body.chinese} already inserted`);
-    }
-
-    const { russian, ...fields } = req.body;
-    const word = await new Dictionary(fields).save();
-    if (russian) {
-      const { translation, examples } = buildDocuments({
-        _id: word._id,
-        chinese: word.chinese,
-        russian,
-      });
-      await DeprecatedDictionaryRussian.create({ _id: word._id, chinese: word.chinese, russian });
-      await DictionaryTranslation.collection.insertOne(translation);
-      if (examples.length) await DictionaryExample.collection.insertMany(examples);
-    }
-    res.send('Data inserted');
-  } catch (err) {
-    console.log(err);
-  }
-});
 
 /**
  * @route     GET api/dictionary/allwords
@@ -347,17 +315,44 @@ router.post('/segmenter', (req, res) => {
 /**
  * @method  PUT
  * @route   api/dictionary/updateWord
- * @desc    update translation or pinyin for a word
- * @access  Private
+ * @desc    update pinyin of a word
+ * @access  Admin, moderator
  */
-router.put('/updateWord', auth, updateWord);
+router.put('/updateWord', moderatorAuth, updateWord);
 
 /**
- * @method  PUT
- * @desc    roll back using previous content of a word
- * @route   api/dictionary/rollbackUpdate?wordId...&prevInd=
- * @access  Private
+ * @route   GET api/dictionary/word/:id/edit
+ * @desc    word, its translation in the editor shape and its edit history
+ * @access  Admin, moderator
  */
-router.put('/rollbackUpdate', auth, rollbackUpdate);
+router.get('/word/:id/edit', moderatorAuth, getWordForEdit);
+
+/**
+ * @route   POST api/dictionary/word
+ * @desc    add a word with its translation and examples
+ * @access  Admin, moderator
+ */
+router.post('/word', moderatorAuth, addWord);
+
+/**
+ * @route   PUT api/dictionary/word/:id
+ * @desc    save pinyin, trad. chinese and the translation (with examples) in one language
+ * @access  Admin, moderator
+ */
+router.put('/word/:id', moderatorAuth, editWord);
+
+/**
+ * @route   DELETE api/dictionary/word/:id/translation/:lang?updatedAt=
+ * @desc    delete the word's translation in one language (not its only one)
+ * @access  Admin, moderator
+ */
+router.delete('/word/:id/translation/:lang', moderatorAuth, deleteWordTranslation);
+
+/**
+ * @route   PUT api/dictionary/word/:id/rollback/:revisionId
+ * @desc    restore the word as it was before a revision
+ * @access  Admin, moderator
+ */
+router.put('/word/:id/rollback/:revisionId', moderatorAuth, rollbackWord);
 
 module.exports = router;

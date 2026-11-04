@@ -38,7 +38,7 @@ async function wildcardSearch(req, res) {
   const words = await Dictionary.find({
     $or: [{ chinese: { $regex: regex } }, { tradChinese: { $regex: regex } }],
   })
-    .select('-date -edited -previous -updatedAt -russian')
+    .select('-date -edited -updatedAt -russian')
     .limit(RESULTS_LIMIT)
     .lean();
   await attachSenses(words);

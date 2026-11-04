@@ -1,4 +1,5 @@
 const DictionaryTranslation = require('../../../../models/DictionaryTranslation');
+const { pickTranslations } = require('./langs');
 
 // sense text shown in tooltips and list rows (HSK tables, search results, user words)
 const SHORT_TRANSLATION_CHARS = 150;
@@ -6,14 +7,23 @@ const SHORT_TRANSLATION_CHARS = 150;
 const MIN_CUT_CHARS = 20;
 const ELLIPSIS = '…';
 
-/** Parsed senses by dictionary word id (as a string), for the words that have them. */
-async function findSenses(wordIds) {
+/**
+ * The translation the site shows ({ wordId, lang, senses }: russian, else a fallback language,
+ * see langs.js) by dictionary word id (as a string), for the words that have one.
+ */
+async function findTranslations(wordIds) {
   if (!wordIds.length) return new Map();
   const docs = await DictionaryTranslation.find(
     { wordId: { $in: wordIds } },
-    { _id: 0, wordId: 1, senses: 1 },
+    { _id: 0, wordId: 1, lang: 1, senses: 1 },
   ).lean();
-  return new Map(docs.map((d) => [String(d.wordId), d.senses]));
+  return pickTranslations(docs);
+}
+
+/** Parsed senses of the shown translation by dictionary word id (as a string). */
+async function findSenses(wordIds) {
+  const translations = await findTranslations(wordIds);
+  return new Map([...translations].map(([key, t]) => [key, t.senses]));
 }
 
 // "получать, добывать; обретать" -> "получать, добывать…": at most n chars, at a word boundary
@@ -90,4 +100,4 @@ async function attachSenses(words, { idField = '_id' } = {}) {
   return words;
 }
 
-module.exports = { attachSenses, findSenses, trimSenses };
+module.exports = { attachSenses, findSenses, findTranslations, trimSenses };

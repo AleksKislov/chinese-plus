@@ -69,7 +69,6 @@ export default component$(() => {
               chinese,
               pinyin,
               senses,
-              previous: [],
             }))}
           />
         </MainContent>

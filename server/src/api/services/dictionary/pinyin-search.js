@@ -22,7 +22,7 @@ async function pinyinSearch(req, res) {
   }
 
   const words = await Dictionary.find({ cleanPinyin: pattern })
-    .select('-date -edited -previous -updatedAt -russian')
+    .select('-date -edited -updatedAt -russian')
     .limit(RESULTS_LIMIT)
     .lean();
   await attachSenses(words);

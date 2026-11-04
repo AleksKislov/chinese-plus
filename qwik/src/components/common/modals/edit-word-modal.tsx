@@ -1,10 +1,9 @@
 import { $, component$, useContext, useSignal, useTask$ } from '@builder.io/qwik';
-import { globalAction$, z, zod$ } from '@builder.io/qwik-city';
+import { globalAction$, Link, z, zod$ } from '@builder.io/qwik-city';
 import { ApiService } from '~/misc/actions/request';
 import { alertsContext } from '~/root';
 
-// translations are not editable for now (they come from the parsed dictionarytranslations),
-// only pinyin can be changed
+// quick pinyin edit; the translation and examples are edited on /dictionary/edit/[id]
 export const useEditWord = globalAction$((body, ev) => {
   const token = ev.cookie.get('token')?.value;
   return ApiService.put(`/api/dictionary/updateWord`, body, token, {});
@@ -60,7 +59,13 @@ export const EditWordModal = component$(
               />
             </div>
 
-            <div class="text-sm opacity-70 mt-2">Редактирование перевода временно отключено</div>
+            <Link
+              prefetch="js"
+              href={'/dictionary/edit/' + String(word._id)}
+              class="link link-hover link-secondary text-sm mt-2 inline-block"
+            >
+              Полное редактирование: перевод и примеры →
+            </Link>
 
             <div class="modal-action">
               <label for={modalId} class="btn btn-info btn-outline btn-sm" onClick$={submitEdition}>

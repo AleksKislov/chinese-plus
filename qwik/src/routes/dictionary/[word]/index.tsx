@@ -145,7 +145,8 @@ export default component$(() => {
   const input = useSignal(loc.params.word || '');
 
   const alertsState = useContext(alertsContext);
-  const { isAdmin } = useContext(userContext);
+  const { isAdmin, isModerator } = useContext(userContext);
+  const canEditDictionary = isAdmin || isModerator;
   const showExamples = useSignal(true);
   const showHandwriting = useSignal(false);
 
@@ -223,24 +224,24 @@ export default component$(() => {
     }),
   );
 
+  // undefined for a moment when navigating to another route (/dictionary/edit/…, /dictionary/add)
+  const pageWord = loc.params.word || '';
+
   return (
     <>
       <JsonLd
         data={{
           '@context': 'https://schema.org',
           '@type': 'DefinedTerm',
-          name: loc.params.word,
+          name: pageWord,
           inDefinedTermSet: `${CONST_URLS.siteUrl}/dictionary`,
-          url: `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(loc.params.word)}`,
+          url: `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(pageWord)}`,
         }}
       />
       <Breadcrumbs
-        items={[
-          { name: 'Словарь', href: '/dictionary/' },
-          { name: truncateCrumb(loc.params.word) },
-        ]}
+        items={[{ name: 'Словарь', href: '/dictionary/' }, { name: truncateCrumb(pageWord) }]}
       />
-      <PageTitle txt={'Китайско-русский словарь: ' + loc.params.word} />
+      <PageTitle txt={'Китайско-русский словарь: ' + pageWord} />
 
       <FlexRow>
         <Sidebar noAds={true}></Sidebar>
@@ -278,6 +279,16 @@ export default component$(() => {
               </button>
 
               {showHandwriting.value && <HandwritingInput />}
+
+              {canEditDictionary && (
+                <Link
+                  prefetch="js"
+                  href="/dictionary/add"
+                  class="link link-hover link-secondary text-sm w-fit"
+                >
+                  + Добавить слово в словарь
+                </Link>
+              )}
             </div>
 
             <div id={CHAR_SVG_DIV_ID} class="flex mt-3"></div>
@@ -321,7 +332,7 @@ export default component$(() => {
                     showExamples={showExamples.value}
                   />
 
-                  {isAdmin && (
+                  {canEditDictionary && (
                     <EditWordModal word={words.value[0] as DictWord} modalId={editWordModalId} />
                   )}
                 </>

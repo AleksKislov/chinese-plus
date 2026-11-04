@@ -8,9 +8,6 @@ const DictionarySchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  previous: {
-    type: Array,
-  },
   date: {
     type: Date,
     default: Date.now,

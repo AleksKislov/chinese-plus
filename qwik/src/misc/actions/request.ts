@@ -13,6 +13,9 @@ type ReqOptions = {
   body?: string;
 };
 
+// result of ApiService.send: the data, or the message of a refused request
+export type ApiResult<T> = { data: T; error?: undefined } | { data?: undefined; error: string };
+
 const headers: ReqHeaders = {
   'Content-Type': 'application/json',
 };
@@ -77,6 +80,26 @@ class ApiServiceFactory {
 
   delete(path: string, token?: string, defaultVal?: any): Promise<any> {
     return this._myFetch(path, this._getReqOptions('DELETE', null, token), defaultVal);
+  }
+
+  // unlike the methods above, keeps why a request was refused (`{ msg }` of the backend),
+  // for forms that show it
+  async send<T>(
+    method: 'POST' | 'PUT' | 'DELETE',
+    path: string,
+    body: object | null,
+    token?: string,
+  ): Promise<ApiResult<T>> {
+    try {
+      const opts = this._getReqOptions(method, body ? JSON.stringify(body) : null, token);
+      const res = await fetch(this._baseUrl + path, opts);
+      const data = await res.json().catch(() => null);
+      if (!res.ok) return { error: data?.msg || `Ошибка ${res.status}` };
+      return { data };
+    } catch (err) {
+      console.log('[fetch fail] for ', this._baseUrl + path, err);
+      return { error: 'Сервер недоступен' };
+    }
   }
 }
 

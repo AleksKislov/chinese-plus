@@ -5,7 +5,7 @@ import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
 import { searchSvg } from '~/components/common/media/svg';
 import { ApiService } from '~/misc/actions/request';
-import { alertsContext } from '~/root';
+import { alertsContext, userContext } from '~/root';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { Loader } from '~/components/common/ui/loader';
 import { HandwritingInput } from '~/components/search/handwriting-input';
@@ -84,6 +84,7 @@ export default component$(() => {
   const nav = useNavigate();
   const input = useSignal('');
   const alertsState = useContext(alertsContext);
+  const { isAdmin, isModerator } = useContext(userContext);
   const showHandwriting = useSignal(false);
 
   const goToWord = $(() => {
@@ -153,6 +154,16 @@ export default component$(() => {
               </button>
 
               {showHandwriting.value && <HandwritingInput />}
+
+              {(isAdmin || isModerator) && (
+                <Link
+                  prefetch="js"
+                  href="/dictionary/add"
+                  class="link link-hover link-secondary text-sm w-fit"
+                >
+                  + Добавить слово в словарь
+                </Link>
+              )}
             </div>
           </div>
         </MainContent>
