@@ -1,5 +1,4 @@
 import type { TranslationInline, TranslationNode } from '~/components/common/translation/types';
-import { parseRussian } from './parse-russian';
 
 const escapeHtml = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -53,25 +52,15 @@ const sensesToText = (senses: TranslationNode[]): string[] =>
 
 /**
  * Only the meanings, as escaped HTML text: no pinyin, labels, sense numbers or homonym headers
- * (tests, where pinyin would give the answer away). The DSL markup of the old HSK 2021 list
- * when there is no parsed one.
+ * (tests, where pinyin would give the answer away).
  */
-export const translationTextHtml = ({
-  senses,
-  russian,
-}: {
-  senses?: TranslationNode[];
-  russian?: string;
-}): string =>
-  senses?.length
-    ? escapeHtml(sensesToText(senses).filter(Boolean).join('; '))
-    : parseRussian(russian || '', false);
+export const translationTextHtml = ({ senses }: { senses?: TranslationNode[] }): string =>
+  escapeHtml(
+    sensesToText(senses || [])
+      .filter(Boolean)
+      .join('; '),
+  );
 
-/** The parsed translation of a dictionary word, else the DSL markup of the old HSK 2021 list. */
-export const translationHtml = ({
-  senses,
-  russian,
-}: {
-  senses?: TranslationNode[];
-  russian?: string;
-}): string => (senses?.length ? sensesToHtml(senses) : parseRussian(russian || '', false));
+/** Compact HTML of a word's parsed translation, empty when it has none. */
+export const translationHtml = ({ senses }: { senses?: TranslationNode[] }): string =>
+  sensesToHtml(senses || []);

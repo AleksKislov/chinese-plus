@@ -1,5 +1,4 @@
 import { component$ } from '@builder.io/qwik';
-import { markUpRuText } from '~/misc/helpers/translation';
 import { ParsedTranslation } from './parsed-translation';
 import type { DictExample, TranslationNode } from './types';
 
@@ -7,14 +6,14 @@ export type ParsedWordTranslation = { senses: TranslationNode[]; examples: DictE
 
 export const DictWordTranslation = component$(
   ({
-    ru,
+    emptyText,
     parsed,
     showExamples,
     py,
     tradChinese,
   }: {
-    ru?: string;
-    // parsed translation of the word; the DSL markup in `ru` is rendered when there is none
+    // shown when there is no parsed translation, e.g. 'перевод отсутствует'
+    emptyText?: string;
     parsed?: ParsedWordTranslation | null;
     showExamples: boolean;
     py: string;
@@ -36,7 +35,7 @@ export const DictWordTranslation = component$(
             showExamples={showExamples}
           />
         ) : (
-          <div dangerouslySetInnerHTML={markUpRuText(ru || '', showExamples)}></div>
+          emptyText && <div>{emptyText}</div>
         )}
       </>
     );

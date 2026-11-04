@@ -29,6 +29,10 @@
  *   node scripts/split-dictionary-translations.js --word=的,猫    # print the documents that would be inserted
  *   node scripts/split-dictionary-translations.js --apply         # write (target collections must be empty)
  *   node scripts/split-dictionary-translations.js --apply --rebuild   # drop both target collections first
+ *   node scripts/split-dictionary-translations.js --update        # dry run: count words whose output changed
+ *   node scripts/split-dictionary-translations.js --update --apply
+ *     # re-parses every entry and replaces only the translations / examples that differ from the
+ *     # stored ones (e.g. after a parser fix): nothing is dropped, the site keeps its translations
  *   node scripts/split-dictionary-translations.js --limit=1000
  *   node scripts/split-dictionary-translations.js --apply --target-db=dict_test --word=的,猫
  *     # --target-db writes the new collections into another database (source is still read
@@ -51,6 +55,7 @@ const { buildDocuments } = require('../src/api/services/dictionary/translations/
 
 const APPLY = process.argv.includes('--apply');
 const REBUILD = process.argv.includes('--rebuild');
+const UPDATE = process.argv.includes('--update');
 const argValue = (name) => {
   const arg = process.argv.find((a) => a.startsWith(`--${name}=`));
   return arg ? arg.slice(name.length + 3) : undefined;
@@ -106,6 +111,60 @@ async function createIndexes(db) {
     ]);
 }
 
+// a stored document without its _id, to compare with a freshly built one
+const comparable = ({ _id, ...doc }) => JSON.stringify(doc);
+
+/** Writes the built documents that differ from the stored ones (`--update`). */
+async function updateChanged(db, built, stats, changedSamples) {
+  const ids = built.map((b) => b.translation.wordId);
+  const [stored, storedExamples] = await Promise.all([
+    db
+      .collection(TRANSLATIONS)
+      .find({ wordId: { $in: ids } })
+      .toArray(),
+    db
+      .collection(EXAMPLES)
+      .find({ wordId: { $in: ids } })
+      .sort({ order: 1 })
+      .toArray(),
+  ]);
+  const storedById = new Map(stored.map((t) => [String(t.wordId), comparable(t)]));
+  const examplesById = new Map();
+  storedExamples.forEach((ex) => {
+    const key = String(ex.wordId);
+    examplesById.set(key, [...(examplesById.get(key) || []), comparable(ex)]);
+  });
+
+  const changed = built.filter(({ translation, examples }) => {
+    const id = String(translation.wordId);
+    return (
+      storedById.get(id) !== comparable(translation) ||
+      (examplesById.get(id) || []).join('\n') !== examples.map(comparable).join('\n')
+    );
+  });
+  stats.changed += changed.length;
+  changed.forEach(
+    ({ translation }) =>
+      changedSamples.length < WARNING_SAMPLES && changedSamples.push(translation.chinese),
+  );
+  if (!APPLY || !changed.length) return;
+
+  await db.collection(TRANSLATIONS).bulkWrite(
+    changed.map(({ translation }) => ({
+      replaceOne: {
+        filter: { wordId: translation.wordId },
+        replacement: translation,
+        upsert: true,
+      },
+    })),
+  );
+  await db
+    .collection(EXAMPLES)
+    .deleteMany({ wordId: { $in: changed.map((c) => c.translation.wordId) } });
+  const examples = changed.flatMap((c) => c.examples);
+  if (examples.length) await db.collection(EXAMPLES).insertMany(examples, { ordered: false });
+}
+
 async function run() {
   const MONGO_DB = process.env.MONGO_IN_CONTAINER
     ? process.env.CONTAINER_MONGO_DB
@@ -130,7 +189,10 @@ async function run() {
     `${APPLY ? 'APPLYING' : 'DRY RUN'} - ~${total} entries from ${SOURCE}${LIMIT ? `, limited to ${LIMIT}` : ''}` +
       `${APPLY ? `, writing to ${targetDb.databaseName}` : ''}`,
   );
-  if (APPLY) await prepareTargets(targetDb);
+  // --rebuild drops both collections: with --word / --limit only part of them would come back
+  if (REBUILD && (WORDS || LIMIT || UPDATE))
+    throw new Error('--rebuild rebuilds everything: drop --word / --limit / --update');
+  if (APPLY && !UPDATE) await prepareTargets(targetDb);
 
   const cursor = db
     .collection(SOURCE)
@@ -146,8 +208,11 @@ async function run() {
     withWarnings: 0,
     byLang: {},
     maxBytes: 0,
+    ...(UPDATE && { changed: 0 }),
   };
   const warningSamples = [];
+  const changedSamples = [];
+  let updateBatch = [];
   let translationBatch = [];
   let exampleBatch = [];
 
@@ -186,8 +251,16 @@ async function run() {
       stats.maxBytesWord = doc.chinese;
     }
 
-    translationBatch.push(translation);
-    exampleBatch.push(...examples);
+    if (UPDATE) {
+      updateBatch.push({ translation, examples });
+      if (updateBatch.length >= BATCH_SIZE) {
+        await updateChanged(targetDb, updateBatch, stats, changedSamples);
+        updateBatch = [];
+      }
+    } else {
+      translationBatch.push(translation);
+      exampleBatch.push(...examples);
+    }
 
     stats.translations += 1;
     stats.examples += examples.length;
@@ -198,14 +271,16 @@ async function run() {
     if (stats.processed % LOG_EVERY === 0) console.log(`processed ${stats.processed}/${total}`);
   }
   await flush(true);
+  if (updateBatch.length) await updateChanged(targetDb, updateBatch, stats, changedSamples);
 
-  if (APPLY) {
+  if (APPLY && !UPDATE) {
     await createIndexes(targetDb);
     console.log('Indexes created');
   }
 
   console.log('Done.', stats);
   if (warningSamples.length) console.log(`Warning samples:\n  ${warningSamples.join('\n  ')}`);
+  if (changedSamples.length) console.log(`Changed: ${changedSamples.join(' ')}`);
   if (!APPLY) console.log('Dry run only - no writes made. Re-run with --apply to persist.');
 
   await mongoose.disconnect();

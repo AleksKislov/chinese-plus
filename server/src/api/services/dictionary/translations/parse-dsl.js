@@ -230,6 +230,16 @@ function parseLine(segsIn) {
       segs.shift();
       continue;
     }
+    // "[m1]I [b]àihào[/b]": a plain roman numeral right before the reading
+    if (!markerType && s.type === 'text' && segs[1]?.type === 'pinyin') {
+      const roman = s.value.match(ROMAN_RE);
+      if (roman && !roman[2].trim()) {
+        markerType = 'homonym';
+        node.marker = roman[1];
+        segs.shift();
+        continue;
+      }
+    }
     if (!markerType && (s.type === 'strong' || s.type === 'pinyin')) {
       const roman = s.value.match(ROMAN_RE);
       if (roman) {

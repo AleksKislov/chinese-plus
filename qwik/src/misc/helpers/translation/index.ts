@@ -1,13 +1,6 @@
-import { markUpRuText, stripRuMarkup } from './mark-up-ru-text';
-import { parseRussian } from './parse-russian';
+import { markUpRuText } from './mark-up-ru-text';
 import { sensesToHtml, translationHtml, translationTextHtml } from './senses-to-html';
 // import { sanitizer } from "./sanitizer";
 
-export {
-  parseRussian,
-  markUpRuText,
-  stripRuMarkup,
-  sensesToHtml,
-  translationHtml,
-  translationTextHtml,
-};
+// markUpRuText: DSL markup of the russian -> chinese lookup (russianwords) only
+export { markUpRuText, sensesToHtml, translationHtml, translationTextHtml };

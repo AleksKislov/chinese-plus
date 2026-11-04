@@ -1,6 +1,5 @@
 const { Parser } = require('@json2csv/plainjs');
-const { markupTranslation } = require('./mark-up-translation');
-const { markupSenses, sensesToText } = require('./mark-up-senses');
+const { markupSenses, sensesToText, escapeHtml } = require('./mark-up-senses');
 const { findSenses } = require('../dictionary/translations/attach-senses');
 const DictionaryExample = require('../../../models/DictionaryExample');
 
@@ -23,9 +22,9 @@ const findExamples = async (wordIds) => {
 };
 
 /**
- * @param {{ chinese, pinyin, russian?, wordId? }[]} allWords - `wordId`: dictionary entry, whose
- *   parsed translation (and examples) is used; `russian`: DSL markup of words of the old lists
- *   (lexicons, HSK 3.0 2021), which keep their own translation
+ * @param {{ chinese, pinyin, wordId?, translation? }[]} allWords - `wordId`: dictionary entry, whose
+ *   parsed translation (and examples) is used; `translation`: plain text of the HSK 2.0 words
+ *   (lexicons), which keep their own
  */
 const getDictWordsCsv = async (allWords, hasExamples, isHtml) => {
   const json2csv = new Parser({ fields: ['chinese', 'pinyin', 'russian'] });
@@ -36,14 +35,15 @@ const getDictWordsCsv = async (allWords, hasExamples, isHtml) => {
     hasExamples && isHtml ? findExamples(wordIds) : new Map(),
   ]);
 
-  const rows = allWords.map(({ chinese, pinyin, russian, wordId }) => {
+  // the column keeps its old name `russian`
+  const rows = allWords.map(({ chinese, pinyin, wordId, translation = '' }) => {
     const senses = wordId && sensesById.get(String(wordId));
-    if (!isHtml) return { chinese, pinyin, russian: senses ? sensesToText(senses) : russian };
+    if (!isHtml) return { chinese, pinyin, russian: senses ? sensesToText(senses) : translation };
 
-    const translation = senses
+    const html = senses
       ? markupSenses(senses, examplesById.get(String(wordId)))
-      : markupTranslation(russian, hasExamples);
-    return { chinese, pinyin, russian: `${SPAN_OPEN}${pinyin}</span><br>${translation}` };
+      : escapeHtml(translation);
+    return { chinese, pinyin, russian: `${SPAN_OPEN}${pinyin}</span><br>${html}` };
   });
 
   return json2csv.parse(rows);

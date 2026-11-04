@@ -16,22 +16,9 @@ const downloadNewHskCsv = async (req, res) => {
     return res.status(404).json({ msg: 'No words found' });
   }
 
-  // const fields = ['chinese', 'pinyin', 'translation'];
-  // const json2csv = new Parser({ fields });
-  // const csv = json2csv.parse(
-  //   allWords.map((doc) => {
-  //     return {
-  //       chinese: doc.cn,
-  //       pinyin: doc.py,
-  //       translation: `${SPAN_OPEN}${doc.py}</span><br>${markupTranslation(doc.ru, hasExamples)}`,
-  //     };
-  //   }),
-  // );
-
   const mapped = allWords.map((x) => ({
     chinese: x.cn,
     pinyin: x.py,
-    russian: x.ru,
     wordId: x.dictId,
   }));
 

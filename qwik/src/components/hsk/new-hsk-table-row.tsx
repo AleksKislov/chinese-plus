@@ -37,7 +37,7 @@ export const NewHskTableRow = component$(
     userSelected: userClicked,
     isPrivate,
   }: NewHskTableRowType) => {
-    const { cn, py, ru, senses, id } = word;
+    const { cn, py, senses, id } = word;
     const audioPath = getHskAudioPath(word, isLegacyBand);
     const hasUserBtn = userClicked !== undefined;
 
@@ -104,7 +104,7 @@ export const NewHskTableRow = component$(
             <td class={rowBg}>
               <div
                 style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}
-                dangerouslySetInnerHTML={translationHtml({ senses, russian: ru })}
+                dangerouslySetInnerHTML={translationHtml({ senses })}
               ></div>
             </td>
           )}

@@ -28,7 +28,7 @@ export const toMoreInfoWord = (word: DictWord | null | undefined): NewHskWordTyp
     : undefined;
 
 // `dictId` - dictionary entry of the word: its full parsed translation and examples are loaded
-// while the modal is open; until then (and for words without one) `senses` / `ru` are shown.
+// while the modal is open; until then (and for words without one) its trimmed `senses` are shown.
 // `word` may be unset: the modal can be rendered before a word is picked (see NewHskTable)
 export const MoreInfoModal = component$((props: { word?: NewHskWordType; modalId: string }) => {
   const { word, modalId } = props;
@@ -88,12 +88,7 @@ export const MoreInfoModal = component$((props: { word?: NewHskWordType; modalId
 
               <ShowHideBtn showExamples={showExamples} />
               {isLoading.value && <Loader size="sm" />}
-              <DictWordTranslation
-                ru={word.ru}
-                parsed={parsed}
-                showExamples={showExamples.value}
-                py={word.py}
-              />
+              <DictWordTranslation parsed={parsed} showExamples={showExamples.value} py={word.py} />
             </>
           )}
         </label>

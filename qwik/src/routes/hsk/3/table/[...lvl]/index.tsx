@@ -38,7 +38,6 @@ export type NewHskWordType = {
   id: number;
   cn: string;
   py: string;
-  ru?: string; // DSL markup, only for words without a parsed translation (`senses`)
   senses?: TranslationNode[];
   dictId?: ObjectId; // dictionary entry, for the full translation
   lvl: string;

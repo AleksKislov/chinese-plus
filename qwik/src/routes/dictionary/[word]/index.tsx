@@ -308,11 +308,7 @@ export default component$(() => {
                     <ShowHideBtn showExamples={showExamples} />
                   </div>
                   <DictWordTranslation
-                    ru={
-                      typeof words.value[0] === 'string'
-                        ? 'перевод отсутствует или не найден :('
-                        : undefined
-                    }
+                    emptyText="перевод отсутствует или не найден :("
                     parsed={wordParsed(words.value[0], parsedTranslation.value)}
                     py={(words.value[0] as DictWord).pinyin}
                     tradChinese={

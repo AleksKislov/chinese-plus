@@ -18,7 +18,7 @@ const downloadOldHskCsv = async (req, res) => {
   const mapped = allLexicon.map((x) => ({
     chinese: x.chinese,
     pinyin: x.pinyin,
-    russian: x.translation,
+    translation: x.translation,
   }));
   const csv = await getDictWordsCsv(mapped, false, isHtml);
 

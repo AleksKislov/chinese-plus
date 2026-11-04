@@ -1,5 +1,4 @@
-// HTML for CSV/Anki cards from a parsed translation (dictionarytranslations), styled like
-// markupTranslation() does for the DSL markup
+// HTML for CSV/Anki cards from a parsed translation (dictionarytranslations)
 const BLUE = 'color: #3a6ea5;';
 const GREEN = 'color: #3e8d63;';
 
@@ -69,4 +68,4 @@ const sensesToText = (senses) =>
     .filter(Boolean)
     .join('; ');
 
-module.exports = { markupSenses, sensesToText };
+module.exports = { markupSenses, sensesToText, escapeHtml };
