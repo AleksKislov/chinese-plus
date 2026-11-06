@@ -73,8 +73,8 @@ Frontend (`qwik/src/`):
     - `cn`: Chinese sentence(s) + Russian translation `ru`; may get `audio`
     - `note`: Russian explanation (one per paragraph), may quote Chinese words
     - `grammar`: link to a grammar lesson, `slug` checked against the DB, `text` = lesson title
-    - `words`: segmented text; on read it is replaced by `segments` (dictionary objects or plain
-      strings) for `WordTooltip`, like grammar examples
+    - `words`: segmented text; on read it is replaced by `segments` (dictionary objects with their
+      trimmed parsed translation `senses`, or plain strings) for `WordTooltip`, like grammar examples
 - `tutorprofiles`: one per user. `tts { voice, speed }` (audio settings, keys), `memory` (summary of past lessons, ≤1500 chars), `level` (last
   chosen), `usage: { day, count, ttsCount }` (daily quotas, reset when `day` changes)
 - `tutorusages`: one per user per day. Requests, tokens (prompt / completion / cached), `costUsd`,

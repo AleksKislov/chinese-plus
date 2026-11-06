@@ -1,5 +1,6 @@
 const nodejieba = require('nodejieba');
-const { getAllWords, shortenTranslation } = require('../../../../routes/api/services');
+const { getAllWords } = require('../../../../routes/api/services');
+const { attachSenses } = require('../dictionary/translations/attach-senses');
 
 const HAN = /\p{Script=Han}/u;
 const HAN_RUN = /(\p{Script=Han}+)/u;
@@ -14,7 +15,8 @@ function segmentText(text) {
     .flatMap((part) => (HAN.test(part) ? nodejieba.cut(part) : [part]));
 }
 
-// replaces `words` of assistant blocks with `segments` (dictionary word objects or plain strings)
+// replaces `words` of assistant blocks with `segments` (dictionary word objects with their trimmed
+// parsed translation `senses`, or plain strings)
 async function attachTooltips(messages) {
   const blocks = messages.flatMap((m) => m.blocks || []);
   const allWords = new Set();
@@ -22,9 +24,8 @@ async function attachTooltips(messages) {
 
   const byChinese = new Map();
   if (allWords.size) {
-    const dictWords = await getAllWords([...allWords]).lean();
+    const dictWords = await attachSenses(await getAllWords([...allWords]).lean());
     dictWords.forEach((w) => {
-      w.russian = shortenTranslation(w.russian);
       if (!byChinese.has(w.chinese)) byChinese.set(w.chinese, w);
     });
   }
