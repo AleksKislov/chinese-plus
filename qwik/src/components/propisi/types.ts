@@ -5,12 +5,11 @@ import { pluralRu } from '~/components/hsk/exams/levels';
 export type SheetChar = { ch: string; py: string; ru: string };
 
 export type SheetGrid = 'tian' | 'mi' | 'kou';
-export type SheetSize = 'xs' | 's' | 'm' | 'l';
 export type HskSheetVersion = '3' | '2';
 
 export type SheetOptions = {
   grid: SheetGrid;
-  size: SheetSize;
+  cols: number; // cells per row, sets the cell size: 180 mm / cols
   rows: number; // practice rows per character
   trace: number; // grey copies to trace after the model in the first row
   py: boolean;
@@ -48,16 +47,17 @@ export const hskLevelTitle = (v: HskSheetVersion, level: string) =>
 
 export const hskSheetPath = (v: HskSheetVersion, level: string) => `/propisi/hsk-${v}/${level}/`;
 
-// A4 minus 15 mm side margins: 180 mm fits 18 / 15 / 12 / 9 cells
+// A4 minus 15 mm side margins; rows always fill it: 18 cells of 10 mm ... 3 cells of 60 mm (brush)
 export const SHEET_WIDTH_MM = 180;
 export const SHEET_PADDING_MM = 6;
-export const CELL_MM: Record<SheetSize, number> = { xs: 10, s: 12, m: 15, l: 20 };
+export const MIN_COLS = 3;
+export const MAX_COLS = 18;
 export const ORDER_CELL_MM = 8;
-export const cellsPerRow = (size: SheetSize) => Math.floor(SHEET_WIDTH_MM / CELL_MM[size]);
+export const cellMm = (cols: number) => SHEET_WIDTH_MM / cols;
 
 export const DEFAULT_OPTIONS: SheetOptions = {
   grid: 'tian',
-  size: 'm',
+  cols: 12,
   rows: 2,
   trace: 3,
   py: true,
@@ -91,12 +91,12 @@ export const parseSource = (
 };
 
 export const parseOptions = (params: URLSearchParams): SheetOptions => {
-  const size = pick(params.get('size'), ['xs', 's', 'm', 'l'] as const, DEFAULT_OPTIONS.size);
+  const cols = intIn(params.get('cols'), MIN_COLS, MAX_COLS, DEFAULT_OPTIONS.cols);
   return {
     grid: pick(params.get('grid'), ['tian', 'mi', 'kou'] as const, DEFAULT_OPTIONS.grid),
-    size,
+    cols,
     rows: intIn(params.get('rows'), 1, 8, DEFAULT_OPTIONS.rows),
-    trace: intIn(params.get('trace'), 0, cellsPerRow(size) - 1, DEFAULT_OPTIONS.trace),
+    trace: intIn(params.get('trace'), 0, cols - 1, Math.min(DEFAULT_OPTIONS.trace, cols - 1)),
     py: params.get('py') !== '0',
     ru: params.get('ru') !== '0',
     order: params.get('order') !== '0',

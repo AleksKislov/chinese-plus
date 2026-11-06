@@ -1,5 +1,5 @@
 import { component$, useSignal } from '@builder.io/qwik';
-import { MoreInfoModal } from '../common/modals/more-info-modal';
+import { MoreInfoModal, toMoreInfoWord } from '../common/modals/more-info-modal';
 import { moreInfoModalId } from '../common/tooltips/word-tooltip';
 import { HideButtons } from '../hsk/hide-buttons';
 import { SearchResultRow } from './search-result-row';
@@ -39,17 +39,7 @@ export const SearchResutlTable = component$(({ words, hskLevels }: SearchResultT
         </table>
         {!currentWord.value ? null : (
           <>
-            <MoreInfoModal
-              word={{
-                _id: currentWord.value._id,
-                cn: currentWord.value.chinese,
-                py: currentWord.value.pinyin,
-                ru: currentWord.value.russian,
-                lvl: 'unknown',
-                id: 0,
-              }}
-              modalId={moreInfoModalId}
-            />
+            <MoreInfoModal word={toMoreInfoWord(currentWord.value)} modalId={moreInfoModalId} />
           </>
         )}
       </div>

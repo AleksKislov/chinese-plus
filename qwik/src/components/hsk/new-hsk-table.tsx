@@ -43,11 +43,8 @@ export const NewHskTable = component$(
               ))}
             </tbody>
           </table>
-          {!currentWord.value ? null : (
-            <>
-              <MoreInfoModal word={currentWord.value as NewHskWordType} modalId={moreInfoModalId} />
-            </>
-          )}
+          {/* always rendered: the rows' "more" labels need its checkbox on their first click */}
+          <MoreInfoModal word={currentWord.value} modalId={moreInfoModalId} />
         </div>
       </>
     );

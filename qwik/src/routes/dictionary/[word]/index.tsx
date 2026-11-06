@@ -32,7 +32,6 @@ import { alertsContext, userContext } from '~/root';
 import { getWordsForTooltips } from '~/routes/read/texts/[id]';
 import HanziWriter from 'hanzi-writer';
 import { sheetUrl } from '~/components/propisi/types';
-import { stripRuMarkup } from '~/misc/helpers/translation';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { Loader } from '~/components/common/ui/loader';
 import { SearchRuResult } from '~/components/search/search-ru-result';
@@ -53,6 +52,11 @@ import CONST_URLS from '~/misc/consts/urls';
 import { Breadcrumbs, truncateCrumb } from '~/components/common/layout/breadcrumbs';
 import { nameUrl } from '~/components/names/types';
 import { type HskLevels, HskLevelBadge } from '~/components/hsk/hsk-level-badge';
+import {
+  type DictTranslationResponse,
+  translationToText,
+} from '~/components/common/translation/types';
+import { type ParsedWordTranslation } from '~/components/common/translation/dict-word-translation';
 
 export const useGetRuWord = routeLoader$(async ({ params }): Promise<RuWord | null> => {
   if (!isRussian(params.word)) return null;
@@ -89,6 +93,32 @@ export const useLoadTranslation = routeLoader$(
 
 const singleChinese = (word: string | DictWord) => (typeof word === 'string' ? word : word.chinese);
 
+// full parsed translation of the found word, else the trimmed one it came with from the search
+// (null: the DSL markup is rendered, the word is not migrated)
+const wordParsed = (
+  word: string | DictWord,
+  loaded: DictTranslationResponse | null,
+): ParsedWordTranslation | null => {
+  if (typeof word === 'string') return null;
+  if (loaded?.translation && loaded.translation.wordId === String(word._id)) {
+    return { senses: loaded.translation.senses, examples: loaded.examples };
+  }
+  return word.senses?.length ? { senses: word.senses, examples: [] } : null;
+};
+
+// parsed translation + examples of a single found word (null: falls back to the DSL markup)
+export const useGetParsedTranslation = routeLoader$(
+  async ({ resolveValue }): Promise<DictTranslationResponse | null> => {
+    const words = await resolveValue(useLoadTranslation);
+    if (!words || words.length !== 1 || typeof words[0] === 'string') return null;
+    return ApiService.get(
+      `/api/dictionary/translation/${String(words[0]._id)}?examples=true`,
+      undefined,
+      null,
+    );
+  },
+);
+
 // HSK 3.0 levels of every chinese word the page shows (search result, wildcard and pinyin lists)
 export const useGetHskLevels = routeLoader$(async ({ resolveValue }): Promise<HskLevels> => {
   const lists = await Promise.all([
@@ -110,11 +140,13 @@ export default component$(() => {
   const wildcardWords = useGetWildcardWords();
   const pinyinWords = useGetPinyinWords();
   const hskLevels = useGetHskLevels();
+  const parsedTranslation = useGetParsedTranslation();
   const words = useSignal<(string | DictWord)[] | null>(null);
   const input = useSignal(loc.params.word || '');
 
   const alertsState = useContext(alertsContext);
-  const { isAdmin } = useContext(userContext);
+  const { isAdmin, isModerator } = useContext(userContext);
+  const canEditDictionary = isAdmin || isModerator;
   const showExamples = useSignal(true);
   const showHandwriting = useSignal(false);
 
@@ -192,24 +224,24 @@ export default component$(() => {
     }),
   );
 
+  // undefined for a moment when navigating to another route (/dictionary/edit/…, /dictionary/add)
+  const pageWord = loc.params.word || '';
+
   return (
     <>
       <JsonLd
         data={{
           '@context': 'https://schema.org',
           '@type': 'DefinedTerm',
-          name: loc.params.word,
+          name: pageWord,
           inDefinedTermSet: `${CONST_URLS.siteUrl}/dictionary`,
-          url: `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(loc.params.word)}`,
+          url: `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(pageWord)}`,
         }}
       />
       <Breadcrumbs
-        items={[
-          { name: 'Словарь', href: '/dictionary/' },
-          { name: truncateCrumb(loc.params.word) },
-        ]}
+        items={[{ name: 'Словарь', href: '/dictionary/' }, { name: truncateCrumb(pageWord) }]}
       />
-      <PageTitle txt={'Китайско-русский словарь: ' + loc.params.word} />
+      <PageTitle txt={'Китайско-русский словарь: ' + pageWord} />
 
       <FlexRow>
         <Sidebar noAds={true}></Sidebar>
@@ -247,6 +279,16 @@ export default component$(() => {
               </button>
 
               {showHandwriting.value && <HandwritingInput />}
+
+              {canEditDictionary && (
+                <Link
+                  prefetch="js"
+                  href="/dictionary/add"
+                  class="link link-hover link-secondary text-sm w-fit"
+                >
+                  + Добавить слово в словарь
+                </Link>
+              )}
             </div>
 
             <div id={CHAR_SVG_DIV_ID} class="flex mt-3"></div>
@@ -277,11 +319,8 @@ export default component$(() => {
                     <ShowHideBtn showExamples={showExamples} />
                   </div>
                   <DictWordTranslation
-                    ru={
-                      typeof words.value[0] === 'string'
-                        ? 'перевод отсутствует или не найден :('
-                        : words.value[0].russian
-                    }
+                    emptyText="перевод отсутствует или не найден :("
+                    parsed={wordParsed(words.value[0], parsedTranslation.value)}
                     py={(words.value[0] as DictWord).pinyin}
                     tradChinese={
                       typeof words.value[0] !== 'string' &&
@@ -293,7 +332,7 @@ export default component$(() => {
                     showExamples={showExamples.value}
                   />
 
-                  {isAdmin && (
+                  {canEditDictionary && (
                     <EditWordModal word={words.value[0] as DictWord} modalId={editWordModalId} />
                   )}
                 </>
@@ -365,6 +404,7 @@ export default component$(() => {
 
 export const head: DocumentHead = ({ resolveValue, params }) => {
   const cnTranslation = resolveValue(useLoadTranslation);
+  const parsedTranslation = resolveValue(useGetParsedTranslation);
   const ruWord = resolveValue(useGetRuWord);
   const word = params.word;
   const url = `${CONST_URLS.siteUrl}/dictionary/${encodeURIComponent(word)}/`;
@@ -396,9 +436,9 @@ export const head: DocumentHead = ({ resolveValue, params }) => {
     const title = `${wordObj.chinese}${hasTrad ? ' / ' + wordObj.tradChinese : ''} (${
       wordObj.pinyin
     }) — перевод с китайского на русский | Chinese+`;
-    const description = `Значение китайского слова ${chineseLabel}: ${stripRuMarkup(
-      wordObj.russian,
-    )}`.slice(0, 300);
+    const parsed = wordParsed(wordObj, parsedTranslation);
+    const meaning = parsed ? translationToText(parsed.senses) : '';
+    const description = `Значение китайского слова ${chineseLabel}: ${meaning}`.slice(0, 300);
 
     return {
       title,

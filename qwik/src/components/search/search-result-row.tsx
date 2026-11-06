@@ -1,5 +1,5 @@
 import { component$, type Signal } from '@builder.io/qwik';
-import { parseRussian } from '~/misc/helpers/translation';
+import { translationHtml } from '~/misc/helpers/translation';
 import { moreInfoSvg } from '../common/media/svg';
 import { moreInfoModalId } from '../common/tooltips/word-tooltip';
 import { HideBtnsEnum } from '../hsk/hide-buttons';
@@ -43,10 +43,9 @@ export const SearchResultRow = component$(
             <td>
               <div
                 style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}
-                dangerouslySetInnerHTML={parseRussian(
-                  typeof word === 'string' ? 'нет перевода' : word.russian,
-                  false,
-                )}
+                dangerouslySetInnerHTML={
+                  typeof word === 'string' ? 'нет перевода' : translationHtml(word)
+                }
               ></div>
             </td>
           )}

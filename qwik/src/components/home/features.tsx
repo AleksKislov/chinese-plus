@@ -3,6 +3,22 @@ import { FeatureCard } from './feature-card';
 import { academicCapExtraBigSvg, bookExtraBigSvg, graphExtraBigSvg } from '../common/media/svg';
 import { WordTooltip, moreInfoModalId } from '../common/tooltips/word-tooltip';
 import { MoreInfoModal } from '../common/modals/more-info-modal';
+import { type TranslationNode } from '../common/translation/types';
+
+// parsed translation of 我 (dictionarytranslations), for the demo tooltip
+const WO_SENSES: TranslationNode[] = [
+  { marker: '1', text: 'я; мой' },
+  {
+    marker: '2',
+    text: 'мы; наш (о коллективе, стране)',
+    content: [
+      { type: 'text', value: 'мы; наш (' },
+      { type: 'comment', value: 'о коллективе, стране' },
+      { type: 'text', value: ')' },
+    ],
+  },
+  { marker: '3', text: 'сам; самоличный, частный, личный' },
+];
 
 type FeatureLink = { href: string; text: string };
 
@@ -25,9 +41,7 @@ export const featuresArr: Feature[] = [
             chinese: '我',
             _id: '5f04819868566a15a9ff0227',
             pinyin: ' wǒ',
-            // previous: [],
-            russian:
-              ' [m1]1) я; мой[/m][m2][*][ex]我是学生 я ― учащийся[/ex][/*][/m][m2][*][ex]我父亲 мой отец[/ex][/*][/m][m1]2) мы; наш ([i]о коллективе, стране[/i])[/m][m2][*][ex]我方 наша сторона, наши[/ex][/*][/m][m2][*][ex]我军 наша армия[/ex][/*][/m][m2][*][ex]敌我 противник и мы[/ex][/*][/m][m1]3) сам; самоличный, частный, личный[/m][m2][*][ex]自我 сам; собственный[/ex][/*][/m][m2][*][ex]大公无我 всё общественное, нет ничего личного (собственного)[/ex][/*][/m]',
+            senses: WO_SENSES,
           }}
         />
       </span>
@@ -112,8 +126,9 @@ export const Features = component$(() => {
           id: 0,
           lvl: '1',
           _id: '5f04819868566a15a9ff0227',
+          dictId: '5f04819868566a15a9ff0227',
           py: ' wǒ',
-          ru: ' [m1]1) я; мой[/m][m2][*][ex]我是学生 я ― учащийся[/ex][/*][/m][m2][*][ex]我父亲 мой отец[/ex][/*][/m][m1]2) мы; наш ([i]о коллективе, стране[/i])[/m][m2][*][ex]我方 наша сторона, наши[/ex][/*][/m][m2][*][ex]我军 наша армия[/ex][/*][/m][m2][*][ex]敌我 противник и мы[/ex][/*][/m][m1]3) сам; самоличный, частный, личный[/m][m2][*][ex]自我 сам; собственный[/ex][/*][/m][m2][*][ex]大公无我 всё общественное, нет ничего личного (собственного)[/ex][/*][/m]',
+          senses: WO_SENSES,
         }}
         modalId={moreInfoModalId}
       />

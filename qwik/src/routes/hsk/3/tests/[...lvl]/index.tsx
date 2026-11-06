@@ -30,7 +30,7 @@ import {
   QuestKinds,
 } from '../../../2/tests/[...lvl]';
 
-import { parseRussian } from '~/misc/helpers/translation';
+import { translationTextHtml } from '~/misc/helpers/translation';
 import { CalligraphyGame } from '~/components/games/calligraphy-game';
 
 // get 150 words
@@ -40,13 +40,14 @@ export const onGet = wordsLevelOnGet('new');
 export const getTestWords = routeLoader$(async (ev): Promise<TestWord[]> => {
   const lvl = ev.params.lvl || '1';
   const res = await ApiService.get(`/api/newhskwords/all?hsk_level=${lvl}`, undefined, []);
-  return res.map(({ cn: chinese, lvl: level, py: pinyin, id, ru, audio }: NewHskWordType) => ({
+  return res.map(({ cn: chinese, lvl: level, py: pinyin, id, senses, audio }: NewHskWordType) => ({
     id,
     audio,
     level,
     chinese,
     pinyin,
-    translation: parseRussian(ru, false),
+    // only the meanings: pinyin and labels would give the answers away
+    translation: translationTextHtml({ senses }),
   }));
 });
 

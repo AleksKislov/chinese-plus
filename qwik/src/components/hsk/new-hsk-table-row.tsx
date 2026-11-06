@@ -2,7 +2,7 @@ import { $, component$, useContext, useSignal, type Signal } from '@builder.io/q
 import CONST_URLS from '~/misc/consts/urls';
 import CONSTANTS from '~/misc/consts/consts';
 import { type NewHskWordType } from '~/routes/hsk/3/table/[...lvl]';
-import { parseRussian } from '~/misc/helpers/translation';
+import { translationHtml } from '~/misc/helpers/translation';
 import { AlertColorEnum, alertsContext, userContext } from '~/root';
 import { useAddUserHsk3Word } from '~/misc/actions/user-hsk3-words/add-word';
 import { useRemoveUserHsk3Word } from '~/misc/actions/user-hsk3-words/remove-word';
@@ -37,7 +37,7 @@ export const NewHskTableRow = component$(
     userSelected: userClicked,
     isPrivate,
   }: NewHskTableRowType) => {
-    const { cn, py, ru, id } = word;
+    const { cn, py, senses, id } = word;
     const audioPath = getHskAudioPath(word, isLegacyBand);
     const hasUserBtn = userClicked !== undefined;
 
@@ -104,7 +104,7 @@ export const NewHskTableRow = component$(
             <td class={rowBg}>
               <div
                 style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}
-                dangerouslySetInnerHTML={parseRussian(ru, false)}
+                dangerouslySetInnerHTML={translationHtml({ senses })}
               ></div>
             </td>
           )}

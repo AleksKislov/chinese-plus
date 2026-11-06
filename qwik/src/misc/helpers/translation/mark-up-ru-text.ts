@@ -23,13 +23,3 @@ export const markUpRuText = (text: string, showExamples: boolean = false): strin
   }
   return text;
 };
-
-// Plain-text version for use in meta descriptions, where HTML markup isn't valid.
-export const stripRuMarkup = (text: string): string => {
-  if (!text) return '';
-  return text
-    .replace(/\[.*?\]/g, '')
-    .replace(/<[^>]+>/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-};

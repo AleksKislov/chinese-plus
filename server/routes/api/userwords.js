@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 
 const UserDictWord = require('../../src/models/UserWord');
+const { attachSenses } = require('../../src/api/services/dictionary/translations/attach-senses');
 
 const { downloadUserDictWordsCsv } = require('../../src/api/services/userwords');
 
@@ -14,13 +15,13 @@ const { downloadUserDictWordsCsv } = require('../../src/api/services/userwords')
 router.get('/', auth, async (req, res) => {
   try {
     const words = await UserDictWord.find({ user: req.user.id })
-      .populate('wordId', ['chinese', 'russian', 'pinyin', '_id'])
+      .populate('wordId', ['chinese', 'pinyin', '_id'])
       .sort({ date: -1 });
 
     if (words.length <= 0) return res.status(400).json({ msg: 'There are no words yet' });
 
     // console.log(words);
-    res.json(words.map(userWordToDTO));
+    res.json(await attachSenses(words.map(userWordToDTO), { idField: 'dictWordId' }));
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -52,7 +53,6 @@ function userWordToDTO(word) {
     _id: word._id,
     date: word.date,
     chinese: word.wordId.chinese,
-    translation: word.wordId.russian,
     pinyin: word.wordId.pinyin,
     dictWordId: word.wordId._id,
   };

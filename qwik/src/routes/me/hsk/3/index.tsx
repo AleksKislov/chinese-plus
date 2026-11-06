@@ -15,7 +15,7 @@ import { TypingGame } from '~/components/games/typing-game';
 import { CalligraphyGame } from '~/components/games/calligraphy-game';
 import { CsvCard } from '~/components/hsk/csv-card';
 import { WORD_LEVELS } from '~/components/hsk/words-seo';
-import { parseRussian } from '~/misc/helpers/translation';
+import { translationTextHtml } from '~/misc/helpers/translation';
 import { type TestWord } from '~/routes/hsk/2/tests/[...lvl]';
 
 // a word of the current HSK 3.0 list (`_id` is its hskword2025 _id) + when it was added
@@ -33,13 +33,13 @@ export const useGetUserHsk3Words = routeLoader$(async ({ cookie }): Promise<User
 });
 
 const toTestWords = (words: UserHsk3WordType[]): TestWord[] =>
-  words.map(({ cn, lvl, py, id, ru, audio }) => ({
+  words.map(({ cn, lvl, py, id, senses, audio }) => ({
     id,
     audio,
     level: lvl,
     chinese: cn,
     pinyin: py,
-    translation: parseRussian(ru, false),
+    translation: translationTextHtml({ senses }),
   }));
 
 export default component$(() => {

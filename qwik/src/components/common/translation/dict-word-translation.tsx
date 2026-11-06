@@ -1,14 +1,20 @@
 import { component$ } from '@builder.io/qwik';
-import { markUpRuText } from '~/misc/helpers/translation';
+import { ParsedTranslation } from './parsed-translation';
+import type { DictExample, TranslationNode } from './types';
+
+export type ParsedWordTranslation = { senses: TranslationNode[]; examples: DictExample[] };
 
 export const DictWordTranslation = component$(
   ({
-    ru,
+    emptyText,
+    parsed,
     showExamples,
     py,
     tradChinese,
   }: {
-    ru: string;
+    // shown when there is no parsed translation, e.g. 'перевод отсутствует'
+    emptyText?: string;
+    parsed?: ParsedWordTranslation | null;
     showExamples: boolean;
     py: string;
     tradChinese?: string;
@@ -22,7 +28,15 @@ export const DictWordTranslation = component$(
             <div class="text-3xl">{tradChinese}</div>
           </div>
         )}
-        <div dangerouslySetInnerHTML={markUpRuText(ru, showExamples)}></div>
+        {parsed?.senses.length ? (
+          <ParsedTranslation
+            senses={parsed.senses}
+            examples={parsed.examples}
+            showExamples={showExamples}
+          />
+        ) : (
+          emptyText && <div>{emptyText}</div>
+        )}
       </>
     );
   },

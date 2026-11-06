@@ -20,11 +20,11 @@ import {
   type HskSheetVersion,
   type SheetGrid,
   type SheetOptions,
-  type SheetSize,
-  CELL_MM,
   HSK_SHEET_LEVELS,
   MAX_CHARS,
-  cellsPerRow,
+  MAX_COLS,
+  MIN_COLS,
+  cellMm,
   hskLevelName,
   hskLevelTitle,
   hskSheetPath,
@@ -56,7 +56,8 @@ const GRIDS: { val: SheetGrid; text: string }[] = [
   { val: 'kou', text: 'Без линий' },
 ];
 
-const SIZES: SheetSize[] = ['l', 'm', 's', 'xs'];
+// the size slider's left end is the smallest cell (most columns)
+const sliderToCols = (val: string) => MIN_COLS + MAX_COLS - Number(val);
 
 type PropisiPageProps = {
   seo: { h1: string; intro: string; crumbs: Crumb[] };
@@ -117,7 +118,7 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
   // display options change the sheet in place and the shareable URL, without a new request
   const setOptions = $((patch: Partial<SheetOptions>) => {
     Object.assign(opts, patch);
-    opts.trace = Math.min(opts.trace, cellsPerRow(opts.size) - 1);
+    opts.trace = Math.min(opts.trace, opts.cols - 1);
     history.replaceState(history.state, '', sheetUrl(source.value, { ...opts }));
     copied.value = false;
   });
@@ -268,20 +269,26 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
                   </button>
                 ))}
               </div>
-              <div class="flex items-center gap-2">
-                Клетки
-                <div class="btn-group">
-                  {SIZES.map((val) => (
-                    <button
-                      key={val}
-                      class={`btn btn-sm normal-case ${opts.size === val ? 'btn-active' : ''}`}
-                      onClick$={() => setOptions({ size: val })}
-                    >
-                      {CELL_MM[val]} мм
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <label class="flex items-center gap-3">
+                Размер
+                <input
+                  type="range"
+                  class="range range-sm range-primary w-40"
+                  min={MIN_COLS}
+                  max={MAX_COLS}
+                  value={MIN_COLS + MAX_COLS - opts.cols}
+                  onInput$={(e) => {
+                    opts.cols = sliderToCols((e.target as HTMLInputElement).value);
+                    opts.trace = Math.min(opts.trace, opts.cols - 1);
+                  }}
+                  onChange$={(e) =>
+                    setOptions({ cols: sliderToCols((e.target as HTMLInputElement).value) })
+                  }
+                />
+                <span class="whitespace-nowrap">
+                  {Number(cellMm(opts.cols).toFixed(1))} мм · {opts.cols} в ряду
+                </span>
+              </label>
               <label class="flex items-center gap-2">
                 Строк на иероглиф
                 <select
@@ -307,7 +314,7 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
                     setOptions({ trace: Number((e.target as HTMLSelectElement).value) })
                   }
                 >
-                  {Array.from({ length: cellsPerRow(opts.size) }, (_, n) => n).map((n) => (
+                  {Array.from({ length: opts.cols }, (_, n) => n).map((n) => (
                     <option key={n} value={String(n)} selected={opts.trace === n}>
                       {String(n)}
                     </option>
@@ -414,7 +421,7 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
         <h2>Как пользоваться генератором прописей</h2>
         <ol>
           <li>Вставьте свои иероглифы или выберите версию и уровень HSK.</li>
-          <li>Выберите сетку (田字格, 米字格 или без линий) и размер клеток.</li>
+          <li>Выберите сетку (田字格, 米字格 или без линий) и размер клеток — от 1 до 6 см.</li>
           <li>
             Укажите, сколько строк дать на каждый иероглиф и сколько серых знаков для обводки.
           </li>

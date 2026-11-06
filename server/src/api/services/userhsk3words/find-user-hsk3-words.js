@@ -1,20 +1,20 @@
 const UserHsk3Word = require('../../../models/UserHsk3Word');
 require('../../../models/Hskword2025');
-require('../../../models/Dictionary');
+const { attachSenses } = require('../dictionary/translations/attach-senses');
 
-// user's hsk 3.0 words, newest first; translation is joined from `dictionary` like in /api/newhskwords
+// user's hsk 3.0 words, newest first; with the parsed `senses` of their dictionary entry, like in
+// /api/newhskwords
 const findUserHsk3Words = async (userId) => {
   const words = await UserHsk3Word.find({ user: userId })
     .populate({
       path: 'wordId',
       select: ['id', 'lvl', 'cn', 'py', 'audio', 'dictId'],
-      populate: { path: 'dictId', select: ['russian'] },
     })
     .sort({ date: -1 })
     .lean();
 
   // hsk words may be re-imported: skip entries whose word no longer exists
-  return words
+  const userWords = words
     .filter((x) => x.wordId)
     .map(({ wordId: word, date }) => ({
       _id: word._id,
@@ -22,10 +22,11 @@ const findUserHsk3Words = async (userId) => {
       lvl: word.lvl,
       cn: word.cn,
       py: word.py,
-      ru: word.dictId?.russian || '',
+      dictId: word.dictId,
       audio: word.audio,
       date,
     }));
+  return attachSenses(userWords, { idField: 'dictId' });
 };
 
 module.exports = { findUserHsk3Words };

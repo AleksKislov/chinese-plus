@@ -1,4 +1,5 @@
 const Dictionary = require('../../../models/Dictionary');
+const { attachSenses } = require('./translations/attach-senses');
 
 const MAX_PATTERN_LENGTH = 30;
 const RESULTS_LIMIT = 300;
@@ -21,8 +22,10 @@ async function pinyinSearch(req, res) {
   }
 
   const words = await Dictionary.find({ cleanPinyin: pattern })
-    .select('-date -edited -previous -updatedAt')
-    .limit(RESULTS_LIMIT);
+    .select('-date -edited -updatedAt -russian')
+    .limit(RESULTS_LIMIT)
+    .lean();
+  await attachSenses(words);
 
   res.json(words);
 }

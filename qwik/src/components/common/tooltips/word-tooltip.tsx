@@ -1,11 +1,9 @@
-import { component$, type Signal, useContext, useSignal, useTask$, $ } from '@builder.io/qwik';
-import { parseRussian } from '~/misc/helpers/translation';
+import { component$, type Signal, useContext, useSignal, $ } from '@builder.io/qwik';
+import { translationHtml } from '~/misc/helpers/translation';
 import { userContext } from '~/root';
 import { moreInfoSvg } from '../media/svg';
 import { EditWordBtn } from './edit-word-btn';
 import { OwnWordBtn } from './own-word-btn';
-import { globalAction$ } from '@builder.io/qwik-city';
-import { getWordsForTooltips } from '~/routes/read/texts/[id]';
 
 export const editWordModalId = 'editWordModalId';
 export const moreInfoModalId = 'moreInfoModalId';
@@ -20,38 +18,18 @@ type WordTooltipProps = {
 // dict pinyin may hold several readings, e.g. ' hǎo, hào' or ' de; dí; dì'
 const getFirstPinyin = (pinyin: string): string => pinyin.split(/[,;，；]/)[0].trim();
 
-export const useGetWordFullTranslation = globalAction$((params): Promise<(string | DictWord)[]> => {
-  return getWordsForTooltips([params.chineseWord as string]);
-});
-
 export const WordTooltip = component$(
   ({ word, hasReddened, currentWord, showPinyin }: WordTooltipProps) => {
-    const getFullTranslation = useGetWordFullTranslation();
     const isRightSide = useSignal(false);
     const isScreenCenter = useSignal(false);
     const userState = useContext(userContext);
     const { loggedIn } = userState;
     const showTooltip = useSignal(false);
 
-    useTask$(({ track }) => {
-      const val = track(() => getFullTranslation.value);
-      const translation = (val?.[0] as DictWord)?.russian;
-      if (translation && currentWord) {
-        // setCurrentWord(word as DictWord, translation);
-        currentWord.value = null;
-        // setTimeout(() => {
-        currentWord.value = word as DictWord;
-        currentWord.value.russian = translation;
-        // });
-      }
-    });
-
-    const setCurrentWord = $((word: DictWord, translation?: string) => {
+    // the "more info" modal loads the word's full translation itself (see MoreInfoModal)
+    const setCurrentWord = $((word: DictWord) => {
       currentWord.value = null;
-      setTimeout(() => {
-        currentWord.value = word;
-        if (translation) currentWord.value.russian = translation;
-      });
+      setTimeout(() => (currentWord.value = word));
     });
 
     let isUserWord = false;
@@ -111,21 +89,12 @@ export const WordTooltip = component$(
                 <div class={'text-2xl mr-2'}>{word.chinese}</div>
                 <div class={'text-lg text-info'}>{word.pinyin}</div>
               </div>
-              <div
-                class={'text-sm mb-2'}
-                dangerouslySetInnerHTML={parseRussian(word.russian, false)}
-              ></div>
+              <div class={'text-sm mb-2'} dangerouslySetInnerHTML={translationHtml(word)}></div>
 
               <div class={'flex flex-row justify-between'}>
                 <div>
                   <div class="tooltip tooltip-info tooltip-bottom" data-tip={'Больше информации'}>
-                    <label
-                      for={moreInfoModalId}
-                      class={'btn btn-sm btn-info mr-1'}
-                      onClick$={() => {
-                        getFullTranslation.submit({ chineseWord: word.chinese });
-                      }}
-                    >
+                    <label for={moreInfoModalId} class={'btn btn-sm btn-info mr-1'}>
                       {moreInfoSvg}
                     </label>
                   </div>
