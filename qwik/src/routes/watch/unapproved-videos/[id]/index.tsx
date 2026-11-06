@@ -17,7 +17,7 @@ import {
   WHERE,
 } from '~/components/common/comments/comment-form';
 import { Subs } from '~/components/watch/subs';
-import { parseVideoWords } from '~/misc/helpers/content';
+import { getContentPath, parseVideoWords } from '~/misc/helpers/content';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { type CommentType } from '~/components/common/comments/comment-card';
 import { getContentComments } from '~/misc/actions/get-content-comments';
@@ -43,6 +43,19 @@ export const useGetVideo = routeLoader$(
   async ({ params, redirect }): Promise<VideoFromDB & TooltipSubs> => {
     const videoFromDb = await getVideoFromDB(params.id);
     if (!videoFromDb) throw redirect(302, '/watch/unapproved-videos');
+    if (videoFromDb.isApproved) {
+      throw redirect(
+        302,
+        getContentPath(
+          WHERE.video,
+          videoFromDb._id,
+          false,
+          undefined,
+          undefined,
+          videoFromDb.title,
+        ),
+      );
+    }
     const tooltipSubs = await getWordsForTooltips(videoFromDb.chineseArr);
     return { ...videoFromDb, tooltipSubs };
   },
@@ -189,6 +202,7 @@ export default component$(() => {
 export const head: DocumentHead = {
   title: 'Chinese+ Китайские видео с субтитрами',
   meta: [
+    { name: 'robots', content: 'noindex, follow' },
     {
       name: 'description',
       content:

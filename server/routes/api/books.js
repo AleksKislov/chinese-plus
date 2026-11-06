@@ -61,7 +61,9 @@ router.get('/:id', async (req, res) => {
 
     if (!book) return res.status(404).json({ msg: 'Book not found' });
 
-    const contentsPromise = BookContent.find({ book: bookId }).select('ind title').sort({ ind: 1 });
+    const contentsPromise = BookContent.find({ book: bookId })
+      .select('ind title part')
+      .sort({ ind: 1 });
 
     const pagesPromise = BookPage.find({ book: bookId }).select('ind length belongsTo');
 
@@ -76,6 +78,7 @@ router.get('/:id', async (req, res) => {
         _id: part._id,
         ind: part.ind,
         title: part.title,
+        ...(part.part?.ind != null && { part: part.part }), // volume, only for books that have them
         length: pages.reduce((acc, currentVal) => acc + currentVal.length, 0),
         pages,
       };
@@ -118,6 +121,36 @@ router.post('/chapter', moderatorAuth, async (req, res) => {
     Notify.admin(`📖 Добавлена глава для книги "${book?.title?.cn || bookId}": ${chapterTitles}`);
 
     res.json(savedChapters);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
+/**
+ * @route   PUT api/books/chapter/:chapter_id
+ * @desc    Move a chapter to a volume: { part: { ind, title: { cn, ru } } }, or out of it: { part: null }
+ */
+router.put('/chapter/:chapter_id', moderatorAuth, async (req, res) => {
+  const { part } = req.body;
+
+  if (part && (!Number.isInteger(part.ind) || part.ind < 1)) {
+    return res.status(400).json({ msg: 'Номер тома должен быть целым числом >= 1' });
+  }
+
+  try {
+    // no empty title fields: BookContent.part has no defaults on purpose
+    const title = {};
+    if (part?.title?.cn) title.cn = part.title.cn;
+    if (part?.title?.ru) title.ru = part.title.ru;
+
+    const update = part ? { $set: { part: { ind: part.ind, title } } } : { $unset: { part: 1 } };
+    const chapter = await BookContent.findByIdAndUpdate(req.params.chapter_id, update, {
+      new: true,
+    });
+
+    if (!chapter) return res.status(404).json({ msg: 'Chapter not found' });
+    res.json(chapter);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');

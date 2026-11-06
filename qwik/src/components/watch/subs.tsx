@@ -2,10 +2,10 @@ import { component$, useSignal, type Signal } from '@builder.io/qwik';
 import { FontSizeMap, FontSizeBtns } from '../common/content-cards/content-page-card';
 import { FontSizeBtnGroup } from '../common/content-cards/font-size-btns';
 import { EditWordModal } from '../common/modals/edit-word-modal';
-import { MoreInfoModal } from '../common/modals/more-info-modal';
+import { MoreInfoModal, toMoreInfoWord } from '../common/modals/more-info-modal';
 import { editWordModalId, moreInfoModalId, WordTooltip } from '../common/tooltips/word-tooltip';
 import { HideBtnsEnum, HideButtons } from '../hsk/hide-buttons';
-import { PlayerState } from '~/routes/watch/videos/[id]';
+import { PlayerState } from './video-players';
 
 type SubsProps = {
   hideBtnsSig: Signal<string[]>;
@@ -65,17 +65,7 @@ export const Subs = component$(
         {!currentWord.value ? null : (
           <>
             <EditWordModal word={currentWord.value} modalId={editWordModalId} />
-            <MoreInfoModal
-              word={{
-                _id: currentWord.value._id,
-                cn: currentWord.value.chinese,
-                py: currentWord.value.pinyin,
-                ru: currentWord.value.russian,
-                lvl: 'unknown',
-                id: 0,
-              }}
-              modalId={moreInfoModalId}
-            />
+            <MoreInfoModal word={toMoreInfoWord(currentWord.value)} modalId={moreInfoModalId} />
           </>
         )}
       </div>

@@ -1,6 +1,7 @@
 import { component$, createContextId, useContextProvider, useStore } from '@builder.io/qwik';
 import { QwikCityProvider, RouterOutlet, ServiceWorkerRegister } from '@builder.io/qwik-city';
 import { RouterHead } from './components/router-head/router-head';
+import { type TranslationNode } from './components/common/translation/types';
 
 // plain import (not ?inline + useStyles$): emitted as a separate, cacheable CSS file
 // instead of ~150KB of CSS inlined into every SSR'd HTML page
@@ -16,7 +17,7 @@ export type UserWord = {
   _id: ObjectId;
   chinese: string;
   pinyin: string;
-  translation: string;
+  senses?: TranslationNode[];
   date: ISODate;
   dictWordId: ObjectId;
 };
@@ -36,6 +37,7 @@ export interface User {
   readTodayNum: number;
   readTodayMap: ReadTodayMap;
   hsk2WordsTotal: number;
+  hsk3WordsTotal: number;
   role?: 'admin' | 'moderator';
   newAvatar?: NewAvatar;
   bio: string;
@@ -77,6 +79,7 @@ export default component$(() => {
     wordsMap: {},
     wordsCount: 0,
     hsk2WordsTotal: 0,
+    hsk3WordsTotal: 0,
     readDailyGoal: 0,
     readTodayNum: 0,
     readTodayMap: {},

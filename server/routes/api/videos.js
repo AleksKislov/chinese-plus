@@ -20,6 +20,7 @@ const {
   getAllVideoLessons,
   getVideoLessonById,
   deleteVideo,
+  setVideoLessonRutube,
 } = require('../../src/api/services/videos');
 
 /**
@@ -67,6 +68,14 @@ router.get(
 );
 
 router.get('/video-lessons/:id', getVideoLessonById);
+
+/**
+ * @method  POST
+ * @route   api/videos/video-lessons/:id/rutube
+ * @desc    Set (or clear with '') the Rutube link of a video lesson
+ * @access  Admin
+ */
+router.post('/video-lessons/:id/rutube', adminAuth, setVideoLessonRutube);
 
 // router.post("/create-lesson", async (req, res) => {
 //   const newLesson = new VideoLesson(req.body);

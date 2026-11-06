@@ -21,18 +21,25 @@ import { MainContent } from '~/components/common/layout/main-content';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
 import { CsvCard } from '~/components/hsk/csv-card';
+import { PropisiLinkCard } from '~/components/propisi/propisi-link-card';
 import { configContext } from '~/root';
 import YANDEX_ADS from '~/misc/consts/ads';
 import { BannerAds } from '~/components/common/ads/sidebar-ads';
 import OUR_ADS from '~/misc/consts/our-ads';
 import { OurAds } from '~/components/common/ads/our-ads';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { useGetUserHsk3WordIds } from '~/misc/loaders/user-hsk3-loaders';
+import { type TranslationNode } from '~/components/common/translation/types';
+
+export { useGetUserHsk3WordIds } from '~/misc/loaders/user-hsk3-loaders';
 
 export type NewHskWordType = {
   _id: ObjectId;
   id: number;
   cn: string;
   py: string;
-  ru: string;
+  senses?: TranslationNode[];
+  dictId?: ObjectId; // dictionary entry, for the full translation
   lvl: string;
   audio?: string; // 2026 list: path under myAudioURL, absent if there is no audio yet
 };
@@ -53,6 +60,7 @@ export default component$(() => {
 
   const loc = useLocation();
   const hskWords = getHskWords();
+  const userHskWordIds = useGetUserHsk3WordIds();
 
   // useComputed$ re-derives when the level / ?pg= changes; a plain const in the component
   // body is computed once, leaving the H1 and breadcrumbs on the first level.
@@ -71,11 +79,14 @@ export default component$(() => {
       <PageTitle txt={seo.value.h1} />
 
       <FlexRow>
+        <Alerts />
+
         <Sidebar>
           <TableCard level={loc.params.lvl || '1'} isOldHsk={false} isForTests={false} />
           <CsvCard level={loc.params.lvl || '1'} isOldHsk={false} isPrivate={false} />
           <PhoneticsLinkCard />
           <CharactersLinkCard />
+          <PropisiLinkCard version="3" level={loc.params.lvl || '1'} />
           <HskExamsLinkCard version="new" level={loc.params.lvl || '1'} />
         </Sidebar>
 
@@ -100,7 +111,10 @@ export default component$(() => {
             isOldHsk={false}
           />
 
-          <NewHskTable hskWords={hskWords?.value || []} />
+          <NewHskTable
+            hskWords={hskWords?.value || []}
+            userHskWordIds={userHskWordIds.value || []}
+          />
         </MainContent>
       </FlexRow>
     </>

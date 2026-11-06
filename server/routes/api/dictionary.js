@@ -3,25 +3,37 @@ const router = express.Router();
 const Hanzi = require('./dict/dictionary');
 const mdbg = require('mdbg');
 const nodejieba = require('nodejieba');
-const { getAllWords, getWordsForParag, shortenTranslation } = require('./services');
+const { getAllWords, getWordsForParag } = require('./services');
 const auth = require('../../middleware/auth');
+const moderatorAuth = require('../../middleware/moderator-auth');
 const { cacheRoute, TTL } = require('../../src/cache');
 
 const Dictionary = require('../../src/models/Dictionary');
+const { attachSenses } = require('../../src/api/services/dictionary/translations/attach-senses');
+const { normalizeRu } = require('../../src/api/services/dictionary/translations/ru-search-terms');
+const DictionaryTranslation = require('../../src/models/DictionaryTranslation');
 
 const {
   updateWord,
-  rollbackUpdate,
   getEditedWords,
   wildcardSearch,
   pinyinSearch,
   handwritingSearch,
   getSitemapWords,
+  getTranslation,
+  getWordForEdit,
+  editWord,
+  deleteWordTranslation,
+  addWord,
+  rollbackWord,
 } = require('../../src/api/services/dictionary');
+
+const RU_SEARCH_LIMIT = 100;
 
 /**
  * @route     GET api/dictionary?word=...
- * @desc      get chinese word from dictionary
+ * @desc      get chinese word from dictionary; a russian word is looked up in the glosses
+ *            of the parsed translations (ruTerms)
  * @access    Public
  */
 router.get('/', async (req, res) => {
@@ -30,11 +42,21 @@ router.get('/', async (req, res) => {
 
   try {
     if (word.match(/[\wа-я]+/gi)) {
-      re = new RegExp('[\\s|\\]](' + word + ')');
-      lexicon = await Dictionary.find({ russian: { $regex: re, $options: 'gm' } });
+      const found = await DictionaryTranslation.find({ ruTerms: normalizeRu(word) }, { wordId: 1 })
+        .limit(RU_SEARCH_LIMIT)
+        .lean();
+      lexicon = await attachSenses(
+        await Dictionary.find({ _id: { $in: found.map((t) => t.wordId) } })
+          .select('-russian')
+          .lean(),
+      );
     } else {
       re = new RegExp('^(' + word + ')');
-      lexicon = await Dictionary.find({ chinese: { $regex: re, $options: 'i' } });
+      lexicon = await attachSenses(
+        await Dictionary.find({ chinese: { $regex: re, $options: 'i' } })
+          .select('-russian')
+          .lean(),
+      );
     }
 
     res.json(lexicon);
@@ -46,7 +68,7 @@ router.get('/', async (req, res) => {
 
 /**
  * @route     GET api/dictionary/editedWords
- * @desc      get words with previously edited values
+ * @desc      get words edited by admins and moderators (their history: dictionaryrevisions)
  * @access    Public
  */
 router.get('/editedWords', getEditedWords);
@@ -71,40 +93,13 @@ router.get('/editedWords', getEditedWords);
 // });
 
 /**
- * @route     POST api/dictionary
- * @desc      Add one word to dictionary
- * @access    Private
- */
-router.post('/', auth, async (req, res) => {
-  try {
-    const alreadyExists = await Dictionary.find({ chinese: req.body.chinese });
-
-    if (alreadyExists && alreadyExists[0]) {
-      return res.send(`The word ${req.body.chinese} already inserted`);
-    }
-
-    await new Dictionary(req.body).save();
-    res.send('Data inserted');
-  } catch (err) {
-    console.log(err);
-  }
-});
-
-/**
  * @route     GET api/dictionary/allwords
  * @desc      Get all the words in a text
  * @access    Public
  */
 router.post('/allwords', async (req, res) => {
-  const { isShortRu } = req.query;
   try {
-    const words = await getAllWords(req.body);
-    if (isShortRu) {
-      for (let i = 0; i < words.length; i++) {
-        words[i].russian = shortenTranslation(words[i].russian);
-      }
-    }
-    res.json(words);
+    res.json(await attachSenses(await getAllWords(req.body).lean()));
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -117,6 +112,13 @@ router.post('/allwords', async (req, res) => {
  * @access    Public
  */
 router.get('/sitemap-words', cacheRoute('dictionary-sitemap', { ttl: TTL.DAY }), getSitemapWords);
+
+/**
+ * @route     GET api/dictionary/translation/:wordId?examples=true
+ * @desc      Parsed translation of a word (dictionarytranslations), with its examples when asked
+ * @access    Public
+ */
+router.get('/translation/:wordId', getTranslation);
 
 /**
  * @route     POST api/dictionary/wildcardSearch
@@ -154,14 +156,9 @@ router.post('/wordsForParag', auth, async (req, res) => {
 // @todo сделать в виде одного запроса
 router.post('/allWordsForVideo', async (req, res) => {
   try {
-    const promises = req.body.map((arr) => getAllWords(arr));
+    const promises = req.body.map((arr) => getAllWords(arr).lean());
     const segmentedSubs = await Promise.all(promises);
-    for (let i = 0; i < segmentedSubs.length; i++) {
-      const words = segmentedSubs[i];
-      for (let k = 0; k < words.length; k++) {
-        words[k].russian = shortenTranslation(words[k].russian);
-      }
-    }
+    await attachSenses(segmentedSubs.flat());
     res.json(segmentedSubs);
   } catch (err) {
     console.error(err.message);
@@ -227,10 +224,7 @@ router.get('/certain/:word', async (req, res) => {
   // console.log(word);
   try {
     if (word === 'eng') {
-      re = new RegExp(/^[\p{Latin}\p{Common}]+$/);
-      lexicon = await Dictionary.find({
-        russian: { $regex: re, $options: 'g' },
-      }).countDocuments();
+      lexicon = await DictionaryTranslation.countDocuments({ lang: 'en' });
     } else if (word === 'pinyin') {
       re = new RegExp(/ --| _/);
       lexicon = await Dictionary.find({
@@ -321,17 +315,44 @@ router.post('/segmenter', (req, res) => {
 /**
  * @method  PUT
  * @route   api/dictionary/updateWord
- * @desc    update translation or pinyin for a word
- * @access  Private
+ * @desc    update pinyin of a word
+ * @access  Admin, moderator
  */
-router.put('/updateWord', auth, updateWord);
+router.put('/updateWord', moderatorAuth, updateWord);
 
 /**
- * @method  PUT
- * @desc    roll back using previous content of a word
- * @route   api/dictionary/rollbackUpdate?wordId...&prevInd=
- * @access  Private
+ * @route   GET api/dictionary/word/:id/edit
+ * @desc    word, its translation in the editor shape and its edit history
+ * @access  Admin, moderator
  */
-router.put('/rollbackUpdate', auth, rollbackUpdate);
+router.get('/word/:id/edit', moderatorAuth, getWordForEdit);
+
+/**
+ * @route   POST api/dictionary/word
+ * @desc    add a word with its translation and examples
+ * @access  Admin, moderator
+ */
+router.post('/word', moderatorAuth, addWord);
+
+/**
+ * @route   PUT api/dictionary/word/:id
+ * @desc    save pinyin, trad. chinese and the translation (with examples) in one language
+ * @access  Admin, moderator
+ */
+router.put('/word/:id', moderatorAuth, editWord);
+
+/**
+ * @route   DELETE api/dictionary/word/:id/translation/:lang?updatedAt=
+ * @desc    delete the word's translation in one language (not its only one)
+ * @access  Admin, moderator
+ */
+router.delete('/word/:id/translation/:lang', moderatorAuth, deleteWordTranslation);
+
+/**
+ * @route   PUT api/dictionary/word/:id/rollback/:revisionId
+ * @desc    restore the word as it was before a revision
+ * @access  Admin, moderator
+ */
+router.put('/word/:id/rollback/:revisionId', moderatorAuth, rollbackWord);
 
 module.exports = router;

@@ -1,28 +1,43 @@
-import { component$, Slot, useContext, useTask$, useVisibleTask$ } from '@builder.io/qwik';
+import { component$, Slot, useContext, useTask$ } from '@builder.io/qwik';
 import Header from '../components/common/layout/header/header';
 import { routeLoader$, useLocation } from '@builder.io/qwik-city';
-import { ApiService } from '~/misc/actions/request';
-import { getTokenFromCookie, logout, type UserFromDB } from '~/misc/actions/auth';
+import { ApiService, BASE_URL } from '~/misc/actions/request';
+import { getTokenFromCookie, type UserFromDB } from '~/misc/actions/auth';
 import { Footer } from '~/components/common/layout/footer';
-import { userContext, configContext, type Config, IsLightThemeCookieName } from '~/root';
-import { type CommentType } from '~/components/common/comments/comment-card';
+import { userContext, configContext, type Config } from '~/root';
 import { ThemeTypes } from '~/components/common/layout/header/theme-changer';
 import { ChineseSelectionPopup } from '~/components/common/selection/chinese-selection-popup';
 import { cachedFetch } from '~/misc/helpers/tools/cached-fetch';
+import { useCheckTheme } from '~/misc/loaders/layout-loaders';
+
+// defined outside so header components can use them without importing this file
+export { getNewMentions, useCheckTheme } from '~/misc/loaders/layout-loaders';
 
 // version/configs are identical for every visitor - don't hit the backend on every request
 const SHARED_LOADER_TTL_MS = 60 * 1000;
 
-export const getNewMentions = routeLoader$(async ({ cookie }): Promise<CommentType[]> => {
-  const token = getTokenFromCookie(cookie);
-  if (!token) return [];
-  return ApiService.get('/api/comments/to_me/false', token, []);
-});
-
+// Logs out (deletes the token) only when the BE definitely rejects it. Anything else -
+// a 404 page, a BE error or restart - keeps the session; ApiService can't tell these apart
+// (it returns null for every failure), hence the plain fetch.
 export const useGetUser = routeLoader$(async ({ cookie }): Promise<UserFromDB | null> => {
   const token = getTokenFromCookie(cookie);
   if (!token) return null;
-  return ApiService.get('/api/auth', token, null);
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/auth`, { headers: { 'x-auth-token': token } });
+    if (res.status === 401) {
+      cookie.delete('token', { path: '/' }); // invalid or expired token
+      return null;
+    }
+    if (!res.ok) return null;
+
+    const user: UserFromDB | null = await res.json();
+    if (!user) cookie.delete('token', { path: '/' }); // valid token of a deleted user
+    return user;
+  } catch (err) {
+    console.log('[fetch fail] for /api/auth', err);
+    return null;
+  }
 });
 
 export const useGetBackendVersion = routeLoader$(async (): Promise<{ v: string } | null> => {
@@ -36,6 +51,17 @@ export const useGetUserHsk2WordsTotal = routeLoader$(async ({ cookie }): Promise
   if (!token) return 0;
   const res = await ApiService.get('/api/words', token, []);
   return res?.length || 0;
+});
+
+export const useGetUserHsk3WordsTotal = routeLoader$(async ({ cookie }): Promise<number> => {
+  const token = getTokenFromCookie(cookie);
+  if (!token) return 0;
+  const res: { count: number } | null = await ApiService.get(
+    '/api/userhsk3words/count',
+    token,
+    null,
+  );
+  return res?.count || 0;
 });
 
 // Lightweight - just the chinese strings, used app-wide for the "is this word known"
@@ -61,16 +87,12 @@ export const useFeConfigs = routeLoader$((): Promise<Config[]> => {
   );
 });
 
-export const useCheckTheme = routeLoader$(({ cookie }): boolean => {
-  const isLightTheme = Boolean(+(cookie.get(IsLightThemeCookieName)?.value || '0'));
-  return !isLightTheme;
-});
-
 export default component$(() => {
   const isDarkTheme = useCheckTheme().value;
   const userState = useContext(userContext);
   const user = useGetUser();
   const hsk2WordsTotal = useGetUserHsk2WordsTotal();
+  const hsk3WordsTotal = useGetUserHsk3WordsTotal();
   const userWords = useGetUserWords();
   const beVersion = useGetBackendVersion();
   const feConfigs = useFeConfigs();
@@ -104,16 +126,16 @@ export default component$(() => {
   });
 
   useTask$(({ track }) => {
+    track(() => hsk3WordsTotal.value);
+    if (hsk3WordsTotal.value === undefined) return;
+    userState.hsk3WordsTotal = hsk3WordsTotal.value;
+  });
+
+  useTask$(({ track }) => {
     track(() => userWords.value);
     if (userWords.value === undefined) return;
     userState.wordsMap = Object.fromEntries(userWords.value.map((chinese) => [chinese, true]));
     userState.wordsCount = userWords.value.length;
-  });
-
-  useVisibleTask$(({ track }) => {
-    track(() => user.value);
-    if (user.value === undefined) return;
-    if (user.value === null) logout();
   });
 
   // layout loaders re-run on every client navigation - replace, don't append

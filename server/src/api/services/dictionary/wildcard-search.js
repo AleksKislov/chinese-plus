@@ -1,4 +1,5 @@
 const Dictionary = require('../../../models/Dictionary');
+const { attachSenses } = require('./translations/attach-senses');
 
 const WILDCARD_CHAR = '*';
 const MAX_PATTERN_LENGTH = 6;
@@ -37,8 +38,10 @@ async function wildcardSearch(req, res) {
   const words = await Dictionary.find({
     $or: [{ chinese: { $regex: regex } }, { tradChinese: { $regex: regex } }],
   })
-    .select('-date -edited -previous -updatedAt')
-    .limit(RESULTS_LIMIT);
+    .select('-date -edited -updatedAt -russian')
+    .limit(RESULTS_LIMIT)
+    .lean();
+  await attachSenses(words);
 
   res.json(words);
 }

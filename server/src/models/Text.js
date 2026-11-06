@@ -45,6 +45,8 @@ const TextSchema = new Schema({
   date: { type: Date, default: Date.now },
 });
 
+TextSchema.index({ title: 1, isApproved: 1 }); // same-title count in get-by-id
+
 module.exports = Text = mongoose.model('text', TextSchema);
 
 // textCategories: [

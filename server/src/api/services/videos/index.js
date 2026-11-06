@@ -16,6 +16,7 @@ const { getAllVideoLessons } = require('./get-all-video-lessons');
 const { getVideoLessonById } = require('./get-video-lesson-by-id');
 const { likeVideoLesson } = require('./like-phonetics-video');
 const { deleteVideo } = require('./delete-video');
+const { setVideoLessonRutube } = require('./set-video-lesson-rutube');
 
 module.exports = {
   getVideosNum: apiDecorator(getVideosNum),
@@ -34,4 +35,5 @@ module.exports = {
   getAllVideoLessons: apiDecorator(getAllVideoLessons),
   getVideoLessonById: apiDecorator(getVideoLessonById),
   likeVideoLesson: apiDecorator(likeVideoLesson),
+  setVideoLessonRutube: apiDecorator(setVideoLessonRutube),
 };

@@ -41,4 +41,9 @@ setTimeout(async () => {
   logger.info({ heapUsedMb: toMb(heapUsed), rssMb: toMb(rss) }, 'Dictionary loaded into memory');
 }, 100);
 
+// a word added to the dictionary after start (admin), so texts get segmented with it
+segmenter.addWord = (word) => {
+  HANZI_DICT[word] = 1;
+};
+
 module.exports = segmenter;

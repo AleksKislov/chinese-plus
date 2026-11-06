@@ -86,6 +86,7 @@ export default component$(() => {
     readDailyGoal,
     readTodayNum,
     hsk2WordsTotal,
+    hsk3WordsTotal,
     wordsCount,
     role,
     bio,
@@ -135,6 +136,7 @@ export default component$(() => {
             finishedTextsTotal={finishedTexts.length}
             userWordsTotal={wordsCount}
             hsk2Total={hsk2WordsTotal}
+            hsk3Total={hsk3WordsTotal}
           />
         </div>
 

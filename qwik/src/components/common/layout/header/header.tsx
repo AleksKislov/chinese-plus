@@ -3,7 +3,7 @@ import { userContext } from '~/root';
 import { Link } from '@builder.io/qwik-city';
 import { MenuItem, type MenuItemProps } from './menu-item';
 import { collapsedMenuSvg, enterSvg, logoSvg } from '../../media/svg';
-import { getNewMentions } from '~/routes/layout';
+import { getNewMentions } from '~/misc/loaders/layout-loaders';
 import { AvatarImg } from '../../media/avatar-img';
 import MenuLink from './menu-link';
 import { MenuItemNew } from './menu-item-new';
@@ -18,6 +18,7 @@ export default component$(() => {
   const isMobile = useSignal(false);
   const isDrawerOpen = useSignal(false);
   const userHskWordsTotal = userState.hsk2WordsTotal;
+  const userHsk3WordsTotal = userState.hsk3WordsTotal;
   const userWordsTotal = userState.wordsCount;
 
   useVisibleTask$(() => {
@@ -93,7 +94,7 @@ export default component$(() => {
                   <MenuItemNew name={watch.name} links={watch.links} />
                   <MenuLink href="/dictionary" text="Словарь" />
                   <MenuLink href="/tutor/" text="AI-учитель" />
-                  <MenuItemNew name={blog.name} links={blog.links} />
+                  <MenuLink href="/read/blog/" text="Блог" />
                   {/* <MenuLink href="/heroes" text="Герои клуба" /> */}
                   {/* <MenuLink href="/donate" text="Донат и цели" /> */}
                   <ThemeChanger />
@@ -133,7 +134,7 @@ export default component$(() => {
 
                 <MenuLink href="/tutor/" text="AI-учитель" />
                 {/* <MenuItem name={ourClub.name} links={ourClub.links} /> */}
-                <MenuItem name={blog.name} links={blog.links} />
+                <MenuLink href="/read/blog/" text="Блог" />
 
                 <ThemeChanger />
               </ul>
@@ -175,7 +176,11 @@ export default component$(() => {
                 class="dropdown-content z-[3] menu p-2 shadow bg-base-200 rounded-box w-64 text-base-content"
               >
                 {userState.name ? (
-                  <AuthMenu hskWordsTotal={userHskWordsTotal} wordsTotal={userWordsTotal} />
+                  <AuthMenu
+                    hskWordsTotal={userHskWordsTotal}
+                    hsk3WordsTotal={userHsk3WordsTotal}
+                    wordsTotal={userWordsTotal}
+                  />
                 ) : (
                   unAuthMenu
                 )}
@@ -232,6 +237,14 @@ export const startChars: MenuItemProps = {
       href: '/watch/characters-lessons',
       text: 'Уроки иероглифики',
     },
+    {
+      href: '/names/',
+      text: 'Имя на китайском',
+    },
+    {
+      href: '/propisi/',
+      text: 'Прописи иероглифов',
+    },
   ],
 };
 
@@ -284,20 +297,6 @@ export const read: MenuItemProps = {
     },
     {
       href: '/read/unapproved-texts',
-      text: 'На проверке',
-    },
-  ],
-};
-
-export const blog: MenuItemProps = {
-  name: 'Блог',
-  links: [
-    {
-      href: '/read/blog',
-      text: 'Все посты',
-    },
-    {
-      href: '/read/unapproved-blog',
       text: 'На проверке',
     },
   ],

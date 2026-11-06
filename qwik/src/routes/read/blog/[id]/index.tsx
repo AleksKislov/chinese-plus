@@ -15,6 +15,7 @@ import { PageTitle } from '~/components/common/layout/title';
 import { BlogPostCard } from '~/components/read/blog-post-card';
 import { BlogContent } from '~/components/read/blog-content';
 import { CommentsFullBlock } from '~/components/common/comments/comments-full-block';
+import { SubscribeCta } from '~/components/common/media/subscribe-cta';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
 import {
@@ -133,6 +134,8 @@ export default component$(() => {
           isApproved={Boolean(isApproved)}
         />
 
+        <SubscribeCta />
+
         <CommentsFullBlock
           contentId={postId}
           where={WHERE.blog}
@@ -150,6 +153,7 @@ export const head: DocumentHead = ({ resolveValue }) => {
   const postInfo = resolveValue(useGetBlogPost);
   const title = `${postInfo.title} | Блог Chinese+`;
   const description = getPreviewText(postInfo.content) || postInfo.title;
+  const coverImage = getCoverImage(postInfo.content);
   const url =
     CONST_URLS.siteUrl +
     getContentPath(WHERE.blog, postInfo._id, false, undefined, undefined, postInfo.title);
@@ -158,11 +162,14 @@ export const head: DocumentHead = ({ resolveValue }) => {
     title,
     meta: [
       { name: 'description', content: description },
+      ...(postInfo.isApproved ? [] : [{ name: 'robots', content: 'noindex, follow' }]),
       { property: 'og:title', content: title },
       { property: 'og:description', content: description },
       { property: 'og:type', content: 'article' },
       { property: 'og:url', content: url },
-      { property: 'og:image', content: getCoverImage(postInfo.content) },
+      // no cover -> no tag, so RouterHead adds the default image (an empty og:image made
+      // VK reject posts with a link preview: "link_photo_sizing_rule. No photo given")
+      ...(coverImage ? [{ property: 'og:image', content: coverImage }] : []),
     ],
   };
 };

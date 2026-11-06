@@ -61,6 +61,7 @@ app.use('/api/lexicon', require('./routes/api/lexicon'));
 app.use('/api/newhskwords', require('./routes/api/newhskwords'));
 app.use('/api/words', require('./routes/api/words'));
 app.use('/api/userwords', require('./routes/api/userwords'));
+app.use('/api/userhsk3words', require('./routes/api/userhsk3words'));
 app.use('/api/dictionary', require('./routes/api/dictionary'));
 app.use('/api/comments', require('./routes/api/comments'));
 app.use('/api/texts', require('./routes/api/texts'));
@@ -77,6 +78,8 @@ app.use('/api/grammar', require('./routes/api/grammar'));
 app.use('/api/hsk-exams', require('./routes/api/hsk-exams'));
 app.use('/api/ru-dictionary', require('./routes/api/ru-dictionary'));
 app.use('/api/tutor', require('./routes/api/tutor'));
+app.use('/api/names', require('./routes/api/names'));
+app.use('/api/writing-sheets', require('./routes/api/writing-sheets'));
 
 // glcoud services routes
 app.use('/gcloud/youtube', require('./routes/gcloud/youtube'));

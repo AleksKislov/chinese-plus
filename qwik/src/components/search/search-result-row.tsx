@@ -1,19 +1,21 @@
 import { component$, type Signal } from '@builder.io/qwik';
-import { parseRussian } from '~/misc/helpers/translation';
+import { translationHtml } from '~/misc/helpers/translation';
 import { moreInfoSvg } from '../common/media/svg';
 import { moreInfoModalId } from '../common/tooltips/word-tooltip';
 import { HideBtnsEnum } from '../hsk/hide-buttons';
 import { Link } from '@builder.io/qwik-city';
 import { OwnWordBtn } from '../common/tooltips/own-word-btn';
+import { HskLevelBadge } from '../hsk/hsk-level-badge';
 
 type SearchResultRowType = {
   word: string | DictWord;
   hideBtnsSig: Signal<string[]>;
   currentWord: Signal<DictWord | undefined>;
+  hskLevel?: string;
 };
 
 export const SearchResultRow = component$(
-  ({ word, hideBtnsSig, currentWord }: SearchResultRowType) => {
+  ({ word, hideBtnsSig, currentWord, hskLevel }: SearchResultRowType) => {
     const chinese = typeof word === 'string' ? word : word.chinese;
     const tradChinese = typeof word === 'string' ? undefined : word.tradChinese;
     const showTrad = tradChinese && tradChinese !== chinese;
@@ -27,6 +29,7 @@ export const SearchResultRow = component$(
                 <h2 class="w-24">{chinese}</h2>
                 {showTrad && <div class="text-sm opacity-60">{tradChinese}</div>}
               </Link>
+              {hskLevel && <HskLevelBadge level={hskLevel} />}
             </td>
           )}
           {!hideBtnsSig.value.includes(HideBtnsEnum.py) && (
@@ -40,10 +43,9 @@ export const SearchResultRow = component$(
             <td>
               <div
                 style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}
-                dangerouslySetInnerHTML={parseRussian(
-                  typeof word === 'string' ? 'нет перевода' : word.russian,
-                  false,
-                )}
+                dangerouslySetInnerHTML={
+                  typeof word === 'string' ? 'нет перевода' : translationHtml(word)
+                }
               ></div>
             </td>
           )}

@@ -6,9 +6,9 @@ import { editWordModalId } from './word-tooltip';
 
 export const EditWordBtn = component$(() => {
   const userState = useContext(userContext);
-  const { isAdmin } = userState;
+  const { isAdmin, isModerator } = userState;
 
-  if (!isAdmin) return null;
+  if (!isAdmin && !isModerator) return null;
 
   return (
     <div class="tooltip tooltip-info tooltip-bottom" data-tip={'Редактировать'}>

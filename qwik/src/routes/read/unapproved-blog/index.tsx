@@ -61,4 +61,5 @@ export default component$(() => {
 
 export const head: DocumentHead = {
   title: 'Chinese+ Посты на проверке',
+  meta: [{ name: 'robots', content: 'noindex, follow' }],
 };

@@ -10,9 +10,14 @@ import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 import { getWordsSeo, wordsHead } from '~/components/hsk/words-seo';
 import { NewHskTable } from '~/components/hsk/new-hsk-table';
 import { type DocumentHead } from '@builder.io/qwik-city';
+import { Alerts } from '~/components/common/alerts/alerts';
+import { useGetUserHsk3WordIds } from '~/misc/loaders/user-hsk3-loaders';
+
+export { useGetUserHsk3WordIds } from '~/misc/loaders/user-hsk3-loaders';
 
 export default component$(() => {
   const hskWords = useSignal<NewHskWordType[]>([]);
+  const userHskWordIds = useGetUserHsk3WordIds();
 
   const seo = getWordsSeo({ version: 'new', page: 'search' });
 
@@ -21,6 +26,8 @@ export default component$(() => {
       <Breadcrumbs items={seo.crumbs} />
       <PageTitle txt={seo.h1} />
       <FlexRow>
+        <Alerts />
+
         <Sidebar>
           <div class="card bg-primary text-primary-content">
             <div class="card-body">
@@ -42,7 +49,10 @@ export default component$(() => {
         </Sidebar>
 
         <MainContent>
-          <NewHskTable hskWords={hskWords?.value || []} />
+          <NewHskTable
+            hskWords={hskWords?.value || []}
+            userHskWordIds={userHskWordIds.value || []}
+          />
         </MainContent>
       </FlexRow>
     </>

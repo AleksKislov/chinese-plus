@@ -9,6 +9,13 @@ import { type HskExamListItem } from '~/components/hsk/exams/types';
 import { type HskVersion, examsPath } from '~/components/hsk/exams/levels';
 import { WORD_LEVELS, type WordsPage, wordsPageUrl } from '~/components/hsk/words-seo';
 import { grammarLevelUrl, grammarTopicUrl } from '~/components/grammar/types';
+import { type NameListItem, nameUrl, namesHubUrl } from '~/components/names/types';
+import {
+  type HskSheetVersion,
+  HSK_SHEET_LEVELS,
+  hskSheetPath,
+  propisiUrl,
+} from '~/components/propisi/types';
 
 type GrammarSlug = { slug: string; level: string; updatedAt?: string };
 
@@ -25,6 +32,7 @@ const STATIC_PATHS = [
   '/read/books',
   '/read/blog',
   '/dictionary',
+  '/segment',
   '/watch/videos',
   '/watch/phonetics-lessons',
   '/watch/characters-lessons',
@@ -144,6 +152,7 @@ export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => 
     blogPosts,
     hskExams,
     grammarTopics,
+    names,
   ] = await Promise.all([
     ApiService.get('/api/texts/', undefined, { texts: [] }) as Promise<{
       texts: ContentListItem[];
@@ -160,6 +169,7 @@ export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => 
     // Requested without a token, so the backend returns approved exams only.
     ApiService.get('/api/hsk-exams', undefined, []) as Promise<HskExamListItem[]>,
     ApiService.get('/api/grammar/slugs', undefined, []) as Promise<GrammarSlug[]>,
+    ApiService.get('/api/names', undefined, []) as Promise<NameListItem[]>,
   ]);
 
   const urls: SitemapUrl[] = [
@@ -182,6 +192,14 @@ export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => 
       loc: `${CONST_URLS.siteUrl}${grammarTopicUrl(t.slug)}`,
       lastmod: t.updatedAt?.slice(0, 10),
     })),
+    { loc: `${CONST_URLS.siteUrl}${namesHubUrl}` },
+    ...names.map((n) => ({ loc: `${CONST_URLS.siteUrl}${nameUrl(n.slug)}` })),
+    { loc: `${CONST_URLS.siteUrl}${propisiUrl}` },
+    ...(Object.keys(HSK_SHEET_LEVELS) as HskSheetVersion[]).flatMap((v) =>
+      HSK_SHEET_LEVELS[v].map((level) => ({
+        loc: `${CONST_URLS.siteUrl}${hskSheetPath(v, level)}`,
+      })),
+    ),
   ];
 
   headers.set('Content-Type', 'application/xml; charset=utf-8');
