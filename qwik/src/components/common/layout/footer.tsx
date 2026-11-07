@@ -10,6 +10,9 @@ export const Footer = component$(({ beVersion }: { beVersion: string }) => {
         <Link prefetch="js" class="link link-hover" href="/contacts">
           Контакты
         </Link>
+        <Link prefetch="js" class="link link-hover ml-4" href="/extension">
+          Расширение
+        </Link>
 
         {/* <Link class="link link-hover" href="/donate">
           Донат и цели

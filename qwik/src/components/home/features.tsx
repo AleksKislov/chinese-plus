@@ -52,6 +52,7 @@ export const featuresArr: Feature[] = [
       { href: '/read/books', text: 'Книги' },
       { href: '/watch/videos', text: 'Видео с субтитрами' },
       { href: '/segment', text: 'Сегментатор текста' },
+      { href: '/extension', text: 'Расширение для браузера' },
     ],
   },
   {

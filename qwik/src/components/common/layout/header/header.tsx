@@ -88,6 +88,7 @@ export default component$(() => {
                         <MenuItemNew name={'Тексты'} links={read.links} />
                         <MenuLink href={'/read/books'} text={'Книги'} />
                         <MenuLink href={'/segment'} text={'Сегментатор'} />
+                        <MenuLink href={'/extension'} text={'Расширение для браузера'} />
                       </ul>
                     </details>
                   </li>
@@ -126,6 +127,7 @@ export default component$(() => {
                   <MenuItemNew name={'Тексты'} links={read.links} />
                   <MenuLink href={'/read/books'} text={'Книги'} />
                   <MenuLink href={'/segment'} text={'Сегментатор'} />
+                  <MenuLink href={'/extension'} text={'Расширение для браузера'} />
                 </MenuDropdownGroup>
 
                 <MenuItem name={watch.name} links={watch.links} />

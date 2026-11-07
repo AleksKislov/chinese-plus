@@ -33,6 +33,8 @@ const STATIC_PATHS = [
   '/read/blog',
   '/dictionary',
   '/segment',
+  '/extension',
+  '/extension/privacy',
   '/watch/videos',
   '/watch/phonetics-lessons',
   '/watch/characters-lessons',
