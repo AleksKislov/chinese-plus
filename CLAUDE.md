@@ -20,6 +20,8 @@ browser-side request works locally and fails only in production.
 ## Feature docs
 
 - AI tutor (`/tutor/`, `server/src/api/services/tutor/`): read `docs/ai-tutor.md` before changing it.
+- Browser extension (`extension/`, dictionary from `server/scripts/export-extension-dictionary.js`):
+  read `extension/README.md`.
 
 ## Production setup
 

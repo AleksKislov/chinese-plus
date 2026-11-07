@@ -1,0 +1,5 @@
+/* the word the popup is shown for (CSS Custom Highlight API, set in content.js) */
+::highlight(chineseplus-word) {
+  background-color: #3abff8;
+  color: #002b3d;
+}

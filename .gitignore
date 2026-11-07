@@ -3,3 +3,6 @@ monitoring/.env
 .claude/
 audio/
 books/
+# browser extension: generated dictionary and packages
+extension/dict/
+extension/dist/

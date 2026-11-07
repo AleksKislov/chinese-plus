@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ChinesePlus</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <img src="icons/icon-32.png" width="24" height="24" alt="" />
+      <span class="title">ChinesePlus</span>
+    </header>
+
+    <label class="switch">
+      <input type="checkbox" id="enabled" />
+      <span>Показывать перевод</span>
+    </label>
+
+    <label class="switch sub">
+      <input type="checkbox" id="showParts" />
+      <span>Показывать слова внутри слова <small>(中国人 → 中国, 中)</small></span>
+    </label>
+
+    <div class="theme" role="radiogroup" aria-label="Тема">
+      <span>Тема:</span>
+      <label><input type="radio" name="theme" value="auto" /> Авто</label>
+      <label><input type="radio" name="theme" value="light" /> Светлая</label>
+      <label><input type="radio" name="theme" value="dark" /> Тёмная</label>
+    </div>
+
+    <p class="hint">
+      Наведите курсор на китайское слово (на телефоне — нажмите на него), чтобы увидеть
+      пиньинь и перевод. Словарь работает без интернета.
+    </p>
+    <p class="hint" id="shortcut-hint" hidden></p>
+
+    <a class="btn" href="https://www.chineseplus.club/dictionary?utm_source=browser_extension" target="_blank" rel="noopener">
+      Словарь на сайте ↗
+    </a>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
