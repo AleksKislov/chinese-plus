@@ -20,7 +20,6 @@ const TUTOR = {
 const HSK_LEVELS = [1, 2, 3, 4, 5, 6];
 
 // MiniMax system voices a user can choose; the client only ever sends the key.
-// Check / change ids with ~/Desktop/mm-test.sh voices. id null: MINIMAX_TTS_VOICE.
 const TTS_VOICES = {
   teacher: { id: null, label: 'Учитель Ван (по умолчанию)' },
   girl: { id: 'female-shaonv', label: 'Девушка' },

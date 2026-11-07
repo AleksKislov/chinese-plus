@@ -1,36 +1,40 @@
 # AI tutor (王老师)
 
-Chat with an AI Chinese teacher at `/tutor/`. Logged-in users only (logged-out visitors see a
-short description with login / register links).
+Chat with an AI Chinese teacher at `/tutor/`. **For now admins only**: every `/api/tutor` endpoint
+checks the role (`adminOnly` in `routes/api/tutor.js`, 403 for others), the page loader redirects
+everyone else to `/`, and the "AI-учитель" menu links show only to admins. To open it to all
+logged-in users, remove those three checks (the page still has its logged-out view: a short
+description with login / register links).
 
-| Stage | What | Status |
-|---|---|---|
-| 1 | Text chat: DeepSeek via SiliconFlow | done |
-| 2 | TTS for the tutor's Chinese sentences: MiniMax | done |
-| 3 | Speech-to-text for the user | planned: OpenAI `gpt-4o-mini-transcribe` (SiliconFlow intl has no STT; it also handles Russian mixed into Chinese) |
+| Stage | What                                           | Status                                                                                                             |
+| ----- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| 1     | Text chat: DeepSeek via SiliconFlow            | done                                                                                                               |
+| 2     | TTS for the tutor's Chinese sentences: MiniMax | done                                                                                                               |
+| 3     | Speech-to-text for the user                    | planned: OpenAI `gpt-4o-mini-transcribe` (SiliconFlow intl has no STT; it also handles Russian mixed into Chinese) |
 
 ## Services and env (`server/config/.env.dev` / `.env.prod`)
 
-| Env | Default | Notes |
-|---|---|---|
-| `SILICONFLOW_API_KEY` | — | required, chat |
-| `SILICONFLOW_API_URL` | `https://api.siliconflow.com/v1` | |
-| `SILICONFLOW_CHAT_MODEL` | `deepseek-ai/DeepSeek-V4.1-Flash` | check ids: `GET /v1/models` |
-| `MINIMAX_API_KEY` | — | required, TTS |
-| `MINIMAX_API_URL` | `https://api.minimax.io/v1` | |
-| `MINIMAX_TTS_MODEL` | `speech-2.8-turbo` | or `speech-2.8-hd` |
-| `MINIMAX_TTS_VOICE` | `Chinese (Mandarin)_Lyrical_Voice` | the "teacher" voice (default choice) |
-| `MINIMAX_TTS_SPEED` | `0.9` | only when no speed is given; users pick novice / normal / advanced |
-| `TUTOR_USER_DAILY_LIMIT` | 100 | messages per user per day |
-| `TUTOR_USER_DAILY_TTS` | 200 | new audio clips per user per day (existing clips are free) |
-| `TUTOR_GLOBAL_DAILY_LIMIT` | 5000 | all users, per process: budget guard |
-| `TUTOR_PRICE_INPUT_PER_M` / `_OUTPUT_PER_M` / `_CACHED_PER_M` | 0.15 / 0.6 / = input | USD per 1M tokens, for cost estimates |
-| `TUTOR_PRICE_TTS_PER_M_CHARS` | 60 (100 if model ends with `-hd`) | USD per 1M TTS characters (MiniMax speech-2.8) |
-| `METRICS_PORT` | 9464 | Prometheus metrics |
+| Env                                                           | Default                            | Notes                                                              |
+| ------------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------ |
+| `SILICONFLOW_API_KEY`                                         | —                                  | required, chat                                                     |
+| `SILICONFLOW_API_URL`                                         | `https://api.siliconflow.com/v1`   |                                                                    |
+| `SILICONFLOW_CHAT_MODEL`                                      | `deepseek-ai/DeepSeek-V4.1-Flash`  | check ids: `GET /v1/models`                                        |
+| `MINIMAX_API_KEY`                                             | —                                  | required, TTS                                                      |
+| `MINIMAX_API_URL`                                             | `https://api.minimax.io/v1`        |                                                                    |
+| `MINIMAX_TTS_MODEL`                                           | `speech-2.8-turbo`                 | or `speech-2.8-hd`                                                 |
+| `MINIMAX_TTS_VOICE`                                           | `Chinese (Mandarin)_Lyrical_Voice` | the "teacher" voice (default choice)                               |
+| `MINIMAX_TTS_SPEED`                                           | `0.9`                              | only when no speed is given; users pick novice / normal / advanced |
+| `TUTOR_USER_DAILY_LIMIT`                                      | 100                                | messages per user per day                                          |
+| `TUTOR_USER_DAILY_TTS`                                        | 200                                | new audio clips per user per day (existing clips are free)         |
+| `TUTOR_GLOBAL_DAILY_LIMIT`                                    | 5000                               | all users, per process: budget guard                               |
+| `TUTOR_PRICE_INPUT_PER_M` / `_OUTPUT_PER_M` / `_CACHED_PER_M` | 0.15 / 0.6 / = input               | USD per 1M tokens, for cost estimates                              |
+| `TUTOR_PRICE_TTS_PER_M_CHARS`                                 | 60 (100 if model ends with `-hd`)  | USD per 1M TTS characters (MiniMax speech-2.8)                     |
+| `METRICS_PORT`                                                | 9464                               | Prometheus metrics                                                 |
 
 ## Files
 
 Backend (`server/`):
+
 - `routes/api/tutor.js`: routes, mounted at `/api/tutor` in `server.js`
 - `src/api/services/tutor/`
   - `send-message.js`: `POST /messages`, the main flow (below)
@@ -49,6 +53,7 @@ Backend (`server/`):
 - `src/metrics.js`: prom-client registry + metrics server
 
 Frontend (`qwik/src/`):
+
 - `routes/tutor/index.tsx`: the page (loaders, send flow, sticky toolbar and input, read-only mode)
 - `components/tutor/`: `tutor-message.tsx` (bubbles, avatars, welcome), `tutor-audio-btn.tsx`,
   `tutor-chats-card.tsx` (lessons + memory), `tutor-admin-chats-card.tsx`, `tutor-tips-card.tsx`
@@ -103,9 +108,9 @@ whole lesson. Typing a message without choosing = a normal chat.
 
 - `chat` "Свободный разговор": nothing extra.
 - `vocab` "Повторить мои слова": up to 50 words from «Мой словарик» (`userwords` → `Dictionary`)
-  + «Мой словарик HSK» (`words` → `Lexicon`): the 20 newest + random older ones, picked once at
-  the start and saved in `focus.words` (stable prompt → prompt cache). Chinese only, no
-  translations. The prompt asks for batches of 3-5 words with quizzes.
+  - «Мой словарик HSK» (`words` → `Lexicon`): the 20 newest + random older ones, picked once at
+    the start and saved in `focus.words` (stable prompt → prompt cache). Chinese only, no
+    translations. The prompt asks for batches of 3-5 words with quizzes.
 - `text` "Обсудить текст": 3 suggestions (`GET /api/tutor/texts?level=`): bookmarks (Закладки =
   `User.finished_texts`) first, then random approved texts of the level (HSK 1-2 → text level 1,
   3-4 → 2, 5-6 → 3), or a link to a text page. The link is never opened: only the id is taken
@@ -165,8 +170,7 @@ whole lesson. Typing a message without choosing = a normal chat.
 - Toolbar dropdown (`tutor-voice-settings.tsx`): voice select, 3 speeds, "Прослушать" sample.
 - Choices live in `server/src/api/services/tutor/consts.js`: `TTS_VOICES` (key → MiniMax id +
   Russian label; `teacher` = `MINIMAX_TTS_VOICE`) and `TTS_SPEEDS` (novice 0.75, normal 1,
-  advanced 1.2). The client only sends keys; ids never leave the server. Verify / change voice
-  ids with `~/Desktop/mm-test.sh voices`.
+  advanced 1.2). The client only sends keys; ids never leave the server.
 - Saved in `TutorProfile.tts { voice, speed }` via `PUT /api/tutor/settings`; returned by
   `GET /chats` with `ttsChoices`.
 - `POST /api/tutor/tts/sample { voice, speed }` voices the fixed `TTS_SAMPLE_TEXT` (cached like

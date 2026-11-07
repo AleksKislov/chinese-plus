@@ -38,21 +38,26 @@ import {
   ttsKey,
 } from '~/components/tutor/types';
 
-// null: not logged in
-export const useTutorOverview = routeLoader$(async ({ cookie }): Promise<TutorOverview | null> => {
-  const token = getTokenFromCookie(cookie);
-  if (!token) return null;
-  return ApiService.get('/api/tutor/chats', token, {
-    chats: [],
-    memory: '',
-    level: 1,
-    usage: { used: 0, limit: 0 },
-    isAdmin: false,
-    tts: { voice: 'teacher', speed: 'normal' },
-    listenMode: false,
-    ttsChoices: { voices: [], speeds: [] },
-  });
-});
+// for now admins only (the API refuses everyone else): others go to the home page.
+// null: not logged in (the logged-out view is kept for when the tutor opens to all)
+export const useTutorOverview = routeLoader$(
+  async ({ cookie, redirect }): Promise<TutorOverview | null> => {
+    const token = getTokenFromCookie(cookie);
+    if (!token) throw redirect(302, '/');
+    const overview: TutorOverview = await ApiService.get('/api/tutor/chats', token, {
+      chats: [],
+      memory: '',
+      level: 1,
+      usage: { used: 0, limit: 0 },
+      isAdmin: false,
+      tts: { voice: 'teacher', speed: 'normal' },
+      listenMode: false,
+      ttsChoices: { voices: [], speeds: [] },
+    });
+    if (!overview.isAdmin) throw redirect(302, '/');
+    return overview;
+  },
+);
 
 // admin: latest lessons of all users (read-only)
 export const useTutorAllChats = routeLoader$(

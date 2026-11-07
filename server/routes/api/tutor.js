@@ -15,6 +15,21 @@ const {
   setListenMode,
   getTextSuggestions,
 } = require('../../src/api/services/tutor');
+const { getUserPrivileges } = require('../../src/api/services/_misc');
+
+// for now the tutor is open to admins only (page, menu link and every endpoint)
+async function adminOnly(req, res, next) {
+  try {
+    const { isAdmin } = await getUserPrivileges(req.user.id);
+    if (!isAdmin)
+      return res.status(403).json({ msg: 'AI-учитель пока доступен только администраторам' });
+    next();
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+}
+router.use(auth, adminOnly);
 
 /**
  * @route     GET api/tutor/chats

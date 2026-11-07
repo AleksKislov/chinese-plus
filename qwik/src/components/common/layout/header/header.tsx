@@ -93,7 +93,7 @@ export default component$(() => {
                   </li>
                   <MenuItemNew name={watch.name} links={watch.links} />
                   <MenuLink href="/dictionary" text="Словарь" />
-                  <MenuLink href="/tutor/" text="AI-учитель" />
+                  {userState.isAdmin && <MenuLink href="/tutor/" text="AI-учитель" />}
                   <MenuLink href="/read/blog/" text="Блог" />
                   {/* <MenuLink href="/heroes" text="Герои клуба" /> */}
                   {/* <MenuLink href="/donate" text="Донат и цели" /> */}
@@ -132,7 +132,7 @@ export default component$(() => {
 
                 <MenuLink href="/dictionary" text="Словарь" />
 
-                <MenuLink href="/tutor/" text="AI-учитель" />
+                {userState.isAdmin && <MenuLink href="/tutor/" text="AI-учитель" />}
                 {/* <MenuItem name={ourClub.name} links={ourClub.links} /> */}
                 <MenuLink href="/read/blog/" text="Блог" />
 
