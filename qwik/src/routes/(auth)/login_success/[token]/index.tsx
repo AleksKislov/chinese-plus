@@ -4,11 +4,12 @@ import Cookies from 'js-cookie';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { PageTitle } from '~/components/common/layout/title';
 import { getTokenFromCookie } from '~/misc/actions/auth';
+import { takeLoginNext } from '~/misc/helpers/login-next';
 
 export const onGet = async ({ cookie, redirect }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
-  if (token) throw redirect(302, '/me');
-  // throw redirect(302, "/login");
+  // the page reloads itself once the token is saved: then on to the saved `next` page or /me
+  if (token) throw redirect(302, takeLoginNext(cookie));
 };
 
 export default component$(() => {

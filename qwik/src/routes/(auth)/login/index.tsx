@@ -6,23 +6,20 @@ import {
   useContext,
   useVisibleTask$,
 } from '@builder.io/qwik';
-import {
-  routeAction$,
-  type RequestEvent,
-  Link,
-  type DocumentHead,
-  useNavigate,
-} from '@builder.io/qwik-city';
+import { routeAction$, type RequestEvent, Link, type DocumentHead } from '@builder.io/qwik-city';
 import Cookies from 'js-cookie';
 import { GoogleButton } from '~/components/auth/google-btn';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { getTokenFromCookie } from '~/misc/actions/auth';
+import { rememberLoginNext, takeLoginNext } from '~/misc/helpers/login-next';
 import { ApiService } from '~/misc/actions/request';
 import { AlertColorEnum, alertsContext } from '~/root';
 
-export const onGet = async ({ cookie, redirect }: RequestEvent) => {
+export const onGet = async ({ cookie, redirect, url }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
-  if (token) throw redirect(302, '/me');
+  if (token) throw redirect(302, takeLoginNext(cookie));
+  // /login?next=<path>: back there after the login (also via /register or Google)
+  rememberLoginNext(cookie, url.searchParams.get('next'));
 };
 
 export const useLogin = routeAction$(async (params): Promise<{ token: string } | null> => {
@@ -36,7 +33,6 @@ export const useSendResetPasswordEmail = routeAction$(
 );
 
 export default component$(() => {
-  const nav = useNavigate();
   const email = useSignal('');
   const password = useSignal('');
   const login = useLogin();
@@ -56,7 +52,8 @@ export default component$(() => {
     }
 
     Cookies.set('token', res.token, { expires: 27 });
-    setTimeout(() => nav('/me'), 200);
+    // onGet sends a logged in user on: to the saved `next` page or /me
+    setTimeout(() => location.reload(), 200);
   });
 
   useVisibleTask$(({ track }) => {

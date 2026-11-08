@@ -4,12 +4,16 @@ import Cookies from 'js-cookie';
 import { GoogleButton } from '~/components/auth/google-btn';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { getTokenFromCookie } from '~/misc/actions/auth';
+import { rememberLoginNext, takeLoginNext } from '~/misc/helpers/login-next';
 import { ApiService } from '~/misc/actions/request';
 import { AlertColorEnum, alertsContext } from '~/root';
 
-export const onGet = async ({ cookie, redirect }: RequestEvent) => {
+export const onGet = async ({ cookie, redirect, url }: RequestEvent) => {
   const token = getTokenFromCookie(cookie);
-  if (token) throw redirect(302, '/me');
+  if (token) throw redirect(302, takeLoginNext(cookie));
+  // from /login the saved `next` is kept: only a new one replaces it
+  const next = url.searchParams.get('next');
+  if (next) rememberLoginNext(cookie, next);
 };
 
 export const useRegisterUser = routeAction$(async (params): Promise<{ token: string } | null> => {

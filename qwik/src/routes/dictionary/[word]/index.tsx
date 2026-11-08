@@ -10,6 +10,7 @@ import {
 import {
   type DocumentHead,
   Link,
+  type RequestEvent,
   routeLoader$,
   useLocation,
   useNavigate,
@@ -23,6 +24,9 @@ import { EditWordModal } from '~/components/common/modals/edit-word-modal';
 import { ShowHideBtn } from '~/components/common/modals/show-hide-btn';
 import { EditWordBtn } from '~/components/common/tooltips/edit-word-btn';
 import { OwnWordBtn } from '~/components/common/tooltips/own-word-btn';
+import { ADD_WORD_PARAM, OwnWordRequest } from '~/components/common/tooltips/own-word-request';
+import { getTokenFromCookie } from '~/misc/actions/auth';
+import { loginUrl } from '~/misc/helpers/login-next';
 import { editWordModalId } from '~/components/common/tooltips/word-tooltip';
 import { DictWordTranslation } from '~/components/common/translation/dict-word-translation';
 import { SearchResutlTable } from '~/components/search/search-result-table';
@@ -57,6 +61,13 @@ import {
   translationToText,
 } from '~/components/common/translation/types';
 import { type ParsedWordTranslation } from '~/components/common/translation/dict-word-translation';
+
+// ?add=1 ("add to my words" from the browser extension) needs a login first, then back here
+export const onGet = async ({ cookie, redirect, url }: RequestEvent) => {
+  if (url.searchParams.get(ADD_WORD_PARAM) === '1' && !getTokenFromCookie(cookie)) {
+    throw redirect(302, loginUrl(url.pathname + url.search));
+  }
+};
 
 export const useGetRuWord = routeLoader$(async ({ params }): Promise<RuWord | null> => {
   if (!isRussian(params.word)) return null;
@@ -290,6 +301,8 @@ export default component$(() => {
                 </Link>
               )}
             </div>
+
+            {loadTranslation.value && <OwnWordRequest words={loadTranslation.value} />}
 
             <div id={CHAR_SVG_DIV_ID} class="flex mt-3"></div>
             {sheetChars.value && (
