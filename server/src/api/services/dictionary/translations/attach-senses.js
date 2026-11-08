@@ -1,3 +1,4 @@
+const { LRUCache } = require('lru-cache');
 const DictionaryTranslation = require('../../../../models/DictionaryTranslation');
 const { pickTranslations } = require('./langs');
 
@@ -6,6 +7,27 @@ const SHORT_TRANSLATION_CHARS = 150;
 // a sense that would be cut shorter than this is left out instead (unless it is the first one)
 const MIN_CUT_CHARS = 20;
 const ELLIPSIS = '…';
+
+// cached value of a word that has no translation
+const NO_TRANSLATION = false;
+
+/**
+ * Trimmed senses by dictionary word id (as a string), for attachSenses. Text pages, tooltips and
+ * HSK tables ask for the same common words over and over; reading their full translations from
+ * `dictionarytranslations` every time costs mongo cache and ~30 ms per 300 words.
+ * Bounded by the JSON size of the values (~20M chars: tens of thousands of words, a few tens of MB
+ * of heap). The values are shared between requests: callers must not modify `word.senses`.
+ * Edits drop their word (forgetShortSenses, called by word-entry.js); scripts that write
+ * translations run in another process, so their changes show after the TTL or a backend restart.
+ */
+const shortSenses = new LRUCache({
+  maxSize: 20_000_000,
+  sizeCalculation: (senses) => (senses ? JSON.stringify(senses).length || 1 : 1),
+  ttl: 6 * 60 * 60 * 1000,
+});
+
+/** Drops the cached short translation of a word whose translation changed. */
+const forgetShortSenses = (wordId) => shortSenses.delete(String(wordId));
 
 /**
  * The translation the site shows ({ wordId, lang, senses }: russian, else a fallback language,
@@ -92,12 +114,31 @@ function trimSenses(senses, maxChars = SHORT_TRANSLATION_CHARS) {
  * @param {{ idField?: string }} fields - the field with the dictionary entry id
  */
 async function attachSenses(words, { idField = '_id' } = {}) {
-  const sensesById = await findSenses(words.map((w) => w[idField]).filter(Boolean));
+  const ids = [...new Set(words.filter((w) => w[idField]).map((w) => String(w[idField])))];
+
+  // looked up once into a local map: a big miss batch may evict entries read before it
+  const byId = new Map();
+  const missing = [];
+  for (const id of ids) {
+    const cached = shortSenses.get(id);
+    if (cached === undefined) missing.push(id);
+    else byId.set(id, cached);
+  }
+  if (missing.length) {
+    const sensesById = await findSenses(missing);
+    for (const id of missing) {
+      const senses = sensesById.get(id);
+      const short = senses ? trimSenses(senses) : NO_TRANSLATION;
+      shortSenses.set(id, short);
+      byId.set(id, short);
+    }
+  }
+
   for (const word of words) {
-    const senses = word[idField] && sensesById.get(String(word[idField]));
-    if (senses) word.senses = trimSenses(senses);
+    const senses = word[idField] && byId.get(String(word[idField]));
+    if (senses) word.senses = senses;
   }
   return words;
 }
 
-module.exports = { attachSenses, findSenses, findTranslations, trimSenses };
+module.exports = { attachSenses, findSenses, findTranslations, trimSenses, forgetShortSenses };

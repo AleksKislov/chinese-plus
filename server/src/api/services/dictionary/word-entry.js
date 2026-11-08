@@ -9,6 +9,7 @@ const { invalidateTag } = require('../../../cache');
 const { HttpError } = require('../../http-error');
 const { normalizeTranslation, toEditable } = require('./translations/editable-translation');
 const { TRANSLATION_LANGS } = require('./translations/langs');
+const { forgetShortSenses } = require('./translations/attach-senses');
 const { describeUpdate, describeCreate } = require('./word-notify');
 
 /**
@@ -90,11 +91,13 @@ async function saveTranslation(word, { examples, ...translation }) {
     { wordId: word._id, chinese: word.chinese, ...translation },
     { upsert: true },
   );
+  forgetShortSenses(word._id);
 }
 
 async function deleteTranslation(word, lang) {
   await DictionaryExample.collection.deleteMany({ wordId: word._id, lang });
   await DictionaryTranslation.collection.deleteOne({ wordId: word._id, lang });
+  forgetShortSenses(word._id);
 }
 
 const hasTranslation = (snapshot) => snapshot.senses.length > 0 || snapshot.examples.length > 0;
