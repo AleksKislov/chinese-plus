@@ -9,6 +9,7 @@
  *     {
  *       w: { "<simplified>": [[pinyin, senses], ...] },  // several entries for homographs
  *       t: { "<traditional>": ["<simplified>", ...] },   // lookup by traditional form
+ *       h: { "<simplified>": "1" | ... | "789" },        // lowest HSK 3.0 level, as on the site
  *     }
  *   A hover looks up at most 4 prefixes of the same first character, so it reads one bucket
  *   (plus the simplified word's bucket for a traditional form).
@@ -75,6 +76,24 @@ const HSK_LISTS = [
   { collection: 'hskwords', field: 'cn' }, // HSK 2021
   { collection: 'hskword2025', field: 'cn' }, // HSK 3.0
 ];
+
+const HSK3_LEVELS = ['1', '2', '3', '4', '5', '6', '789'];
+
+/** { word: its lowest HSK 3.0 level }, like src/api/services/newhskwords/get-hsk-levels.js */
+async function loadHskLevels(db) {
+  const levels = new Map();
+  const docs = await db
+    .collection('hskword2025')
+    .find({}, { projection: { cn: 1, lvl: 1 } })
+    .toArray();
+  for (const { cn, lvl } of docs) {
+    const word = (cn || '').trim();
+    if (!word || !HSK3_LEVELS.includes(lvl)) continue;
+    const current = levels.get(word);
+    if (!current || HSK3_LEVELS.indexOf(lvl) < HSK3_LEVELS.indexOf(current)) levels.set(word, lvl);
+  }
+  return levels;
+}
 
 /** Words of 2+ characters to export: jieba list + HSK words; null: all of them. */
 async function loadCommonWords(db) {
@@ -143,6 +162,7 @@ async function run() {
   // bucket -> { w: Map<word, Map<serialized entry, true>>, t: Map<trad, Set<word>> }
   const buckets = Array.from({ length: BUCKETS }, () => ({ w: new Map(), t: new Map() }));
   const commonWords = await loadCommonWords(db);
+  const hskLevels = await loadHskLevels(db);
   const isKept = (word) => !commonWords || [...word].length === 1 || commonWords.has(word);
   console.log(
     commonWords
@@ -230,6 +250,7 @@ async function run() {
 
   let words = 0;
   let trad = 0;
+  let hsk = 0;
   let totalBytes = 0;
   let largest = { n: 0, bytes: 0 };
   buckets.forEach((bucket, n) => {
@@ -240,9 +261,13 @@ async function run() {
     const t = [...bucket.t]
       .filter(([form]) => !bucket.w.has(form))
       .map(([form, simplified]) => `${JSON.stringify(form)}:${JSON.stringify([...simplified])}`);
+    const h = [...bucket.w.keys()]
+      .filter((word) => hskLevels.has(word))
+      .map((word) => `${JSON.stringify(word)}:${JSON.stringify(hskLevels.get(word))}`);
     words += w.length;
     trad += t.length;
-    const json = `{"w":{${w.join(',')}},"t":{${t.join(',')}}}`;
+    hsk += h.length;
+    const json = `{"w":{${w.join(',')}},"t":{${t.join(',')}},"h":{${h.join(',')}}}`;
     fs.writeFileSync(path.join(OUT_DIR, `${n}.json`), json);
     const bytes = Buffer.byteLength(json);
     totalBytes += bytes;
@@ -256,11 +281,12 @@ async function run() {
     minFreq: commonWords ? MIN_FREQ : null,
     words,
     trad,
+    hsk,
   };
   fs.writeFileSync(path.join(OUT_DIR, 'meta.json'), JSON.stringify(meta, null, 2));
 
   const mb = (bytes) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-  console.log({ ...stats, words, trad });
+  console.log({ ...stats, words, trad, hsk });
   console.log(
     `Written to ${OUT_DIR}: ${BUCKETS} buckets, ${mb(totalBytes)} in total, ` +
       `largest ${largest.n}.json ${(largest.bytes / 1024).toFixed(0)} KB`,

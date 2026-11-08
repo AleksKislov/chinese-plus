@@ -1,7 +1,7 @@
 const api = globalThis.browser ?? globalThis.chrome;
 
-const checkbox = document.getElementById('enabled');
-const showPartsCheckbox = document.getElementById('showParts');
+// on / off settings: checkbox id = storage key, and its value when nothing is stored yet
+const SWITCHES = { enabled: true, showParts: true, toneColors: false, requireShift: false };
 
 const themeInputs = [...document.querySelectorAll('input[name="theme"]')];
 
@@ -12,19 +12,17 @@ const applyTheme = (theme) => {
   themeInputs.forEach((input) => (input.checked = input.value === value));
 };
 
-api.storage.local.get(['enabled', 'theme', 'showParts']).then(({ enabled, theme, showParts }) => {
-  checkbox.checked = enabled !== false;
-  showPartsCheckbox.checked = showParts !== false;
-  applyTheme(theme);
+api.storage.local.get(['theme', ...Object.keys(SWITCHES)]).then((stored) => {
+  for (const [key, byDefault] of Object.entries(SWITCHES)) {
+    document.getElementById(key).checked = typeof stored[key] === 'boolean' ? stored[key] : byDefault;
+  }
+  applyTheme(stored.theme);
 });
 
-checkbox.addEventListener('change', () => {
-  api.storage.local.set({ enabled: checkbox.checked });
-});
-
-showPartsCheckbox.addEventListener('change', () => {
-  api.storage.local.set({ showParts: showPartsCheckbox.checked });
-});
+for (const key of Object.keys(SWITCHES)) {
+  const input = document.getElementById(key);
+  input.addEventListener('change', () => api.storage.local.set({ [key]: input.checked }));
+}
 
 themeInputs.forEach((input) =>
   input.addEventListener('change', () => {

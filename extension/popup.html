@@ -14,12 +14,22 @@
 
     <label class="switch">
       <input type="checkbox" id="enabled" />
-      <span>Показывать перевод</span>
+      <span>Вкл / выкл</span>
     </label>
 
     <label class="switch sub">
       <input type="checkbox" id="showParts" />
       <span>Показывать слова внутри слова <small>(中国人 → 中国, 中)</small></span>
+    </label>
+
+    <label class="switch sub">
+      <input type="checkbox" id="toneColors" />
+      <span>Цвет пиньиня по тонам <small>(<b class="t1">mā</b> <b class="t2">má</b> <b class="t3">mǎ</b> <b class="t4">mà</b>)</small></span>
+    </label>
+
+    <label class="switch sub">
+      <input type="checkbox" id="requireShift" />
+      <span>Только с зажатым Shift <small>(для мыши: наведите и нажмите Shift)</small></span>
     </label>
 
     <div class="theme" role="radiogroup" aria-label="Тема">

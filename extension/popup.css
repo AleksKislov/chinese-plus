@@ -4,6 +4,10 @@
   --muted: #6b7280;
   --info: #3abff8;
   --info-fg: #002b3d;
+  --tone1: #dc2626;
+  --tone2: #d97706;
+  --tone3: #16a34a;
+  --tone4: #2563eb;
   color-scheme: light;
 }
 
@@ -16,6 +20,10 @@
     --muted: #94a3b8;
     --info: #0ca5e9;
     --info-fg: #000000;
+    --tone1: #f87171;
+    --tone2: #fbbf24;
+    --tone3: #4ade80;
+    --tone4: #60a5fa;
     color-scheme: dark;
   }
 }
@@ -26,6 +34,10 @@
   --muted: #94a3b8;
   --info: #0ca5e9;
   --info-fg: #000000;
+  --tone1: #f87171;
+  --tone2: #fbbf24;
+  --tone3: #4ade80;
+  --tone4: #60a5fa;
   color-scheme: dark;
 }
 
@@ -88,6 +100,15 @@ header {
 .switch small {
   color: var(--muted);
 }
+
+/* tone colors example, the same as in the tooltips (content.js) */
+.switch small b {
+  font-weight: 600;
+}
+.t1 { color: var(--tone1); }
+.t2 { color: var(--tone2); }
+.t3 { color: var(--tone3); }
+.t4 { color: var(--tone4); }
 
 .switch input {
   width: 18px;

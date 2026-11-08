@@ -2,9 +2,11 @@
  * Dictionary lookups for the content script, from the files in dict/ (written by
  * server/scripts/export-extension-dictionary.js): no network, works offline.
  *
- * Message { type: 'lookup', text } -> { matches: [{ len, word, trad?, entries: [[pinyin, senses]] }] }
+ * Message { type: 'lookup', text }
+ *   -> { matches: [{ len, word, trad?, hsk?, entries: [[pinyin, senses]] }] }
  *   every dictionary word that is a prefix of `text`, longest first; `word` is the simplified
- *   form (the site's dictionary URL), `trad` the traditional form when that one was matched.
+ *   form (the site's dictionary URL), `trad` the traditional form when that one was matched,
+ *   `hsk` the word's lowest HSK 3.0 level ('1'..'6', '789').
  */
 const api = globalThis.browser ?? globalThis.chrome;
 
@@ -43,16 +45,20 @@ async function getBucket(word) {
   return bucket;
 }
 
+// `h` (HSK 3.0 levels) is missing in dictionaries exported before it was added
+const hskOf = (bucket, word) => bucket.h?.[word];
+
 /** Entries of `key` as a simplified word, else through its traditional form. */
 async function findWord(key) {
   const bucket = await getBucket(key);
-  if (bucket.w[key]) return [{ word: key, entries: bucket.w[key] }];
+  if (bucket.w[key]) return [{ word: key, hsk: hskOf(bucket, key), entries: bucket.w[key] }];
   const simplified = bucket.t[key];
   if (!simplified) return [];
   const found = await Promise.all(
     simplified.map(async (word) => {
-      const entries = (await getBucket(word)).w[word];
-      return entries ? { word, trad: key, entries } : null;
+      const wordBucket = await getBucket(word);
+      const entries = wordBucket.w[word];
+      return entries ? { word, trad: key, hsk: hskOf(wordBucket, word), entries } : null;
     }),
   );
   return found.filter(Boolean);

@@ -21,11 +21,19 @@
   // a tap on these keeps its usual meaning (follow the link, press the button, edit the text)
   const INTERACTIVE_SELECTOR =
     'a[href], button, input, textarea, select, option, label, summary, [contenteditable=""], [contenteditable="true"], [role="button"], [role="link"]';
+  // Shift pressed while typing here is not a request for a lookup
+  const EDITABLE_SELECTOR = 'input, textarea, select, [contenteditable=""], [contenteditable="true"]';
+  const COPIED_MS = 1200;
 
+  // settings, changed in popup.html
   let enabled = true;
-  let theme = 'auto'; // 'auto' (as the system) | 'light' | 'dark', set in popup.html
-  let showParts = true; // also show the shorter words inside the hovered one, set in popup.html
+  let theme = 'auto'; // 'auto' (as the system) | 'light' | 'dark'
+  let showParts = true; // also show the shorter words inside the hovered one
+  let toneColors = false; // pinyin syllables colored by tone
+  let requireShift = false; // mouse: new words only while Shift is held
   let lastPointerType = 'mouse';
+  let lastMouse = null; // last mouse position, to look up when Shift is pressed without moving
+  let currentRange = null; // the highlighted word
   let lastHit = null; // { node, offset } of the character the popup is shown for
   // last pointer position over that word: moving from there toward the popup keeps the popup
   let aim = null;
@@ -149,24 +157,39 @@
   // ---------- popup ----------
 
   let host = null;
+  let shadow = null;
   let popup = null;
   let card = null;
+  let tip = null; // hover hint of the buttons, outside the card: its scrolling doesn't cut it
+  let tipTarget = null;
 
   function ensurePopup() {
     if (host?.isConnected) return;
     host = document.createElement('chineseplus-popup');
     host.style.cssText =
       'all: initial; position: absolute; top: 0; left: 0; width: 0; height: 0; z-index: 2147483647;';
-    const shadow = host.attachShadow({ mode: 'closed' });
+    shadow = host.attachShadow({ mode: 'closed' });
     const style = document.createElement('style');
     style.textContent = POPUP_CSS;
     popup = document.createElement('div');
     popup.className = 'popup';
     popup.hidden = true;
+    popup.dataset.theme = theme;
     card = document.createElement('div');
     card.className = 'card';
-    card.dataset.theme = theme;
-    popup.append(card);
+    tip = document.createElement('div');
+    tip.className = 'tip';
+    tip.hidden = true;
+    tip.setAttribute('aria-hidden', 'true'); // the buttons have aria-label
+    popup.append(card, tip);
+    // mouse only: on touch screens a tap opens the link or presses the button at once
+    card.addEventListener('pointerover', (e) => {
+      const target = e.pointerType === 'mouse' && e.target.closest?.('[data-tip]');
+      if (target) showTip(target);
+      else hideTip();
+    });
+    card.addEventListener('pointerleave', hideTip);
+    card.addEventListener('scroll', hideTip, { passive: true });
     shadow.append(style, popup);
     document.documentElement.append(host);
   }
@@ -208,7 +231,7 @@
       if (node.k) line.append(el('span', 'strong', node.m), ' ');
       else line.append(`${node.m}) `);
     }
-    if (node.p) line.append(el('span', 'pinyin', node.p), ' ');
+    if (node.p) line.append(pinyinEl('span', 'pinyin', node.p), ' ');
     if (node.l) line.append(el('span', 'label', node.l.join(' ')), ' ');
     if (node.c) node.c.forEach((inline) => renderInline(line, inline));
     else if (node.t) line.append(node.t);
@@ -221,28 +244,251 @@
     return wrap;
   }
 
-  function renderMatch({ word, trad, entries }) {
+  // ---------- pinyin tone colors ----------
+
+  // one syllable: initial, vowels, final n / ng and erhua r unless the next syllable starts with
+  // it (zhōngguó -> zhōng guó, dàngé -> dàn gé, yīdiǎnr -> yī diǎnr); dictionary pinyin is
+  // written without spaces
+  const SYLLABLE_RE =
+    /(?:zh|ch|sh|[bpmfdtnlgkhjqxrzcsyw])?[aeiouüvāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]+(?:ng(?![aeiouüvāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ])|n(?![aeiouüvāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]))?(?:r(?![aeiouüvāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]))?/giu;
+  const TONE_MARKS = { '̄': 1, '́': 2, '̌': 3, '̀': 4 };
+
+  const toneOf = (syllable) => {
+    for (const ch of syllable.normalize('NFD')) if (TONE_MARKS[ch]) return TONE_MARKS[ch];
+    return 5; // neutral tone: no mark
+  };
+
+  /** Pinyin as text, or as one span per syllable colored by its tone (the setting). */
+  function pinyinEl(tag, className, pinyin) {
+    const node = el(tag, className);
+    if (!toneColors) {
+      node.textContent = pinyin;
+      return node;
+    }
+    let last = 0;
+    for (const match of pinyin.matchAll(SYLLABLE_RE)) {
+      if (match.index > last) node.append(pinyin.slice(last, match.index));
+      node.append(el('span', `tone${toneOf(match[0])}`, match[0]));
+      last = match.index + match[0].length;
+    }
+    if (last < pinyin.length) node.append(pinyin.slice(last));
+    return node;
+  }
+
+  // ---------- audio: the browser's own speech synthesis (no download, works offline) ----------
+
+  const speech = globalThis.speechSynthesis;
+  let voice = null; // best chinese voice, null: none known (yet)
+  let voicesLoaded = false;
+
+  // mandarin first (zh-CN), then other chinese voices except cantonese ones (zh-HK);
+  // a voice inside the system before an online one
+  const voiceRank = (v) => {
+    const lang = v.lang.replace('_', '-').toLowerCase();
+    const langRank = /hk|yue/.test(lang) ? 3 : lang === 'zh-cn' || lang.startsWith('cmn') ? 0 : lang === 'zh-tw' ? 2 : 1;
+    return langRank * 2 + (v.localService ? 0 : 1);
+  };
+
+  function pickVoice() {
+    const voices = speech?.getVoices() || [];
+    voicesLoaded = voices.length > 0;
+    const chinese = voices.filter((v) => /^(zh|cmn|yue)/i.test(v.lang));
+    voice = chinese.sort((a, b) => voiceRank(a) - voiceRank(b))[0] || null;
+  }
+  if (speech) {
+    pickVoice();
+    speech.addEventListener?.('voiceschanged', pickVoice);
+  }
+
+  // the voice list comes asynchronously: until then, offer the button and let the browser choose
+  const canSpeak = () => Boolean(speech) && (Boolean(voice) || !voicesLoaded);
+
+  function speak(text) {
+    speech.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = voice?.lang || 'zh-CN';
+    if (voice) utterance.voice = voice;
+    utterance.rate = 0.8;
+    speech.speak(utterance);
+  }
+
+  // ---------- copy ----------
+
+  const inlineText = (inline) => (typeof inline === 'string' ? inline : inline[1]);
+
+  function senseLines(node, depth) {
+    let line = '';
+    if (node.m) line += node.k ? `${node.m} ` : `${node.m}) `;
+    if (node.p) line += `${node.p} `;
+    if (node.l) line += `${node.l.join(' ')} `;
+    line += node.c ? node.c.map(inlineText).join('') : node.t || '';
+    const lines = [`${'  '.repeat(depth)}${line.trim()}`];
+    node.s?.forEach((child) => lines.push(...senseLines(child, depth + 1)));
+    return lines;
+  }
+
+  /** The entry as plain text: word, pinyin, meanings (one per line). */
+  function entryText({ word, trad, entries }) {
+    const lines = [trad ? `${word} (${trad})` : word];
+    for (const [pinyin, senses] of entries) {
+      if (pinyin) lines.push(pinyin);
+      senses.forEach((sense) => lines.push(...senseLines(sense, 0)));
+    }
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // http pages, or the page's permissions policy forbids it: the old way
+    }
+    const area = el('textarea');
+    area.value = text;
+    area.style.cssText = 'position: fixed; top: 0; left: 0; opacity: 0;';
+    shadow.append(area);
+    area.select();
+    let copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } catch {
+      // not allowed here
+    }
+    area.remove();
+    return copied;
+  }
+
+  // ---------- popup content ----------
+
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  // lucide icons (ISC license), as path data
+  const ICONS = {
+    speaker: ['M11 5 6 9H2v6h4l5 4V5z', 'M15.5 8.5a5 5 0 0 1 0 7', 'M19 5a10 10 0 0 1 0 14'],
+    copy: [
+      'M10 8h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z',
+      'M4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2',
+    ],
+    entry: [
+      'M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z',
+      'M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2',
+      'M8 11h8',
+      'M8 16h5',
+    ],
+    check: ['M20 6 9 17l-5-5'],
+    plus: ['M12 5v14', 'M5 12h14'],
+  };
+
+  function icon(name) {
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+    for (const d of ICONS[name]) {
+      const path = document.createElementNS(SVG_NS, 'path');
+      path.setAttribute('d', d);
+      svg.append(path);
+    }
+    return svg;
+  }
+
+  // instant hover hint (like the site's daisyUI tooltips); a native `title` shows late
+  function setTip(node, text) {
+    node.dataset.tip = text;
+    node.setAttribute('aria-label', text);
+    if (node === tipTarget) showTip(node); // e.g. "Скопировано" while the pointer is on it
+  }
+
+  /** The hint under `target`, centered on it but kept within the card's width. */
+  function showTip(target) {
+    tipTarget = target;
+    tip.textContent = target.dataset.tip;
+    tip.hidden = false;
+    const popupRect = popup.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const width = tip.offsetWidth;
+    const inset = 6;
+    const center = targetRect.left + targetRect.width / 2 - popupRect.left;
+    const left = Math.max(
+      cardRect.left - popupRect.left + inset,
+      Math.min(center - width / 2, cardRect.right - popupRect.left - width - inset),
+    );
+    tip.style.left = `${left}px`;
+    tip.style.top = `${targetRect.bottom - popupRect.top + 7}px`;
+    tip.style.setProperty('--arrow-x', `${center - left}px`);
+  }
+
+  function hideTip() {
+    tipTarget = null;
+    if (tip) tip.hidden = true;
+  }
+
+  function iconButton(name, tip, onClick) {
+    const button = el('button', 'icon');
+    button.type = 'button';
+    button.append(icon(name));
+    setTip(button, tip);
+    button.addEventListener('click', onClick);
+    return button;
+  }
+
+  /** Copies on click, then shows a check mark for a moment. */
+  function copyButton(name, tip, getText) {
+    const button = iconButton(name, tip, async () => {
+      const copied = await copyText(getText());
+      button.replaceChildren(icon(copied ? 'check' : name));
+      setTip(button, copied ? 'Скопировано' : 'Не удалось скопировать');
+      setTimeout(() => {
+        button.replaceChildren(icon(name));
+        setTip(button, tip);
+      }, COPIED_MS);
+    });
+    return button;
+  }
+
+  const hskLabel = (level) => (level === '789' ? '7–9' : level);
+
+  function renderMatch(match) {
+    const { word, trad, hsk, entries } = match;
     const block = el('div', 'match');
     const head = el('div', 'head');
     head.append(el('span', 'hanzi', word));
     if (trad) head.append(el('span', 'trad', trad));
 
     const single = entries.length === 1;
-    if (single && entries[0][0]) head.append(el('span', 'head-pinyin', entries[0][0]));
+    if (single && entries[0][0]) head.append(pinyinEl('span', 'head-pinyin', entries[0][0]));
+    if (hsk) {
+      const badge = el('span', 'hsk', `HSK ${hskLabel(hsk)}`);
+      badge.title = `Слово из списка HSK 3.0, уровень ${hskLabel(hsk)}`;
+      head.append(badge);
+    }
 
-    // small "more on the site" link button under the character and pinyin
-    const link = el('a', 'btn', 'Подробнее ↗');
+    // small "more on the site" link button and tools under the character and pinyin
+    const actions = el('div', 'actions');
+    const link = el('a', 'icon text', 'Подробнее ↗');
     link.href = dictionaryUrl(word);
     link.target = '_blank';
     link.rel = 'noopener';
-    // instant hover hint (CSS, like the site's daisyUI tooltips); a native `title` shows late
-    link.dataset.tip = 'Примеры, порядок черт, добавить в свои слова';
+    setTip(link, 'Примеры, порядок черт и другое на сайте');
     link.setAttribute('aria-label', `Подробнее: ${link.dataset.tip}`);
-    block.append(head, link);
+    // the site adds it (after asking, and after a login if needed): no account in the extension
+    const add = el('a', 'icon');
+    add.href = `${dictionaryUrl(word)}&add=1`;
+    add.target = '_blank';
+    add.rel = 'noopener';
+    add.append(icon('plus'));
+    setTip(add, 'Добавить в мои слова на сайте');
+    actions.append(link, add);
+    if (canSpeak()) actions.append(iconButton('speaker', 'Произнести', () => speak(word)));
+    actions.append(
+      copyButton('copy', 'Копировать слово', () => word),
+      copyButton('entry', 'Копировать слово с переводом', () => entryText(match)),
+    );
+    block.append(head, actions);
 
     for (const [pinyin, senses] of entries) {
       const entry = el('div', 'entry');
-      if (!single && pinyin) entry.append(el('div', 'head-pinyin', pinyin));
+      if (!single && pinyin) entry.append(pinyinEl('div', 'head-pinyin', pinyin));
       const body = el('div', 'senses');
       senses.forEach((sense) => body.append(renderSense(sense)));
       entry.append(body);
@@ -253,6 +499,7 @@
 
   function render(matches) {
     ensurePopup();
+    hideTip();
     card.replaceChildren();
     const close = el('button', 'close', '✕');
     close.type = 'button';
@@ -317,6 +564,7 @@
     range.setStart(hit.node, hit.offset);
     range.setEnd(end.node, end.offset);
 
+    currentRange = range;
     setHighlight(range);
     // the shorter words inside the matched one (中国人 -> 中国, 中) only when the setting is on
     render(showParts ? matches : matches.filter((m) => m.len === matches[0].len));
@@ -328,7 +576,9 @@
     requestId++; // drops a lookup still in flight
     lastHit = null;
     aim = null;
+    currentRange = null;
     clearHighlight();
+    hideTip();
     if (popup && !popup.hidden) popup.hidden = true;
   }
 
@@ -362,10 +612,14 @@
     return inTriangle({ x, y }, aim, left, right);
   }
 
+  const overCurrentWord = (x, y) =>
+    Boolean(currentRange) &&
+    [...currentRange.getClientRects()].some((rect) => rectContains(rect, x, y));
+
   function handlePoint() {
     moveTimer = 0;
     if (!pendingPoint) return;
-    const { x, y } = pendingPoint;
+    const { x, y, shift } = pendingPoint;
     pendingPoint = null;
     clearTimeout(settleTimer);
 
@@ -373,9 +627,16 @@
       // keep the popup; if the pointer stops before reaching it, take the word under it
       settleTimer = setTimeout(() => {
         aim = null;
-        pendingPoint = { x, y };
+        pendingPoint = { x, y, shift };
         handlePoint();
       }, SETTLE_MS);
+      return;
+    }
+
+    if (requireShift && !shift) {
+      // "only with Shift": no new words, the popup stays while the pointer is on its word
+      if (overCurrentWord(x, y)) aim = { x, y };
+      else hide();
       return;
     }
 
@@ -396,10 +657,12 @@
       // reached the popup: leaving it later goes by the word under the pointer again
       aim = null;
       pendingPoint = null;
+      lastMouse = null; // Shift over the popup looks nothing up
       clearTimeout(settleTimer);
       return;
     }
-    pendingPoint = { x: e.clientX, y: e.clientY };
+    lastMouse = { x: e.clientX, y: e.clientY };
+    pendingPoint = { ...lastMouse, shift: e.shiftKey };
     if (!moveTimer) moveTimer = setTimeout(handlePoint, MOVE_THROTTLE_MS);
   }
 
@@ -425,20 +688,37 @@
   });
   document.addEventListener('pointermove', onPointerMove, { passive: true });
   document.addEventListener('click', onClick, { capture: true, passive: true });
-  document.addEventListener('keydown', (e) => e.key === 'Escape' && hide());
+  // "only with Shift": pressing it looks up the word under the resting mouse pointer
+  function onKeyDown(e) {
+    if (e.key === 'Escape') {
+      hide();
+      return;
+    }
+    if (e.key !== 'Shift' || e.repeat || !requireShift || !enabled || !lastMouse) return;
+    const active = document.activeElement;
+    if (active?.isContentEditable || active?.closest?.(EDITABLE_SELECTOR)) return;
+    clearTimeout(moveTimer);
+    aim = null; // a lookup right here, even on the way to the popup
+    pendingPoint = { ...lastMouse, shift: true };
+    handlePoint();
+  }
+
+  document.addEventListener('keydown', onKeyDown);
   window.addEventListener('resize', () => lastPointerType === 'mouse' && hide(), { passive: true });
 
   // ---------- settings (popup.html, keyboard shortcut) ----------
 
   const setTheme = (value) => {
     theme = ['light', 'dark'].includes(value) ? value : 'auto';
-    if (card) card.dataset.theme = theme;
+    if (popup) popup.dataset.theme = theme;
   };
 
-  api.storage.local.get(['enabled', 'theme', 'showParts']).then(
+  api.storage.local.get(['enabled', 'theme', 'showParts', 'toneColors', 'requireShift']).then(
     (stored) => {
       enabled = stored.enabled !== false;
       showParts = stored.showParts !== false;
+      toneColors = stored.toneColors === true;
+      requireShift = stored.requireShift === true;
       setTheme(stored.theme);
     },
     () => {},
@@ -447,6 +727,8 @@
     if (area !== 'local') return;
     if (changes.theme) setTheme(changes.theme.newValue);
     if (changes.showParts) showParts = changes.showParts.newValue !== false;
+    if (changes.toneColors) toneColors = changes.toneColors.newValue === true;
+    if (changes.requireShift) requireShift = changes.requireShift.newValue === true;
     if (changes.enabled) {
       enabled = changes.enabled.newValue !== false;
       if (!enabled) hide();
@@ -456,14 +738,21 @@
   // colors follow the site's daisyUI themes: emerald (light) and night (dark)
   const DARK_VARS = `
     --bg: #0f172a; --fg: #cbd5e1; --muted: #94a3b8; --info: #0ca5e9; --info-fg: #000000;
-    --success: #2dd4bf; --line: #1e293b;
+    --success: #2dd4bf; --line: #1e293b; --pinyin: #0ca5e9;
+    --tone1: #f87171; --tone2: #fbbf24; --tone3: #4ade80; --tone4: #60a5fa; --tone5: #94a3b8;
   `;
   const POPUP_CSS = `
-    .popup { position: absolute; top: 0; left: 0; }
-    .popup[hidden] { display: none; }
-    .card {
+    .popup {
+      position: absolute; top: 0; left: 0;
       --bg: #ffffff; --fg: #333c4d; --muted: #6b7280; --info: #3abff8; --info-fg: #002b3d;
       --success: #059669; --line: #e5e7eb;
+      /* darker than --info: light blue text is hard to read on white */
+      --pinyin: #0284c7;
+      /* pinyin tone colors (setting), as in Zhongwen: red, orange, green, blue, gray */
+      --tone1: #dc2626; --tone2: #d97706; --tone3: #16a34a; --tone4: #2563eb; --tone5: #6b7280;
+    }
+    .popup[hidden] { display: none; }
+    .card {
       position: relative; box-sizing: border-box; width: 300px; max-height: 60vh; overflow: auto;
       overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
       background: var(--bg); color: var(--fg); border: 1px solid var(--info); border-radius: 12px;
@@ -474,9 +763,9 @@
       overflow-wrap: anywhere; cursor: auto;
     }
     @media (prefers-color-scheme: dark) {
-      .card[data-theme="auto"] { ${DARK_VARS} }
+      .popup[data-theme="auto"] { ${DARK_VARS} }
     }
-    .card[data-theme="dark"] { ${DARK_VARS} }
+    .popup[data-theme="dark"] { ${DARK_VARS} }
     .close {
       position: absolute; top: 4px; right: 4px; width: 28px; height: 28px; border: 0;
       border-radius: 50%; background: transparent; color: var(--muted); font: 14px/28px sans-serif;
@@ -487,8 +776,30 @@
     .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; margin: 0 28px 4px 0; }
     .hanzi { font-size: 24px; line-height: 1.2; color: var(--fg); }
     .trad { font-size: 16px; color: var(--muted); }
-    .head-pinyin { font-size: 17px; color: var(--info); }
-    .match > .btn { margin-bottom: 6px; }
+    .head-pinyin { font-size: 17px; color: var(--pinyin); }
+    .tone1 { color: var(--tone1); } .tone2 { color: var(--tone2); } .tone3 { color: var(--tone3); }
+    .tone4 { color: var(--tone4); } .tone5 { color: var(--tone5); }
+    .hsk {
+      align-self: center; padding: 0 6px; border: 1px solid var(--info); border-radius: 999px;
+      color: var(--pinyin); font-size: 11px; line-height: 16px; white-space: nowrap; cursor: default;
+    }
+    .actions { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+    .icon {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 20px; padding: 0; border: 1px solid var(--info); border-radius: 6px;
+      box-sizing: border-box; background: transparent; color: var(--pinyin); cursor: pointer;
+      text-decoration: none;
+    }
+    /* outlined like the HSK badge (daisyUI btn-outline btn-info), filled on hover */
+    .icon:hover { background: var(--info); color: var(--info-fg); }
+    .icon.text {
+      width: auto; padding: 0 7px; font-size: 12px; font-weight: 500; line-height: 18px;
+      white-space: nowrap;
+    }
+    .icon svg {
+      width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
     .entry + .entry { margin-top: 6px; }
     .senses { font-size: 13.5px; }
     .children { margin-left: 12px; }
@@ -497,25 +808,18 @@
     .pinyin, .strong { color: var(--success); font-weight: 700; }
     .en { color: var(--success); }
     .ref { color: var(--info); text-decoration: underline; }
-    .btn {
-      position: relative; display: inline-block; padding: 1px 8px; border-radius: 6px;
-      background: var(--info); color: var(--info-fg); font-size: 12px; line-height: 18px;
-      font-weight: 600; text-decoration: none; white-space: nowrap;
+    /* hint under a button (showTip): placed by the script, within the card's width */
+    .tip {
+      position: absolute; z-index: 1; box-sizing: border-box; width: max-content; max-width: 220px;
+      padding: 4px 8px; border-radius: 6px; background: var(--info); color: var(--info-fg);
+      font: 500 12px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      text-align: left; white-space: normal; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
     }
-    .btn:hover { background: color-mix(in srgb, var(--info) 88%, #000); }
-    /* hint under the button, shown at once on hover (not on touch screens: a tap opens the link) */
-    @media (hover: hover) {
-      .btn[data-tip]:hover::after {
-        content: attr(data-tip); position: absolute; left: 0; top: calc(100% + 6px); z-index: 1;
-        width: max-content; max-width: 210px; padding: 4px 8px; border-radius: 6px;
-        background: var(--info); color: var(--info-fg); font-size: 12px; font-weight: 500;
-        line-height: 1.35; white-space: normal; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        pointer-events: none;
-      }
-      .btn[data-tip]:hover::before {
-        content: ''; position: absolute; left: 12px; top: calc(100% - 4px); z-index: 1;
-        border: 5px solid transparent; border-bottom-color: var(--info); pointer-events: none;
-      }
+    .tip[hidden] { display: none; }
+    .tip::before {
+      content: ''; position: absolute; top: -10px; left: calc(var(--arrow-x, 12px) - 5px);
+      border: 5px solid transparent; border-bottom-color: var(--info);
     }
   `;
 })();
