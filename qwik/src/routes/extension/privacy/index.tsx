@@ -60,13 +60,24 @@ export default component$(() => {
                 Текст страниц, адреса сайтов и история просмотра никуда не отправляются и не
                 сохраняются.
               </li>
+              <li>
+                Кнопки копирования кладут слово (или слово с переводом) в буфер обмена — только
+                когда вы на них нажимаете.
+              </li>
+              <li>
+                Кнопка произношения озвучивает слово голосом, встроенным в браузер или систему (Web
+                Speech API). Само расширение ничего не отправляет. Некоторые браузеры (например,
+                Chrome, если в системе нет китайского голоса) озвучивают текст онлайн-голосом
+                производителя браузера — тогда браузер передаёт ему это слово по его собственным
+                правилам.
+              </li>
             </ul>
 
             <h2>Что хранится</h2>
             <p>
-              Только ваши настройки расширения: включено ли оно, тема подсказок и показ слов внутри
-              слова. Они хранятся в памяти браузера на вашем устройстве и удаляются вместе с
-              расширением.
+              Только ваши настройки расширения: включено ли оно, тема подсказок, показ слов внутри
+              слова, цвет пиньиня по тонам и режим «Только с зажатым Shift». Они хранятся в памяти
+              браузера на вашем устройстве и удаляются вместе с расширением.
             </p>
 
             <h2>Разрешения</h2>
@@ -87,8 +98,11 @@ export default component$(() => {
               <Link prefetch="js" href="/">
                 chineseplus.club
               </Link>{' '}
-              — только когда вы сами на неё нажимаете. В ссылке есть пометка, что переход сделан из
-              расширения (utm_source=browser_extension). На сайте действуют его обычные правила.
+              — только когда вы сами на неё нажимаете. Кнопка «+» открывает ту же страницу, где сайт
+              предложит добавить слово в ваш список слов (если вы не вошли на сайт — сначала войти).
+              Расширение не хранит ни вход, ни данные аккаунта. В ссылках есть пометка, что переход
+              сделан из расширения (utm_source=browser_extension). На сайте действуют его обычные
+              правила.
             </p>
 
             <h2>Передача третьим лицам</h2>
@@ -136,13 +150,23 @@ export default component$(() => {
                   requests.
                 </li>
                 <li>Page content, URLs and browsing history are never sent anywhere or saved.</li>
+                <li>
+                  The copy buttons put the word (or the word with its translation) on the clipboard,
+                  only when you click them.
+                </li>
+                <li>
+                  The pronunciation button speaks the word with a voice built into the browser or
+                  the operating system (Web Speech API). The extension itself sends nothing. Some
+                  browsers (e.g. Chrome without a Chinese system voice) speak through the browser
+                  vendor's online voice; the browser then sends that word to it under its own terms.
+                </li>
               </ul>
 
               <h3>What is stored</h3>
               <p>
                 Only your extension settings (on/off, tooltip theme, showing shorter words inside
-                the hovered word), kept in the browser's local extension storage on your device.
-                They are removed when you uninstall the extension.
+                the hovered word, pinyin tone colors, Shift-only mode), kept in the browser's local
+                extension storage on your device. They are removed when you uninstall the extension.
               </p>
 
               <h3>Permissions</h3>
@@ -159,8 +183,10 @@ export default component$(() => {
               <h3>Links to chineseplus.club</h3>
               <p>
                 The “Подробнее” (“More”) button opens the word's page on chineseplus.club only when
-                you click it. The link carries a marker that the visit came from the extension
-                (utm_source=browser_extension). The website's own terms apply there.
+                you click it. The “+” button opens the same page, where the website offers to add
+                the word to your word list (after a login on the website if needed). The extension
+                keeps no login or account data. The links carry a marker that the visit came from
+                the extension (utm_source=browser_extension). The website's own terms apply there.
               </p>
 
               <h3>Third parties</h3>

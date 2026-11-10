@@ -3,7 +3,7 @@
 
 export const extensionUrl = '/extension';
 export const extensionPrivacyUrl = '/extension/privacy';
-export const extensionOgImage = '/img/extension/og.jpg';
+export const extensionOgImage = '/img/extension/og-2.jpg';
 
 // null until the store listing is published: the button shows "скоро"
 export const EXTENSION_STORES: { name: string; note: string; url: string | null }[] = [
@@ -20,5 +20,5 @@ export const EXTENSION_STORES: { name: string; note: string; url: string | null 
 ];
 
 // date of the current privacy policy text, shown on /extension/privacy
-export const PRIVACY_UPDATED = '8 ноября 2026';
-export const PRIVACY_UPDATED_EN = 'November 8, 2026';
+export const PRIVACY_UPDATED = '11 ноября 2026';
+export const PRIVACY_UPDATED_EN = 'November 11, 2026';
