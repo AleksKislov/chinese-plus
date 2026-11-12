@@ -24,6 +24,19 @@
   // Shift pressed while typing here is not a request for a lookup
   const EDITABLE_SELECTOR = 'input, textarea, select, [contenteditable=""], [contenteditable="true"]';
   const COPIED_MS = 1200;
+  // touch: a finger lifted within this distance and time is a tap (else a scroll or a long press)
+  const TAP_MOVE_PX = 10;
+  const TAP_MAX_MS = 500;
+  // the click that follows a tap handled on pointerup comes up to ~300 ms later (double-tap check)
+  const TAP_CLICK_MS = 1000;
+  // a popup opened by a tap closes when the page scrolls this far
+  const SCROLL_CLOSE_PX = 24;
+  // swiping the popup sideways closes it: a move this long starts the swipe; past this share of
+  // its width, or fast enough, it closes, else it snaps back
+  const SWIPE_START_PX = 12;
+  const SWIPE_CLOSE_SHARE = 0.3;
+  const SWIPE_FAST_PX_PER_MS = 0.6;
+  const SWIPE_ANIMATION_MS = 150;
 
   // settings, changed in popup.html
   let enabled = true;
@@ -162,6 +175,9 @@
   let card = null;
   let tip = null; // hover hint of the buttons, outside the card: its scrolling doesn't cut it
   let tipTarget = null;
+  let touchOpen = null; // { x, y } page scroll when the popup was opened by a tap; null: by mouse
+  let swipe = null; // the finger dragging the popup sideways
+  let flingTimer = 0;
 
   function ensurePopup() {
     if (host?.isConnected) return;
@@ -190,6 +206,10 @@
     });
     card.addEventListener('pointerleave', hideTip);
     card.addEventListener('scroll', hideTip, { passive: true });
+    card.addEventListener('pointerdown', onSwipeStart);
+    card.addEventListener('pointermove', onSwipeMove);
+    card.addEventListener('pointerup', onSwipeEnd);
+    card.addEventListener('pointercancel', onSwipeEnd);
     shadow.append(style, popup);
     document.documentElement.append(host);
   }
@@ -423,12 +443,36 @@
     if (tip) tip.hidden = true;
   }
 
+  // popup buttons on touch: act when the finger lifts, not on the click that comes ~300 ms later
+  // (double-tap check). That click is then swallowed: it would press the button a second time,
+  // or, after "✕" closed the popup, land on the page under it (e.g. follow a link).
+  let suppressClickUntil = 0;
+
+  function onPress(node, handler) {
+    let down = null;
+    node.addEventListener('pointerdown', (e) => {
+      down = e.pointerType !== 'mouse' && e.isPrimary ? { x: e.clientX, y: e.clientY, time: performance.now() } : null;
+    });
+    node.addEventListener('pointercancel', () => (down = null));
+    node.addEventListener('pointerup', (e) => {
+      const start = down;
+      down = null;
+      if (!start || Math.hypot(e.clientX - start.x, e.clientY - start.y) > TAP_MOVE_PX) return;
+      if (performance.now() - start.time > TAP_MAX_MS) return;
+      suppressClickUntil = performance.now() + TAP_CLICK_MS;
+      handler(e);
+    });
+    node.addEventListener('click', (e) => {
+      if (performance.now() >= suppressClickUntil) handler(e); // mouse, keyboard
+    });
+  }
+
   function iconButton(name, tip, onClick) {
     const button = el('button', 'icon');
     button.type = 'button';
     button.append(icon(name));
     setTip(button, tip);
-    button.addEventListener('click', onClick);
+    onPress(button, onClick);
     return button;
   }
 
@@ -504,7 +548,7 @@
     const close = el('button', 'close', '✕');
     close.type = 'button';
     close.title = 'Закрыть';
-    close.addEventListener('click', hide);
+    onPress(close, hide);
     card.append(close, ...matches.map(renderMatch));
     card.scrollTop = 0;
   }
@@ -519,6 +563,7 @@
     const viewHeight = vv ? vv.height : document.documentElement.clientHeight;
     const margin = 8;
 
+    resetSwipe();
     // keep the same size on screen when the page is pinch-zoomed (mobile)
     card.style.zoom = String(1 / scale);
     card.style.width = `${Math.min(300, (viewWidth - 2 * margin) * scale)}px`;
@@ -577,12 +622,91 @@
     lastHit = null;
     aim = null;
     currentRange = null;
+    touchOpen = null;
+    swipe = null;
     clearHighlight();
     hideTip();
     if (popup && !popup.hidden) popup.hidden = true;
   }
 
   const isPopupEvent = (e) => Boolean(host) && e.composedPath().includes(host);
+
+  // ---------- touch: swipe the popup sideways to close it ----------
+  // Sideways only: up and down scroll a long definition (touch-action: pan-y in POPUP_CSS).
+
+  function moveCard(dx) {
+    const zoom = parseFloat(card.style.zoom) || 1; // the card is zoomed on a pinch-zoomed page
+    card.style.transform = `translateX(${dx / zoom}px)`;
+    card.style.opacity = String(Math.max(0.2, 1 - Math.abs(dx) / 300));
+  }
+
+  function resetSwipe() {
+    clearTimeout(flingTimer);
+    swipe = null;
+    card.style.transition = '';
+    card.style.transform = '';
+    card.style.opacity = '';
+  }
+
+  function onSwipeStart(e) {
+    swipe =
+      e.pointerType !== 'mouse' && e.isPrimary
+        ? { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, time: performance.now(), active: false }
+        : null;
+  }
+
+  function onSwipeMove(e) {
+    if (!swipe || e.pointerId !== swipe.id) return;
+    const dx = e.clientX - swipe.x;
+    const dy = e.clientY - swipe.y;
+    if (!swipe.active) {
+      // clearly sideways, not a slightly slanted scroll of the definition
+      if (Math.abs(dx) < SWIPE_START_PX || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      swipe.active = true;
+      hideTip();
+      card.style.transition = 'none';
+    }
+    swipe.dx = dx;
+    moveCard(dx);
+  }
+
+  function onSwipeEnd(e) {
+    const s = swipe;
+    swipe = null;
+    if (!s?.active) return;
+    const width = card.getBoundingClientRect().width;
+    const speed = Math.abs(s.dx) / Math.max(1, performance.now() - s.time);
+    const far = Math.abs(s.dx) > width * SWIPE_CLOSE_SHARE;
+    const fast = speed > SWIPE_FAST_PX_PER_MS && Math.abs(s.dx) > 30;
+    card.style.transition = `transform ${SWIPE_ANIMATION_MS}ms ease-out, opacity ${SWIPE_ANIMATION_MS}ms`;
+    if (e.type === 'pointerup' && (far || fast)) {
+      moveCard(Math.sign(s.dx) * (window.innerWidth + width)); // off the screen, then closed
+      flingTimer = setTimeout(hide, SWIPE_ANIMATION_MS);
+    } else {
+      moveCard(0); // back in place
+      card.style.opacity = '';
+    }
+  }
+
+  // ---------- touch: a popup opened by a tap closes when the page scrolls on ----------
+
+  const pageScroll = () => {
+    const vv = window.visualViewport;
+    return { x: vv ? vv.pageLeft : window.scrollX, y: vv ? vv.pageTop : window.scrollY };
+  };
+
+  function onScroll(e) {
+    if (!touchOpen || !popup || popup.hidden) return;
+    const target = e.target;
+    if (target === document || target === window.visualViewport) {
+      const now = pageScroll();
+      if (Math.hypot(now.x - touchOpen.x, now.y - touchOpen.y) > SCROLL_CLOSE_PX) hide();
+      return;
+    }
+    // a scrolling block of the page (e.g. a reader's text column): only the one with the word,
+    // not a carousel elsewhere that scrolls by itself
+    if (target instanceof Node && currentRange && target.contains(currentRange.startContainer)) hide();
+  }
 
   // ---------- events ----------
 
@@ -648,6 +772,7 @@
     aim = { x, y };
     if (lastHit && hit.node === lastHit.node && hit.offset === lastHit.offset) return;
     lastHit = hit;
+    touchOpen = null;
     show(hit);
   }
 
@@ -666,28 +791,84 @@
     if (!moveTimer) moveTimer = setTimeout(handlePoint, MOVE_THROTTLE_MS);
   }
 
-  // touch: a tap on a character opens the popup, a tap anywhere else closes it
-  function onClick(e) {
-    if (!enabled || lastPointerType === 'mouse' || isPopupEvent(e)) return;
-    if (e.target instanceof Element && e.target.closest(INTERACTIVE_SELECTOR)) {
-      hide();
+  // ---------- touch: a tap on a character opens the popup, a tap anywhere else closes it ----------
+  // Handled on pointerup, not on click: mobile browsers hold the click back (~300 ms) on pages with
+  // double-tap zoom. The lookup starts already on pointerdown, so the background script (often
+  // asleep on Android) and the dictionary file load while the finger is still on the screen.
+
+  let touchStart = null; // { x, y, time, interactive, hit } of the finger on the screen
+  let tapHandledAt = -Infinity; // performance.now() of the last tap handled on pointerup
+
+  const isInteractive = (target) =>
+    target instanceof Element && Boolean(target.closest(INTERACTIVE_SELECTOR));
+
+  function handleTap(interactive, hit, x, y) {
+    if (interactive || !hit) {
+      hide(); // a link, a button, a field keep their usual meaning; elsewhere: close
       return;
     }
-    const hit = hanCharAt(e.clientX, e.clientY);
-    if (!hit) {
-      hide();
+    if (popup && !popup.hidden && overCurrentWord(x, y)) {
+      hide(); // the highlighted word tapped again
       return;
     }
     lastHit = hit;
+    touchOpen = pageScroll();
     show(hit);
   }
 
-  document.addEventListener('pointerdown', (e) => (lastPointerType = e.pointerType), {
+  function onPointerDown(e) {
+    lastPointerType = e.pointerType;
+    touchStart = null;
+    // a second finger (pinch zoom), or a tap inside the popup: its buttons handle it
+    if (e.pointerType === 'mouse' || !e.isPrimary || !enabled || isPopupEvent(e)) return;
+    const interactive = isInteractive(e.target);
+    const hit = interactive ? null : hanCharAt(e.clientX, e.clientY);
+    touchStart = { x: e.clientX, y: e.clientY, time: performance.now(), interactive, hit };
+    if (hit) {
+      const { text } = textFrom(hit);
+      if (text) lookup(text); // cached: show() on pointerup gets the same promise
+    }
+  }
+
+  function onPointerUp(e) {
+    const start = touchStart;
+    touchStart = null;
+    if (!start || !e.isPrimary || !enabled) return;
+    const moved = Math.hypot(e.clientX - start.x, e.clientY - start.y) > TAP_MOVE_PX;
+    if (moved || performance.now() - start.time > TAP_MAX_MS) return; // scroll, text selection
+    tapHandledAt = performance.now();
+    handleTap(start.interactive, start.hit, start.x, start.y);
+  }
+
+  // fallback: a click without a pointerup before it (pointer events stopped by the page)
+  function onClick(e) {
+    if (!enabled || lastPointerType === 'mouse' || isPopupEvent(e)) return;
+    if (performance.now() - tapHandledAt < TAP_CLICK_MS) return; // this tap is handled already
+    const interactive = isInteractive(e.target);
+    const hit = interactive ? null : hanCharAt(e.clientX, e.clientY);
+    handleTap(interactive, hit, e.clientX, e.clientY);
+  }
+
+  document.addEventListener('pointerdown', onPointerDown, { capture: true, passive: true });
+  document.addEventListener('pointerup', onPointerUp, { capture: true, passive: true });
+  // the browser took the gesture over (scroll, zoom): no tap
+  document.addEventListener('pointercancel', () => (touchStart = null), {
     capture: true,
     passive: true,
   });
   document.addEventListener('pointermove', onPointerMove, { passive: true });
   document.addEventListener('click', onClick, { capture: true, passive: true });
+  // the late click after a popup button pressed on touch (see onPress): first in line, once
+  window.addEventListener(
+    'click',
+    (e) => {
+      if (performance.now() >= suppressClickUntil) return;
+      suppressClickUntil = 0;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    },
+    { capture: true },
+  );
   // "only with Shift": pressing it looks up the word under the resting mouse pointer
   function onKeyDown(e) {
     if (e.key === 'Escape') {
@@ -705,6 +886,9 @@
 
   document.addEventListener('keydown', onKeyDown);
   window.addEventListener('resize', () => lastPointerType === 'mouse' && hide(), { passive: true });
+  // scroll events don't bubble: capture sees the page's own scrolling blocks too
+  document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+  window.visualViewport?.addEventListener('scroll', onScroll, { passive: true }); // pinch-zoom pan
 
   // ---------- settings (popup.html, keyboard shortcut) ----------
 
@@ -754,7 +938,7 @@
     .popup[hidden] { display: none; }
     .card {
       position: relative; box-sizing: border-box; width: 300px; max-height: 60vh; overflow: auto;
-      overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y pinch-zoom;
       background: var(--bg); color: var(--fg); border: 1px solid var(--info); border-radius: 12px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18); padding: 10px 12px;
       font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC",
