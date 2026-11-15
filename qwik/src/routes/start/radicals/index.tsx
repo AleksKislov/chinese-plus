@@ -31,6 +31,18 @@ export default component$(() => {
               </p>{' '}
             </div>
           </div>
+          <div class="card w-full bg-base-200 my-3">
+            <div class="card-body">
+              <h2 class="card-title">Что учить дальше?</h2>
+              <p>
+                После ключей начинайте учить сами иероглифы, с самых частых:{' '}
+                <a href="/start/top-characters" class="link hover:link-success font-bold">
+                  1000 основных иероглифов
+                </a>{' '}
+                покрывают 89% любого текста.
+              </p>
+            </div>
+          </div>
           <CharactersLinkCard />
         </Sidebar>
 

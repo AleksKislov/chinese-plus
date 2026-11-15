@@ -3,7 +3,17 @@
   background-color: var(--bs-table-hover-bg) !important;
 }
 
-#pinyinTable td:hover {
+/* the syllable only: the tone menu is inside the cell too */
+#pinyinTable td:hover > .dropdown > label {
   color: orange;
   font-weight: bold;
+}
+
+/* characters toggle (#pinyinCharsToggle): no character row under the tone buttons */
+.hide-chars .tone-char {
+  display: none;
+}
+.hide-chars .tone-grid {
+  grid-template-rows: none;
+  row-gap: 0;
 }

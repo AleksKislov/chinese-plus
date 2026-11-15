@@ -43,6 +43,7 @@ const STATIC_PATHS = [
   '/start/pinyin-tests',
   '/start/radicals',
   '/start/strokes',
+  '/start/top-characters',
   '/start/tones-practice',
   '/hsk/grammar',
   '/hsk/2/table',

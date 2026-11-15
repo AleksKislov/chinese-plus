@@ -240,12 +240,16 @@ export const startChars: MenuItemProps = {
       text: 'Уроки иероглифики',
     },
     {
-      href: '/names/',
-      text: 'Имя на китайском',
+      href: '/start/top-characters',
+      text: 'Основные иероглифы',
     },
     {
       href: '/propisi/',
       text: 'Прописи иероглифов',
+    },
+    {
+      href: '/names/',
+      text: 'Имя на китайском',
     },
   ],
 };

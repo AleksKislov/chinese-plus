@@ -1,6 +1,7 @@
-import { component$, useContext, useStyles$, useVisibleTask$ } from '@builder.io/qwik';
+import { Fragment, component$, useContext, useStyles$, useVisibleTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { tableMap, pinyinMap } from '~/misc/consts/pinyin';
+import pinyinChars from '~/misc/consts/pinyin-chars';
 import styles from './table.css?inline';
 import CONST_URLS from '~/misc/consts/urls';
 import { PageTitle } from '~/components/common/layout/title';
@@ -45,9 +46,64 @@ export const initHiglights = () => {
   });
 };
 
+// Audio elements per sound file, created on first use (browser only).
+// Reusing them lets a preloaded file play without another download.
+const audioBySound = new Map<string, HTMLAudioElement>();
+
+const getAudio = (sound: string) => {
+  let audio = audioBySound.get(sound);
+  if (!audio) {
+    audio = new Audio(`${CONST_URLS.myAudioURL}pinyin/${sound}.mp3`);
+    audio.preload = 'auto';
+    audio.load();
+    audioBySound.set(sound, audio);
+  }
+  return audio;
+};
+
+// Whether any tone of a syllable has an example character (pinyinChars).
+const hasChars = (pySound: string) =>
+  Object.keys(pinyinMap[pySound] || {}).some((tone) => pinyinChars[tone]);
+
+// Characters toggle: hides them with a CSS class (table.css), so the table is not re-rendered;
+// the choice is kept in localStorage.
+const CHARS_STORAGE_KEY = 'pinyinChartShowChars';
+
+const applyCharsShown = (shown: boolean) => {
+  document.getElementById('pinyinTableWrap')?.classList.toggle('hide-chars', !shown);
+};
+
+export const setCharsShown = (shown: boolean) => {
+  applyCharsShown(shown);
+  try {
+    localStorage.setItem(CHARS_STORAGE_KEY, shown ? '1' : '0');
+  } catch {
+    // storage blocked: the choice lasts until the page is closed
+  }
+};
+
+const restoreCharsShown = () => {
+  let shown = false;
+  try {
+    shown = localStorage.getItem(CHARS_STORAGE_KEY) === '1';
+  } catch {
+    // storage blocked: hidden by default
+  }
+  const toggle = document.getElementById('pinyinCharsToggle') as HTMLInputElement | null;
+  if (toggle) toggle.checked = shown;
+  applyCharsShown(shown);
+};
+
+// Starts downloading a syllable's tones when its menu opens, so they are ready by the click.
+export const preloadSounds = (sounds: string[]) => {
+  sounds.forEach((sound) => sound && getAudio(sound));
+};
+
 export const playAudioFromBtn = (sound: string) => {
   if (!sound) return;
-  new Audio(`${CONST_URLS.myAudioURL}pinyin/${sound}.mp3`).play();
+  const audio = getAudio(sound);
+  audio.currentTime = 0;
+  audio.play();
 };
 
 const FAQ: { q: string; a: string }[] = [
@@ -77,6 +133,7 @@ export default component$(() => {
 
   useVisibleTask$(() => {
     initHiglights();
+    restoreCharsShown();
   });
 
   return (
@@ -92,7 +149,10 @@ export default component$(() => {
 
       <div class="alert mt-3 flex">
         {infoAlertSvg}
-        <span>Таблица озвучена носителем языка. Кликайте на слог, чтобы прослушать</span>
+        <span>
+          Таблица озвучена носителем языка. Кликайте на слог, чтобы прослушать его. Частые иероглифы
+          с таким чтением можно включить переключателем над таблицей
+        </span>
       </div>
 
       <PhoneticsLinkCard />
@@ -101,7 +161,19 @@ export default component$(() => {
       {wideBannerAds?.isActive && <OurAds adsInfo={wideBannerAds} />}
       {bannerAds?.isActive && <BannerAds />}
 
-      <div class="overflow-x-auto">
+      <label class="label cursor-pointer justify-start gap-3 mt-3">
+        <input
+          id="pinyinCharsToggle"
+          type="checkbox"
+          class="toggle toggle-info"
+          onChange$={(_, el) => setCharsShown(el.checked)}
+        />
+        <span class="label-text">
+          <span class="opacity-70">Показать распространенный иероглиф под слогом</span>
+        </span>
+      </label>
+
+      <div id="pinyinTableWrap" class="hide-chars overflow-x-auto">
         <table class="table table-compact text-base-content">
           <thead>
             <tr>
@@ -161,29 +233,57 @@ export default component$(() => {
                   <td key={ind}>
                     {pySound ? (
                       <div class={'dropdown dropdown-bottom'}>
-                        <label tabIndex={0} class="cursor-pointer">
+                        <label
+                          tabIndex={0}
+                          class="cursor-pointer"
+                          onFocus$={() => preloadSounds(Object.values(pinyinMap[pySound] || {}))}
+                        >
                           {pySound}
                         </label>
                         <div
                           tabIndex={0}
-                          class="card compact dropdown-content bg-neutral rounded-box z-[1]"
+                          class="card compact dropdown-content bg-neutral text-neutral-content rounded-box z-[1] w-max"
                         >
                           <div class="card-body">
-                            <div class="btn-group">
-                              {pySound &&
-                                pinyinMap[pySound] &&
-                                Object.keys(pinyinMap[pySound]).map((x, ind) => (
-                                  <button
-                                    class={`lowercase btn btn-sm ${
-                                      pinyinMap[pySound][x] ? 'btn-info' : 'btn-error'
-                                    }`}
-                                    key={ind}
-                                    onClick$={() => {
-                                      playAudioFromBtn(pinyinMap[pySound][x]);
-                                    }}
-                                  >
-                                    {x}
-                                  </button>
+                            {/* a column per tone: the audio button, the character under it;
+                                no character row when no tone has a character */}
+                            <div
+                              class={`tone-grid grid grid-flow-col ${
+                                hasChars(pySound) ? 'grid-rows-2 gap-y-1' : ''
+                              }`}
+                            >
+                              {pinyinMap[pySound] &&
+                                Object.keys(pinyinMap[pySound]).map((x, ind, tones) => (
+                                  <Fragment key={ind}>
+                                    <button
+                                      class={`lowercase btn btn-sm w-full rounded-none ${
+                                        ind === 0 ? 'rounded-l-[var(--rounded-btn,0.5rem)]' : ''
+                                      } ${
+                                        ind === tones.length - 1
+                                          ? 'rounded-r-[var(--rounded-btn,0.5rem)]'
+                                          : ''
+                                      } ${pinyinMap[pySound][x] ? 'btn-info' : 'btn-error'}`}
+                                      onClick$={() => {
+                                        playAudioFromBtn(pinyinMap[pySound][x]);
+                                      }}
+                                    >
+                                      {x}
+                                    </button>
+                                    {/* meaning in a CSS tooltip: no extra elements or scripts;
+                                        cursor-pointer makes iOS show it on tap */}
+                                    {hasChars(pySound) && (
+                                      <span
+                                        class={`tone-char text-2xl text-center ${
+                                          pinyinChars[x]?.[1]
+                                            ? 'tooltip tooltip-bottom tooltip-info cursor-pointer'
+                                            : ''
+                                        }`}
+                                        data-tip={pinyinChars[x]?.[1] || undefined}
+                                      >
+                                        {pinyinChars[x]?.[0]}
+                                      </span>
+                                    )}
+                                  </Fragment>
                                 ))}
                             </div>
                           </div>
@@ -228,6 +328,8 @@ export default component$(() => {
 
 export const head: DocumentHead = {
   title: 'Таблица пиньиня с озвучкой — все слоги китайского языка | Chinese+',
+  // Opens the connection to the audio storage early, so the first click doesn't wait for it.
+  links: [{ rel: 'preconnect', href: new URL(CONST_URLS.myAudioURL).origin }],
   meta: [
     {
       name: 'description',

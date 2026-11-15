@@ -92,10 +92,11 @@ export const featuresArr: Feature[] = [
   {
     title: 'Иероглифы',
     pic: <span class="text-5xl leading-none">写</span>,
-    desc: 'Черты и ключи, уроки иероглифики, прописи с сеткой 田字格 для печати и русские имена по-китайски.',
+    desc: 'Черты и ключи, 1000 основных иероглифов, уроки иероглифики, прописи с сеткой 田字格 для печати и русские имена по-китайски.',
     links: [
       { href: '/start/strokes', text: 'Черты' },
       { href: '/start/radicals', text: 'Таблица ключей' },
+      { href: '/start/top-characters', text: 'Основные иероглифы' },
       { href: '/watch/characters-lessons', text: 'Уроки иероглифики' },
       { href: '/propisi/', text: 'Прописи иероглифов' },
       { href: '/names/', text: 'Имя на китайском' },
