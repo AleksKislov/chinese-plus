@@ -20,6 +20,14 @@ with its meanings). Works offline: the dictionary ships inside the extension.
   the simplified word. File format: see the script's header.
 - `background.js`: answers `lookup` messages from the content script from `dict/`, keeps
   recently used buckets in memory.
+- `lib.js`: shared by `content.js` and the extension's pages: rendering of entries (senses, pinyin
+  tone colors, HSK, icons), speech, copy. Loaded first (manifest, `<script>` tags).
+- `search.js` + `results.css`: offline search on the extension's pages: Chinese text typed or
+  pasted is split into words (the longest dictionary word from each position) and looked up
+  through `background.js`. Pinyin and Russian go to the site's dictionary: the extension's
+  dictionary is indexed by the first character only. A single word searched counts as looked up.
+  Used by the menu (`popup.html`, search box at the top) and `dictionary.html` (the same on a
+  page of its own, opened in a tab from the menu; the query stays in `#q=`).
 - `content.js` + `content.css`: finds the character under the pointer, collects up to 4
   characters, highlights the matched word and shows the popup (closed shadow DOM, built with DOM
   APIs only). Senses are laid out like the site's tooltips
@@ -33,7 +41,13 @@ with its meanings). Works offline: the dictionary ships inside the extension.
   OAuth come back there (`qwik/src/misc/helpers/login-next.ts`).
 - `popup.html`: toolbar button: on / off switch, theme, "words inside the word", pinyin tone
   colors, "only while Shift is held" (mouse: moving the pointer opens no new words, pressing
-  Shift looks up the word under it). Desktop shortcut `Alt+Shift+Y` (`Option+Shift+Y` on macOS); on phones, the switch in the extension menu.
+  Shift looks up the word under it).
+- Looked-up words: `content.js` reports a word once per page when its popup stayed on it 1 s
+  (a tap or Shift: at once); `background.js` keeps the last 300 in `storage.local` `history`
+  (`[word, times, last ms]`, nothing from private windows, setting `saveHistory`). The menu
+  (`popup.html`) shows them and opens `chineseplus.club/dictionary/import#w=<word:times,…>`:
+  the site's page (`qwik/src/routes/dictionary/import/`) reads the fragment in the browser,
+  keeps it in sessionStorage through a login, and adds the checked words on the FE server. Desktop shortcut `Alt+Shift+Y` (`Option+Shift+Y` on macOS); on phones, the switch in the extension menu.
 - The content script does not run on chineseplus.club, which has its own tooltips.
 
 ## Build

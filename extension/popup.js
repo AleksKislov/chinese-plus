@@ -1,7 +1,13 @@
 const api = globalThis.browser ?? globalThis.chrome;
 
 // on / off settings: checkbox id = storage key, and its value when nothing is stored yet
-const SWITCHES = { enabled: true, showParts: true, toneColors: false, requireShift: false };
+const SWITCHES = {
+  enabled: true,
+  showParts: true,
+  toneColors: false,
+  requireShift: false,
+  saveHistory: true,
+};
 
 const themeInputs = [...document.querySelectorAll('input[name="theme"]')];
 
@@ -30,6 +36,81 @@ themeInputs.forEach((input) =>
     api.storage.local.set({ theme: input.value });
   }),
 );
+
+// ---------- looked-up words (recorded by background.js) ----------
+
+const { SITE_URL } = globalThis.ChinesePlusLib; // lib.js
+const PREVIEW_WORDS = 12;
+const CLEAR_CONFIRM_MS = 3000;
+
+const historyCount = document.getElementById('history-count');
+const historyWords = document.getElementById('history-words');
+const historyEmpty = document.getElementById('history-empty');
+const historyActions = document.getElementById('history-actions');
+const historySend = document.getElementById('history-send');
+const historyClear = document.getElementById('history-clear');
+
+/**
+ * The site's page that offers to add the words to the user's words. The list goes in the URL
+ * fragment (#): it never reaches a server or its logs, and 300 words don't fit a query string.
+ * "word:times looked up", the most recent first.
+ */
+const importUrl = (history) =>
+  `${SITE_URL}/dictionary/import?utm_source=browser_extension#w=${encodeURIComponent(
+    history.map(([word, times]) => `${word}:${times}`).join(','),
+  )}`;
+
+function showHistory(history = []) {
+  historyCount.textContent = String(history.length);
+  historyEmpty.hidden = history.length > 0;
+  historyActions.hidden = history.length === 0;
+  const preview = history.slice(0, PREVIEW_WORDS).map(([word]) => word);
+  historyWords.textContent = preview.join('、') + (history.length > PREVIEW_WORDS ? '…' : '');
+  historyWords.hidden = history.length === 0;
+  historySend.href = history.length ? importUrl(history) : '#';
+}
+
+api.storage.local.get('history').then(({ history }) => showHistory(history));
+api.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes.history) showHistory(changes.history.newValue);
+});
+
+// two presses: the list can't be restored
+let clearTimer = 0;
+historyClear.addEventListener('click', () => {
+  if (!historyClear.classList.contains('confirm')) {
+    historyClear.classList.add('confirm');
+    historyClear.textContent = 'Точно?';
+    clearTimer = setTimeout(() => {
+      historyClear.classList.remove('confirm');
+      historyClear.textContent = 'Очистить';
+    }, CLEAR_CONFIRM_MS);
+    return;
+  }
+  clearTimeout(clearTimer);
+  historyClear.classList.remove('confirm');
+  historyClear.textContent = 'Очистить';
+  api.storage.local.set({ history: [] });
+});
+
+// ---------- offline dictionary search (search.js) ----------
+
+const searchInput = document.getElementById('search');
+let searchQuery = '';
+globalThis.ChinesePlusSearch.mount({
+  input: searchInput,
+  results: document.getElementById('search-results'),
+  onQuery: (query) => (searchQuery = query),
+});
+// on a phone the field would open the keyboard over the menu: focus it on desktop only
+if (matchMedia('(hover: hover) and (pointer: fine)').matches) searchInput.focus();
+
+// the same search on a page of its own: a tab can stay open next to the text being read
+document.getElementById('open-tab').addEventListener('click', (e) => {
+  e.preventDefault();
+  const hash = searchQuery ? `#q=${encodeURIComponent(searchQuery)}` : '';
+  api.tabs.create({ url: api.runtime.getURL(`dictionary.html${hash}`) }).then(() => window.close(), () => {});
+});
 
 // keyboard shortcuts exist only in desktop browsers: show the one actually assigned, if any
 async function showShortcut() {

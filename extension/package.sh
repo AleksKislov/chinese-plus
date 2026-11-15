@@ -10,9 +10,12 @@ if [ ! -f dict/meta.json ]; then
   exit 1
 fi
 
+FILES="manifest.json background.js lib.js content.js content.css search.js results.css
+  popup.html popup.js popup.css dictionary.html dictionary.js dictionary.css icons dict"
 VERSION=$(node -p "require('./manifest.json').version")
 mkdir -p dist
 ZIP="dist/chineseplus-$VERSION.zip"
 rm -f "$ZIP"
-zip -r -q -X "$ZIP" manifest.json background.js content.js content.css popup.html popup.js popup.css icons dict
+# shellcheck disable=SC2086
+zip -r -q -X "$ZIP" $FILES
 echo "$ZIP: $(du -h "$ZIP" | cut -f1)"

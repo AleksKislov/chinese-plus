@@ -1,0 +1,215 @@
+/* Search results on the extension's pages (search.js): the same look as the popup on pages
+   (POPUP_CSS in content.js). Colors: the variables of popup.css. */
+
+.search-field {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--info);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 18px/1.3 system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC',
+    sans-serif;
+}
+
+.search-field:focus {
+  outline: 2px solid var(--info);
+  outline-offset: 1px;
+}
+
+.search-note {
+  margin: 8px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.search-note a {
+  color: var(--pinyin);
+}
+
+.words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 10px 0;
+}
+
+.word-chip {
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fg);
+  font: 16px/1.4 system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  cursor: pointer;
+}
+
+.word-chip.missing {
+  color: var(--muted);
+}
+
+.result {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 8px;
+}
+
+.result:first-child {
+  border-top: 0;
+}
+
+.match + .match {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 8px;
+  margin-bottom: 4px;
+}
+
+.hanzi {
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.trad {
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.head-pinyin {
+  font-size: 17px;
+  color: var(--pinyin);
+}
+
+.tone1 { color: var(--tone1); }
+.tone2 { color: var(--tone2); }
+.tone3 { color: var(--tone3); }
+.tone4 { color: var(--tone4); }
+.tone5 { color: var(--tone5); }
+
+.hsk {
+  align-self: center;
+  padding: 0 6px;
+  border: 1px solid var(--info);
+  border-radius: 999px;
+  color: var(--pinyin);
+  font-size: 11px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 30px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--info);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--pinyin);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.icon:hover {
+  background: var(--info);
+  color: var(--info-fg);
+}
+
+.icon.text {
+  width: auto;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.icon svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.entry + .entry {
+  margin-top: 6px;
+}
+
+.senses {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.children {
+  margin-left: 12px;
+}
+
+.label {
+  color: var(--success);
+  font-style: italic;
+  font-size: 12px;
+}
+
+.comment {
+  font-style: italic;
+}
+
+.pinyin,
+.strong {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.en {
+  color: var(--success);
+}
+
+.ref {
+  color: var(--pinyin);
+  text-decoration: underline;
+}
+
+/* the meaning of the word a reference-only entry points to (lib.js renderRefs) */
+.refs {
+  margin-top: 6px;
+}
+
+.ref-meaning {
+  margin-top: 4px;
+  padding-left: 8px;
+  border-left: 2px solid var(--line);
+  font-size: 13px;
+}
+
+.ref-head {
+  margin-bottom: 1px;
+}
+
+.ref-word {
+  font-size: 16px;
+}
+
+.ref-pinyin {
+  color: var(--pinyin);
+}

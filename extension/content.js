@@ -7,7 +7,6 @@
 (() => {
   const api = globalThis.browser ?? globalThis.chrome;
 
-  const SITE_URL = 'https://www.chineseplus.club';
   const MAX_LEN = 4; // longest dictionary word, see server/scripts/export-extension-dictionary.js
   const MOVE_THROTTLE_MS = 30;
   // on the way to the popup the pointer crosses other words; it switches to the word under it
@@ -37,6 +36,9 @@
   const SWIPE_CLOSE_SHARE = 0.3;
   const SWIPE_FAST_PX_PER_MS = 0.6;
   const SWIPE_ANIMATION_MS = 150;
+  // a word counts as looked up (history in popup.html) when the hover popup stayed on it this
+  // long; a tap or Shift is deliberate and counts at once
+  const REMEMBER_HOVER_MS = 1000;
 
   // settings, changed in popup.html
   let enabled = true;
@@ -44,6 +46,7 @@
   let showParts = true; // also show the shorter words inside the hovered one
   let toneColors = false; // pinyin syllables colored by tone
   let requireShift = false; // mouse: new words only while Shift is held
+  let saveHistory = true; // keep looked-up words for "add to my words" in popup.html
   let lastPointerType = 'mouse';
   let lastMouse = null; // last mouse position, to look up when Shift is pressed without moving
   let currentRange = null; // the highlighted word
@@ -178,6 +181,8 @@
   let touchOpen = null; // { x, y } page scroll when the popup was opened by a tap; null: by mouse
   let swipe = null; // the finger dragging the popup sideways
   let flingTimer = 0;
+  let rememberTimer = 0;
+  const rememberedHere = new Set(); // counted once per page, however often it is hovered again
 
   function ensurePopup() {
     if (host?.isConnected) return;
@@ -214,202 +219,12 @@
     document.documentElement.append(host);
   }
 
-  const el = (tag, className, text) => {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (text !== undefined) node.textContent = text;
-    return node;
-  };
-
-  const dictionaryUrl = (word) =>
-    `${SITE_URL}/dictionary/${encodeURIComponent(word)}?utm_source=browser_extension`;
-
-  const INLINE_CLASSES = { l: 'label', m: 'comment', p: 'pinyin', e: 'en', b: 'strong' };
-
-  function renderInline(parent, inline) {
-    if (typeof inline === 'string') {
-      parent.append(inline);
-      return;
-    }
-    const [type, value] = inline;
-    if (type === 'r') {
-      const link = el('a', 'ref', value);
-      link.href = dictionaryUrl(value);
-      link.target = '_blank';
-      link.rel = 'noopener';
-      parent.append(link);
-    } else {
-      parent.append(el('span', INLINE_CLASSES[type] || '', value));
-    }
-  }
-
-  /** Same layout as the site's tooltips (qwik/src/misc/helpers/translation/senses-to-html.ts). */
-  function renderSense(node) {
-    const wrap = el('div');
-    const line = el('div', 'sense');
-    if (node.m) {
-      if (node.k) line.append(el('span', 'strong', node.m), ' ');
-      else line.append(`${node.m}) `);
-    }
-    if (node.p) line.append(pinyinEl('span', 'pinyin', node.p), ' ');
-    if (node.l) line.append(el('span', 'label', node.l.join(' ')), ' ');
-    if (node.c) node.c.forEach((inline) => renderInline(line, inline));
-    else if (node.t) line.append(node.t);
-    wrap.append(line);
-    if (node.s?.length) {
-      const children = el('div', 'children');
-      node.s.forEach((child) => children.append(renderSense(child)));
-      wrap.append(children);
-    }
-    return wrap;
-  }
-
-  // ---------- pinyin tone colors ----------
-
-  // one syllable: initial, vowels, final n / ng and erhua r unless the next syllable starts with
-  // it (zhōngguó -> zhōng guó, dàngé -> dàn gé, yīdiǎnr -> yī diǎnr); dictionary pinyin is
-  // written without spaces
-  const SYLLABLE_RE =
-    /(?:zh|ch|sh|[bpmfdtnlgkhjqxrzcsyw])?[aeiouüvāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]+(?:ng(?![aeiouüvāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ])|n(?![aeiouüvāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]))?(?:r(?![aeiouüvāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]))?/giu;
-  const TONE_MARKS = { '̄': 1, '́': 2, '̌': 3, '̀': 4 };
-
-  const toneOf = (syllable) => {
-    for (const ch of syllable.normalize('NFD')) if (TONE_MARKS[ch]) return TONE_MARKS[ch];
-    return 5; // neutral tone: no mark
-  };
-
-  /** Pinyin as text, or as one span per syllable colored by its tone (the setting). */
-  function pinyinEl(tag, className, pinyin) {
-    const node = el(tag, className);
-    if (!toneColors) {
-      node.textContent = pinyin;
-      return node;
-    }
-    let last = 0;
-    for (const match of pinyin.matchAll(SYLLABLE_RE)) {
-      if (match.index > last) node.append(pinyin.slice(last, match.index));
-      node.append(el('span', `tone${toneOf(match[0])}`, match[0]));
-      last = match.index + match[0].length;
-    }
-    if (last < pinyin.length) node.append(pinyin.slice(last));
-    return node;
-  }
-
-  // ---------- audio: the browser's own speech synthesis (no download, works offline) ----------
-
-  const speech = globalThis.speechSynthesis;
-  let voice = null; // best chinese voice, null: none known (yet)
-  let voicesLoaded = false;
-
-  // mandarin first (zh-CN), then other chinese voices except cantonese ones (zh-HK);
-  // a voice inside the system before an online one
-  const voiceRank = (v) => {
-    const lang = v.lang.replace('_', '-').toLowerCase();
-    const langRank = /hk|yue/.test(lang) ? 3 : lang === 'zh-cn' || lang.startsWith('cmn') ? 0 : lang === 'zh-tw' ? 2 : 1;
-    return langRank * 2 + (v.localService ? 0 : 1);
-  };
-
-  function pickVoice() {
-    const voices = speech?.getVoices() || [];
-    voicesLoaded = voices.length > 0;
-    const chinese = voices.filter((v) => /^(zh|cmn|yue)/i.test(v.lang));
-    voice = chinese.sort((a, b) => voiceRank(a) - voiceRank(b))[0] || null;
-  }
-  if (speech) {
-    pickVoice();
-    speech.addEventListener?.('voiceschanged', pickVoice);
-  }
-
-  // the voice list comes asynchronously: until then, offer the button and let the browser choose
-  const canSpeak = () => Boolean(speech) && (Boolean(voice) || !voicesLoaded);
-
-  function speak(text) {
-    speech.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = voice?.lang || 'zh-CN';
-    if (voice) utterance.voice = voice;
-    utterance.rate = 0.8;
-    speech.speak(utterance);
-  }
-
-  // ---------- copy ----------
-
-  const inlineText = (inline) => (typeof inline === 'string' ? inline : inline[1]);
-
-  function senseLines(node, depth) {
-    let line = '';
-    if (node.m) line += node.k ? `${node.m} ` : `${node.m}) `;
-    if (node.p) line += `${node.p} `;
-    if (node.l) line += `${node.l.join(' ')} `;
-    line += node.c ? node.c.map(inlineText).join('') : node.t || '';
-    const lines = [`${'  '.repeat(depth)}${line.trim()}`];
-    node.s?.forEach((child) => lines.push(...senseLines(child, depth + 1)));
-    return lines;
-  }
-
-  /** The entry as plain text: word, pinyin, meanings (one per line). */
-  function entryText({ word, trad, entries }) {
-    const lines = [trad ? `${word} (${trad})` : word];
-    for (const [pinyin, senses] of entries) {
-      if (pinyin) lines.push(pinyin);
-      senses.forEach((sense) => lines.push(...senseLines(sense, 0)));
-    }
-    return lines.join('\n');
-  }
-
-  async function copyText(text) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      // http pages, or the page's permissions policy forbids it: the old way
-    }
-    const area = el('textarea');
-    area.value = text;
-    area.style.cssText = 'position: fixed; top: 0; left: 0; opacity: 0;';
-    shadow.append(area);
-    area.select();
-    let copied = false;
-    try {
-      copied = document.execCommand('copy');
-    } catch {
-      // not allowed here
-    }
-    area.remove();
-    return copied;
-  }
-
-  // ---------- popup content ----------
-
-  const SVG_NS = 'http://www.w3.org/2000/svg';
-  // lucide icons (ISC license), as path data
-  const ICONS = {
-    speaker: ['M11 5 6 9H2v6h4l5 4V5z', 'M15.5 8.5a5 5 0 0 1 0 7', 'M19 5a10 10 0 0 1 0 14'],
-    copy: [
-      'M10 8h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z',
-      'M4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2',
-    ],
-    entry: [
-      'M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z',
-      'M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2',
-      'M8 11h8',
-      'M8 16h5',
-    ],
-    check: ['M20 6 9 17l-5-5'],
-    plus: ['M12 5v14', 'M5 12h14'],
-  };
-
-  function icon(name) {
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', '0 0 24 24');
-    svg.setAttribute('aria-hidden', 'true');
-    for (const d of ICONS[name]) {
-      const path = document.createElementNS(SVG_NS, 'path');
-      path.setAttribute('d', d);
-      svg.append(path);
-    }
-    return svg;
-  }
+  const lib = globalThis.ChinesePlusLib; // lib.js, loaded before this script
+  const { el, dictionaryUrl, entryText, icon, hskLabel, canSpeak, speak } = lib;
+  // the settings of this page's popup
+  const pinyinEl = (tag, className, pinyin) => lib.pinyinEl(tag, className, pinyin, toneColors);
+  const renderSense = (node) => lib.renderSense(node, toneColors);
+  const copyText = (text) => lib.copyText(text, shadow);
 
   // instant hover hint (like the site's daisyUI tooltips); a native `title` shows late
   function setTip(node, text) {
@@ -490,8 +305,6 @@
     return button;
   }
 
-  const hskLabel = (level) => (level === '789' ? '7–9' : level);
-
   function renderMatch(match) {
     const { word, trad, hsk, entries } = match;
     const block = el('div', 'match');
@@ -538,6 +351,8 @@
       entry.append(body);
       block.append(entry);
     }
+    const refs = lib.renderRefs(match.refs, toneColors); // "см. 一会儿": 一会儿's meaning
+    if (refs) block.append(refs);
     return block;
   }
 
@@ -614,10 +429,22 @@
     // the shorter words inside the matched one (中国人 -> 中国, 中) only when the setting is on
     render(showParts ? matches : matches.filter((m) => m.len === matches[0].len));
     position(range.getBoundingClientRect());
+    rememberWord(matches[0].word, touchOpen || requireShift ? 0 : REMEMBER_HOVER_MS);
+  }
+
+  /** Counts the word as looked up, unless the popup moves on before `delay`. */
+  function rememberWord(word, delay) {
+    clearTimeout(rememberTimer);
+    if (!saveHistory || api.extension?.inIncognitoContext || rememberedHere.has(word)) return;
+    rememberTimer = setTimeout(() => {
+      rememberedHere.add(word);
+      Promise.resolve(api.runtime.sendMessage({ type: 'remember', word })).catch(() => {});
+    }, delay);
   }
 
   function hide() {
     clearTimeout(settleTimer);
+    clearTimeout(rememberTimer);
     requestId++; // drops a lookup still in flight
     lastHit = null;
     aim = null;
@@ -897,8 +724,10 @@
     if (popup) popup.dataset.theme = theme;
   };
 
-  api.storage.local.get(['enabled', 'theme', 'showParts', 'toneColors', 'requireShift']).then(
+  const SETTINGS = ['enabled', 'theme', 'showParts', 'toneColors', 'requireShift', 'saveHistory'];
+  api.storage.local.get(SETTINGS).then(
     (stored) => {
+      saveHistory = stored.saveHistory !== false;
       enabled = stored.enabled !== false;
       showParts = stored.showParts !== false;
       toneColors = stored.toneColors === true;
@@ -913,6 +742,7 @@
     if (changes.showParts) showParts = changes.showParts.newValue !== false;
     if (changes.toneColors) toneColors = changes.toneColors.newValue === true;
     if (changes.requireShift) requireShift = changes.requireShift.newValue === true;
+    if (changes.saveHistory) saveHistory = changes.saveHistory.newValue !== false;
     if (changes.enabled) {
       enabled = changes.enabled.newValue !== false;
       if (!enabled) hide();
@@ -992,6 +822,13 @@
     .pinyin, .strong { color: var(--success); font-weight: 700; }
     .en { color: var(--success); }
     .ref { color: var(--info); text-decoration: underline; }
+    .refs { margin-top: 6px; }
+    .ref-meaning {
+      margin-top: 4px; padding-left: 8px; border-left: 2px solid var(--line); font-size: 13px;
+    }
+    .ref-head { margin-bottom: 1px; }
+    .ref-word { font-size: 16px; }
+    .ref-pinyin { color: var(--pinyin); }
     /* hint under a button (showTip): placed by the script, within the card's width */
     .tip {
       position: absolute; z-index: 1; box-sizing: border-box; width: max-content; max-width: 220px;

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Китайско-русский словарь — ChinesePlus</title>
+    <link rel="icon" href="icons/icon-32.png" />
+    <link rel="stylesheet" href="popup.css" />
+    <link rel="stylesheet" href="results.css" />
+    <link rel="stylesheet" href="dictionary.css" />
+  </head>
+  <body class="page">
+    <header>
+      <img src="icons/icon-32.png" width="24" height="24" alt="" />
+      <span class="title">Словарь ChinesePlus</span>
+      <span class="offline">работает без интернета</span>
+    </header>
+
+    <input
+      class="search-field"
+      id="search"
+      type="search"
+      placeholder="Введите или вставьте китайский текст: 汉字, 你好世界…"
+      aria-label="Поиск китайского слова в словаре"
+      autocomplete="off"
+      spellcheck="false"
+      autofocus
+    />
+    <p class="hint">
+      Фраза или предложение разбивается на слова. Пиньинь и русские слова ищите в
+      <a id="site-link" href="https://www.chineseplus.club/dictionary?utm_source=browser_extension" target="_blank" rel="noopener">словаре на сайте ↗</a>.
+    </p>
+
+    <main id="search-results"></main>
+
+    <script src="lib.js"></script>
+    <script src="search.js"></script>
+    <script src="dictionary.js"></script>
+  </body>
+</html>

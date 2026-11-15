@@ -5,12 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ChinesePlus</title>
     <link rel="stylesheet" href="popup.css" />
+    <link rel="stylesheet" href="results.css" />
   </head>
   <body>
     <header>
       <img src="icons/icon-32.png" width="24" height="24" alt="" />
       <span class="title">ChinesePlus</span>
     </header>
+
+    <section class="search">
+      <input
+        class="search-field"
+        id="search"
+        type="search"
+        placeholder="汉字 — поиск в словаре"
+        aria-label="Поиск китайского слова в словаре"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <div class="search-results" id="search-results"></div>
+      <a class="open-tab" id="open-tab" href="dictionary.html">Открыть словарь во вкладке (офлайн) ↗</a>
+    </section>
 
     <label class="switch">
       <input type="checkbox" id="enabled" />
@@ -32,6 +47,26 @@
       <span>Только с зажатым Shift <small>(для мыши: наведите и нажмите Shift)</small></span>
     </label>
 
+    <section class="history">
+      <div class="history-head">
+        <span>Просмотренные слова</span>
+        <span class="history-count" id="history-count">0</span>
+      </div>
+      <p class="history-words" id="history-words"></p>
+      <p class="history-empty" id="history-empty">
+        Слова, которые вы смотрите в подсказках, появятся здесь — потом их можно разом добавить
+        в свой словарик на сайте.
+      </p>
+      <div class="history-actions" id="history-actions" hidden>
+        <a class="btn" id="history-send" target="_blank" rel="noopener">Добавить в мои слова ↗</a>
+        <button type="button" class="btn-ghost" id="history-clear">Очистить</button>
+      </div>
+      <label class="switch sub">
+        <input type="checkbox" id="saveHistory" />
+        <span>Запоминать слова <small>(последние 300, только в этом браузере)</small></span>
+      </label>
+    </section>
+
     <div class="theme" role="radiogroup" aria-label="Тема">
       <span>Тема:</span>
       <label><input type="radio" name="theme" value="auto" /> Авто</label>
@@ -49,6 +84,8 @@
       Словарь на сайте ↗
     </a>
 
+    <script src="lib.js"></script>
+    <script src="search.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

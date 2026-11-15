@@ -1,0 +1,34 @@
+/* dictionary.html: popup.css and results.css, laid out as a page */
+
+body.page {
+  max-width: 720px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+.page header {
+  flex-wrap: wrap;
+}
+
+.page .title {
+  font-size: 20px;
+}
+
+.offline {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.page .hint a {
+  color: var(--pinyin);
+}
+
+.page .hanzi {
+  font-size: 30px;
+}
+
+.page .senses {
+  font-size: 15px;
+}
