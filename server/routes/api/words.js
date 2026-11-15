@@ -58,6 +58,21 @@ router.post('/:wordId', auth, async (req, res) => {
 });
 
 /**
+ * @desc    Remove all the words from your old hsk vocab ("Очистить список" on /me/hsk/2)
+ * @route   DELETE api/words
+ * @access  Private
+ */
+router.delete('/', auth, async (req, res) => {
+  try {
+    const { deletedCount } = await OldHskUserWord.deleteMany({ user: req.user.id });
+    return res.json({ deleted: deletedCount });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+/**
  * @desc    Remove old hsk word from user hsk vocab
  * @route   DELETE api/words/:wordId
  * @access  Private

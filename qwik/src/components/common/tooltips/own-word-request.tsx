@@ -4,6 +4,7 @@ import { Link, useLocation } from '@builder.io/qwik-city';
 import { alertsContext, userContext } from '~/root';
 import { loginUrl } from '~/misc/helpers/login-next';
 import { useAddUserWord } from './own-word-btn';
+import CONSTANTS from '~/misc/consts/consts';
 
 /**
  * `?add=1` on a dictionary page: "add to my words" from the browser extension (or any link).
@@ -58,6 +59,25 @@ export const OwnWordRequest = component$(({ words }: { words: (string | DictWord
     return (
       <div class="alert alert-success mt-3 not-prose">
         <span>{word.chinese} уже в вашем словарике.</span>
+        <button type="button" class="btn btn-sm btn-ghost" onClick$={close}>
+          ✕
+        </button>
+      </div>
+    );
+  }
+
+  // the list is full: the backend would refuse it (POST api/userwords)
+  if (userState.wordsCount >= CONSTANTS.users.vocabSize) {
+    return (
+      <div class="alert alert-warning mt-3 not-prose">
+        <span>
+          В словарике уже {CONSTANTS.users.vocabSize} слов — это максимум. Чтобы добавить{' '}
+          {word.chinese}, удалите лишние в{' '}
+          <Link prefetch="js" href="/me/words" class="link">
+            «Мой словарик»
+          </Link>
+          .
+        </span>
         <button type="button" class="btn btn-sm btn-ghost" onClick$={close}>
           ✕
         </button>

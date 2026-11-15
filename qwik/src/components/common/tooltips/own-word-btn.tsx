@@ -4,6 +4,7 @@ import { alertsContext, userContext } from '~/root';
 import { minusSvg, plusSvg } from '../media/svg';
 import { ApiService } from '~/misc/actions/request';
 import { globalAction$, z, zod$ } from '@builder.io/qwik-city';
+import CONSTANTS from '~/misc/consts/consts';
 
 export const useAddUserWord = globalAction$(
   (params, ev) => {
@@ -69,6 +70,13 @@ export const OwnWordBtn = component$(({ word }: { word: DictWord }) => {
                 return alertsState.push({
                   bg: 'alert-error',
                   text: 'Авторизуйтесь для добавления слова в ваш словарик',
+                });
+              }
+              // the backend refuses it too (POST api/userwords)
+              if (userState.wordsCount >= CONSTANTS.users.vocabSize) {
+                return alertsState.push({
+                  bg: 'alert-error',
+                  text: `Лимит ${CONSTANTS.users.vocabSize} слов! Удалите лишние в «Мой словарик»`,
                 });
               }
               addUserWord.submit({ wordId: word._id });

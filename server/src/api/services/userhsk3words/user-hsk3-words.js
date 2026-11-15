@@ -52,10 +52,17 @@ const removeUserHsk3Word = async (req, res) => {
   res.json({ msg: 'UserHsk3Word removed' });
 };
 
+// "Очистить список" on /me/hsk/3
+const clearUserHsk3Words = async (req, res) => {
+  const { deletedCount } = await UserHsk3Word.deleteMany({ user: req.user.id });
+  res.json({ deleted: deletedCount });
+};
+
 module.exports = {
   getUserHsk3Words,
   getUserHsk3WordIds,
   countUserHsk3Words,
   addUserHsk3Word,
   removeUserHsk3Word,
+  clearUserHsk3Words,
 };

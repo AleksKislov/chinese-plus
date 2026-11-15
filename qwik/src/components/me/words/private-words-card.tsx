@@ -1,6 +1,7 @@
 import { component$ } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
 import CONSTANTS from '~/misc/consts/consts';
+import { ClearListBtn } from '~/components/me/clear-list-btn';
 
 type TabelCardProps = {
   wordsTotal: number;
@@ -38,6 +39,11 @@ export const PrivateWordsCard = component$(({ wordsTotal }: TabelCardProps) => {
           </tbody>
         </table>
       </div>
+      {wordsTotal > 0 && (
+        <div class="px-4 pb-4">
+          <ClearListBtn kind="words" />
+        </div>
+      )}
     </div>
   );
 });

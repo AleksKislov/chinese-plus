@@ -7,6 +7,7 @@ const {
   countUserHsk3Words,
   addUserHsk3Word,
   removeUserHsk3Word,
+  clearUserHsk3Words,
   downloadUserHsk3Csv,
 } = require('../../src/api/services/userhsk3words');
 
@@ -45,6 +46,13 @@ router.get('/csv', auth, downloadUserHsk3Csv);
  * @access    Private
  */
 router.post('/:wordId', auth, addUserHsk3Word);
+
+/**
+ * @route     DELETE api/userhsk3words
+ * @desc      Remove all the words from your HSK 3.0 list
+ * @access    Private
+ */
+router.delete('/', auth, clearUserHsk3Words);
 
 /**
  * @route     DELETE api/userhsk3words/:wordId

@@ -2,6 +2,7 @@ import { type Signal, component$ } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
 import CONSTANTS from '~/misc/consts/consts';
 import { wordLevelLabel } from '~/components/hsk/words-seo';
+import { ClearListBtn } from '~/components/me/clear-list-btn';
 
 type TabelCardProps = {
   lvlSignal: Signal<string>;
@@ -57,6 +58,11 @@ export const PrivateHskCard = component$(
             </tbody>
           </table>
         </div>
+        {lvlWordsNumMap.total > 0 && (
+          <div class="px-4 py-4">
+            <ClearListBtn kind={isHsk3 ? 'hsk3' : 'hsk2'} />
+          </div>
+        )}
       </div>
     );
   },

@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const auth = require('../../middleware/auth');
 
@@ -6,6 +7,9 @@ const UserDictWord = require('../../src/models/UserWord');
 const { attachSenses } = require('../../src/api/services/dictionary/translations/attach-senses');
 
 const { downloadUserDictWordsCsv } = require('../../src/api/services/userwords');
+
+// same as CONSTANTS.users.vocabSize on the frontend (and the HSK 3.0 list's limit)
+const VOCAB_SIZE = 300;
 
 /**
  * @route     GET api/userwords
@@ -60,21 +64,40 @@ function userWordToDTO(word) {
 
 /**
  * @route     POST api/userwords
- * @desc      Add new word from dictionary to user vocab
+ * @desc      Add new word from dictionary to user vocab (at most VOCAB_SIZE words; an existing
+ *            one is returned as is)
  * @access    Private
  */
 router.post('/:wordId', auth, async (req, res) => {
-  const newWord = {
-    user: req.user.id,
-    wordId: req.params.wordId,
-  };
-
-  const word = new UserDictWord(newWord);
+  const { wordId } = req.params;
+  if (!mongoose.isValidObjectId(wordId)) return res.status(400).json({ msg: 'Invalid word id' });
+  const filter = { user: req.user.id, wordId };
 
   try {
-    await word.save();
+    // no duplicates: the same word added twice (two tabs, a double click) stays one
+    const existing = await UserDictWord.findOne(filter);
+    if (existing) return res.json(existing);
 
-    return res.json(word);
+    if ((await UserDictWord.countDocuments({ user: req.user.id })) >= VOCAB_SIZE) {
+      return res.status(400).json({ msg: `Limit of ${VOCAB_SIZE} words` });
+    }
+
+    return res.json(await new UserDictWord(filter).save());
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+/**
+ * @route   DELETE api/userwords
+ * @desc    Remove all the words from your vocab ("Очистить список" on /me/words)
+ * @access  Private
+ */
+router.delete('/', auth, async (req, res) => {
+  try {
+    const { deletedCount } = await UserDictWord.deleteMany({ user: req.user.id });
+    return res.json({ deleted: deletedCount });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

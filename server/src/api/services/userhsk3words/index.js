@@ -6,6 +6,7 @@ const {
   countUserHsk3Words,
   addUserHsk3Word,
   removeUserHsk3Word,
+  clearUserHsk3Words,
 } = require('./user-hsk3-words');
 const { downloadUserHsk3Csv } = require('./download-user-hsk3-csv');
 
@@ -15,5 +16,6 @@ module.exports = {
   countUserHsk3Words: apiDecorator(countUserHsk3Words),
   addUserHsk3Word: apiDecorator(addUserHsk3Word),
   removeUserHsk3Word: apiDecorator(removeUserHsk3Word),
+  clearUserHsk3Words: apiDecorator(clearUserHsk3Words),
   downloadUserHsk3Csv: apiDecorator(downloadUserHsk3Csv),
 };
