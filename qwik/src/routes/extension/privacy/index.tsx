@@ -75,9 +75,18 @@ export default component$(() => {
 
             <h2>Что хранится</h2>
             <p>
-              Только ваши настройки расширения: включено ли оно, тема подсказок, показ слов внутри
-              слова, цвет пиньиня по тонам и режим «Только с зажатым Shift». Они хранятся в памяти
-              браузера на вашем устройстве и удаляются вместе с расширением.
+              Ваши настройки расширения: включено ли оно, тема подсказок, показ слов внутри слова,
+              цвет пиньиня по тонам и режим «Только с зажатым Shift».
+            </p>
+            <p>
+              Список просмотренных слов: до 300 последних слов, которые вы смотрели в подсказках, —
+              только сами китайские слова, сколько раз и когда вы их смотрели. Адреса страниц и
+              текст вокруг слова не сохраняются; в приватных окнах слова не запоминаются. Список
+              можно очистить или отключить в меню расширения.
+            </p>
+            <p>
+              Всё это хранится в памяти браузера на вашем устройстве и удаляется вместе с
+              расширением.
             </p>
 
             <h2>Разрешения</h2>
@@ -100,9 +109,12 @@ export default component$(() => {
               </Link>{' '}
               — только когда вы сами на неё нажимаете. Кнопка «+» открывает ту же страницу, где сайт
               предложит добавить слово в ваш список слов (если вы не вошли на сайт — сначала войти).
-              Расширение не хранит ни вход, ни данные аккаунта. В ссылках есть пометка, что переход
-              сделан из расширения (utm_source=browser_extension). На сайте действуют его обычные
-              правила.
+              Расширение не хранит ни вход, ни данные аккаунта. Кнопка «Добавить в мои слова» в меню
+              расширения открывает страницу сайта со списком просмотренных слов, где вы выбираете,
+              какие добавить в словарик, — только когда вы сами на неё нажимаете. Список передаётся
+              в части адреса после «#», которую браузер не отправляет на сервер: страница сайта
+              читает её у вас в браузере. В ссылках есть пометка, что переход сделан из расширения
+              (utm_source=browser_extension). На сайте действуют его обычные правила.
             </p>
 
             <h2>Передача третьим лицам</h2>
@@ -164,9 +176,18 @@ export default component$(() => {
 
               <h3>What is stored</h3>
               <p>
-                Only your extension settings (on/off, tooltip theme, showing shorter words inside
-                the hovered word, pinyin tone colors, Shift-only mode), kept in the browser's local
-                extension storage on your device. They are removed when you uninstall the extension.
+                Your extension settings (on/off, tooltip theme, showing shorter words inside the
+                hovered word, pinyin tone colors, Shift-only mode).
+              </p>
+              <p>
+                A list of looked-up words: up to the last 300 Chinese words you looked up in the
+                tooltips, with how many times and when. No page addresses or surrounding text are
+                kept, and nothing is recorded in private windows. You can clear or turn off the list
+                in the extension menu.
+              </p>
+              <p>
+                All of it is kept in the browser's local extension storage on your device and
+                removed when you uninstall the extension.
               </p>
 
               <h3>Permissions</h3>
@@ -185,8 +206,13 @@ export default component$(() => {
                 The “Подробнее” (“More”) button opens the word's page on chineseplus.club only when
                 you click it. The “+” button opens the same page, where the website offers to add
                 the word to your word list (after a login on the website if needed). The extension
-                keeps no login or account data. The links carry a marker that the visit came from
-                the extension (utm_source=browser_extension). The website's own terms apply there.
+                keeps no login or account data. The “Добавить в мои слова” (“Add to my words”)
+                button in the extension menu opens a page of the website with the list of looked-up
+                words, where you choose which ones to add to your word list, only when you click it.
+                The list is passed in the part of the address after “#”, which the browser does not
+                send to the server: the website's page reads it in your browser. The links carry a
+                marker that the visit came from the extension (utm_source=browser_extension). The
+                website's own terms apply there.
               </p>
 
               <h3>Third parties</h3>

@@ -10,7 +10,7 @@ export const EXTENSION_STORES: { name: string; note: string; url: string | null 
   {
     name: 'Chrome',
     note: 'а также Яндекс Браузер, Edge, Opera, Brave',
-    url: null,
+    url: 'https://chromewebstore.google.com/detail/kcdlhglkobgjigfhgbpjemioncohpegd',
   },
   {
     name: 'Firefox',
@@ -20,5 +20,5 @@ export const EXTENSION_STORES: { name: string; note: string; url: string | null 
 ];
 
 // date of the current privacy policy text, shown on /extension/privacy
-export const PRIVACY_UPDATED = '11 ноября 2026';
-export const PRIVACY_UPDATED_EN = 'November 11, 2026';
+export const PRIVACY_UPDATED = '15 ноября 2026';
+export const PRIVACY_UPDATED_EN = 'November 15, 2026';
