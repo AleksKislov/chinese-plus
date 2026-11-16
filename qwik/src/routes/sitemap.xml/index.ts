@@ -10,6 +10,7 @@ import { type HskVersion, examsPath } from '~/components/hsk/exams/levels';
 import { WORD_LEVELS, type WordsPage, wordsPageUrl } from '~/components/hsk/words-seo';
 import { grammarLevelUrl, grammarTopicUrl } from '~/components/grammar/types';
 import { type NameListItem, nameUrl, namesHubUrl } from '~/components/names/types';
+import { type RuWordTopicListItem, ruWordUrl, ruWordsHubUrl } from '~/components/ru-words/types';
 import {
   type HskSheetVersion,
   HSK_SHEET_LEVELS,
@@ -156,6 +157,7 @@ export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => 
     hskExams,
     grammarTopics,
     names,
+    ruWordTopics,
   ] = await Promise.all([
     ApiService.get('/api/texts/', undefined, { texts: [] }) as Promise<{
       texts: ContentListItem[];
@@ -173,6 +175,7 @@ export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => 
     ApiService.get('/api/hsk-exams', undefined, []) as Promise<HskExamListItem[]>,
     ApiService.get('/api/grammar/slugs', undefined, []) as Promise<GrammarSlug[]>,
     ApiService.get('/api/names', undefined, []) as Promise<NameListItem[]>,
+    ApiService.get('/api/ru-words', undefined, []) as Promise<RuWordTopicListItem[]>,
   ]);
 
   const urls: SitemapUrl[] = [
@@ -197,6 +200,12 @@ export const onGet: RequestHandler = async ({ send, headers, cacheControl }) => 
     })),
     { loc: `${CONST_URLS.siteUrl}${namesHubUrl}` },
     ...names.map((n) => ({ loc: `${CONST_URLS.siteUrl}${nameUrl(n.slug)}` })),
+    // "мама на китайском": the hub, a page per topic and per word
+    { loc: `${CONST_URLS.siteUrl}${ruWordsHubUrl}` },
+    ...ruWordTopics.flatMap((t) => [
+      { loc: `${CONST_URLS.siteUrl}${ruWordUrl(t.slug)}` },
+      ...t.words.map((w) => ({ loc: `${CONST_URLS.siteUrl}${ruWordUrl(w.slug)}` })),
+    ]),
     { loc: `${CONST_URLS.siteUrl}${propisiUrl}` },
     ...(Object.keys(HSK_SHEET_LEVELS) as HskSheetVersion[]).flatMap((v) =>
       HSK_SHEET_LEVELS[v].map((level) => ({

@@ -55,6 +55,7 @@ import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
 import { Breadcrumbs, truncateCrumb } from '~/components/common/layout/breadcrumbs';
 import { nameUrl } from '~/components/names/types';
+import { capitalize, ruWordUrl } from '~/components/ru-words/types';
 import { type HskLevels, HskLevelBadge } from '~/components/hsk/hsk-level-badge';
 import {
   type DictTranslationResponse,
@@ -130,6 +131,19 @@ export const useGetParsedTranslation = routeLoader$(
   },
 );
 
+// pages on /na-kitayskom whose main word is the found one: 妈妈 -> "Мама на китайском"
+export const useGetRuWordPages = routeLoader$(
+  async ({ resolveValue }): Promise<{ slug: string; ru: string }[]> => {
+    const words = await resolveValue(useLoadTranslation);
+    if (!words || words.length !== 1 || typeof words[0] === 'string') return [];
+    return ApiService.get(
+      `/api/ru-words/by-cn/${encodeURIComponent(words[0].chinese)}`,
+      undefined,
+      [],
+    );
+  },
+);
+
 // HSK 3.0 levels of every chinese word the page shows (search result, wildcard and pinyin lists)
 export const useGetHskLevels = routeLoader$(async ({ resolveValue }): Promise<HskLevels> => {
   const lists = await Promise.all([
@@ -152,6 +166,7 @@ export default component$(() => {
   const pinyinWords = useGetPinyinWords();
   const hskLevels = useGetHskLevels();
   const parsedTranslation = useGetParsedTranslation();
+  const ruWordPages = useGetRuWordPages();
   const words = useSignal<(string | DictWord)[] | null>(null);
   const input = useSignal(loc.params.word || '');
 
@@ -345,6 +360,17 @@ export default component$(() => {
                     showExamples={showExamples.value}
                   />
 
+                  {ruWordPages.value.map((p) => (
+                    <Link
+                      key={p.slug}
+                      prefetch="js"
+                      href={ruWordUrl(p.slug)}
+                      class="btn btn-outline btn-primary btn-sm mt-3 mr-2"
+                    >
+                      {capitalize(p.ru)} на китайском: произношение, иероглифы, примеры →
+                    </Link>
+                  ))}
+
                   {canEditDictionary && (
                     <EditWordModal word={words.value[0] as DictWord} modalId={editWordModalId} />
                   )}
@@ -391,6 +417,17 @@ export default component$(() => {
                       class="btn btn-outline btn-primary btn-sm mt-3"
                     >
                       Это имя: как пишется по-китайски, значение иероглифов →
+                    </Link>
+                  )}
+
+                  {ruWord.value.wordSlug && (
+                    <Link
+                      prefetch="js"
+                      href={ruWordUrl(ruWord.value.wordSlug)}
+                      class="btn btn-outline btn-primary btn-sm mt-3 ml-2"
+                    >
+                      {capitalize(ruWord.value.word?.ru || pageWord)} на китайском: иероглифы,
+                      произношение, примеры →
                     </Link>
                   )}
                 </>

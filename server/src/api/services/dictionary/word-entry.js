@@ -19,7 +19,7 @@ const { describeUpdate, describeCreate } = require('./word-notify');
  */
 
 // cached responses that show dictionary translations
-const TRANSLATION_CACHE_TAGS = ['hsk-new', 'grammar', 'writing-sheets'];
+const TRANSLATION_CACHE_TAGS = ['hsk-new', 'grammar', 'writing-sheets', 'ru-words'];
 
 // same as scripts/backfill-pinyin.js: only short words get a cleanPinyin
 const MAX_CLEAN_PINYIN_CHARS = 8;

@@ -36,6 +36,7 @@ export type RuWord = {
   } | null;
   other: { value: string; canBeFound: boolean }[];
   nameSlug?: string | null; // the word is a Russian name with its own page on /names
+  wordSlug?: string | null; // the word has its own page on /na-kitayskom
 };
 
 export const segmenter = async (

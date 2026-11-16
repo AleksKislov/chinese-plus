@@ -2,6 +2,7 @@ const RussianWord = require('../../../models/RussianWord');
 const { RU_COLLATION } = RussianWord;
 const { checkRuWord } = require('./check-ru-word');
 const { findNameSlug } = require('../names');
+const { findRuWordSlug } = require('../ru-words');
 
 /**
  * @route   GET api/ru-dictionary/:word
@@ -15,12 +16,17 @@ async function getWord(req, res) {
   const found = matches.find((m) => m.ru === word) || matches[0];
 
   if (found) {
-    // "Александр" also has its own page on /names
-    return res.json({ word: found, other: [], nameSlug: findNameSlug(word) });
+    // "Александр" also has its own page on /names, "мама" on /na-kitayskom
+    return res.json({
+      word: found,
+      other: [],
+      nameSlug: findNameSlug(word),
+      wordSlug: findRuWordSlug(word),
+    });
   }
 
   const other = await checkRuWord(word);
-  res.json({ word: null, other, nameSlug: findNameSlug(word) });
+  res.json({ word: null, other, nameSlug: findNameSlug(word), wordSlug: findRuWordSlug(word) });
 }
 
 module.exports = { getWord };
