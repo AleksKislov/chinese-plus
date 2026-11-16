@@ -80,6 +80,7 @@ app.use('/api/ru-dictionary', require('./routes/api/ru-dictionary'));
 app.use('/api/tutor', require('./routes/api/tutor'));
 app.use('/api/names', require('./routes/api/names'));
 app.use('/api/writing-sheets', require('./routes/api/writing-sheets'));
+app.use('/api/handwriting', require('./routes/api/handwriting'));
 
 // glcoud services routes
 app.use('/gcloud/youtube', require('./routes/gcloud/youtube'));

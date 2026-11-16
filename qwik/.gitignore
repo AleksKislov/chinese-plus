@@ -37,3 +37,5 @@ lerna-debug.log*
 # Yarn
 .yarn/*
 !.yarn/releases
+# handwriting model fonts (commercial, kept locally only): see src/components/handwriting/fonts.ts
+/public/fonts/handwriting/*.woff2
