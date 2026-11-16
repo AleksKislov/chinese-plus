@@ -36,7 +36,9 @@ export const RouterHead = component$(() => {
     <>
       <title>{head.title}</title>
 
-      {!hasOwnCanonical && <link rel="canonical" href={loc.url.origin + loc.url.pathname} />}
+      {/* Always the www host: the bare chineseplus.club also serves pages, and a host-based
+          canonical made each copy claim to be the original. */}
+      {!hasOwnCanonical && <link rel="canonical" href={canonical} />}
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
