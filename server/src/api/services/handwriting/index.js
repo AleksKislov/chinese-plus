@@ -47,6 +47,28 @@ const cleanStrokes = (strokes) => {
   });
 };
 
+// { brush, width, sensitivity, taperStart, taperEnd, smoothing } from the FE brushes,
+// the rest is dropped
+const BRUSH_RE = /^[a-z-]{1,20}$/;
+const cleanStyle = (style) => {
+  if (!style || !BRUSH_RE.test(String(style.brush || ''))) return undefined;
+  if (!isNum(style.width) || !isNum(style.sensitivity)) return undefined;
+  return {
+    brush: style.brush,
+    width: Math.min(200, Math.max(1, Math.round(style.width))),
+    sensitivity: Math.min(10, Math.max(1, Math.round(style.sensitivity))),
+    ...(isNum(style.taperStart) && {
+      taperStart: Math.min(300, Math.max(0, Math.round(style.taperStart))),
+    }),
+    ...(isNum(style.taperEnd) && {
+      taperEnd: Math.min(300, Math.max(0, Math.round(style.taperEnd))),
+    }),
+    ...(isNum(style.smoothing) && {
+      smoothing: Math.min(10, Math.max(0, Math.round(style.smoothing))),
+    }),
+  };
+};
+
 // GET ?font= - chars already saved for the font, to mark them
 async function getSaved(req, res) {
   const font = checkFont(req.query.font);
@@ -60,22 +82,23 @@ async function getOne(req, res) {
   const char = checkChar(req.params.char);
   const doc = await Handwriting.findOne(
     { font, char },
-    { _id: 0, font: 1, char: 1, strokes: 1, size: 1, pen: 1, updatedAt: 1 },
+    { _id: 0, font: 1, char: 1, strokes: 1, size: 1, pen: 1, style: 1, updatedAt: 1 },
   ).lean();
   if (!doc) throw new HttpError(404, 'Not saved yet');
   res.json(doc);
 }
 
-// PUT /:font/:char { strokes, size, pen } - save, replacing an earlier version
+// PUT /:font/:char { strokes, size, pen, style } - save, replacing an earlier version
 async function saveOne(req, res) {
   const font = checkFont(req.params.font);
   const char = checkChar(req.params.char);
   const strokes = cleanStrokes(req.body?.strokes);
   const size = isNum(req.body?.size) ? Math.round(req.body.size) : undefined;
+  const style = cleanStyle(req.body?.style);
 
   await Handwriting.findOneAndUpdate(
     { font, char },
-    { font, char, strokes, size, pen: Boolean(req.body?.pen), user: req.user.id },
+    { font, char, strokes, size, style, pen: Boolean(req.body?.pen), user: req.user.id },
     { upsert: true },
   );
   res.json({ char, font });

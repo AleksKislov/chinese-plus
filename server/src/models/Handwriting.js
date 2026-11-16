@@ -16,6 +16,9 @@ const HandwritingSchema = new mongoose.Schema(
     strokes: { type: mongoose.Schema.Types.Mixed, required: true },
     size: { type: Number }, // writing square in CSS px when it was recorded
     pen: { type: Boolean, default: false }, // written with a stylus (real pressure)
+    // the brush it was written with, only the look: { brush, width, sensitivity, taperStart, taperEnd, smoothing }
+    // (FE components/handwriting/brushes.ts: width on the 1000 grid, pressure curve)
+    style: { type: mongoose.Schema.Types.Mixed },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
   },
   { timestamps: true },

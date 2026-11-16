@@ -47,6 +47,16 @@ const saveSchema = target.extend({
   strokes: z.array(z.array(point).min(1)).min(1).max(80),
   size: z.number(),
   pen: z.boolean(),
+  style: z
+    .object({
+      brush: z.string().regex(/^[a-z-]{1,20}$/),
+      width: z.number(),
+      sensitivity: z.number(),
+      taperStart: z.number().optional(),
+      taperEnd: z.number().optional(),
+      smoothing: z.number().optional(),
+    })
+    .optional(),
 });
 
 const charPath = ({ font, char }: z.infer<typeof target>) => `/${font}/${encodeURIComponent(char)}`;
@@ -58,8 +68,14 @@ export const saveHandwriting = server$(async function (
   if (!parsed.success) return { error: 'Неверные данные' };
   const token = getTokenFromCookie(this.cookie);
   if (!token) return { error: 'Войдите как админ' };
-  const { strokes, size, pen } = parsed.data;
-  return hwFetch(token, 'PUT', charPath(parsed.data), { strokes, size, pen }, 'Не сохранилось');
+  const { strokes, size, pen, style } = parsed.data;
+  return hwFetch(
+    token,
+    'PUT',
+    charPath(parsed.data),
+    { strokes, size, pen, style },
+    'Не сохранилось',
+  );
 });
 
 export const getHandwriting = server$(async function (params: {

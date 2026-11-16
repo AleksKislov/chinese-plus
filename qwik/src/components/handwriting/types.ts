@@ -1,3 +1,5 @@
+import { type BrushStyle } from './brushes';
+
 // Admin page /admin/handwriting/: the admin traces characters with a stylus, the pen movement is
 // saved (BE api/handwriting, model server/src/models/Handwriting.js) to build an animated font.
 
@@ -11,6 +13,7 @@ export type HandwritingData = {
   strokes: PenStroke[];
   size: number; // writing square in CSS px when recorded
   pen: boolean; // written with a stylus: real pressure
+  style?: BrushStyle; // the brush it was written with (only the look)
 };
 
 export type SavedHandwriting = HandwritingData & { font: string; char: string; updatedAt: string };

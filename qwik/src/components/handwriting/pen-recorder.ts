@@ -1,30 +1,53 @@
+import { type BrushStyle, DEFAULT_STYLE, brushFill, strokePath } from './brushes';
 import { GRID, type HandwritingData, type PenPoint, type PenStroke } from './types';
 
 // Records the pen on a canvas (browser only, no API calls): every pointer sample (with the
-// coalesced ones Safari collects between frames: Apple Pencil gives up to 240 per second) as
-// [x, y, pressure, t]. Draws the ink with a width that follows the pressure, and replays
-// recordings with their real timing.
+// coalesced ones the browser collects between frames) as [x, y, pressure, t]. Draws the ink
+// with the chosen brush (brushes.ts) and replays recordings with their real timing.
+//
+// Drawing: finished lines are kept on an offscreen canvas; on each animation frame the screen
+// gets that canvas plus the line being written, recomputed as one smooth outline.
 
-const INK = '#111';
-const REPLAY_INK = '#1d4ed8';
 const MAX_REPLAY_GAP = 400; // ms: longer pen-up pauses are shortened in the replay
+const MAX_CANVAS_PX = 4096; // backing canvas side, also when the page is pinch-zoomed
+const PRESSURE_EVERY = 80; // ms between pressure meter updates
+// ms after the pen is lifted that still count as writing: the wrist rests on the screen
+// between lines, its taps must not press buttons (touch-guard.ts)
+const WRITING_TAIL = 1500;
+
+export type PressureInfo = { pressure: number; max: number; type: string };
+
+// a recording drawn instead of own lines: a replay, or what it left after it ended
+type Shown = { strokes: PenStroke[]; style: BrushStyle; pen: boolean };
+export type ReplayData = { strokes: PenStroke[]; style?: BrushStyle; pen?: boolean };
 
 export class PenRecorder {
   private ctx: CanvasRenderingContext2D;
+  private done: HTMLCanvasElement; // own finished lines
+  private doneCtx: CanvasRenderingContext2D;
   private strokes: PenStroke[] = [];
   private current: PenStroke | null = null;
+  private currentMax = 0; // highest pressure of the line being written
   private pointerId: number | null = null;
   private start = 0; // event time of the first point of the character
   private penSeen = false;
   private cssSize = 400;
-  private width = 22; // base line width on the 1000 grid
+  private style: BrushStyle = DEFAULT_STYLE;
+  private frame = 0; // scheduled redraw
   private replayFrame = 0;
   private resolveReplay: (() => void) | null = null;
-  // a replayed recording left on the canvas (null: own strokes are shown)
-  private shown: { strokes: PenStroke[]; color: string } | null = null;
+  private shown: Shown | null = null;
+  private pressureAt = 0;
+  private liftedAt = -Infinity; // performance.now() of the last pen up
 
-  constructor(private canvas: HTMLCanvasElement, private onChange: (strokeCount: number) => void) {
+  constructor(
+    private canvas: HTMLCanvasElement,
+    private onChange: (strokeCount: number) => void,
+    private onPressure: (info: PressureInfo) => void = () => {},
+  ) {
     this.ctx = canvas.getContext('2d')!;
+    this.done = document.createElement('canvas');
+    this.doneCtx = this.done.getContext('2d')!;
   }
 
   attach() {
@@ -32,34 +55,47 @@ export class PenRecorder {
     const down = (e: PointerEvent) => this.down(e);
     const move = (e: PointerEvent) => this.move(e);
     const up = (e: PointerEvent) => this.up(e);
+    // pinch zoom: more canvas pixels, so the ink stays sharp
+    const zoom = () => this.setSize(this.cssSize);
     c.addEventListener('pointerdown', down);
     c.addEventListener('pointermove', move);
     c.addEventListener('pointerup', up);
     c.addEventListener('pointercancel', up);
+    window.visualViewport?.addEventListener('resize', zoom);
     return () => {
       c.removeEventListener('pointerdown', down);
       c.removeEventListener('pointermove', move);
       c.removeEventListener('pointerup', up);
       c.removeEventListener('pointercancel', up);
+      window.visualViewport?.removeEventListener('resize', zoom);
       this.stopReplay();
+      if (this.frame) cancelAnimationFrame(this.frame);
     };
   }
 
   setSize(cssSize: number) {
     this.cssSize = cssSize;
-    const dpr = window.devicePixelRatio || 1;
-    this.canvas.width = Math.round(cssSize * dpr);
-    this.canvas.height = Math.round(cssSize * dpr);
-    this.redraw();
+    const scale = (window.devicePixelRatio || 1) * (window.visualViewport?.scale || 1);
+    const px = Math.min(MAX_CANVAS_PX, Math.round(cssSize * scale));
+    if (px === this.canvas.width) return;
+    this.canvas.width = this.canvas.height = px;
+    this.done.width = this.done.height = px;
+    this.rebuild();
   }
 
-  setWidth(width: number) {
-    this.width = width;
-    this.redraw();
+  setStyle(style: BrushStyle) {
+    this.style = style;
+    this.rebuild();
   }
 
   get count() {
     return this.strokes.length;
+  }
+
+  // the stylus is on the screen or was lifted a moment ago
+  get writing() {
+    if (!this.penSeen) return false;
+    return this.pointerId !== null || performance.now() - this.liftedAt < WRITING_TAIL;
   }
 
   getData(): HandwritingData {
@@ -67,6 +103,7 @@ export class PenRecorder {
       strokes: this.strokes.map((s) => s.map((p) => [...p] as PenPoint)),
       size: this.cssSize,
       pen: this.penSeen,
+      style: { ...this.style },
     };
   }
 
@@ -74,7 +111,7 @@ export class PenRecorder {
     this.stopReplay();
     this.shown = null;
     this.strokes.pop();
-    this.redraw();
+    this.rebuild();
     this.onChange(this.strokes.length);
   }
 
@@ -84,60 +121,68 @@ export class PenRecorder {
     this.strokes = [];
     this.current = null;
     this.pointerId = null;
-    this.redraw();
+    this.rebuild();
     this.onChange(0);
   }
 
-  // own strokes when none are given; resolves when the replay ends or is stopped
-  replay(data?: Pick<HandwritingData, 'strokes'>, speed = 1): Promise<void> {
+  // own lines when no data is given; a saved recording with its own brush when it has one.
+  // Resolves when the replay ends or is stopped; the whole drawing stays on the canvas.
+  replay(data?: ReplayData, speed = 1): Promise<void> {
     this.stopReplay();
-    const own = !data;
-    const strokes = data?.strokes || this.strokes;
-    const color = own ? INK : REPLAY_INK;
-    this.shown = own ? null : { strokes, color };
+    const show: Shown = data
+      ? { strokes: data.strokes, style: data.style || this.style, pen: Boolean(data.pen) }
+      : { strokes: this.strokes, style: this.style, pen: this.penSeen };
+    this.shown = data ? show : null;
 
     // shift every point back by the pen-up time cut from the pauses before it
     const timeline: PenStroke[] = [];
     let cut = 0;
-    let prevEnd = strokes[0]?.[0]?.[3] ?? 0;
-    strokes.forEach((s) => {
+    let prevEnd = show.strokes[0]?.[0]?.[3] ?? 0;
+    show.strokes.forEach((s) => {
       const gap = s[0][3] - prevEnd;
       if (gap > MAX_REPLAY_GAP) cut += gap - MAX_REPLAY_GAP;
       timeline.push(s.map(([x, y, p, t]) => [x, y, p, t - cut] as PenPoint));
       prevEnd = s[s.length - 1][3];
     });
     const t0 = timeline[0]?.[0]?.[3] ?? 0;
-    this.clearCanvas();
+    const k = this.canvas.width / GRID;
+    const fill = brushFill(this.ctx, show.style);
 
     return new Promise((resolve) => {
-      const drawn = timeline.map(() => 0); // points drawn of each stroke
+      const drawn = timeline.map(() => 0); // points shown of each line
+      const finished: (Path2D | null)[] = timeline.map(() => null);
       const began = performance.now();
-      const frame = () => {
+      const step = () => {
         const now = t0 + (performance.now() - began) * speed;
         let left = false;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = fill;
         timeline.forEach((s, i) => {
-          while (drawn[i] < s.length && s[drawn[i]][3] <= now) {
-            this.drawPoint(s, drawn[i], color);
-            drawn[i]++;
-          }
+          while (drawn[i] < s.length && s[drawn[i]][3] <= now) drawn[i]++;
           if (drawn[i] < s.length) left = true;
+          if (!drawn[i]) return;
+          if (drawn[i] === s.length) {
+            finished[i] ||= strokePath(s, show.style, show.pen, k, true);
+            this.ctx.fill(finished[i]!);
+          } else {
+            this.ctx.fill(strokePath(s.slice(0, drawn[i]), show.style, show.pen, k, false));
+          }
         });
-        if (left) this.replayFrame = requestAnimationFrame(frame);
+        if (left) this.replayFrame = requestAnimationFrame(step);
         else this.stopReplay();
       };
       this.resolveReplay = resolve;
-      this.replayFrame = requestAnimationFrame(frame);
+      this.replayFrame = requestAnimationFrame(step);
     });
   }
 
-  // a stopped replay leaves the whole drawing on the canvas
   stopReplay() {
     if (!this.replayFrame) return;
     cancelAnimationFrame(this.replayFrame);
     this.replayFrame = 0;
     this.resolveReplay?.();
     this.resolveReplay = null;
-    this.redraw();
+    this.render();
   }
 
   private down(e: PointerEvent) {
@@ -147,18 +192,19 @@ export class PenRecorder {
     if (this.pointerId !== null) return;
     e.preventDefault();
 
-    // writing hides a replay and shows own strokes again
+    // writing hides a replay and shows own lines again
     if (this.replayFrame || this.shown) {
-      this.stopReplay();
       this.shown = null;
-      this.redraw();
+      this.stopReplay();
+      this.render();
     }
     this.canvas.setPointerCapture?.(e.pointerId);
     this.pointerId = e.pointerId;
     if (!this.strokes.length) this.start = e.timeStamp;
     this.current = [this.toPoint(e)];
+    this.currentMax = this.current[0][2];
     this.strokes.push(this.current);
-    this.drawPoint(this.current, 0, INK);
+    this.schedule();
   }
 
   private move(e: PointerEvent) {
@@ -170,14 +216,23 @@ export class PenRecorder {
       const last = this.current![this.current!.length - 1];
       if (p[0] === last[0] && p[1] === last[1] && p[3] === last[3]) return;
       this.current!.push(p);
-      this.drawPoint(this.current!, this.current!.length - 1, INK);
+      this.currentMax = Math.max(this.currentMax, p[2]);
     });
+    this.schedule();
+
+    if (e.timeStamp - this.pressureAt > PRESSURE_EVERY) {
+      this.pressureAt = e.timeStamp;
+      this.onPressure({ pressure: e.pressure, max: this.currentMax, type: e.pointerType });
+    }
   }
 
   private up(e: PointerEvent) {
     if (e.pointerId !== this.pointerId) return;
+    if (this.current) this.drawLine(this.doneCtx, this.current, true);
+    this.liftedAt = performance.now();
     this.pointerId = null;
     this.current = null;
+    this.schedule();
     this.onChange(this.strokes.length);
   }
 
@@ -194,42 +249,39 @@ export class PenRecorder {
     ];
   }
 
-  // line width on the 1000 grid: thin at a light touch, up to ~1.25 of the base when pressed
-  private lineWidth(pressure: number) {
-    return this.width * (0.3 + 0.95 * pressure);
+  private drawLine(ctx: CanvasRenderingContext2D, stroke: PenStroke, last: boolean) {
+    ctx.fillStyle = brushFill(ctx, this.style);
+    ctx.fill(strokePath(stroke, this.style, this.penSeen, this.canvas.width / GRID, last));
   }
 
-  // the segment from the previous point (a dot for the first one)
-  private drawPoint(stroke: PenStroke, i: number, color: string) {
-    const k = this.canvas.width / GRID;
-    const ctx = this.ctx;
-    const [x, y, p] = stroke[i];
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    if (i === 0) {
-      ctx.beginPath();
-      ctx.arc(x * k, y * k, (this.lineWidth(p) * k) / 2, 0, Math.PI * 2);
-      ctx.fill();
+  // at most one redraw per animation frame, however many samples came
+  private schedule() {
+    if (this.frame) return;
+    this.frame = requestAnimationFrame(() => {
+      this.frame = 0;
+      this.render();
+    });
+  }
+
+  // own finished lines drawn again: after undo, a new size or brush
+  private rebuild() {
+    this.doneCtx.clearRect(0, 0, this.done.width, this.done.height);
+    this.strokes.forEach((s) => s !== this.current && this.drawLine(this.doneCtx, s, true));
+    this.render();
+  }
+
+  private render() {
+    if (this.replayFrame) return; // the replay draws itself
+    const { ctx, canvas } = this;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (this.shown) {
+      const { strokes, style, pen } = this.shown;
+      const k = canvas.width / GRID;
+      ctx.fillStyle = brushFill(ctx, style);
+      strokes.forEach((s) => ctx.fill(strokePath(s, style, pen, k, true)));
       return;
     }
-    const [px, py, pp] = stroke[i - 1];
-    ctx.lineWidth = this.lineWidth((p + pp) / 2) * k;
-    ctx.beginPath();
-    ctx.moveTo(px * k, py * k);
-    ctx.lineTo(x * k, y * k);
-    ctx.stroke();
-  }
-
-  private clearCanvas() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  }
-
-  private redraw() {
-    if (this.replayFrame) return; // the replay draws itself
-    this.clearCanvas();
-    const { strokes, color } = this.shown || { strokes: this.strokes, color: INK };
-    strokes.forEach((s) => s.forEach((_, i) => this.drawPoint(s, i, color)));
+    ctx.drawImage(this.done, 0, 0);
+    if (this.current) this.drawLine(ctx, this.current, false);
   }
 }

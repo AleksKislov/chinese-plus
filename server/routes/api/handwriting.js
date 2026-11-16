@@ -22,7 +22,7 @@ router.get('/:font/:char', getOne);
 
 /**
  * @route     PUT api/handwriting/:font/:char
- * @desc      Save the pen strokes of a character { strokes, size, pen }, replacing an older one
+ * @desc      Save the pen strokes of a character { strokes, size, pen, style }, replacing an older one
  * @access    Admin
  */
 router.put('/:font/:char', saveOne);

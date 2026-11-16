@@ -19,7 +19,17 @@ import {
 } from '~/misc/actions/handwriting/handwriting-api';
 import { PageTitle } from '~/components/common/layout/title';
 import { MiGrid } from '~/components/handwriting/mi-grid';
-import { PenRecorder } from '~/components/handwriting/pen-recorder';
+import { PenRecorder, type PressureInfo } from '~/components/handwriting/pen-recorder';
+import { guardTouches } from '~/components/handwriting/touch-guard';
+import {
+  BRUSHES,
+  type BrushId,
+  DEFAULT_STYLE,
+  findBrush,
+  fullPressure,
+  MAX_SMOOTHING,
+  MAX_TAPER,
+} from '~/components/handwriting/brushes';
 import {
   DEFAULT_FONT,
   HANDWRITING_FONTS,
@@ -79,8 +89,40 @@ export const useHandwritingPage = routeLoader$(
   },
 );
 
-type Settings = { size: number; opacity: number; width: number; autoNext: boolean };
+type Settings = {
+  size: number;
+  opacity: number;
+  width: number;
+  autoNext: boolean;
+  brush: BrushId;
+  sensitivity: number;
+  taperStart: number;
+  taperEnd: number;
+  smoothing: number;
+  speed: number;
+};
+// kept in this browser (localStorage): settings, the last font and character set (?query),
+// and the current character of each set
 const SETTINGS_KEY = 'handwriting-settings';
+const QUERY_KEY = 'handwriting-query';
+const POS_KEY = 'handwriting-pos'; // { [chars of the set]: index }
+const MAX_POS = 30;
+const SPEEDS = [0.5, 1, 2, 4];
+
+const readJson = <T,>(key: string, empty: T): T => {
+  try {
+    return JSON.parse(localStorage.getItem(key) || 'null') ?? empty;
+  } catch {
+    return empty;
+  }
+};
+const writeJson = (key: string, value: unknown) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // private mode: not kept
+  }
+};
 const SIZE_MIN = 200;
 const SIZE_MAX = 1000;
 
@@ -95,10 +137,17 @@ export default component$(() => {
 
   const size = useSignal(560); // writing square, css px
   const opacity = useSignal(0.15); // of the model character
-  const width = useSignal(22); // line width on the 1000 grid
+  const width = useSignal(DEFAULT_STYLE.width); // line width on the 1000 grid
+  const brush = useSignal<BrushId>(DEFAULT_STYLE.brush);
+  const sensitivity = useSignal(DEFAULT_STYLE.sensitivity); // 1..10, see brushes.ts
+  const taperStart = useSignal(DEFAULT_STYLE.taperStart); // thin start of lines
+  const taperEnd = useSignal(DEFAULT_STYLE.taperEnd);
+  const smoothing = useSignal(DEFAULT_STYLE.smoothing); // 0..10, removes tremor
+  const pressure = useSignal<PressureInfo | null>(null); // live, to tune the sensitivity
   const autoNext = useSignal(true); // after saving go to the next unsaved character
   const speed = useSignal(1); // replay
   const settingsLoaded = useSignal(false);
+  const posKey = useSignal(''); // set whose saved position was restored
 
   const strokeCount = useSignal(0);
   const busy = useSignal(false);
@@ -127,24 +176,55 @@ export default component$(() => {
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ cleanup }) => {
+    // opened without a font or set: the ones used last time
+    const lastQuery = readJson<string>(QUERY_KEY, '');
+    if (!loc.url.search && lastQuery.startsWith('?') && lastQuery !== loc.url.search) {
+      nav(`${HANDWRITING_PATH}${lastQuery}`);
+    }
+
     try {
-      const s: Partial<Settings> = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+      const s: Partial<Settings> = readJson(SETTINGS_KEY, {});
       if (s.size) size.value = Math.min(SIZE_MAX, Math.max(SIZE_MIN, s.size));
       else size.value = Math.max(SIZE_MIN, Math.min(window.innerWidth - 32, 560));
       if (typeof s.opacity === 'number') opacity.value = s.opacity;
       if (s.width) width.value = s.width;
       if (typeof s.autoNext === 'boolean') autoNext.value = s.autoNext;
+      if (s.brush) brush.value = findBrush(s.brush).id;
+      if (s.sensitivity) sensitivity.value = Math.min(10, Math.max(1, s.sensitivity));
+      if (s.speed && SPEEDS.includes(s.speed)) speed.value = s.speed;
+      const taper = (n: unknown) => typeof n === 'number' && n >= 0 && n <= MAX_TAPER;
+      if (taper(s.taperStart)) taperStart.value = s.taperStart!;
+      if (taper(s.taperEnd)) taperEnd.value = s.taperEnd!;
+      if (typeof s.smoothing === 'number' && s.smoothing >= 0 && s.smoothing <= MAX_SMOOTHING) {
+        smoothing.value = s.smoothing;
+      }
     } catch {
       size.value = Math.max(SIZE_MIN, Math.min(window.innerWidth - 32, 560));
     }
     settingsLoaded.value = true;
 
     if (!canvasRef.value) return;
-    const r = new PenRecorder(canvasRef.value, (n) => (strokeCount.value = n));
+    const r = new PenRecorder(
+      canvasRef.value,
+      (n) => (strokeCount.value = n),
+      (info) => (pressure.value = info),
+    );
     r.setSize(size.value);
-    r.setWidth(width.value);
+    r.setStyle({
+      brush: brush.value,
+      width: width.value,
+      sensitivity: sensitivity.value,
+      taperStart: taperStart.value,
+      taperEnd: taperEnd.value,
+      smoothing: smoothing.value,
+    });
     rec.value = noSerialize(r);
-    cleanup(r.attach());
+    const detach = r.attach();
+    const unguard = guardTouches(() => r.writing);
+    cleanup(() => {
+      detach();
+      unguard();
+    });
   });
 
   // eslint-disable-next-line qwik/no-use-visible-task
@@ -154,15 +234,54 @@ export default component$(() => {
       opacity: track(() => opacity.value),
       width: track(() => width.value),
       autoNext: track(() => autoNext.value),
+      brush: track(() => brush.value),
+      sensitivity: track(() => sensitivity.value),
+      taperStart: track(() => taperStart.value),
+      taperEnd: track(() => taperEnd.value),
+      smoothing: track(() => smoothing.value),
+      speed: track(() => speed.value),
     };
     if (!settingsLoaded.value) return;
     rec.value?.setSize(s.size);
-    rec.value?.setWidth(s.width);
-    try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
-    } catch {
-      // private mode: settings are not kept
+    rec.value?.setStyle({
+      brush: s.brush,
+      width: s.width,
+      sensitivity: s.sensitivity,
+      taperStart: s.taperStart,
+      taperEnd: s.taperEnd,
+      smoothing: s.smoothing,
+    });
+    writeJson(SETTINGS_KEY, s);
+  });
+
+  // the font and set shown, to open them next time
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(({ track }) => {
+    const query = track(() => loc.url.search);
+    if (query) writeJson(QUERY_KEY, query);
+  });
+
+  // a set opened again: back to the character it was left at; then the current one is kept.
+  // One task for both, so a new set's index 0 is not saved before its position is restored
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(({ track }) => {
+    const key = track(() => charsKey.value);
+    const i = track(() => idx.value);
+    if (!key) return;
+    const pos = readJson<Record<string, number>>(POS_KEY, {});
+    if (key !== posKey.value) {
+      posKey.value = key;
+      const last = pos[key];
+      if (Number.isInteger(last) && last !== i && last < data.value.chars.length) {
+        idx.value = last; // the task runs again and saves it
+        return;
+      }
     }
+    delete pos[key]; // re-added last: the oldest sets are dropped first
+    pos[key] = i;
+    const keys = Object.keys(pos);
+    keys.slice(0, Math.max(0, keys.length - MAX_POS)).forEach((k) => delete pos[k]);
+    writeJson(POS_KEY, pos);
   });
 
   // the character in Kaiti with its stroke order (Hanzi Writer data, from its CDN); tap: animate
@@ -449,6 +568,34 @@ export default component$(() => {
 
           {msg.value && <div class="mt-2 text-sm">{msg.value}</div>}
 
+          {/* brush: only the look, the saved points are the same */}
+          <div class="flex flex-wrap items-center gap-2 mt-4">
+            <div class="join">
+              {BRUSHES.map(({ id, name }) => (
+                <button
+                  key={id}
+                  type="button"
+                  class={['btn btn-sm join-item', id === brush.value ? 'btn-secondary' : '']}
+                  onClick$={() => (brush.value = id)}
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+            {/* the stylus pressure as the browser gives it, to tune the sensitivity */}
+            <span class="text-xs opacity-70">
+              {pressure.value
+                ? pressure.value.type === 'pen'
+                  ? `нажим ${pressure.value.pressure.toFixed(
+                      2,
+                    )}, максимум в линии ${pressure.value.max.toFixed(
+                      2,
+                    )}, полная толщина с ${fullPressure(sensitivity.value).toFixed(2)}`
+                  : `${pressure.value.type}: нажима нет, толщина по скорости`
+                : 'нажим появится, когда начнёте писать'}
+            </span>
+          </div>
+
           {/* settings, kept in this browser */}
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mt-4 max-w-xl text-sm">
             <label>
@@ -488,12 +635,60 @@ export default component$(() => {
               />
             </label>
             <label>
+              Чувствительность нажима: {sensitivity.value}
+              <input
+                type="range"
+                class="range range-xs"
+                min={1}
+                max={10}
+                step={1}
+                value={sensitivity.value}
+                onInput$={(_, el) => (sensitivity.value = Number(el.value))}
+              />
+            </label>
+            <label>
+              Сглаживание дрожи: {smoothing.value}
+              <input
+                type="range"
+                class="range range-xs"
+                min={0}
+                max={MAX_SMOOTHING}
+                step={1}
+                value={smoothing.value}
+                onInput$={(_, el) => (smoothing.value = Number(el.value))}
+              />
+            </label>
+            <label>
+              Тонкое начало линии: {taperStart.value}
+              <input
+                type="range"
+                class="range range-xs"
+                min={0}
+                max={MAX_TAPER}
+                step={5}
+                value={taperStart.value}
+                onInput$={(_, el) => (taperStart.value = Number(el.value))}
+              />
+            </label>
+            <label>
+              Тонкий конец линии: {taperEnd.value}
+              <input
+                type="range"
+                class="range range-xs"
+                min={0}
+                max={MAX_TAPER}
+                step={5}
+                value={taperEnd.value}
+                onInput$={(_, el) => (taperEnd.value = Number(el.value))}
+              />
+            </label>
+            <label>
               Скорость повтора
               <select
                 class="select select-bordered select-xs ml-2"
                 onChange$={(_, el) => (speed.value = Number(el.value))}
               >
-                {[0.5, 1, 2, 4].map((s) => (
+                {SPEEDS.map((s) => (
                   <option key={s} value={s} selected={s === speed.value}>
                     {`×${s}`}
                   </option>
@@ -512,8 +707,13 @@ export default component$(() => {
           </div>
           <p class="text-xs opacity-60 mt-3 max-w-xl">
             Сохраняется движение пера: каждая линия от касания до отрыва, точки с силой нажатия и
-            временем. Толщина линии влияет только на вид, не на данные. Пальцы и ладонь не рисуют,
-            после того как поле коснулось перо.
+            временем. Кисть, толщина и чувствительность меняют только вид (они сохраняются рядом,
+            чтобы анимация выглядела так же), сами точки те же. Чувствительность: чем выше, тем
+            слабее нужно нажать для самой толстой линии. Тонкое начало и конец: на какой длине линия
+            сужается (поле — 1000), независимо от нажима. Сглаживание убирает дрожь руки; при
+            большом значении острые углы скругляются. Пока перо пишет и ещё 1,5 секунды после
+            отрыва, пальцы и ладонь ничего не нажимают и не прокручивают; перо нажимает кнопки
+            всегда.
           </p>
         </div>
       </div>
