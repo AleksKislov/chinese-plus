@@ -37,7 +37,7 @@ export const ClearListBtn = component$(({ kind }: { kind: UserListKind }) => {
   return (
     <button
       type="button"
-      class={`btn btn-sm w-full ${confirming.value ? 'btn-error' : 'btn-ghost'}`}
+      class={`btn btn-sm w-full ${confirming.value ? 'btn-error' : 'btn-info'}`}
       disabled={busy.value}
       onClick$={onClick}
     >
