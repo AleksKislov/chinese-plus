@@ -10,11 +10,18 @@ const TTL = {
   DAY: 24 * 60 * 60 * 1000, // 1 day - effectively static dictionary data
 };
 
-const cache = new LRUCache({ max: 500, ttl: TTL.MEDIUM });
-
 // tag -> Set of cache keys, so a single data-change event can drop every
 // response derived from that data without knowing the exact URLs involved.
+// Holds only keys that are still in the cache: dispose() removes a key whenever
+// its entry leaves the cache (LRU eviction, overwrite, delete, clear), so the
+// index stays bounded by `max` even for tags that are never invalidated.
 const tagIndex = new Map();
+
+const cache = new LRUCache({
+  max: 500,
+  ttl: TTL.MEDIUM,
+  dispose: (value, key) => value.tags.forEach((tag) => removeFromTag(tag, key)),
+});
 
 function buildKey(req) {
   return `${req.method}:${req.originalUrl}`;
@@ -23,6 +30,13 @@ function buildKey(req) {
 function addToTag(tag, key) {
   if (!tagIndex.has(tag)) tagIndex.set(tag, new Set());
   tagIndex.get(tag).add(key);
+}
+
+function removeFromTag(tag, key) {
+  const keys = tagIndex.get(tag);
+  if (!keys) return;
+  keys.delete(key);
+  if (!keys.size) tagIndex.delete(tag);
 }
 
 /**
@@ -47,7 +61,9 @@ function cacheRoute(tags, options = {}) {
     const originalJson = res.json.bind(res);
     res.json = (body) => {
       if (res.statusCode < 400) {
-        cache.set(key, { status: res.statusCode, body }, ttl ? { ttl } : undefined);
+        // set() disposes a previous entry under the same key (removing it from its
+        // tags) before returning, so the key is re-added to the tags afterwards.
+        cache.set(key, { status: res.statusCode, body, tags: tagList }, ttl ? { ttl } : undefined);
         tagList.forEach((tag) => addToTag(tag, key));
       }
       res.set('X-Cache', 'MISS');
@@ -61,7 +77,8 @@ function invalidateTag(tag) {
   const keys = tagIndex.get(tag);
   if (!keys) return 0;
   let removed = 0;
-  keys.forEach((key) => {
+  // Copy: cache.delete() runs dispose(), which removes the key from this Set.
+  [...keys].forEach((key) => {
     if (cache.delete(key)) removed++;
   });
   tagIndex.delete(tag);

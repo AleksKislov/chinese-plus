@@ -8,6 +8,11 @@ const { logger } = require('./logger');
 // Labels stay low-cardinality (no user ids): per-user numbers live in the TutorUsage collection.
 const register = new client.Registry();
 
+// Process / Node runtime metrics: process_resident_memory_bytes, nodejs_heap_size_used_bytes,
+// nodejs_external_memory_bytes, event loop lag, GC. Used to tell heap growth (a leak in JS)
+// from RSS growth outside the heap (buffers, native code).
+client.collectDefaultMetrics({ register });
+
 const tutorRequests = new client.Counter({
   name: 'tutor_llm_requests_total',
   help: 'AI tutor LLM calls',
