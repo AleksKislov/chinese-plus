@@ -1,4 +1,5 @@
 import { component$, useSignal } from '@builder.io/qwik';
+import { useLocation } from '@builder.io/qwik-city';
 import MenuLink from './menu-link';
 import type { MenuLinkProps } from './menu-link';
 import { dropdownArrowBottom } from '../../media/svg';
@@ -8,8 +9,16 @@ export type MenuItemProps = {
   name: string;
 };
 
+const stripTrailingSlash = (path: string) =>
+  path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
+
 export const MenuItem = component$(({ links, name }: MenuItemProps) => {
   const isOpen = useSignal(false);
+  const loc = useLocation();
+  const pathname = stripTrailingSlash(loc.url.pathname);
+  const hasActiveChild = links.some(
+    (link) => stripTrailingSlash(link.href) === pathname,
+  );
 
   return (
     <li
@@ -19,7 +28,9 @@ export const MenuItem = component$(({ links, name }: MenuItemProps) => {
     >
       <label
         tabIndex={0}
-        class="my-1 hover:text-secondary"
+        class={`my-1 hover:text-secondary ${
+          hasActiveChild ? 'text-secondary font-semibold' : ''
+        }`}
         onClick$={() => (isOpen.value = !isOpen.value)}
       >
         {name}
