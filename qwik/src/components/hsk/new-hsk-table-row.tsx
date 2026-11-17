@@ -1,8 +1,8 @@
 import { $, component$, useContext, useSignal, type Signal } from '@builder.io/qwik';
-import CONST_URLS from '~/misc/consts/urls';
 import CONSTANTS from '~/misc/consts/consts';
 import { type NewHskWordType } from '~/routes/hsk/3/table/[...lvl]';
 import { translationHtml } from '~/misc/helpers/translation';
+import { playChinese, warmChinese } from '~/misc/helpers/speak-chinese';
 import { AlertColorEnum, alertsContext, userContext } from '~/root';
 import { useAddUserHsk3Word } from '~/misc/actions/user-hsk3-words/add-word';
 import { useRemoveUserHsk3Word } from '~/misc/actions/user-hsk3-words/remove-word';
@@ -23,10 +23,6 @@ type NewHskTableRowType = {
 // old (2021) list: mp3 named by lvl/id; 2026 list: explicit path, absent if there is no audio yet
 export const getHskAudioPath = (word: NewHskWordType, isLegacyBand = false) =>
   isLegacyBand ? `newhsk/band${word.lvl}/${word.id}.mp3` : word.audio;
-
-export const pronounce = (audioPath: string) => {
-  new Audio(`${CONST_URLS.myAudioURL}${audioPath}`).play();
-};
 
 export const NewHskTableRow = component$(
   ({
@@ -104,16 +100,21 @@ export const NewHskTableRow = component$(
             <td class={rowBg}>
               <div
                 style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}
-                dangerouslySetInnerHTML={translationHtml({ senses })}
+                dangerouslySetInnerHTML={word.html ?? translationHtml({ senses })}
               ></div>
             </td>
           )}
           <td class={rowBg}>
-            {audioPath && (
-              <button class="btn btn-sm btn-info" onClick$={() => pronounce(audioPath)}>
-                {playSvg}
-              </button>
-            )}
+            {/* words without a recording yet are spoken by the browser's voice */}
+            <button
+              class="btn btn-sm btn-info"
+              title={audioPath ? undefined : 'Голос браузера: записи для этого слова пока нет'}
+              onPointerEnter$={() => warmChinese(audioPath)}
+              onPointerDown$={() => warmChinese(audioPath)}
+              onClick$={() => playChinese(audioPath, cn)}
+            >
+              {playSvg}
+            </button>
           </td>
           <td class={rowBg}>
             <label

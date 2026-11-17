@@ -4,6 +4,7 @@ import { routeLoader$ } from '@builder.io/qwik-city';
 import { TableCard } from '~/components/hsk/table-card';
 import { Pagination } from '~/components/hsk/pagination';
 import { ApiService } from '~/misc/actions/request';
+import { translationHtml } from '~/misc/helpers/translation';
 import { NewHskTable } from '~/components/hsk/new-hsk-table';
 import { PageTitle } from '~/components/common/layout/title';
 import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
@@ -21,6 +22,7 @@ import { MainContent } from '~/components/common/layout/main-content';
 import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-link-card';
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
 import { CsvCard } from '~/components/hsk/csv-card';
+import { PdfCard } from '~/components/hsk/pdf-card';
 import { PropisiLinkCard } from '~/components/propisi/propisi-link-card';
 import { configContext } from '~/root';
 import YANDEX_ADS from '~/misc/consts/ads';
@@ -42,7 +44,19 @@ export type NewHskWordType = {
   dictId?: ObjectId; // dictionary entry, for the full translation
   lvl: string;
   audio?: string; // 2026 list: path under myAudioURL, absent if there is no audio yet
+  html?: string; // translationHtml({ senses }), when the loader already built it (shown instead)
 };
+
+// The table needs only the translation's HTML. Built here (on the server) and sent as one string,
+// it costs far less page state than the senses tree that every row would otherwise serialize -
+// and less work on the first click, when Qwik resumes the page. Words with a dictionary entry
+// lose their senses: the "more" modal loads the full translation by dictId anyway.
+// (also used by /hsk/3/old-table)
+export const toTableWord = ({ senses, ...word }: NewHskWordType): NewHskWordType => ({
+  ...word,
+  html: translationHtml({ senses }),
+  ...(word.dictId ? {} : { senses }),
+});
 
 // /hsk/…/{lvl}/ - redirects old ?lvl= links and /1/, 404s unknown levels.
 export const onGet = wordsLevelOnGet('new');
@@ -50,7 +64,12 @@ export const onGet = wordsLevelOnGet('new');
 export const getHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]> => {
   const lvl = ev.params.lvl || '1';
   const lmt = ev.query.get('pg') || '0';
-  return await ApiService.get(`/api/newhskwords?hsk_level=${lvl}&limit=${lmt}`, undefined, []);
+  const words: NewHskWordType[] = await ApiService.get(
+    `/api/newhskwords?hsk_level=${lvl}&limit=${lmt}`,
+    undefined,
+    [],
+  );
+  return words.map(toTableWord);
 });
 
 export default component$(() => {
@@ -83,6 +102,7 @@ export default component$(() => {
 
         <Sidebar>
           <TableCard level={loc.params.lvl || '1'} isOldHsk={false} isForTests={false} />
+          <PdfCard level={loc.params.lvl || '1'} isOldHsk={false} />
           <CsvCard level={loc.params.lvl || '1'} isOldHsk={false} isPrivate={false} />
           <PhoneticsLinkCard />
           <CharactersLinkCard />

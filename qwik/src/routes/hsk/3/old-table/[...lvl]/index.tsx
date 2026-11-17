@@ -17,7 +17,7 @@ import { FlexRow } from '~/components/common/layout/flex-row';
 import { Sidebar } from '~/components/common/layout/sidebar';
 import { MainContent } from '~/components/common/layout/main-content';
 import { CsvCard } from '~/components/hsk/csv-card';
-import { type NewHskWordType } from '../../table/[...lvl]';
+import { type NewHskWordType, toTableWord } from '../../table/[...lvl]';
 
 // previous (2021) HSK 3.0 word list, kept for reference
 // /hsk/…/{lvl}/ - redirects old ?lvl= links and /1/, 404s unknown levels.
@@ -26,11 +26,12 @@ export const onGet = wordsLevelOnGet('new');
 export const getOldHskWords = routeLoader$(async (ev): Promise<NewHskWordType[]> => {
   const lvl = ev.params.lvl || '1';
   const lmt = ev.query.get('pg') || '0';
-  return await ApiService.get(
+  const words: NewHskWordType[] = await ApiService.get(
     `/api/newhskwords?hsk_level=${lvl}&limit=${lmt}&version=2021`,
     undefined,
     [],
   );
+  return words.map(toTableWord);
 });
 
 export default component$(() => {

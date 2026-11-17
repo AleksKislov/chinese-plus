@@ -99,16 +99,16 @@ export const getWordsSeo = ({ version, page, lvl = '1', pg = 0 }: WordsSeoParams
           : `Слова HSK 3.0 — уровень ${wordLevelLabel(lvl)} (2026)`,
       title:
         version === 'old'
-          ? `Слова HSK ${lvl} — ${sizeText} с переводом и озвучкой (HSK 2.0)${pgSuffix} | Chinese+`
+          ? `Слова HSK ${lvl} — ${sizeText} с переводом, озвучкой и PDF (HSK 2.0)${pgSuffix} | Chinese+`
           : `Слова HSK 3.0 уровень ${wordLevelLabel(
               lvl,
-            )} — ${sizeText} с переводом и озвучкой${pgSuffix} | Chinese+`,
+            )} — ${sizeText} с переводом, озвучкой и PDF${pgSuffix} | Chinese+`,
       description:
         version === 'old'
-          ? `Список слов HSK ${lvl} (стандарт HSK 2.0): ${sizeText} уровня с пиньинем, переводом на русский и озвучкой. Скачайте CSV для Anki и добавляйте слова в личный словарик.`
+          ? `Список слов HSK ${lvl} (стандарт HSK 2.0): ${sizeText} уровня с пиньинем, переводом на русский и озвучкой. Скачайте PDF для печати или CSV для Anki и добавляйте слова в личный словарик.`
           : `Новый список слов HSK 3.0 (редакция 2026), уровень ${wordLevelLabel(
               lvl,
-            )}: ${sizeText} с пиньинем, переводом на русский и озвучкой. Можно скачать CSV для Anki.`,
+            )}: ${sizeText} с пиньинем, переводом на русский и озвучкой. Можно скачать PDF для печати и CSV для Anki.`,
       crumbs: [listCrumb, levelCrumb],
     },
     tests: {
@@ -161,8 +161,13 @@ export const wordsHead = (params: WordsSeoParams): DocumentHeadValue => {
   const { title, description, canonical, image } = getWordsSeo(params);
   return {
     title,
-    // RouterHead skips its default (query-less) canonical when a page sets one.
-    links: [{ rel: 'canonical', href: canonical }],
+    links: [
+      // RouterHead skips its default (query-less) canonical when a page sets one.
+      { rel: 'canonical', href: canonical },
+      // word audio comes from the bucket: connect while the page loads, so the first play
+      // button click doesn't wait for DNS + TLS
+      { rel: 'preconnect', href: new URL(CONST_URLS.myAudioURL).origin },
+    ],
     meta: [
       { name: 'description', content: description },
       { property: 'og:title', content: title },

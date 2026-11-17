@@ -4,3 +4,5 @@ routes/api/dict/dict.js
 .env.*
 .DS_Store
 cedict_db
+# fonts for scripts/generate-hsk-pdfs.js (downloaded, see the script header)
+scripts/fonts

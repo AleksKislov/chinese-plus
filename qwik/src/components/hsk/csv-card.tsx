@@ -1,5 +1,6 @@
 import { $, component$ } from '@builder.io/qwik';
 import Cookies from 'js-cookie';
+import CONST_URLS from '~/misc/consts/urls';
 
 type CsvCardProps = {
   level: string | null;
@@ -17,7 +18,8 @@ export const CsvCard = component$(
     const urlPath = isPrivate ? privateHsk : nonPrivateHsk + (level || '1');
 
     const versionQuery = isLegacyBand && !isPrivate && !isOldHsk ? '?version=2021' : '';
-    const plainCsvLink = `https://chineseplus.club/api/${urlPath}${versionQuery}`;
+    // same origin as the page (www): the bare domain 301s, which breaks the CORS preflight
+    const plainCsvLink = `${CONST_URLS.siteUrl}/api/${urlPath}${versionQuery}`;
 
     const hskType = isNotHsk ? '' : `HSK${isOldHsk ? '2' : '3'}.0`;
 

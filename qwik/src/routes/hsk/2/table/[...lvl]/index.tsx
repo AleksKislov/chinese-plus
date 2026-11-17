@@ -24,6 +24,7 @@ import { PhoneticsLinkCard } from '~/components/common/content-cards/phonetics-l
 import { CharactersLinkCard } from '~/components/common/content-cards/characters-link-card';
 import { PropisiLinkCard } from '~/components/propisi/propisi-link-card';
 import { CsvCard } from '~/components/hsk/csv-card';
+import { PdfCard } from '~/components/hsk/pdf-card';
 import { configContext } from '~/root';
 import YANDEX_ADS from '~/misc/consts/ads';
 import { BannerAds } from '~/components/common/ads/sidebar-ads';
@@ -94,6 +95,7 @@ export default component$(() => {
 
         <Sidebar noAds={true}>
           <TableCard level={loc.params.lvl || '1'} isOldHsk={true} isForTests={false} />
+          <PdfCard level={loc.params.lvl || '1'} isOldHsk={true} />
           <CsvCard level={loc.params.lvl || '1'} isOldHsk={true} isPrivate={false} />
           <PhoneticsLinkCard />
           <CharactersLinkCard />

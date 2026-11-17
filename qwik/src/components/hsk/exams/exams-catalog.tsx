@@ -110,14 +110,16 @@ const pageTexts = ({ version, lvl, exams }: ExamsCatalogData) => {
 
   return {
     h1: `Пробный экзамен ${name} онлайн`,
-    title: `Пробный экзамен ${name} онлайн${variants} | Chinese+`,
+    // people search "hsk 3 пробный тест" / "hsk 3 пробник": the title leads with that wording,
+    // the H1 and description keep "пробный экзамен"
+    title: `Пробный тест ${name} онлайн${variants} | Chinese+`,
     description: format
       ? `Бесплатные пробники и пробные тесты HSK ${lvl} онлайн: ${
           format.questions
         } заданий, около ${format.durationMinutes} минут, ${sectionsText(
           format.sections,
-        )}. Мгновенная проверка ответов с пояснениями и текстами аудио.`
-      : `Бесплатный пробный экзамен HSK ${levelLabel(
+        )}. Пробный экзамен с мгновенной проверкой ответов, пояснениями и текстами аудио.`
+      : `Бесплатный пробный тест и пробный экзамен HSK ${levelLabel(
           version,
           lvl,
         )} по новому стандарту HSK 3.0 онлайн: проверка ответов с пояснениями и текстами аудио.`,

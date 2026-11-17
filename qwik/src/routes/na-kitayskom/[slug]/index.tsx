@@ -103,7 +103,7 @@ const WordView = component$(({ data }: { data: RuWordPage }) => {
               {word.cn}
             </Link>
             <span class="text-2xl">{word.py}</span>
-            <AudioBtn audio={word.audio} label={`Произношение ${word.cn}`} size="md" />
+            <AudioBtn audio={word.audio} cn={word.cn} label={`Произношение ${word.cn}`} size="md" />
             {word.hsk && <HskLevelBadge level={word.hsk} />}
           </div>
           <p class="max-w-3xl">
@@ -151,7 +151,7 @@ const WordView = component$(({ data }: { data: RuWordPage }) => {
                   </Link>{' '}
                   ({a.py}) — {a.ru}{' '}
                   <span class="not-prose inline-block align-middle">
-                    <AudioBtn audio={a.audio} label={`Произношение ${a.cn}`} />
+                    <AudioBtn audio={a.audio} cn={a.cn} label={`Произношение ${a.cn}`} />
                   </span>
                 </li>
               ))}
@@ -272,7 +272,7 @@ const TopicView = component$(({ data }: { data: RuTopicPage }) => {
                 </td>
                 <td>{w.py}</td>
                 <td>
-                  <AudioBtn audio={w.audio} label={`Произношение ${w.cn}`} />
+                  <AudioBtn audio={w.audio} cn={w.cn} label={`Произношение ${w.cn}`} />
                 </td>
               </tr>
             ))}
@@ -380,6 +380,10 @@ export const head: DocumentHead = ({ resolveValue }) => {
       { property: 'og:type', content: 'article' },
       { property: 'og:url', content: url },
     ],
-    links: [{ rel: 'canonical', href: url }],
+    links: [
+      { rel: 'canonical', href: url },
+      // word audio comes from the bucket: connect early, so the first play isn't delayed
+      { rel: 'preconnect', href: new URL(CONST_URLS.myAudioURL).origin },
+    ],
   };
 };

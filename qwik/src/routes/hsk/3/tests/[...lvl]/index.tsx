@@ -17,7 +17,7 @@ import { type DocumentHead, routeLoader$, useLocation } from '@builder.io/qwik-c
 import { type NewHskWordType } from '../../table/[...lvl]';
 import { ApiService } from '~/misc/actions/request';
 import { playSvg } from '~/components/common/media/svg';
-import CONST_URLS from '~/misc/consts/urls';
+import { playChinese, warmChinese } from '~/misc/helpers/speak-chinese';
 import { TypingGame } from '~/components/games/typing-game';
 
 import {
@@ -71,11 +71,8 @@ export default component$(() => {
     }
     questionStore.chars = testWords.value.slice(0, QUEST_NUM);
     questionStore.pinyin = testWords.value.slice(QUEST_NUM, QUEST_NUM * 2);
-    // not every 2026 word has audio yet
-    questionStore.audio = testWords.value
-      .slice(QUEST_NUM * 2)
-      .filter((w) => w.audio)
-      .slice(0, QUEST_NUM);
+    // words without a recording yet are spoken by the browser's voice (playChinese)
+    questionStore.audio = testWords.value.slice(QUEST_NUM * 2, QUEST_NUM * 3);
 
     return () => {
       for (const key in QuestKinds) {
@@ -151,9 +148,15 @@ export default component$(() => {
                       <button
                         class="btn sm:w-1/12 w-1/4 hover:text-neutral-content"
                         id={`${type}_${word.id}`}
+                        onPointerEnter$={() => {
+                          if (type === QuestKinds.audio) warmChinese(word.audio);
+                        }}
+                        onPointerDown$={() => {
+                          if (type === QuestKinds.audio) warmChinese(word.audio);
+                        }}
                         onClick$={() => {
                           if (type !== QuestKinds.audio) return;
-                          if (word.audio) playAudio(word.audio);
+                          playChinese(word.audio, word.chinese);
                         }}
                       >
                         {getQuestionBtn(word, type as QuestionType)}
@@ -197,10 +200,6 @@ export default component$(() => {
     </>
   );
 });
-
-export const playAudio = (audioPath: string) => {
-  new Audio(`${CONST_URLS.myAudioURL}${audioPath}`).play();
-};
 
 export const head: DocumentHead = ({ url, params }) =>
   wordsHead({

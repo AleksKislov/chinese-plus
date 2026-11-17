@@ -67,6 +67,7 @@ export default component$(() => {
                         <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
                         <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
                         <MenuItemNew name={startChars.name} links={startChars.links} />
+                        <MenuItemNew name={startVocab.name} links={startVocab.links} />
                       </ul>
                     </details>
                   </li>
@@ -114,6 +115,7 @@ export default component$(() => {
                   <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
                   <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
                   <MenuItemNew name={startChars.name} links={startChars.links} />
+                  <MenuItemNew name={startVocab.name} links={startVocab.links} />
                 </MenuDropdownGroup>
 
                 <MenuDropdownGroup name="HSK">
@@ -240,16 +242,22 @@ export const startChars: MenuItemProps = {
       text: 'Уроки иероглифики',
     },
     {
+      href: '/propisi/',
+      text: 'Прописи иероглифов',
+    },
+  ],
+};
+
+export const startVocab: MenuItemProps = {
+  name: 'Базовая лексика',
+  links: [
+    {
       href: '/start/top-characters',
       text: 'Основные иероглифы',
     },
     {
       href: '/na-kitayskom/',
-      text: 'Слова на китайском',
-    },
-    {
-      href: '/propisi/',
-      text: 'Прописи иероглифов',
+      text: 'Лексика по темам',
     },
     {
       href: '/names/',
