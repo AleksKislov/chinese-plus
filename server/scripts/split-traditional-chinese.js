@@ -10,7 +10,7 @@
  * Word-level mdbg lookup is tried first, so CEDICT resolves ambiguous
  * simplified->traditional mappings using word context (e.g. 干 -> 幹/乾/干
  * depending on meaning) rather than a naive per-character guess. Falls back
- * to nodejieba segmentation, then per-character lookup, for words not in
+ * to jieba segmentation, then per-character lookup, for words not in
  * CEDICT whole - same ladder as the pinyin backfill script.
  *
  * tradChinese is set for EVERY resolvable entry, even when it's identical
@@ -36,7 +36,7 @@ require('dotenv').config({
 });
 
 const mongoose = require('mongoose');
-const nodejieba = require('nodejieba');
+const { jieba } = require('../src/api/services/_misc/jieba');
 const mdbg = require('mdbg');
 const { connectDB } = require('../src/mongo_db/db');
 const Dictionary = require('../src/models/Dictionary');
@@ -63,7 +63,7 @@ async function traditionalForHanzi(hanzi) {
   const whole = await tryGetTraditional(hanzi);
   if (whole) return whole;
 
-  const segments = nodejieba.cut(hanzi).filter((s) => s.trim() !== '');
+  const segments = jieba.cut(hanzi, true).filter((s) => s.trim() !== '');
   const pieces = [];
   for (const segment of segments) {
     const segTraditional = await tryGetTraditional(segment);

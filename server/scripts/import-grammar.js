@@ -5,7 +5,7 @@
  * - Topics are upserted on `slug`; re-running with an edited file overwrites.
  * - Topics of an imported level that are no longer in its file are deleted.
  * - `words` (used for tooltips) are taken from the spaces in `cn` ("我 是 学生。");
- *   a sentence without spaces is segmented with nodejieba.
+ *   a sentence without spaces is segmented with jieba.
  * - `audio` is kept for sentences whose text did not change (spaces aside); new or edited
  *   sentences get audio from scripts/generate-grammar-audio.js.
  * - Vocabulary check: words above the topic's level in the HSK 3.0 list
@@ -32,7 +32,7 @@ require('dotenv').config({
   ),
 });
 
-const nodejieba = require('nodejieba');
+const { jieba } = require('../src/api/services/_misc/jieba');
 
 const APPLY = process.argv.includes('--apply');
 const VALIDATE_ONLY = process.argv.includes('--validate-only');
@@ -101,7 +101,7 @@ const isSegmented = (cn) => /\s/.test(cn.trim());
 // words from the spaces in cn, punctuation split off as separate tokens:
 // "小王，你 好！" -> 小王 ， 你 好 ！
 function segment(cn) {
-  if (!isSegmented(cn)) return nodejieba.cut(cn).filter((w) => w.trim());
+  if (!isSegmented(cn)) return jieba.cut(cn, true).filter((w) => w.trim());
   return cn
     .trim()
     .split(/\s+/)
@@ -189,7 +189,9 @@ function validateFile(data, file, wordLevels, grammarWords, seenSlugs) {
           warn(eat, 'question mark in cn and py does not match');
         }
         // jieba on the plain sentence: it keeps 打电话, 感兴趣 … together like the word list
-        const jiebaWords = ex.cn ? nodejieba.cut(plainCn(ex.cn)).filter((w) => HAN_RE.test(w)) : [];
+        const jiebaWords = ex.cn
+          ? jieba.cut(plainCn(ex.cn), true).filter((w) => HAN_RE.test(w))
+          : [];
         if (ex.cn && !isSegmented(ex.cn) && jiebaWords.length > 1) {
           warn(eat, `${ex.cn} — not segmented into words (put spaces between them)`);
         }

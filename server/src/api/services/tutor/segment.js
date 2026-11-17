@@ -1,18 +1,18 @@
-const nodejieba = require('nodejieba');
+const { jieba } = require('../_misc/jieba');
 const { getAllWords } = require('../../../../routes/api/services');
 const { attachSenses } = require('../dictionary/translations/attach-senses');
 
 const HAN = /\p{Script=Han}/u;
 const HAN_RUN = /(\p{Script=Han}+)/u;
 
-// The LLM returns plain sentences; this splits them into words for tooltips with nodejieba
+// The LLM returns plain sentences; this splits them into words for tooltips with jieba
 // (as for books). Only Chinese runs are segmented, the rest stays as is:
 // 'Слово «苹果» значит' -> ['Слово «', '苹果', '» значит']
 function segmentText(text) {
   return text
     .split(HAN_RUN)
     .filter(Boolean)
-    .flatMap((part) => (HAN.test(part) ? nodejieba.cut(part) : [part]));
+    .flatMap((part) => (HAN.test(part) ? jieba.cut(part, true) : [part]));
 }
 
 // replaces `words` of assistant blocks with `segments` (dictionary word objects with their trimmed

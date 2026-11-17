@@ -3,7 +3,7 @@
  * on the dictionary collection.
  *
  * - pinyin generation uses `mdbg` (local CC-CEDICT index, already used by
- *   routes/api/dictionary.js `/getTextPinyin`), falling back to nodejieba
+ *   routes/api/dictionary.js `/getTextPinyin`), falling back to jieba
  *   segmentation and then per-character lookup for words not in CEDICT whole.
  * - Only entries whose pinyin is empty or a placeholder ("_", "--", etc.) are
  *   regenerated; existing pinyin is left untouched (just trimmed).
@@ -34,7 +34,7 @@ require('dotenv').config({
 });
 
 const mongoose = require('mongoose');
-const nodejieba = require('nodejieba');
+const { jieba } = require('../src/api/services/_misc/jieba');
 const mdbg = require('mdbg');
 const { connectDB } = require('../src/mongo_db/db');
 const Dictionary = require('../src/models/Dictionary');
@@ -81,7 +81,7 @@ async function pinyinForHanzi(hanzi) {
   const whole = await tryGet(hanzi);
   if (whole) return whole;
 
-  const segments = nodejieba.cut(hanzi).filter((s) => s.trim() !== '');
+  const segments = jieba.cut(hanzi, true).filter((s) => s.trim() !== '');
   const pieces = [];
   for (const segment of segments) {
     const segPinyin = await tryGet(segment);

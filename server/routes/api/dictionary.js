@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Hanzi = require('./dict/dictionary');
 const mdbg = require('mdbg');
-const nodejieba = require('nodejieba');
+const { jieba } = require('../../src/api/services/_misc/jieba');
 const { getAllWords, getWordsForParag } = require('./services');
 const auth = require('../../middleware/auth');
 const moderatorAuth = require('../../middleware/moderator-auth');
@@ -251,7 +251,7 @@ router.get('/certain/:word', async (req, res) => {
 const SEGMENTER_VERSIONS = {
   default: Hanzi.segment.bind(Hanzi),
   v2: Hanzi.segmentFromEnd.bind(Hanzi),
-  v3: nodejieba.cut,
+  v3: (text) => jieba.cut(text, true),
 };
 
 /**

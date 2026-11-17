@@ -21,7 +21,7 @@
  *   Inline  "plain text" | [type, value], type: l label, m comment, r ref, p pinyin, e en, b strong
  *
  * Rare words are left out (most of the 1.4M words of 1-4 characters are rare compounds and
- * terms): a word of 2+ characters is kept only if the jieba word list (nodejieba's
+ * terms): a word of 2+ characters is kept only if the jieba word list (@node-rs/jieba's
  * jieba.dict.utf8, "word frequency tag" per line) has it with frequency >= --min-freq, or tags it
  * as an idiom (`i`, chengyu: kept whatever the frequency). Single characters and HSK words
  * (old HSK, HSK 2021, HSK 3.0 lists) are always kept.
@@ -60,11 +60,7 @@ const OUT_DIR = path.resolve(
 );
 const ALL_WORDS = process.argv.includes('--all-words');
 const MIN_FREQ = Number(argValue('min-freq') || 5);
-const FREQ_LIST = path.join(
-  __dirname,
-  '..',
-  'node_modules/nodejieba/submodules/cppjieba/dict/jieba.dict.utf8',
-);
+const FREQ_LIST = path.join(__dirname, '..', 'node_modules/@node-rs/jieba/dict.txt');
 const BATCH_SIZE = 2000;
 
 // only chinese characters: the extension never looks up latin letters, digits or punctuation

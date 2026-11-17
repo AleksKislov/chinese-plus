@@ -1,7 +1,7 @@
-const nodejieba = require('nodejieba');
+const { jieba } = require('./jieba');
 
 const getBookChineseArr = (txt) => {
-  return nodejieba.cut(txt).filter((word) => word !== ' ');
+  return jieba.cut(txt, true).filter((word) => word !== ' ');
 };
 
 module.exports = { getBookChineseArr };

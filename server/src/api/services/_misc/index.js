@@ -5,6 +5,7 @@ const { CHARS_PER_PAGE } = require('./consts');
 const { getBookChineseArr } = require('./get-book-chinese-arr');
 const { s3 } = require('./s3-client');
 const { getUserPrivileges } = require('./get-user-privileges');
+const { jieba } = require('./jieba');
 
 module.exports = {
   Notify,
@@ -15,4 +16,5 @@ module.exports = {
   countUniqChars,
   s3,
   getUserPrivileges,
+  jieba,
 };

@@ -9,7 +9,7 @@
  *      ('hǎo; hào', with markup), such entries are skipped;
  *   2. characters of multi-character HSK 3.0 words, by the word's level, with the reading the word
  *      gives them (否 only appears in 否则 fǒuzé, 否认 and so on);
- *   3. other characters with jieba frequency >= --min-freq (nodejieba's jieba.dict.utf8), with
+ *   3. other characters with jieba frequency >= --min-freq (@node-rs/jieba's dict.txt), with
  *      the first reading of their dictionary entry; shown only if they get a gloss;
  *   4. any single character of the dictionary, with its first reading, if jieba has it or at least
  *      MIN_DICT_WORDS dictionary words contain it; shown only if it gets a gloss.
@@ -62,11 +62,7 @@ const MIN_FREQ = Number(argValue('min-freq') || 1000);
 const QWIK_CONSTS = path.join(__dirname, '..', '..', 'qwik', 'src', 'misc', 'consts');
 const PINYIN_TS = path.join(QWIK_CONSTS, 'pinyin.ts');
 const OUT_FILE = path.resolve(argValue('out') || path.join(QWIK_CONSTS, 'pinyin-chars.ts'));
-const FREQ_LIST = path.join(
-  __dirname,
-  '..',
-  'node_modules/nodejieba/submodules/cppjieba/dict/jieba.dict.utf8',
-);
+const FREQ_LIST = path.join(__dirname, '..', 'node_modules/@node-rs/jieba/dict.txt');
 
 const HSK_LEVELS = ['1', '2', '3', '4', '5', '6', '789'];
 const HSK_LISTS = ['hskword2025', 'hskwords'];
