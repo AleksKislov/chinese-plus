@@ -1,11 +1,13 @@
 import { component$, useSignal, Slot } from '@builder.io/qwik';
 import { dropdownArrowBottom } from '../../media/svg';
+import { ACTIVE_MENU_CLASS } from './menu-active';
 
 export type MenuDropdownGroupProps = {
   name: string;
+  isActive?: boolean;
 };
 
-export const MenuDropdownGroup = component$(({ name }: MenuDropdownGroupProps) => {
+export const MenuDropdownGroup = component$(({ name, isActive }: MenuDropdownGroupProps) => {
   const isOpen = useSignal(false);
 
   return (
@@ -16,7 +18,7 @@ export const MenuDropdownGroup = component$(({ name }: MenuDropdownGroupProps) =
     >
       <label
         tabIndex={0}
-        class="my-1 hover:text-secondary"
+        class={`my-1 hover:text-secondary ${isActive ? ACTIVE_MENU_CLASS : ''}`}
         onClick$={() => (isOpen.value = !isOpen.value)}
       >
         {name}

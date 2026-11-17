@@ -14,8 +14,10 @@ import { ApiService } from '~/misc/actions/request';
 import { getTokenFromCookie } from '~/misc/actions/auth';
 import {
   deleteHandwriting,
+  deleteHandwritingSettings,
   getHandwriting,
   saveHandwriting,
+  saveHandwritingSettings,
 } from '~/misc/actions/handwriting/handwriting-api';
 import { PageTitle } from '~/components/common/layout/title';
 import { MiGrid } from '~/components/handwriting/mi-grid';
@@ -25,11 +27,22 @@ import {
   BRUSHES,
   type BrushId,
   DEFAULT_STYLE,
-  findBrush,
   fullPressure,
   MAX_SMOOTHING,
   MAX_TAPER,
 } from '~/components/handwriting/brushes';
+import {
+  cleanSettings,
+  defaultSettings,
+  type HandwritingSettings,
+  OPACITY_MAX,
+  settingsDiff,
+  SIZE_MAX,
+  SIZE_MIN,
+  SPEEDS,
+  WIDTH_MAX,
+  WIDTH_MIN,
+} from '~/components/handwriting/settings';
 import {
   DEFAULT_FONT,
   HANDWRITING_FONTS,
@@ -60,11 +73,10 @@ export const useHandwritingPage = routeLoader$(
 
     const font = findFont(query.get('font') || '')?.id || DEFAULT_FONT;
     // the BE refuses everyone but admins
-    const saved: string[] | null = await ApiService.get(
-      `/api/handwriting?font=${font}`,
-      token,
-      null,
-    );
+    const [saved, preset]: [string[] | null, HandwritingPageData['preset']] = await Promise.all([
+      ApiService.get(`/api/handwriting?font=${font}`, token, null),
+      ApiService.get(`/api/handwriting/settings/${font}`, token, null),
+    ]);
     if (!saved) throw redirect(302, '/');
 
     const typed = [...new Set([...(query.get('chars') || '')].filter((ch) => HAN_RE.test(ch)))]
@@ -76,7 +88,7 @@ export const useHandwritingPage = routeLoader$(
         undefined,
         [],
       );
-      return { chars, saved, font, source: typed };
+      return { chars, saved, font, source: typed, preset };
     }
 
     const hsk = HSK_SETS.includes(query.get('hsk') || '') ? query.get('hsk')! : DEFAULT_HSK;
@@ -86,29 +98,19 @@ export const useHandwritingPage = routeLoader$(
       undefined,
       [],
     );
-    return { chars, saved, font, source: hsk };
+    return { chars, saved, font, source: hsk, preset };
   },
 );
 
-type Settings = {
-  size: number;
-  opacity: number;
-  width: number;
-  autoNext: boolean;
-  brush: BrushId;
-  sensitivity: number;
-  taperStart: number;
-  taperEnd: number;
-  smoothing: number;
-  speed: number;
-};
-// kept in this browser (localStorage): settings, the last font and character set (?query),
-// and the current character of each set
-const SETTINGS_KEY = 'handwriting-settings';
+// kept in this browser (localStorage): the working copy of the settings of each font, the last
+// used settings (for a font opened for the first time), the last font and character set
+// (?query) and the current character of each set. The settings saved for a font on the BE
+// change only by the button (components/handwriting/settings.ts)
+const SETTINGS_KEY = 'handwriting-settings'; // the last used, any font
+const FONT_SETTINGS_KEY = 'handwriting-font-settings'; // { [font id]: settings }
 const QUERY_KEY = 'handwriting-query';
 const POS_KEY = 'handwriting-pos'; // { [chars of the set]: index }
 const MAX_POS = 30;
-const SPEEDS = [0.5, 1, 2, 4];
 
 const readJson = <T,>(key: string, empty: T): T => {
   try {
@@ -126,8 +128,6 @@ const writeJson = (key: string, value: unknown) => {
 };
 const FONT_WAIT_STEP = 500; // ms
 const FONT_WAIT_TRIES = 60;
-const SIZE_MIN = 200;
-const SIZE_MAX = 1000;
 
 export default component$(() => {
   const data = useHandwritingPage();
@@ -149,7 +149,10 @@ export default component$(() => {
   const pressure = useSignal<PressureInfo | null>(null); // live, to tune the sensitivity
   const autoNext = useSignal(true); // after saving go to the next unsaved character
   const speed = useSignal(1); // replay
-  const settingsLoaded = useSignal(false);
+  // the font whose settings are on the page ('' until loaded): its working copy is kept
+  const settingsFont = useSignal('');
+  const preset = useSignal(data.value.preset); // the settings saved for the font
+  const settingsMsg = useSignal('');
   const posKey = useSignal(''); // set whose saved position was restored
 
   const strokeCount = useSignal(0);
@@ -166,11 +169,45 @@ export default component$(() => {
   const isSaved = useComputed$(() =>
     Boolean(current.value && saved.value.includes(current.value.ch)),
   );
+  const settings = useComputed$(
+    (): HandwritingSettings => ({
+      size: size.value,
+      opacity: opacity.value,
+      width: width.value,
+      brush: brush.value,
+      sensitivity: sensitivity.value,
+      taperStart: taperStart.value,
+      taperEnd: taperEnd.value,
+      smoothing: smoothing.value,
+      speed: speed.value,
+      autoNext: autoNext.value,
+    }),
+  );
+  // what was changed since the font's settings were saved: [label, saved, now]
+  const presetDiff = useComputed$(() =>
+    preset.value ? settingsDiff(preset.value.settings, settings.value) : [],
+  );
+
+  // all at once, with the font they belong to: the task that keeps them sees both together
+  const applySettings = $((s: HandwritingSettings, fontId: string) => {
+    size.value = s.size;
+    opacity.value = s.opacity;
+    width.value = s.width;
+    brush.value = s.brush;
+    sensitivity.value = s.sensitivity;
+    taperStart.value = s.taperStart;
+    taperEnd.value = s.taperEnd;
+    smoothing.value = s.smoothing;
+    speed.value = s.speed;
+    autoNext.value = s.autoNext;
+    settingsFont.value = fontId;
+  });
 
   // another font or character set loaded: a new font has its own saved characters
   useTask$(({ track }) => {
     const d = track(() => data.value);
     saved.value = d.saved;
+    preset.value = d.preset;
     const key = d.chars.map((c) => c.ch).join('');
     if (key !== charsKey.value) {
       charsKey.value = key;
@@ -187,42 +224,13 @@ export default component$(() => {
       nav(`${HANDWRITING_PATH}${lastQuery}`);
     }
 
-    try {
-      const s: Partial<Settings> = readJson(SETTINGS_KEY, {});
-      if (s.size) size.value = Math.min(SIZE_MAX, Math.max(SIZE_MIN, s.size));
-      else size.value = Math.max(SIZE_MIN, Math.min(window.innerWidth - 32, 560));
-      if (typeof s.opacity === 'number') opacity.value = s.opacity;
-      if (s.width) width.value = s.width;
-      if (typeof s.autoNext === 'boolean') autoNext.value = s.autoNext;
-      if (s.brush) brush.value = findBrush(s.brush).id;
-      if (s.sensitivity) sensitivity.value = Math.min(10, Math.max(1, s.sensitivity));
-      if (s.speed && SPEEDS.includes(s.speed)) speed.value = s.speed;
-      const taper = (n: unknown) => typeof n === 'number' && n >= 0 && n <= MAX_TAPER;
-      if (taper(s.taperStart)) taperStart.value = s.taperStart!;
-      if (taper(s.taperEnd)) taperEnd.value = s.taperEnd!;
-      if (typeof s.smoothing === 'number' && s.smoothing >= 0 && s.smoothing <= MAX_SMOOTHING) {
-        smoothing.value = s.smoothing;
-      }
-    } catch {
-      size.value = Math.max(SIZE_MIN, Math.min(window.innerWidth - 32, 560));
-    }
-    settingsLoaded.value = true;
-
     if (!canvasRef.value) return;
+    // size and brush are given by the task below once the settings are loaded
     const r = new PenRecorder(
       canvasRef.value,
       (n) => (strokeCount.value = n),
       (info) => (pressure.value = info),
     );
-    r.setSize(size.value);
-    r.setStyle({
-      brush: brush.value,
-      width: width.value,
-      sensitivity: sensitivity.value,
-      taperStart: taperStart.value,
-      taperEnd: taperEnd.value,
-      smoothing: smoothing.value,
-    });
     rec.value = noSerialize(r);
     const detach = r.attach();
     const unguard = guardTouches(() => r.writing);
@@ -232,23 +240,33 @@ export default component$(() => {
     });
   });
 
+  // the settings of a font, when the page opens and when another font is picked: this
+  // browser's working copy of the font, else the settings saved for it, else the ones in use
+  // (on opening: the last used, else the defaults)
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(async ({ track }) => {
+    const d = track(() => data.value);
+    if (d.font === settingsFont.value) return;
+    const inUse = settingsFont.value
+      ? settings.value
+      : cleanSettings(
+          readJson(SETTINGS_KEY, null),
+          defaultSettings(Math.max(SIZE_MIN, Math.min(window.innerWidth - 32, 560))),
+        );
+    const kept = readJson<Record<string, unknown>>(FONT_SETTINGS_KEY, {})[d.font];
+    settingsMsg.value = '';
+    await applySettings(cleanSettings(kept ?? d.preset?.settings ?? inUse, inUse), d.font);
+  });
+
+  // every change: to the recorder and to this browser's working copy of the font
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track }) => {
-    const s: Settings = {
-      size: track(() => size.value),
-      opacity: track(() => opacity.value),
-      width: track(() => width.value),
-      autoNext: track(() => autoNext.value),
-      brush: track(() => brush.value),
-      sensitivity: track(() => sensitivity.value),
-      taperStart: track(() => taperStart.value),
-      taperEnd: track(() => taperEnd.value),
-      smoothing: track(() => smoothing.value),
-      speed: track(() => speed.value),
-    };
-    if (!settingsLoaded.value) return;
-    rec.value?.setSize(s.size);
-    rec.value?.setStyle({
+    const s = track(() => settings.value);
+    const r = track(() => rec.value);
+    const fontId = track(() => settingsFont.value);
+    if (!fontId) return; // not loaded yet: the defaults are not kept over the saved ones
+    r?.setSize(s.size);
+    r?.setStyle({
       brush: s.brush,
       width: s.width,
       sensitivity: s.sensitivity,
@@ -257,6 +275,9 @@ export default component$(() => {
       smoothing: s.smoothing,
     });
     writeJson(SETTINGS_KEY, s);
+    const byFont = readJson<Record<string, HandwritingSettings>>(FONT_SETTINGS_KEY, {});
+    byFont[fontId] = s;
+    writeJson(FONT_SETTINGS_KEY, byFont);
   });
 
   // the font and set shown, to open them next time
@@ -403,6 +424,51 @@ export default component$(() => {
     }
     saved.value = saved.value.filter((c) => c !== ch);
     msg.value = `${ch} удалён`;
+  });
+
+  // the settings on the page become the font's saved settings
+  const savePreset = $(async () => {
+    const f = font.value;
+    if (busy.value || settingsFont.value !== f.id) return;
+    if (preset.value && !confirm(`Заменить сохранённые настройки шрифта ${f.name}?`)) return;
+    busy.value = true;
+    settingsMsg.value = '';
+    const res = await saveHandwritingSettings({ font: f.id, settings: settings.value });
+    busy.value = false;
+    if ('error' in res) {
+      settingsMsg.value = res.error;
+      return;
+    }
+    if (font.value.id === res.font) preset.value = res;
+    settingsMsg.value = `Настройки сохранены для шрифта ${f.name}`;
+  });
+
+  // back to the font's saved settings, e.g. after an accidental change
+  const restorePreset = $(async () => {
+    const p = preset.value;
+    const f = font.value;
+    if (!p || settingsFont.value !== f.id) return;
+    if (!confirm(`Вернуть сохранённые настройки шрифта ${f.name}? Текущие изменения пропадут`)) {
+      return;
+    }
+    await applySettings(cleanSettings(p.settings, settings.value), f.id);
+    settingsMsg.value = 'Сохранённые настройки возвращены';
+  });
+
+  const deletePreset = $(async () => {
+    const f = font.value;
+    if (!preset.value || busy.value) return;
+    if (!confirm(`Удалить сохранённые настройки шрифта ${f.name}? Текущие останутся`)) return;
+    busy.value = true;
+    settingsMsg.value = '';
+    const res = await deleteHandwritingSettings(f.id);
+    busy.value = false;
+    if ('error' in res) {
+      settingsMsg.value = res.error;
+      return;
+    }
+    if (font.value.id === f.id) preset.value = null;
+    settingsMsg.value = 'Сохранённые настройки удалены';
   });
 
   const pickFont = $((id: string) => {
@@ -636,7 +702,72 @@ export default component$(() => {
             </span>
           </div>
 
-          {/* settings, kept in this browser */}
+          {/* the settings saved for the font: back to them after an accidental change */}
+          <div class="mt-4 max-w-xl text-sm border border-base-300 rounded p-3">
+            <div class="font-semibold mb-1">Настройки шрифта {font.value.name}</div>
+            {settingsFont.value !== font.value.id ? (
+              <div class="text-xs opacity-70">Загружаются…</div>
+            ) : (
+              <>
+                {preset.value ? (
+                  <div class="text-xs">
+                    Сохранены {new Date(preset.value.updatedAt).toLocaleDateString('ru-RU')}
+                    {presetDiff.value.length ? (
+                      <>
+                        . Изменено с тех пор:
+                        <ul class="list-disc ml-5 my-1">
+                          {presetDiff.value.map(([label, was, now]) => (
+                            <li key={label}>
+                              {label}: {was} → {now}
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    ) : (
+                      <span class="text-success">, текущие совпадают с ними</span>
+                    )}
+                  </div>
+                ) : (
+                  <div class="text-xs opacity-70">
+                    Для этого шрифта настройки не сохранены: сейчас рабочие настройки этого браузера
+                  </div>
+                )}
+                <div class="flex flex-wrap gap-2 mt-2">
+                  <button
+                    type="button"
+                    class="btn btn-xs btn-primary"
+                    disabled={busy.value || Boolean(preset.value && !presetDiff.value.length)}
+                    onClick$={savePreset}
+                  >
+                    {preset.value ? 'Сохранить текущие вместо них' : 'Сохранить для шрифта'}
+                  </button>
+                  {preset.value && (
+                    <>
+                      <button
+                        type="button"
+                        class="btn btn-xs"
+                        disabled={!presetDiff.value.length}
+                        onClick$={restorePreset}
+                      >
+                        Вернуть сохранённые
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-xs btn-ghost text-error"
+                        disabled={busy.value}
+                        onClick$={deletePreset}
+                      >
+                        Удалить сохранённые
+                      </button>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+            {settingsMsg.value && <div class="mt-2 text-xs">{settingsMsg.value}</div>}
+          </div>
+
+          {/* settings: every change is kept in this browser for the font */}
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mt-4 max-w-xl text-sm">
             <label>
               Размер поля: {size.value}px
@@ -656,7 +787,7 @@ export default component$(() => {
                 type="range"
                 class="range range-xs"
                 min={0}
-                max={0.6}
+                max={OPACITY_MAX}
                 step={0.01}
                 value={opacity.value}
                 onInput$={(_, el) => (opacity.value = Number(el.value))}
@@ -667,8 +798,8 @@ export default component$(() => {
               <input
                 type="range"
                 class="range range-xs"
-                min={6}
-                max={60}
+                min={WIDTH_MIN}
+                max={WIDTH_MAX}
                 step={1}
                 value={width.value}
                 onInput$={(_, el) => (width.value = Number(el.value))}
@@ -754,6 +885,13 @@ export default component$(() => {
             большом значении острые углы скругляются. Пока перо пишет и ещё 1,5 секунды после
             отрыва, пальцы и ладонь ничего не нажимают и не прокручивают; перо нажимает кнопки
             всегда.
+          </p>
+          <p class="text-xs opacity-60 mt-2 max-w-xl">
+            Настройки (все, что выше) у каждого шрифта свои: любое изменение сразу запоминается в
+            этом браузере. Кнопка «Сохранить для шрифта» сохраняет их на сервере — они не меняются
+            от случайного движения ползунка, их видно в другом браузере, а «Вернуть сохранённые»
+            возвращает к ним. Шрифт, который в этом браузере ещё не открывали, начинает с
+            сохранённых.
           </p>
         </div>
       </div>

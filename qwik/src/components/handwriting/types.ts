@@ -1,4 +1,5 @@
 import { type BrushStyle } from './brushes';
+import { type SavedSettings } from './settings';
 
 // Admin page /admin/handwriting/: the admin traces characters with a stylus, the pen movement is
 // saved (BE api/handwriting, model server/src/models/Handwriting.js) to build an animated font.
@@ -25,6 +26,7 @@ export type HandwritingPageData = {
   saved: string[]; // chars already saved for the font
   font: string;
   source: string; // ?chars= or ?hsk= as typed, to show in the form
+  preset: SavedSettings | null; // the page settings saved for the font (settings.ts)
 };
 
 export const HANDWRITING_PATH = '/admin/handwriting/';

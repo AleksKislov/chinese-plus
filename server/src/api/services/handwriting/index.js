@@ -1,6 +1,7 @@
 const { apiDecorator } = require('../../api-decorator');
 const { HttpError } = require('../../http-error');
 const Handwriting = require('../../../models/Handwriting');
+const HandwritingSettings = require('../../../models/HandwritingSettings');
 
 // fonts are listed on the FE (components/handwriting/fonts.ts), any id of this shape is accepted
 const FONT_RE = /^[a-z0-9-]{1,40}$/;
@@ -112,7 +113,64 @@ async function deleteOne(req, res) {
   res.json({ char, font });
 }
 
+// page settings saved for a font (models/HandwritingSettings.js); every field is required,
+// numbers are clamped and rounded as the FE sliders give them
+const cleanSettings = (s) => {
+  if (!s || typeof s !== 'object') throw new HttpError(400, 'Bad settings');
+  const num = (key, min, max, digits = 0) => {
+    if (!isNum(s[key])) throw new HttpError(400, `Bad setting ${key}`);
+    const k = 10 ** digits;
+    return Math.round(Math.min(max, Math.max(min, s[key])) * k) / k;
+  };
+  if (!BRUSH_RE.test(String(s.brush || ''))) throw new HttpError(400, 'Bad setting brush');
+  if (typeof s.autoNext !== 'boolean') throw new HttpError(400, 'Bad setting autoNext');
+  return {
+    size: num('size', 100, 2000),
+    opacity: num('opacity', 0, 1, 2),
+    width: num('width', 1, 200),
+    brush: s.brush,
+    sensitivity: num('sensitivity', 1, 10),
+    taperStart: num('taperStart', 0, 300),
+    taperEnd: num('taperEnd', 0, 300),
+    smoothing: num('smoothing', 0, 10),
+    speed: num('speed', 0.1, 10, 2),
+    autoNext: s.autoNext,
+  };
+};
+
+// GET /settings/:font - the settings saved for the font, null if none
+async function getSettings(req, res) {
+  const font = checkFont(req.params.font);
+  const doc = await HandwritingSettings.findOne(
+    { font },
+    { _id: 0, font: 1, settings: 1, updatedAt: 1 },
+  ).lean();
+  res.json(doc || null);
+}
+
+// PUT /settings/:font { settings } - save, replacing the font's earlier settings
+async function saveSettings(req, res) {
+  const font = checkFont(req.params.font);
+  const settings = cleanSettings(req.body?.settings);
+  const doc = await HandwritingSettings.findOneAndUpdate(
+    { font },
+    { font, settings, user: req.user.id },
+    { upsert: true, returnDocument: 'after', projection: { _id: 0, font: 1, settings: 1, updatedAt: 1 } },
+  ).lean();
+  res.json(doc);
+}
+
+// DELETE /settings/:font
+async function deleteSettings(req, res) {
+  const font = checkFont(req.params.font);
+  await HandwritingSettings.deleteOne({ font });
+  res.json({ font });
+}
+
 module.exports = {
+  getSettings: apiDecorator(getSettings),
+  saveSettings: apiDecorator(saveSettings),
+  deleteSettings: apiDecorator(deleteSettings),
   getSaved: apiDecorator(getSaved),
   getOne: apiDecorator(getOne),
   saveOne: apiDecorator(saveOne),

@@ -1,7 +1,15 @@
 const router = require('express').Router();
 const adminAuth = require('../../middleware/admin-auth');
 
-const { getSaved, getOne, saveOne, deleteOne } = require('../../src/api/services/handwriting');
+const {
+  getSaved,
+  getOne,
+  saveOne,
+  deleteOne,
+  getSettings,
+  saveSettings,
+  deleteSettings,
+} = require('../../src/api/services/handwriting');
 
 // stylus recordings of characters for an animated handwriting font (FE page /admin/handwriting/)
 router.use(adminAuth);
@@ -12,6 +20,29 @@ router.use(adminAuth);
  * @access    Admin
  */
 router.get('/', getSaved);
+
+// /settings/:font before /:font/:char, which would take 'settings' for a font id
+
+/**
+ * @route     GET api/handwriting/settings/:font
+ * @desc      The page settings saved for the font (line width, brush...), null if none
+ * @access    Admin
+ */
+router.get('/settings/:font', getSettings);
+
+/**
+ * @route     PUT api/handwriting/settings/:font
+ * @desc      Save the page settings for the font { settings }, replacing the earlier ones
+ * @access    Admin
+ */
+router.put('/settings/:font', saveSettings);
+
+/**
+ * @route     DELETE api/handwriting/settings/:font
+ * @desc      Delete the settings saved for the font
+ * @access    Admin
+ */
+router.delete('/settings/:font', deleteSettings);
 
 /**
  * @route     GET api/handwriting/:font/:char

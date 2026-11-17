@@ -1,6 +1,7 @@
 import { component$ } from '@builder.io/qwik';
 import { Link, useLocation } from '@builder.io/qwik-city';
 import CONSTANTS from '~/misc/consts/consts';
+import { ACTIVE_MENU_CLASS, isLinkActive } from './menu-active';
 
 export type MenuLinkProps = {
   href: string;
@@ -8,21 +9,17 @@ export type MenuLinkProps = {
   curVocabSize?: number;
 };
 
-const stripTrailingSlash = (path: string) =>
-  path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
-
 export default component$(({ href, text, curVocabSize }: MenuLinkProps) => {
   const vocabSize = CONSTANTS.users.vocabSize;
   const loc = useLocation();
-  const isActive =
-    stripTrailingSlash(loc.url.pathname) === stripTrailingSlash(href);
+  const isActive = isLinkActive(loc.url.pathname, href);
 
   return (
     <li>
       <Link
         href={href}
         class={`my-1 hover:text-secondary active:text-secondary focus:text-secondary ${
-          isActive ? 'text-secondary font-semibold' : ''
+          isActive ? ACTIVE_MENU_CLASS : ''
         }`}
         aria-current={isActive ? 'page' : undefined}
         prefetch="js"

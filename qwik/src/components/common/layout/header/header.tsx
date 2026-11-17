@@ -1,6 +1,6 @@
 import { component$, useContext, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 import { userContext } from '~/root';
-import { Link } from '@builder.io/qwik-city';
+import { Link, useLocation } from '@builder.io/qwik-city';
 import { MenuItem, type MenuItemProps } from './menu-item';
 import { collapsedMenuSvg, enterSvg, logoSvg } from '../../media/svg';
 import { getNewMentions } from '~/misc/loaders/layout-loaders';
@@ -11,6 +11,7 @@ import { MenuDropdownGroup } from './menu-dropdown-group';
 import { ThemeChanger } from './theme-changer';
 import { Brand } from './brand';
 import { AuthMenu } from './auth-menu';
+import { ACTIVE_MENU_CLASS, isGroupActive } from './menu-active';
 
 export default component$(() => {
   const newMentions = getNewMentions();
@@ -20,6 +21,10 @@ export default component$(() => {
   const userHskWordsTotal = userState.hsk2WordsTotal;
   const userHsk3WordsTotal = userState.hsk3WordsTotal;
   const userWordsTotal = userState.wordsCount;
+  const pathname = useLocation().url.pathname;
+  const isStartActive = isGroupActive(pathname, startGroupHrefs);
+  const isHskActive = isGroupActive(pathname, hskGroupHrefs);
+  const isReadActive = isGroupActive(pathname, readGroupHrefs);
 
   useVisibleTask$(() => {
     isMobile.value = window.innerWidth <= 768;
@@ -62,7 +67,7 @@ export default component$(() => {
                 >
                   <li>
                     <details class="z-40">
-                      <summary>Введение</summary>
+                      <summary class={isStartActive ? ACTIVE_MENU_CLASS : ''}>Введение</summary>
                       <ul class="w-52 bg-base-200">
                         <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
                         <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
@@ -73,7 +78,7 @@ export default component$(() => {
                   </li>
                   <li>
                     <details class="z-40">
-                      <summary>HSK</summary>
+                      <summary class={isHskActive ? ACTIVE_MENU_CLASS : ''}>HSK</summary>
                       <ul class="w-52 bg-base-200">
                         <MenuLink href="/hsk/exams/" text="Экзамены" />
                         <MenuLink href="/hsk/grammar/" text="Грамматика" />
@@ -84,7 +89,7 @@ export default component$(() => {
                   </li>
                   <li>
                     <details class="z-40">
-                      <summary>{read.name}</summary>
+                      <summary class={isReadActive ? ACTIVE_MENU_CLASS : ''}>{read.name}</summary>
                       <ul class="w-52 bg-base-200">
                         <MenuItemNew name={'Тексты'} links={read.links} />
                         <MenuLink href={'/read/books'} text={'Книги'} />
@@ -111,21 +116,21 @@ export default component$(() => {
                 <Brand />
               </Link>
               <ul class="menu menu-horizontal mt-1">
-                <MenuDropdownGroup name="Введение">
+                <MenuDropdownGroup name="Введение" isActive={isStartActive}>
                   <MenuLink href={'/start/how-to-start'} text={'С чего начать'} />
                   <MenuItemNew name={startPhonetics.name} links={startPhonetics.links} />
                   <MenuItemNew name={startChars.name} links={startChars.links} />
                   <MenuItemNew name={startVocab.name} links={startVocab.links} />
                 </MenuDropdownGroup>
 
-                <MenuDropdownGroup name="HSK">
+                <MenuDropdownGroup name="HSK" isActive={isHskActive}>
                   <MenuLink href="/hsk/exams/" text="Экзамены" />
                   <MenuLink href="/hsk/grammar/" text="Грамматика" />
                   <MenuItemNew name={hsk3.name} links={hsk3.links} />
                   <MenuItemNew name={hsk2.name} links={hsk2.links} />
                 </MenuDropdownGroup>
 
-                <MenuDropdownGroup name={read.name}>
+                <MenuDropdownGroup name={read.name} isActive={isReadActive}>
                   <MenuItemNew name={'Тексты'} links={read.links} />
                   <MenuLink href={'/read/books'} text={'Книги'} />
                   <MenuLink href={'/segment'} text={'Сегментатор'} />
@@ -359,3 +364,15 @@ export const hsk2: MenuItemProps = {
     },
   ],
 };
+
+const hrefsOf = (item: MenuItemProps) => item.links.map((link) => link.href);
+
+// Every link under the top-level dropdowns, so the dropdown is lit on any of their pages.
+const startGroupHrefs = [
+  '/start/how-to-start',
+  ...hrefsOf(startPhonetics),
+  ...hrefsOf(startChars),
+  ...hrefsOf(startVocab),
+];
+const hskGroupHrefs = ['/hsk/exams/', '/hsk/grammar/', ...hrefsOf(hsk3), ...hrefsOf(hsk2)];
+const readGroupHrefs = [...hrefsOf(read), '/read/books', '/segment', '/extension'];

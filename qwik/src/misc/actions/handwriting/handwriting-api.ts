@@ -7,6 +7,7 @@ import {
   type HandwritingData,
   type SavedHandwriting,
 } from '~/components/handwriting/types';
+import { type HandwritingSettings, type SavedSettings } from '~/components/handwriting/settings';
 
 // /admin/handwriting/ calls made after user actions. server$: runs on the FE server
 // (PUBLIC_BASE_URL is not reachable from the browser in production) and does not re-run the
@@ -98,4 +99,47 @@ export const deleteHandwriting = server$(async function (params: {
   const token = getTokenFromCookie(this.cookie);
   if (!token) return { error: 'Войдите как админ' };
   return hwFetch(token, 'DELETE', charPath(parsed.data), null, 'Не удалилось');
+});
+
+// the page settings saved for a font (components/handwriting/settings.ts); the BE checks them
+const settingsSchema = z.object({
+  size: z.number(),
+  opacity: z.number(),
+  width: z.number(),
+  brush: z.string().regex(/^[a-z-]{1,20}$/),
+  sensitivity: z.number(),
+  taperStart: z.number(),
+  taperEnd: z.number(),
+  smoothing: z.number(),
+  speed: z.number(),
+  autoNext: z.boolean(),
+});
+const fontSchema = z.string().regex(FONT_ID_RE);
+
+export const saveHandwritingSettings = server$(async function (params: {
+  font: string;
+  settings: HandwritingSettings;
+}): Promise<SavedSettings | Failure> {
+  const font = fontSchema.safeParse(params.font);
+  const settings = settingsSchema.safeParse(params.settings);
+  if (!font.success || !settings.success) return { error: 'Неверные настройки' };
+  const token = getTokenFromCookie(this.cookie);
+  if (!token) return { error: 'Войдите как админ' };
+  return hwFetch(
+    token,
+    'PUT',
+    `/settings/${font.data}`,
+    { settings: settings.data },
+    'Настройки не сохранились',
+  );
+});
+
+export const deleteHandwritingSettings = server$(async function (
+  fontId: string,
+): Promise<{ font: string } | Failure> {
+  const font = fontSchema.safeParse(fontId);
+  if (!font.success) return { error: 'Неверный шрифт' };
+  const token = getTokenFromCookie(this.cookie);
+  if (!token) return { error: 'Войдите как админ' };
+  return hwFetch(token, 'DELETE', `/settings/${font.data}`, null, 'Настройки не удалились');
 });
