@@ -34,7 +34,8 @@ import {
   DEFAULT_FONT,
   HANDWRITING_FONTS,
   findFont,
-  fontFaceCss,
+  fontCssUrl,
+  fontFaceName,
   fontFamily,
 } from '~/components/handwriting/fonts';
 import {
@@ -123,6 +124,8 @@ const writeJson = (key: string, value: unknown) => {
     // private mode: not kept
   }
 };
+const FONT_WAIT_STEP = 500; // ms
+const FONT_WAIT_TRIES = 60;
 const SIZE_MIN = 200;
 const SIZE_MAX = 1000;
 
@@ -158,6 +161,8 @@ export default component$(() => {
 
   const font = useComputed$(() => findFont(data.value.font) || HANDWRITING_FONTS[0]);
   const current = useComputed$(() => data.value.chars[idx.value] as HandwritingChar | undefined);
+  // the model font's slice with the current character: 'loading' until the browser has it
+  const fontState = useSignal<'loading' | 'ready' | 'failed'>('loading');
   const isSaved = useComputed$(() =>
     Boolean(current.value && saved.value.includes(current.value.ch)),
   );
@@ -310,6 +315,30 @@ export default component$(() => {
     el.onclick = () => writer.animateCharacter();
   });
 
+  // the slice of the current character in the model font. document.fonts.load finds nothing
+  // until font.css (in the head) is loaded, so it is asked again for a while
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(async ({ track, cleanup }) => {
+    const ch = track(() => current.value?.ch);
+    const f = track(() => font.value);
+    if (!ch) return;
+    let stopped = false;
+    cleanup(() => (stopped = true));
+    const spec = `40px '${fontFaceName(f)}'`;
+    fontState.value = 'loading';
+    for (let i = 0; i < FONT_WAIT_TRIES; i++) {
+      const faces = await document.fonts.load(spec, ch).catch(() => []);
+      if (stopped) return;
+      if (faces.length) {
+        fontState.value = 'ready';
+        return;
+      }
+      await new Promise((resolve) => setTimeout(resolve, FONT_WAIT_STEP));
+      if (stopped) return;
+    }
+    fontState.value = 'failed';
+  });
+
   const goTo = $((i: number) => {
     const n = data.value.chars.length;
     if (!n) return;
@@ -387,7 +416,6 @@ export default component$(() => {
 
   return (
     <div style={{ touchAction: 'manipulation' }}>
-      <style dangerouslySetInnerHTML={fontFaceCss} />
       <PageTitle txt="Пропись стилусом" />
 
       {/* model font and the character set */}
@@ -480,6 +508,17 @@ export default component$(() => {
         )}
 
         <div>
+          {fontState.value !== 'ready' && (
+            <div
+              class={['text-xs mb-1', fontState.value === 'failed' ? 'text-error' : 'opacity-70']}
+            >
+              {fontState.value === 'failed'
+                ? `Шрифт ${font.value.name} не загрузился: есть ли ${fontCssUrl(
+                    font.value,
+                  )} на сервере?`
+                : `Шрифт ${font.value.name} загружается…`}
+            </div>
+          )}
           {/* writing square: 米字格, the model character, the ink canvas on top */}
           <div
             class="relative bg-white select-none"
@@ -721,7 +760,12 @@ export default component$(() => {
   );
 });
 
-export const head: DocumentHead = {
-  title: 'Пропись стилусом',
-  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+// only the chosen model font's slices list; its slices load as characters are shown
+export const head: DocumentHead = ({ resolveValue }) => {
+  const font = findFont(resolveValue(useHandwritingPage).font) || HANDWRITING_FONTS[0];
+  return {
+    title: 'Пропись стилусом',
+    meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+    links: [{ rel: 'stylesheet', href: fontCssUrl(font) }],
+  };
 };

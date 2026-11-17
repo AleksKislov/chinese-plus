@@ -37,5 +37,6 @@ lerna-debug.log*
 # Yarn
 .yarn/*
 !.yarn/releases
-# handwriting model fonts (commercial, kept locally only): see src/components/handwriting/fonts.ts
-/public/fonts/handwriting/*.woff2
+# handwriting model fonts and their slices (commercial, kept locally only):
+# see src/components/handwriting/fonts.ts and scripts/split-handwriting-fonts.py
+/public/fonts/handwriting/

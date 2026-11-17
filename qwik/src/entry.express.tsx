@@ -100,6 +100,22 @@ app.use(
 app.use(`/build`, express.static(buildDir, { immutable: true, maxAge: '1y' }));
 // Vite-hashed css + bundle-graph.json: without this they're revalidated (304) on every load
 app.use(`/assets`, express.static(join(distDir, 'assets'), { immutable: true, maxAge: '1y' }));
+// handwriting model font slices (scripts/split-handwriting-fonts.py): their names carry a hash
+// of the content (0-1a2b3c4d.woff2), so they are kept forever; font.css lists them and may
+// change, like any other file there - an hour
+const HASHED_SLICE = /-[0-9a-f]{8}\.woff2$/;
+app.use(
+  `/fonts/handwriting`,
+  express.static(join(distDir, 'fonts', 'handwriting'), {
+    redirect: false,
+    setHeaders: (res, path) => {
+      res.setHeader(
+        'Cache-Control',
+        HASHED_SLICE.test(path) ? 'public, max-age=31536000, immutable' : 'public, max-age=3600',
+      );
+    },
+  }),
+);
 app.use(express.static(distDir, { redirect: false }));
 
 // Use Qwik City's page and endpoint request handler
