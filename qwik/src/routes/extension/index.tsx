@@ -84,26 +84,19 @@ export default component$(() => {
               для Android.
             </p>
 
-            <div class="not-prose flex flex-wrap gap-4 my-6">
-              {EXTENSION_STORES.map((store) =>
-                store.url ? (
-                  <a
-                    key={store.name}
-                    href={store.url}
-                    target="_blank"
-                    rel="noopener"
-                    class="btn btn-info"
-                  >
-                    Установить в {store.name}
-                    <span class="text-xs font-normal normal-case opacity-80">{store.note}</span>
-                  </a>
-                ) : (
-                  <div key={store.name} class="btn btn-disabled">
-                    {store.name} — скоро
-                    <span class="text-xs font-normal normal-case">{store.note}</span>
-                  </div>
-                ),
-              )}
+            <div class="not-prose flex flex-wrap gap-6 my-6">
+              {EXTENSION_STORES.map((store) => (
+                <div key={store.name} class="flex flex-col items-start gap-1">
+                  {store.url ? (
+                    <a href={store.url} target="_blank" rel="noopener" class="btn btn-info btn-sm">
+                      Установить в {store.name}
+                    </a>
+                  ) : (
+                    <div class="btn btn-disabled btn-sm">{store.name} — скоро</div>
+                  )}
+                  <span class="text-xs opacity-60">{store.note}</span>
+                </div>
+              ))}
             </div>
 
             <img
