@@ -322,6 +322,7 @@ export default component$(() => {
     const ch = track(() => current.value?.ch);
     const f = track(() => font.value);
     if (!ch) return;
+    if (!document.fonts) return; // no Font Loading API: just show the fallback font, no message
     let stopped = false;
     cleanup(() => (stopped = true));
     const spec = `40px '${fontFaceName(f)}'`;
