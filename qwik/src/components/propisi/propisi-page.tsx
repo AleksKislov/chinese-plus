@@ -8,19 +8,24 @@ import {
   useTask$,
   useVisibleTask$,
 } from '@builder.io/qwik';
+import { isServer } from '@builder.io/qwik/build';
 import { Link, useLocation, useNavigate } from '@builder.io/qwik-city';
 import HanziWriter from 'hanzi-writer';
 import { PageTitle } from '~/components/common/layout/title';
 import { Breadcrumbs, type Crumb } from '~/components/common/layout/breadcrumbs';
 import { JsonLd } from '~/components/common/seo/json-ld';
-import { Sheet, type StrokesMap } from './sheet';
+import { Sheet, type GlyphsMap, type StrokesMap } from './sheet';
 import { useSheetData } from '~/misc/loaders/propisi-loaders';
+import { getGlyphs } from '~/misc/actions/propisi/get-glyphs';
 import {
   type FaqItem,
   type HskSheetVersion,
   type SheetGrid,
+  type SheetFont,
   type SheetOptions,
   HSK_SHEET_LEVELS,
+  SHEET_FONTS,
+  defaultOrder,
   MAX_CHARS,
   MAX_COLS,
   MIN_COLS,
@@ -73,6 +78,7 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
   const source = useComputed$(() => parseSource(loc.url.searchParams, loc.params));
   const opts = useStore<SheetOptions>(parseOptions(loc.url.searchParams));
   const strokes = useStore<StrokesMap>({});
+  const glyphs = useStore<Partial<Record<SheetOptions['font'], GlyphsMap>>>({});
 
   const mode = useSignal(source.value.kind);
   const charsInput = useSignal(source.value.kind === 'chars' ? source.value.chars : '');
@@ -111,8 +117,34 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
     { strategy: 'document-ready' },
   );
 
-  const strokesLoading = useComputed$(() =>
-    data.value.chars.some(({ ch }) => strokes[ch] === undefined),
+  // 行书 glyphs: only for the chosen font and only the sheet's chars (via the FE server).
+  // useTask$, not useVisibleTask$: a server$ used only in browser-only code is never loaded on
+  // the server ("Dynamic import not found"); a sheet opened with ?font= also renders at once.
+  // In the browser the task doesn't wait for them: an async task holds back the re-render, so the
+  // font picker froze until they came; glyphsLoading shows the wait instead
+  useTask$(async ({ track }) => {
+    const chars = track(() => data.value.chars);
+    const font = track(() => opts.font);
+    if (font === 'kai') return;
+    // read back from the store: the stored object is a reactive proxy, the literal is not
+    if (!glyphs[font]) glyphs[font] = {};
+    const loaded = glyphs[font]!;
+    const missing = chars.map(({ ch }) => ch).filter((ch) => loaded[ch] === undefined);
+    if (!missing.length) return;
+    const request = getGlyphs(font, missing.join(''))
+      .catch(() => ({} as GlyphsMap))
+      // a char without a glyph (or a failed request) is drawn as 楷书
+      .then((res) => missing.forEach((ch) => (loaded[ch] = res[ch] ?? null)));
+    if (isServer) await request;
+  });
+
+  const glyphsLoading = useComputed$(
+    () =>
+      opts.font !== 'kai' &&
+      data.value.chars.some(({ ch }) => glyphs[opts.font]?.[ch] === undefined),
+  );
+  const strokesLoading = useComputed$(
+    () => glyphsLoading.value || data.value.chars.some(({ ch }) => strokes[ch] === undefined),
   );
 
   // display options change the sheet in place and the shareable URL, without a new request
@@ -258,6 +290,33 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
             <div class="divider my-0"></div>
 
             <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+              <label class="flex items-center gap-2">
+                Шрифт
+                <select
+                  class="select select-bordered select-sm"
+                  value={opts.font}
+                  onChange$={(e) => {
+                    const font = (e.target as HTMLSelectElement).value as SheetFont;
+                    setOptions({ font, order: defaultOrder(font) });
+                  }}
+                >
+                  {SHEET_FONTS.map(({ id, name }) => (
+                    <option key={id} value={id} selected={opts.font === id}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+                {glyphsLoading.value ? (
+                  <span class="flex items-center gap-1 opacity-70">
+                    <span class="loading loading-spinner loading-xs"></span>
+                    Загружаем шрифт…
+                  </span>
+                ) : (
+                  <span class="opacity-70">
+                    {SHEET_FONTS.find(({ id }) => id === opts.font)?.hint}
+                  </span>
+                )}
+              </label>
               <div class="btn-group">
                 {GRIDS.map(({ val, text }) => (
                   <button
@@ -350,7 +409,12 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
                 disabled={strokesLoading.value || !data.value.chars.length}
                 onClick$={print}
               >
-                {strokesLoading.value ? 'Загружаем черты…' : 'Скачать PDF / Распечатать'}
+                {strokesLoading.value && <span class="loading loading-spinner loading-sm"></span>}
+                {glyphsLoading.value
+                  ? 'Загружаем шрифт…'
+                  : strokesLoading.value
+                  ? 'Загружаем черты…'
+                  : 'Скачать PDF / Распечатать'}
               </button>
               <button
                 class="btn btn-outline"
@@ -370,12 +434,24 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
       </div>
 
       {data.value.chars.length ? (
-        <Sheet
-          chars={data.value.chars}
-          strokes={strokes}
-          opts={opts}
-          title={sheetTitle(src, data.value.total)}
-        />
+        <div class="relative">
+          {/* until the 行书 glyphs come, the cells still show 楷书 */}
+          {glyphsLoading.value && (
+            <div class="absolute inset-0 z-10 flex justify-center pt-24 bg-base-100/50 print:hidden">
+              <span class="flex items-center gap-2 h-fit px-4 py-2 rounded-lg bg-base-100 shadow">
+                <span class="loading loading-spinner loading-md"></span>
+                Загружаем шрифт…
+              </span>
+            </div>
+          )}
+          <Sheet
+            chars={data.value.chars}
+            strokes={strokes}
+            glyphs={glyphs[opts.font] || {}}
+            opts={opts}
+            title={sheetTitle(src, data.value.total)}
+          />
+        </div>
       ) : (
         <div class="alert print:hidden">
           {src.kind === 'chars'
@@ -421,7 +497,10 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
         <h2>Как пользоваться генератором прописей</h2>
         <ol>
           <li>Вставьте свои иероглифы или выберите версию и уровень HSK.</li>
-          <li>Выберите сетку (田字格, 米字格 или без линий) и размер клеток — от 1 до 6 см.</li>
+          <li>
+            Выберите шрифт — уставной 楷书 или один из трёх вариантов синшу ("бегущий стиль") ручкой
+            硬笔行书, сетку (田字格, 米字格 или без линий) и размер клеток — от 1 до 6 см.
+          </li>
           <li>
             Укажите, сколько строк дать на каждый иероглиф и сколько серых знаков для обводки.
           </li>

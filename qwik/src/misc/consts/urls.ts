@@ -4,6 +4,8 @@ const CONST_URLS = {
   textsAudioUrl: 'https://storage.yandexcloud.net/buyilehu/texts/',
   // printable word lists, made by server/scripts/generate-hsk-pdfs.js
   hskPdfUrl: 'https://storage.yandexcloud.net/buyilehu/hsk-pdf/',
+  // 行书 glyphs for the propisi sheets, made by server/scripts/upload-propisi-fonts.js
+  propisiFontsUrl: 'https://storage.yandexcloud.net/buyilehu/propisi-fonts/',
   landingRutubeId: 'cc892c8ff12525750d877f12ad8106db', // rutube.ru/video/<id>/
   defaultTextPic:
     'https://images.unsplash.com/photo-1523730205978-59fd1b2965e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxNjE4ODV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MjAzOTY4NjU&ixlib=rb-1.2.1&q=80&w=400',

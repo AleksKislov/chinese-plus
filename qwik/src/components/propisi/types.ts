@@ -5,16 +5,31 @@ import { pluralRu } from '~/components/hsk/exams/levels';
 export type SheetChar = { ch: string; py: string; ru: string };
 
 export type SheetGrid = 'tian' | 'mi' | 'kou';
+// kai: hanzi-writer strokes; the others: 行书 fonts, glyphs from the bucket
+// (ids = folders of server/scripts/upload-propisi-fonts.js)
+export type SheetFont = 'kai' | 'zqp' | 'changan' | 'ssq';
+
+export const SHEET_FONTS: { id: SheetFont; name: string; hint: string }[] = [
+  { id: 'kai', name: '楷书', hint: 'Уставное письмо, с порядком черт' },
+  { id: 'zqp', name: '张清平', hint: 'Скоропись ручкой: 瑞美加张清平硬笔行书' },
+  { id: 'changan', name: '长安体', hint: 'Скоропись ручкой 行书: 平方长安体' },
+  { id: 'ssq', name: '上上谦体', hint: 'Скоропись ручкой 行书: 平方上上谦体' },
+];
+
+// hanzi-writer stroke order is 楷书 order, so with a 行书 font the row is off unless asked for
+export const defaultOrder = (font: SheetFont) => font === 'kai';
+
 export type HskSheetVersion = '3' | '2';
 
 export type SheetOptions = {
   grid: SheetGrid;
+  font: SheetFont;
   cols: number; // cells per row, sets the cell size: 180 mm / cols
   rows: number; // practice rows per character
   trace: number; // grey copies to trace after the model in the first row
   py: boolean;
   ru: boolean;
-  order: boolean; // stroke order row
+  order: boolean; // stroke order row, default: defaultOrder(font)
 };
 
 // what to print: typed characters (/propisi/), or a part of an HSK level's new characters
@@ -26,6 +41,12 @@ export type SheetSource =
 export type SheetData = { chars: SheetChar[]; total: number; parts: string[] };
 
 export type FaqItem = { q: string; a: string };
+
+// the fonts of SHEET_FONTS, on the hub and every HSK level page
+export const fontsFaq: FaqItem = {
+  q: 'Какой шрифт выбрать для прописей?',
+  a: 'По умолчанию иероглифы написаны уставным письмом 楷书 — с него начинают и по нему учат порядок черт. Для скорописи ручкой (硬笔行书) есть три рукописных шрифта. 张清平 — аккуратный и ровный стиль 行书. 平方长安体 — тоже 行书, но крупнее и чётче, по сути ближе к 行楷: черты почти не сливаются, поэтому он хорош как переход от 楷书. 平方上上谦体 — беглый и довольно интересный шрифт, с плавными связками между чертами. «Порядок черт» показывает порядок черт для 楷书, поэтому со шрифтами 行书 она по умолчанию выключена, там черты часто сливаются.',
+};
 
 export const propisiUrl = '/propisi/';
 export const propisiOgImage = '/img/og/propisi.png';
@@ -57,6 +78,7 @@ export const cellMm = (cols: number) => SHEET_WIDTH_MM / cols;
 
 export const DEFAULT_OPTIONS: SheetOptions = {
   grid: 'tian',
+  font: 'kai',
   cols: 12,
   rows: 2,
   trace: 3,
@@ -92,14 +114,21 @@ export const parseSource = (
 
 export const parseOptions = (params: URLSearchParams): SheetOptions => {
   const cols = intIn(params.get('cols'), MIN_COLS, MAX_COLS, DEFAULT_OPTIONS.cols);
+  const font = pick(
+    params.get('font'),
+    SHEET_FONTS.map((f) => f.id),
+    DEFAULT_OPTIONS.font,
+  );
+  const order = params.get('order');
   return {
     grid: pick(params.get('grid'), ['tian', 'mi', 'kou'] as const, DEFAULT_OPTIONS.grid),
+    font,
     cols,
     rows: intIn(params.get('rows'), 1, 8, DEFAULT_OPTIONS.rows),
     trace: intIn(params.get('trace'), 0, cols - 1, Math.min(DEFAULT_OPTIONS.trace, cols - 1)),
     py: params.get('py') !== '0',
     ru: params.get('ru') !== '0',
-    order: params.get('order') !== '0',
+    order: order === null ? defaultOrder(font) : order !== '0',
   };
 };
 
@@ -111,7 +140,7 @@ export const sheetUrl = (source: SheetSource, opts: SheetOptions = DEFAULT_OPTIO
 
   (Object.keys(DEFAULT_OPTIONS) as (keyof SheetOptions)[]).forEach((key) => {
     const val = opts[key];
-    if (val === DEFAULT_OPTIONS[key]) return;
+    if (val === (key === 'order' ? defaultOrder(opts.font) : DEFAULT_OPTIONS[key])) return;
     params.set(key, typeof val === 'boolean' ? (val ? '1' : '0') : String(val));
   });
 
@@ -147,9 +176,9 @@ export const hubSeo = {
   h1: 'Прописи китайских иероглифов',
   title: 'Прописи китайских иероглифов — распечатать или скачать PDF | Chinese+',
   description:
-    'Бесплатный генератор прописей для китайских иероглифов: сетка 田字格 или 米字格, порядок черт, пиньинь и перевод. Свои иероглифы или списки HSK 1–6 — скачайте PDF и распечатайте.',
+    'Бесплатный генератор прописей для китайских иероглифов: уставное письмо 楷书 (кайшу) или скоропись 行书 (синшу), сетка 田字格 или 米字格, порядок черт, пиньинь и перевод. Свои иероглифы или списки HSK 1–9 — скачайте PDF.',
   intro:
-    'Генератор прописей для китайских иероглифов: клетки 田字格 или 米字格, порядок черт, пиньинь и перевод. Вставьте свои иероглифы или выберите уровень HSK, настройте лист и сохраните его в PDF или сразу распечатайте. Бесплатно и без регистрации.',
+    'Генератор прописей для китайских иероглифов: клетки 田字格 или 米字格, порядок черт, пиньинь и перевод. Пишите уставным письмом 楷书 или тренируйте скоропись ручкой 行书 — на выбор три рукописных шрифта. Вставьте свои иероглифы или выберите уровень HSK, настройте лист и сохраните его в PDF или сразу распечатайте. Бесплатно и без регистрации.',
   crumbs: [{ name: 'Прописи иероглифов' }] as Crumb[],
 };
 
@@ -161,7 +190,7 @@ export const levelSeo = (v: HskSheetVersion, level: string, total: number) => {
     h1: `Прописи ${name}`,
     title: `Прописи ${name} — ${count}, распечатать PDF | Chinese+`,
     description: `Прописи для иероглифов ${name}: ${count} уровня в клетках 田字格 с порядком черт, пиньинем и переводом. Листы по ${PART_SIZE} иероглифов — распечатайте или сохраните в PDF.`,
-    intro: `Прописи для всех иероглифов, которые впервые встречаются в словах ${name}: ${count}, по ${PART_SIZE} на листе. У каждого иероглифа — порядок черт, пиньинь, перевод, образец и серые знаки для обводки. Выберите лист, настройте сетку и распечатайте или сохраните в PDF.`,
+    intro: `Прописи для всех иероглифов, которые впервые встречаются в словах ${name}: ${count}, по ${PART_SIZE} на листе. У каждого иероглифа — порядок черт, пиньинь, перевод, образец и серые знаки для обводки. Выберите лист и шрифт — 楷书 или скоропись 行书, настройте сетку и распечатайте или сохраните в PDF.`,
     crumbs: [
       { name: 'Прописи иероглифов', href: propisiUrl },
       {
@@ -183,6 +212,7 @@ export const levelSeo = (v: HskSheetVersion, level: string, total: number) => {
         q: `Как распечатать прописи ${name}?`,
         a: 'Выберите лист с нужными иероглифами, настройте сетку и количество строк, нажмите «Скачать PDF / Распечатать». В окне печати выберите принтер или «Сохранить как PDF», формат A4, масштаб 100%.',
       },
+      fontsFaq,
     ] as FaqItem[],
   };
 };

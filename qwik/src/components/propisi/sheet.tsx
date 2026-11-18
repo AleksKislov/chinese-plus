@@ -12,6 +12,8 @@ import {
 
 // hanzi-writer stroke paths per char; null - no stroke data, the char is drawn with a font
 export type StrokesMap = Record<string, string[] | null | undefined>;
+// 行书 outline per char of one font (1000x1000 box, y down); null - not in the font, drawn as 楷书
+export type GlyphsMap = Record<string, string | null | undefined>;
 
 const GRID_COLOR = '#e08080';
 const MODEL_COLOR = '#111111';
@@ -23,37 +25,49 @@ const SHEET_PX = ((SHEET_WIDTH_MM + 2 * SHEET_PADDING_MM) * 96) / 25.4;
 const KAI_FONT = "'KaiTi', 'STKaiti', 'Kaiti SC', 'Noto Serif SC', serif";
 
 // empty cell, or a char in one colour, or a stroke order step (strokes up to `step`)
-type Cell = { ch: string; strokes?: string[] | null; color?: string; step?: number } | null;
+type Cell = {
+  ch: string;
+  strokes?: string[] | null;
+  glyph?: string | null;
+  color?: string;
+  step?: number;
+} | null;
 
-const CharSvg = ({ cell, x }: { cell: NonNullable<Cell>; x: number }) => (
-  <svg x={x + 5} y={5} width={90} height={90} viewBox="0 0 1024 1024">
-    {cell.strokes ? (
-      <g transform="translate(0, 900) scale(1, -1)">
-        {cell.strokes.map((d, i) =>
-          cell.step !== undefined && i > cell.step ? null : (
-            <path
-              key={i}
-              d={d}
-              fill={cell.step !== undefined && i < cell.step ? DONE_STROKE_COLOR : cell.color}
-            />
-          ),
-        )}
-      </g>
-    ) : (
-      <text
-        x="512"
-        y="520"
-        font-size="880"
-        text-anchor="middle"
-        dominant-baseline="middle"
-        font-family={KAI_FONT}
-        fill={cell.color}
-      >
-        {cell.ch}
-      </text>
-    )}
-  </svg>
-);
+const CharSvg = ({ cell, x }: { cell: NonNullable<Cell>; x: number }) =>
+  cell.glyph ? (
+    // a long stroke may reach a bit past the box, into the cell's margin
+    <svg x={x + 5} y={5} width={90} height={90} viewBox="0 0 1000 1000" overflow="visible">
+      <path d={cell.glyph} fill={cell.color} />
+    </svg>
+  ) : (
+    <svg x={x + 5} y={5} width={90} height={90} viewBox="0 0 1024 1024">
+      {cell.strokes ? (
+        <g transform="translate(0, 900) scale(1, -1)">
+          {cell.strokes.map((d, i) =>
+            cell.step !== undefined && i > cell.step ? null : (
+              <path
+                key={i}
+                d={d}
+                fill={cell.step !== undefined && i < cell.step ? DONE_STROKE_COLOR : cell.color}
+              />
+            ),
+          )}
+        </g>
+      ) : (
+        <text
+          x="512"
+          y="520"
+          font-size="880"
+          text-anchor="middle"
+          dominant-baseline="middle"
+          font-family={KAI_FONT}
+          fill={cell.color}
+        >
+          {cell.ch}
+        </text>
+      )}
+    </svg>
+  );
 
 // a row of cells as one svg, 100 units per cell, so neighbours share their borders
 // line widths are set in mm, so small and brush-size cells print the same lines
@@ -110,11 +124,12 @@ const chunk = <T,>(arr: T[], size: number) =>
 type SheetProps = {
   chars: SheetChar[];
   strokes: StrokesMap;
+  glyphs: GlyphsMap; // of opts.font
   opts: SheetOptions;
   title: string;
 };
 
-export const Sheet = component$(({ chars, strokes, opts, title }: SheetProps) => {
+export const Sheet = component$(({ chars, strokes, glyphs, opts, title }: SheetProps) => {
   const cols = opts.cols;
   const sizeMm = cellMm(cols);
   const orderCols = Math.floor(SHEET_WIDTH_MM / ORDER_CELL_MM);
@@ -145,10 +160,16 @@ export const Sheet = component$(({ chars, strokes, opts, title }: SheetProps) =>
 
           {chars.map(({ ch, py, ru }) => {
             const charStrokes = strokes[ch];
+            const glyph = opts.font === 'kai' ? null : glyphs[ch];
             const practice: Cell[][] = Array.from({ length: opts.rows }, (_, row) =>
               Array.from({ length: cols }, (_, i) => {
                 if (row > 0 || i > opts.trace) return null;
-                return { ch, strokes: charStrokes, color: i === 0 ? MODEL_COLOR : TRACE_COLOR };
+                return {
+                  ch,
+                  strokes: charStrokes,
+                  glyph,
+                  color: i === 0 ? MODEL_COLOR : TRACE_COLOR,
+                };
               }),
             );
             const orderCells: Cell[] = (charStrokes || []).map((_, step) => ({

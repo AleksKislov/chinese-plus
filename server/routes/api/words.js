@@ -15,8 +15,6 @@ router.get('/', auth, async (req, res) => {
       .populate('wordId', ['chinese', 'translation', 'pinyin', 'level', 'word_id', '_id'])
       .sort({ date: -1 });
 
-    if (words.length <= 0) return res.status(400).json({ msg: 'There are no words yet' });
-
     // console.log(words);
     res.json(words.map(oldHskWordToDTO));
   } catch (err) {
