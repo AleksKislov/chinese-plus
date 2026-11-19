@@ -34,6 +34,7 @@ export class PenRecorder {
   private cssSize = 400;
   private style: BrushStyle = DEFAULT_STYLE;
   private frame = 0; // scheduled redraw
+  private dirty = false; // own finished lines to draw again on the next frame
   private replayFrame = 0;
   private resolveReplay: (() => void) | null = null;
   private shown: Shown | null = null;
@@ -61,12 +62,16 @@ export class PenRecorder {
     c.addEventListener('pointermove', move);
     c.addEventListener('pointerup', up);
     c.addEventListener('pointercancel', up);
+    // the pen's pointerup can be lost (Safari): without this the pen stays "down", it can't
+    // start a new line and fingers stay blocked (touch-guard.ts)
+    c.addEventListener('lostpointercapture', up);
     window.visualViewport?.addEventListener('resize', zoom);
     return () => {
       c.removeEventListener('pointerdown', down);
       c.removeEventListener('pointermove', move);
       c.removeEventListener('pointerup', up);
       c.removeEventListener('pointercancel', up);
+      c.removeEventListener('lostpointercapture', up);
       window.visualViewport?.removeEventListener('resize', zoom);
       this.stopReplay();
       if (this.frame) cancelAnimationFrame(this.frame);
@@ -80,12 +85,16 @@ export class PenRecorder {
     if (px === this.canvas.width) return;
     this.canvas.width = this.canvas.height = px;
     this.done.width = this.done.height = px;
-    this.rebuild();
+    this.rebuildSoon();
   }
 
+  // a slider sends a new style on every step: the lines are drawn again once per frame, and
+  // not at all when nothing changed
   setStyle(style: BrushStyle) {
+    const keys = Object.keys({ ...this.style, ...style }) as (keyof BrushStyle)[];
+    if (keys.every((k) => this.style[k] === style[k])) return;
     this.style = style;
-    this.rebuild();
+    this.rebuildSoon();
   }
 
   get count() {
@@ -259,12 +268,19 @@ export class PenRecorder {
     if (this.frame) return;
     this.frame = requestAnimationFrame(() => {
       this.frame = 0;
-      this.render();
+      if (this.dirty) this.rebuild();
+      else this.render();
     });
+  }
+
+  private rebuildSoon() {
+    this.dirty = true;
+    this.schedule();
   }
 
   // own finished lines drawn again: after undo, a new size or brush
   private rebuild() {
+    this.dirty = false;
     this.doneCtx.clearRect(0, 0, this.done.width, this.done.height);
     this.strokes.forEach((s) => s !== this.current && this.drawLine(this.doneCtx, s, true));
     this.render();

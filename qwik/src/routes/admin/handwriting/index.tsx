@@ -20,6 +20,7 @@ import {
   saveHandwritingSettings,
 } from '~/misc/actions/handwriting/handwriting-api';
 import { PageTitle } from '~/components/common/layout/title';
+import { PresetPanel } from '~/components/handwriting/preset-panel';
 import { MiGrid } from '~/components/handwriting/mi-grid';
 import { PenRecorder, type PressureInfo } from '~/components/handwriting/pen-recorder';
 import { guardTouches } from '~/components/handwriting/touch-guard';
@@ -183,6 +184,28 @@ export default component$(() => {
       autoNext: autoNext.value,
     }),
   );
+  // What the page shows of the signals that change often (the pen pressure while writing,
+  // slider steps) is read only through these computed signals or in child components: a
+  // `.value` read in this component's JSX renders the whole page again (all the characters of
+  // the set), which made the page lag on an iPad while writing
+  const fontName = useComputed$(() => font.value.name);
+  const settingsReady = useComputed$(() => settingsFont.value === font.value.id);
+  const opacityPct = useComputed$(() => Math.round(opacity.value * 100));
+  const modelStyle = useComputed$(() => ({
+    fontFamily: fontFamily(font.value),
+    fontSize: `${size.value * 0.85}px`,
+    lineHeight: 1,
+    opacity: opacity.value,
+  }));
+  const pressureText = useComputed$(() => {
+    const p = pressure.value;
+    if (!p) return 'нажим появится, когда начнёте писать';
+    if (p.type !== 'pen') return `${p.type}: нажима нет, толщина по скорости`;
+    const full = fullPressure(sensitivity.value).toFixed(2);
+    return `нажим ${p.pressure.toFixed(2)}, максимум в линии ${p.max.toFixed(
+      2,
+    )}, полная толщина с ${full}`;
+  });
   // what was changed since the font's settings were saved: [label, saved, now]
   const presetDiff = useComputed$(() =>
     preset.value ? settingsDiff(preset.value.settings, settings.value) : [],
@@ -594,12 +617,7 @@ export default component$(() => {
             <MiGrid />
             <div
               class="absolute inset-0 flex items-center justify-center pointer-events-none text-black"
-              style={{
-                fontFamily: fontFamily(font.value),
-                fontSize: `${size.value * 0.85}px`,
-                lineHeight: 1,
-                opacity: opacity.value,
-              }}
+              style={modelStyle.value}
             >
               {current.value?.ch}
             </div>
@@ -689,83 +707,21 @@ export default component$(() => {
               ))}
             </div>
             {/* the stylus pressure as the browser gives it, to tune the sensitivity */}
-            <span class="text-xs opacity-70">
-              {pressure.value
-                ? pressure.value.type === 'pen'
-                  ? `нажим ${pressure.value.pressure.toFixed(
-                      2,
-                    )}, максимум в линии ${pressure.value.max.toFixed(
-                      2,
-                    )}, полная толщина с ${fullPressure(sensitivity.value).toFixed(2)}`
-                  : `${pressure.value.type}: нажима нет, толщина по скорости`
-                : 'нажим появится, когда начнёте писать'}
-            </span>
+            <span class="text-xs opacity-70">{pressureText.value}</span>
           </div>
 
           {/* the settings saved for the font: back to them after an accidental change */}
-          <div class="mt-4 max-w-xl text-sm border border-base-300 rounded p-3">
-            <div class="font-semibold mb-1">Настройки шрифта {font.value.name}</div>
-            {settingsFont.value !== font.value.id ? (
-              <div class="text-xs opacity-70">Загружаются…</div>
-            ) : (
-              <>
-                {preset.value ? (
-                  <div class="text-xs">
-                    Сохранены {new Date(preset.value.updatedAt).toLocaleDateString('ru-RU')}
-                    {presetDiff.value.length ? (
-                      <>
-                        . Изменено с тех пор:
-                        <ul class="list-disc ml-5 my-1">
-                          {presetDiff.value.map(([label, was, now]) => (
-                            <li key={label}>
-                              {label}: {was} → {now}
-                            </li>
-                          ))}
-                        </ul>
-                      </>
-                    ) : (
-                      <span class="text-success">, текущие совпадают с ними</span>
-                    )}
-                  </div>
-                ) : (
-                  <div class="text-xs opacity-70">
-                    Для этого шрифта настройки не сохранены: сейчас рабочие настройки этого браузера
-                  </div>
-                )}
-                <div class="flex flex-wrap gap-2 mt-2">
-                  <button
-                    type="button"
-                    class="btn btn-xs btn-primary"
-                    disabled={busy.value || Boolean(preset.value && !presetDiff.value.length)}
-                    onClick$={savePreset}
-                  >
-                    {preset.value ? 'Сохранить текущие вместо них' : 'Сохранить для шрифта'}
-                  </button>
-                  {preset.value && (
-                    <>
-                      <button
-                        type="button"
-                        class="btn btn-xs"
-                        disabled={!presetDiff.value.length}
-                        onClick$={restorePreset}
-                      >
-                        Вернуть сохранённые
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-xs btn-ghost text-error"
-                        disabled={busy.value}
-                        onClick$={deletePreset}
-                      >
-                        Удалить сохранённые
-                      </button>
-                    </>
-                  )}
-                </div>
-              </>
-            )}
-            {settingsMsg.value && <div class="mt-2 text-xs">{settingsMsg.value}</div>}
-          </div>
+          <PresetPanel
+            fontName={fontName}
+            loaded={settingsReady}
+            preset={preset}
+            diff={presetDiff}
+            busy={busy}
+            msg={settingsMsg}
+            onSave$={savePreset}
+            onRestore$={restorePreset}
+            onDelete$={deletePreset}
+          />
 
           {/* settings: every change is kept in this browser for the font */}
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mt-4 max-w-xl text-sm">
@@ -782,7 +738,7 @@ export default component$(() => {
               />
             </label>
             <label>
-              Видимость образца: {Math.round(opacity.value * 100)}%
+              Видимость образца: {opacityPct.value}%
               <input
                 type="range"
                 class="range range-xs"
