@@ -113,6 +113,11 @@ header {
   color: var(--muted);
 }
 
+/* the keyboard shortcut next to "Вкл / выкл" (popup.js), not as bold as the label */
+#shortcut-hint {
+  font-weight: 400;
+}
+
 /* tone colors example, the same as in the tooltips (content.js) */
 .switch small b {
   font-weight: 600;
@@ -158,6 +163,43 @@ kbd {
   margin-top: 6px;
   color: var(--pinyin);
   font-size: 13px;
+}
+
+.text-size {
+  margin-top: 10px;
+}
+
+.text-size-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.text-size-head b {
+  color: var(--pinyin);
+}
+
+#textScale {
+  display: block;
+  width: 100%;
+  margin: 4px 0 0;
+  accent-color: var(--info);
+  cursor: pointer;
+}
+
+/* labels under the 5 steps of the slider: the first and the last at its ends */
+.text-size-ticks {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.text-size-hint {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .history {

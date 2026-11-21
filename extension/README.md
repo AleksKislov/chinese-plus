@@ -39,7 +39,10 @@ with its meanings). Works offline: the dictionary ships inside the extension.
   The site asks before adding (a link from any page could carry `add=1`); without a login the
   page's `onGet` sends the user to `/login?next=…` first, and login / registration / Google
   OAuth come back there (`qwik/src/misc/helpers/login-next.ts`).
-- `popup.html`: toolbar button: on / off switch, theme, "words inside the word", pinyin tone
+- Bigger Chinese text (setting `textScale`, 100–200%): `content.js` multiplies the font size
+  of every element with Chinese text of its own (inline `!important`, the original kept and
+  restored), not the page zoom, so lines wrap to the screen; new content via a MutationObserver.
+- `popup.html`: toolbar button: on / off switch, text size, theme, "words inside the word", pinyin tone
   colors, "only while Shift is held" (mouse: moving the pointer opens no new words, pressing
   Shift looks up the word under it).
 - Looked-up words: `content.js` reports a word once per page when its popup stayed on it 1 s

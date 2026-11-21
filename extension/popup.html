@@ -29,7 +29,7 @@
 
     <label class="switch">
       <input type="checkbox" id="enabled" />
-      <span>Вкл / выкл</span>
+      <span>Вкл / выкл <small id="shortcut-hint" hidden></small></span>
     </label>
 
     <label class="switch sub">
@@ -67,6 +67,27 @@
       </label>
     </section>
 
+    <div class="text-size">
+      <label class="text-size-head" for="textScale">
+        <span>Размер шрифта:</span>
+        <b id="textScale-value">100%</b>
+      </label>
+      <!-- steps: 100, 125, 150, 175, 200% (TEXT_SCALES in popup.js and content.js) -->
+      <input
+        type="range"
+        id="textScale"
+        min="0"
+        max="4"
+        step="1"
+        value="0"
+        aria-describedby="textScale-hint"
+      />
+      <div class="text-size-ticks" aria-hidden="true">
+        <span>100%</span><span>125%</span><span>150%</span><span>175%</span><span>200%</span>
+      </div>
+      <small class="text-size-hint" id="textScale-hint">Только для китайского текста на страницах: крупнее — легче читать и попадать пальцем по словам на телефоне</small>
+    </div>
+
     <div class="theme" role="radiogroup" aria-label="Тема">
       <span>Тема:</span>
       <label><input type="radio" name="theme" value="auto" /> Авто</label>
@@ -78,7 +99,6 @@
       Наведите курсор на китайское слово (на телефоне — нажмите на него), чтобы увидеть
       пиньинь и перевод. Словарь работает без интернета.
     </p>
-    <p class="hint" id="shortcut-hint" hidden></p>
 
     <a class="btn" href="https://www.chineseplus.club/dictionary?utm_source=browser_extension" target="_blank" rel="noopener">
       Словарь на сайте ↗

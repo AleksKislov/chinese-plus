@@ -76,7 +76,7 @@ export default component$(() => {
             <h2>Что хранится</h2>
             <p>
               Ваши настройки расширения: включено ли оно, тема подсказок, показ слов внутри слова,
-              цвет пиньиня по тонам и режим «Только с зажатым Shift».
+              цвет пиньиня по тонам, режим «Только с зажатым Shift» и размер китайского текста.
             </p>
             <p>
               Список просмотренных слов: до 300 последних слов, которые вы смотрели в подсказках, —
@@ -177,7 +177,7 @@ export default component$(() => {
               <h3>What is stored</h3>
               <p>
                 Your extension settings (on/off, tooltip theme, showing shorter words inside the
-                hovered word, pinyin tone colors, Shift-only mode).
+                hovered word, pinyin tone colors, Shift-only mode, Chinese text size).
               </p>
               <p>
                 A list of looked-up words: up to the last 300 Chinese words you looked up in the

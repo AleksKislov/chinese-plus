@@ -47,6 +47,7 @@
   let toneColors = false; // pinyin syllables colored by tone
   let requireShift = false; // mouse: new words only while Shift is held
   let saveHistory = true; // keep looked-up words for "add to my words" in popup.html
+  let textScale = 1; // Chinese text on pages this many times bigger (1: as the page has it)
   let lastPointerType = 'mouse';
   let lastMouse = null; // last mouse position, to look up when Shift is pressed without moving
   let currentRange = null; // the highlighted word
@@ -717,6 +718,115 @@
   document.addEventListener('scroll', onScroll, { capture: true, passive: true });
   window.visualViewport?.addEventListener('scroll', onScroll, { passive: true }); // pinch-zoom pan
 
+  // ---------- bigger Chinese text (setting `textScale`) ----------
+  // Small characters are hard to read and to tap on a phone. The font size of every element with
+  // Chinese text of its own is multiplied (an inline `!important` style, undone exactly), not the
+  // page zoom: lines wrap to the screen, no sideways scrolling, the rest of the page as it was.
+
+  const TEXT_SCALES = [1, 1.25, 1.5, 1.75, 2];
+  const SCALE_MAX_PX = 32; // headings this big are left as they are
+  const SCALE_DEBOUNCE_MS = 300;
+  const scaled = new Map(); // element -> its own inline font-size / line-height before
+  let scaleObserver = null;
+  let scaleTimer = 0;
+  const pendingRoots = new Set();
+
+  const hasScaledAncestor = (el) => {
+    for (let node = el.parentElement; node; node = node.parentElement) {
+      if (scaled.has(node)) return true;
+    }
+    return false;
+  };
+
+  /** Elements under `root` with Chinese text directly in them, not scaled yet. */
+  function scaleTargets(root) {
+    const targets = new Set();
+    const consider = (text) => {
+      const el = text.parentElement;
+      if (!el || scaled.has(el) || !HAN_RE.test(text.data)) return;
+      if (el.closest(`${SKIP_SELECTOR}, ${EDITABLE_SELECTOR}`)) return;
+      targets.add(el);
+    };
+    if (root.nodeType === Node.TEXT_NODE) {
+      consider(root);
+      return targets;
+    }
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) consider(node);
+    return targets;
+  }
+
+  /**
+   * All sizes are read first, then written: a child sized relative to its parent (em, inherit)
+   * gets its own explicit size from the original, not from the already enlarged parent. Content
+   * added later inside an enlarged element already inherits its size: skipped.
+   */
+  function applyScale(targets, later) {
+    const plans = [];
+    for (const el of targets) {
+      if (later && hasScaledAncestor(el)) continue;
+      const style = getComputedStyle(el);
+      const size = parseFloat(style.fontSize);
+      if (!size || size >= SCALE_MAX_PX) continue;
+      const lineHeight = style.lineHeight.endsWith('px') ? parseFloat(style.lineHeight) : null;
+      plans.push([el, size, lineHeight]);
+    }
+    for (const [el, size, lineHeight] of plans) {
+      scaled.set(el, {
+        fontSize: [el.style.getPropertyValue('font-size'), el.style.getPropertyPriority('font-size')],
+        lineHeight: [el.style.getPropertyValue('line-height'), el.style.getPropertyPriority('line-height')],
+      });
+      el.style.setProperty('font-size', `${(size * textScale).toFixed(1)}px`, 'important');
+      // a fixed line height would make the bigger lines overlap
+      if (lineHeight) el.style.setProperty('line-height', `${(lineHeight * textScale).toFixed(1)}px`, 'important');
+    }
+  }
+
+  function unscaleAll() {
+    for (const [el, { fontSize, lineHeight }] of scaled) {
+      el.style.setProperty('font-size', ...fontSize);
+      el.style.setProperty('line-height', ...lineHeight);
+    }
+    scaled.clear();
+  }
+
+  function flushScale() {
+    scaleTimer = 0;
+    const roots = [...pendingRoots].filter((root) => root.isConnected);
+    pendingRoots.clear();
+    for (const el of scaled.keys()) if (!el.isConnected) scaled.delete(el); // removed content
+    const targets = new Set();
+    roots.forEach((root) => scaleTargets(root).forEach((el) => targets.add(el)));
+    applyScale(targets, true);
+  }
+
+  /** Applies the current setting: everything again from the original sizes. */
+  function updateTextScale() {
+    unscaleAll();
+    scaleObserver?.disconnect();
+    scaleObserver = null;
+    clearTimeout(scaleTimer);
+    pendingRoots.clear();
+    if (!enabled || textScale === 1 || !document.body) return;
+    applyScale(scaleTargets(document.body), false);
+    // text added later: infinite scroll, chats, pages that render after load
+    scaleObserver = new MutationObserver((mutations) => {
+      for (const { addedNodes, target, type } of mutations) {
+        if (type === 'characterData') pendingRoots.add(target);
+        addedNodes.forEach((node) => pendingRoots.add(node));
+      }
+      if (pendingRoots.size && !scaleTimer) scaleTimer = setTimeout(flushScale, SCALE_DEBOUNCE_MS);
+    });
+    scaleObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+  }
+
+  const setTextScale = (value) => {
+    const next = TEXT_SCALES.includes(value) ? value : 1;
+    if (next === textScale) return;
+    textScale = next;
+    updateTextScale();
+  };
+
   // ---------- settings (popup.html, keyboard shortcut) ----------
 
   const setTheme = (value) => {
@@ -724,7 +834,15 @@
     if (popup) popup.dataset.theme = theme;
   };
 
-  const SETTINGS = ['enabled', 'theme', 'showParts', 'toneColors', 'requireShift', 'saveHistory'];
+  const SETTINGS = [
+    'enabled',
+    'theme',
+    'showParts',
+    'toneColors',
+    'requireShift',
+    'saveHistory',
+    'textScale',
+  ];
   api.storage.local.get(SETTINGS).then(
     (stored) => {
       saveHistory = stored.saveHistory !== false;
@@ -733,6 +851,7 @@
       toneColors = stored.toneColors === true;
       requireShift = stored.requireShift === true;
       setTheme(stored.theme);
+      setTextScale(stored.textScale);
     },
     () => {},
   );
@@ -746,7 +865,9 @@
     if (changes.enabled) {
       enabled = changes.enabled.newValue !== false;
       if (!enabled) hide();
+      updateTextScale(); // the page's own sizes back while the extension is off
     }
+    if (changes.textScale) setTextScale(changes.textScale.newValue);
   });
 
   // colors follow the site's daisyUI themes: emerald (light) and night (dark)

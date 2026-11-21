@@ -37,6 +37,25 @@ themeInputs.forEach((input) =>
   }),
 );
 
+// how much bigger the Chinese text on pages is (content.js): 1 = as the page has it
+// a slider of 5 steps; pages are rescaled when it is let go (`change`), not on every move
+const TEXT_SCALES = [1, 1.25, 1.5, 1.75, 2];
+const textScaleInput = document.getElementById('textScale');
+const textScaleValue = document.getElementById('textScale-value');
+const showTextScale = () => {
+  const percent = `${TEXT_SCALES[Number(textScaleInput.value)] * 100}%`;
+  textScaleValue.textContent = percent;
+  textScaleInput.setAttribute('aria-valuetext', percent);
+};
+api.storage.local.get('textScale').then(({ textScale = 1 }) => {
+  textScaleInput.value = String(Math.max(0, TEXT_SCALES.indexOf(textScale)));
+  showTextScale();
+});
+textScaleInput.addEventListener('input', showTextScale);
+textScaleInput.addEventListener('change', () =>
+  api.storage.local.set({ textScale: TEXT_SCALES[Number(textScaleInput.value)] }),
+);
+
 // ---------- looked-up words (recorded by background.js) ----------
 
 const { SITE_URL } = globalThis.ChinesePlusLib; // lib.js
@@ -117,8 +136,8 @@ async function showShortcut() {
   const commands = await api.commands?.getAll?.();
   const shortcut = commands?.find((c) => c.name === 'toggle-enabled')?.shortcut;
   if (!shortcut) return;
-  const hint = document.getElementById('shortcut-hint');
-  hint.textContent = `Включить / выключить: ${shortcut}`;
+  const hint = document.getElementById('shortcut-hint'); // next to the on / off switch
+  hint.textContent = `(${shortcut})`;
   hint.hidden = false;
 }
 showShortcut().catch(() => {});
