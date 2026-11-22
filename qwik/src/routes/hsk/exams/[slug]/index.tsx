@@ -85,12 +85,16 @@ export default component$(() => {
 
   const paper = exam.value;
   if (!paper) return <ExamNotFound />;
-  // Old HSK 2-4 have their own line-by-line layout (see ExamQuestionCard's
-  // variant); every other paper keeps the default rendering.
-  const cardVariant =
-    paper.version === 'old' && ['2', '3', '4'].includes(paper.level)
-      ? (`old-${paper.level}` as 'old-2' | 'old-3' | 'old-4')
-      : undefined;
+  // Old HSK 2-5 have their own line-by-line layout (see ExamQuestionCard's
+  // variant); old HSK 5 is laid out like HSK 4. Every other paper keeps the
+  // default rendering.
+  const oldVariants: Record<string, 'old-2' | 'old-3' | 'old-4' | undefined> = {
+    '2': 'old-2',
+    '3': 'old-3',
+    '4': 'old-4',
+    '5': 'old-4',
+  };
+  const cardVariant = paper.version === 'old' ? oldVariants[paper.level] : undefined;
 
   const gradeable = paper.sections.flatMap((section, sInd) =>
     section.parts.flatMap((part, pInd) =>

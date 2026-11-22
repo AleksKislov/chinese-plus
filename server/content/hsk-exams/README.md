@@ -147,7 +147,7 @@ each section, as on the paper.
 | `reading-sentence-order` | `options` A/B/C, ordered | `correctAnswer` = labels in order, e.g. `BCA` |
 | `writing-sentence-order` | `options` = the words, in paper order | `correctAnswer` = full sentence; several accepted orders separated by ` / ` |
 | `writing-character` | literal text | `promptCn` with `（ ）`, `pinyin`, `correctAnswer` = character |
-| `writing-essay` | not auto-graded | `promptRu` |
+| `writing-essay` | not auto-graded | `promptCn`/`promptRu`; optional picture; optional sample text in `correctAnswer`, shown after checking |
 | `writing-picture-sentence` | not auto-graded | picture, `promptCn` = the word to use, `correctAnswer` = sample sentence |
 
 The validator enforces this table: a bank-answered question with no bank, an

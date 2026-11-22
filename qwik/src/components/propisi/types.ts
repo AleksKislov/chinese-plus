@@ -5,6 +5,8 @@ import { pluralRu } from '~/components/hsk/exams/levels';
 export type SheetChar = { ch: string; py: string; ru: string };
 
 export type SheetGrid = 'tian' | 'mi' | 'kou';
+// h: rows per character under its pinyin, translation and stroke count; v: a column per character
+export type SheetDir = 'v' | 'h';
 // kai: hanzi-writer strokes; the others: 行书 fonts, glyphs from the bucket
 // (ids = folders of server/scripts/upload-propisi-fonts.js)
 export type SheetFont = 'kai' | 'zqp' | 'changan' | 'ssq';
@@ -16,20 +18,22 @@ export const SHEET_FONTS: { id: SheetFont; name: string; hint: string }[] = [
   { id: 'ssq', name: '上上谦体', hint: 'Скоропись ручкой 行书: 平方上上谦体' },
 ];
 
-// hanzi-writer stroke order is 楷书 order, so with a 行书 font the row is off unless asked for
-export const defaultOrder = (font: SheetFont) => font === 'kai';
+// hanzi-writer strokes are 楷书 strokes: with a 行书 font the stroke order and count are not shown
+export const hasStrokes = (font: SheetFont) => font === 'kai';
 
 export type HskSheetVersion = '3' | '2';
 
 export type SheetOptions = {
+  dir: SheetDir;
   grid: SheetGrid;
   font: SheetFont;
   cols: number; // cells per row, sets the cell size: 180 mm / cols
-  rows: number; // practice rows per character
+  rows: number; // practice rows (dir h) or columns (dir v) per character
   trace: number; // grey copies to trace after the model in the first row
   py: boolean;
-  ru: boolean;
-  order: boolean; // stroke order row, default: defaultOrder(font)
+  ru: boolean; // dir h only
+  count: boolean; // stroke count, dir h only; with hasStrokes(font)
+  order: boolean; // stroke order, with hasStrokes(font)
 };
 
 // what to print: typed characters (/propisi/), or a part of an HSK level's new characters
@@ -45,7 +49,7 @@ export type FaqItem = { q: string; a: string };
 // the fonts of SHEET_FONTS, on the hub and every HSK level page
 export const fontsFaq: FaqItem = {
   q: 'Какой шрифт выбрать для прописей?',
-  a: 'По умолчанию иероглифы написаны уставным письмом 楷书 — с него начинают и по нему учат порядок черт. Для скорописи ручкой (硬笔行书) есть три рукописных шрифта. 张清平 — аккуратный и ровный стиль 行书. 平方长安体 — тоже 行书, но крупнее и чётче, по сути ближе к 行楷: черты почти не сливаются, поэтому он хорош как переход от 楷书. 平方上上谦体 — беглый и довольно интересный шрифт, с плавными связками между чертами. «Порядок черт» показывает порядок черт для 楷书, поэтому со шрифтами 行书 она по умолчанию выключена, там черты часто сливаются.',
+  a: 'По умолчанию иероглифы написаны уставным письмом 楷书 — с него начинают и по нему учат порядок черт. Для скорописи ручкой (硬笔行书) есть три рукописных шрифта. 张清平 — аккуратный и ровный стиль 行书. 平方长安体 — тоже 行书, но крупнее и чётче, по сути ближе к 行楷: черты почти не сливаются, поэтому он хорош как переход от 楷书. 平方上上谦体 — беглый и довольно интересный шрифт, с плавными связками между чертами. Порядок и количество черт даны для 楷书, поэтому со шрифтами 行书 их нет: там черты часто сливаются.',
 };
 
 export const propisiUrl = '/propisi/';
@@ -77,6 +81,7 @@ export const ORDER_CELL_MM = 8;
 export const cellMm = (cols: number) => SHEET_WIDTH_MM / cols;
 
 export const DEFAULT_OPTIONS: SheetOptions = {
+  dir: 'h',
   grid: 'tian',
   font: 'kai',
   cols: 12,
@@ -84,6 +89,7 @@ export const DEFAULT_OPTIONS: SheetOptions = {
   trace: 3,
   py: true,
   ru: true,
+  count: true,
   order: true,
 };
 
@@ -119,8 +125,8 @@ export const parseOptions = (params: URLSearchParams): SheetOptions => {
     SHEET_FONTS.map((f) => f.id),
     DEFAULT_OPTIONS.font,
   );
-  const order = params.get('order');
   return {
+    dir: pick(params.get('dir'), ['v', 'h'] as const, DEFAULT_OPTIONS.dir),
     grid: pick(params.get('grid'), ['tian', 'mi', 'kou'] as const, DEFAULT_OPTIONS.grid),
     font,
     cols,
@@ -128,7 +134,8 @@ export const parseOptions = (params: URLSearchParams): SheetOptions => {
     trace: intIn(params.get('trace'), 0, cols - 1, Math.min(DEFAULT_OPTIONS.trace, cols - 1)),
     py: params.get('py') !== '0',
     ru: params.get('ru') !== '0',
-    order: order === null ? defaultOrder(font) : order !== '0',
+    count: params.get('count') !== '0',
+    order: params.get('order') !== '0',
   };
 };
 
@@ -140,7 +147,7 @@ export const sheetUrl = (source: SheetSource, opts: SheetOptions = DEFAULT_OPTIO
 
   (Object.keys(DEFAULT_OPTIONS) as (keyof SheetOptions)[]).forEach((key) => {
     const val = opts[key];
-    if (val === (key === 'order' ? defaultOrder(opts.font) : DEFAULT_OPTIONS[key])) return;
+    if (val === DEFAULT_OPTIONS[key]) return;
     params.set(key, typeof val === 'boolean' ? (val ? '1' : '0') : String(val));
   });
 

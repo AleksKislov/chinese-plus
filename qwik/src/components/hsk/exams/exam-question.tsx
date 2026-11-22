@@ -33,8 +33,9 @@ type Props = {
   // Paper-specific layout tweaks. 'old-2' (old HSK 2) prints dialogues and
   // passage + ★ statement one line per row - its content stores those lines
   // newline-separated. 'old-3' (old HSK 3) does the same and has no pictures of
-  // its own on any question. 'old-4' (old HSK 4+) likewise, except for the
-  // writing part 2 pictures. Every other paper renders exactly as before.
+  // its own on any question. 'old-4' (old HSK 4 and 5) likewise, except for the
+  // writing part 2 pictures (HSK 4 picture sentences, the HSK 5 picture essay).
+  // Every other paper renders exactly as before.
   variant?: 'old-2' | 'old-3' | 'old-4';
 };
 
@@ -86,9 +87,11 @@ export const ExamQuestionCard = component$<Props>(
     // Own picture (q.hasImage) is likewise a concept only non-bank types have -
     // a bank-answered question is never illustrated by its own picture.
     // The old HSK 3 paper only has pictures in its listening part 1 bank, old
-    // HSK 4 only in writing part 2.
+    // HSK 4/5 only in writing part 2.
     const canHaveOwnImage =
-      !usesBank(q.questionType) && !isOld3 && (!isOld4 || isPictureSentence);
+      !usesBank(q.questionType) &&
+      !isOld3 &&
+      (!isOld4 || isPictureSentence || q.questionType === 'writing-essay');
     // The combined 3-photos-in-one-picture question type (HSK 1 listening part
     // 2's picture-choice items) needs roughly double the width to keep each of
     // its three sub-photos legible; every other own-image type is one plain
@@ -418,6 +421,13 @@ export const ExamQuestionCard = component$<Props>(
               {isChecked && ungraded && !isPictureSentence && (
                 <p class="text-sm opacity-70 mt-2">
                   Свободный ответ — проверяется вручную, в счёт баллов не идёт.
+                </p>
+              )}
+
+              {/* An essay may carry a sample text in correctAnswer (old HSK 5). */}
+              {isChecked && ungraded && !isPictureSentence && !exampleLabel && q.correctAnswer && (
+                <p class="text-sm mt-2">
+                  Пример ответа: <span class="text-base">{q.correctAnswer}</span>
                 </p>
               )}
 

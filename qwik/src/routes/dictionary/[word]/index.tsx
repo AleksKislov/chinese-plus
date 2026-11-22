@@ -3,7 +3,6 @@ import {
   component$,
   useComputed$,
   useContext,
-  useOnDocument,
   useSignal,
   useVisibleTask$,
 } from '@builder.io/qwik';
@@ -13,13 +12,11 @@ import {
   type RequestEvent,
   routeLoader$,
   useLocation,
-  useNavigate,
 } from '@builder.io/qwik-city';
 import { Alerts } from '~/components/common/alerts/alerts';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { MainContent } from '~/components/common/layout/main-content';
 import { PageTitle } from '~/components/common/layout/title';
-import { searchSvg } from '~/components/common/media/svg';
 import { EditWordModal } from '~/components/common/modals/edit-word-modal';
 import { ShowHideBtn } from '~/components/common/modals/show-hide-btn';
 import { EditWordBtn } from '~/components/common/tooltips/edit-word-btn';
@@ -30,27 +27,22 @@ import { loginUrl } from '~/misc/helpers/login-next';
 import { editWordModalId } from '~/components/common/tooltips/word-tooltip';
 import { DictWordTranslation } from '~/components/common/translation/dict-word-translation';
 import { SearchResutlTable } from '~/components/search/search-result-table';
-import { HandwritingInput } from '~/components/search/handwriting-input';
+import { DictionarySearch } from '~/components/search/dictionary-search';
 import { ApiService } from '~/misc/actions/request';
-import { alertsContext, userContext } from '~/root';
+import { userContext } from '~/root';
 import { getWordsForTooltips } from '~/routes/read/texts/[id]';
 import HanziWriter from 'hanzi-writer';
 import { sheetUrl } from '~/components/propisi/types';
 import { Sidebar } from '~/components/common/layout/sidebar';
-import { Loader } from '~/components/common/ui/loader';
 import { SearchRuResult } from '~/components/search/search-ru-result';
+import { getChineseWordsArr, HanziWriterSettings, type RuWord } from '~/routes/dictionary';
 import {
-  getChineseWordsArr,
-  HanziWriterSettings,
   isChinese,
   isPinyin,
   isRussian,
   isValidWildcardPattern,
   isWildcardPattern,
-  WILDCARD_MAX_LENGTH,
-  WILDCARD_CHAR,
-  type RuWord,
-} from '~/routes/dictionary';
+} from '~/components/search/dictionary-query';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
 import { Breadcrumbs, truncateCrumb } from '~/components/common/layout/breadcrumbs';
@@ -159,7 +151,6 @@ export const useGetHskLevels = routeLoader$(async ({ resolveValue }): Promise<Hs
 export default component$(() => {
   const CHAR_SVG_DIV_ID = 'showCharDiv';
   const loc = useLocation();
-  const nav = useNavigate();
   const loadTranslation = useLoadTranslation();
   const ruWord = useGetRuWord();
   const wildcardWords = useGetWildcardWords();
@@ -168,13 +159,10 @@ export default component$(() => {
   const parsedTranslation = useGetParsedTranslation();
   const ruWordPages = useGetRuWordPages();
   const words = useSignal<(string | DictWord)[] | null>(null);
-  const input = useSignal(loc.params.word || '');
 
-  const alertsState = useContext(alertsContext);
   const { isAdmin, isModerator } = useContext(userContext);
   const canEditDictionary = isAdmin || isModerator;
   const showExamples = useSignal(true);
-  const showHandwriting = useSignal(false);
 
   // Chinese queries only (the loader skips Russian, pinyin and * patterns); long texts get no link
   const sheetChars = useComputed$(() => {
@@ -183,8 +171,7 @@ export default component$(() => {
   });
 
   useVisibleTask$(({ track }) => {
-    const word = track(() => loc.params.word);
-    input.value = word || '';
+    track(() => loc.params.word);
     words.value = null;
     setTimeout(() => (words.value = loadTranslation.value));
   });
@@ -213,43 +200,6 @@ export default component$(() => {
     }, 100);
   });
 
-  const getTranslation = $(() => {
-    clearCharDiv();
-
-    let inputStr = input.value.trim();
-    if (!inputStr) return (input.value = '');
-
-    if (isRussian(inputStr)) {
-      inputStr = inputStr.toLowerCase();
-      input.value = inputStr;
-    }
-
-    if (isWildcardPattern(inputStr)) {
-      if (!isValidWildcardPattern(inputStr)) {
-        alertsState.push({
-          bg: 'alert-error',
-          text: `Шаблон должен содержать от 1 до ${WILDCARD_MAX_LENGTH} китайских иероглифов, "${WILDCARD_CHAR}" заменяет один неизвестный символ`,
-        });
-        return;
-      }
-      nav('/dictionary/' + encodeURIComponent(inputStr));
-    } else if (isChinese(inputStr) || isRussian(inputStr) || isPinyin(inputStr)) {
-      nav('/dictionary/' + encodeURIComponent(inputStr));
-    } else {
-      alertsState.push({
-        bg: 'alert-error',
-        text: 'Поиск только по китайским, русским словам или пиньинь',
-      });
-    }
-  });
-
-  useOnDocument(
-    'keydown',
-    $((e) => {
-      if ((e as KeyboardEvent).key === 'Enter') getTranslation();
-    }),
-  );
-
   // undefined for a moment when navigating to another route (/dictionary/edit/…, /dictionary/add)
   const pageWord = loc.params.word || '';
 
@@ -274,38 +224,7 @@ export default component$(() => {
         <Alerts />
         <MainContent>
           <div class="prose mb-3">
-            <div class="form-control">
-              <div class="input-group w-full">
-                <input
-                  type="text"
-                  placeholder="汉字…"
-                  class="input input-bordered w-full"
-                  value={input.value}
-                  onInput$={(e) => (input.value = (e.target as HTMLInputElement)?.value || '')}
-                />
-                <button
-                  class="btn btn-square"
-                  onClick$={getTranslation}
-                  disabled={loc.isNavigating}
-                >
-                  {loc.isNavigating ? <Loader size="sm" /> : searchSvg}
-                </button>
-              </div>
-              <span class="text-sm opacity-60 mt-1">
-                Используйте "{WILDCARD_CHAR}" вместо неизвестного иероглифа, например "爱
-                {WILDCARD_CHAR}"
-              </span>
-
-              <button
-                type="button"
-                class="link link-hover link-secondary text-sm my-2 text-left w-fit"
-                onClick$={() => (showHandwriting.value = !showHandwriting.value)}
-              >
-                {showHandwriting.value ? 'Скрыть ручной ввод' : 'Ручной ввод иероглифов'}
-              </button>
-
-              {showHandwriting.value && <HandwritingInput />}
-
+            <DictionarySearch value={pageWord} placeholder="汉字…">
               {canEditDictionary && (
                 <Link
                   prefetch="js"
@@ -315,7 +234,7 @@ export default component$(() => {
                   + Добавить слово в словарь
                 </Link>
               )}
-            </div>
+            </DictionarySearch>
 
             {loadTranslation.value && <OwnWordRequest words={loadTranslation.value} />}
 

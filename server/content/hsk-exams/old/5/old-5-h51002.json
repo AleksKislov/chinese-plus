@@ -1,0 +1,3104 @@
+{
+  "version": "old",
+  "level": "5",
+  "slug": "old-5-h51002",
+  "ind": 2,
+  "durationMinutes": 125,
+  "title": {
+    "cn": "HSK（五级）H51002",
+    "ru": "HSK 5 — экзамен H51002"
+  },
+  "descriptionRu": "Официальный пробный экзамен HSK 5 (вариант H51002): 45 заданий на аудирование, 45 на чтение и 10 на письмо, около 125 минут.",
+  "sections": [
+    {
+      "type": "listening",
+      "titleCn": "一、听力",
+      "titleRu": "Аудирование",
+      "durationMinutes": 30,
+      "hasAudio": true,
+      "parts": [
+        {
+          "ind": 0,
+          "instructionCn": "第一部分：第1-20题。请选出正确答案。",
+          "instructionRu": "Прослушайте короткий диалог и вопрос, выберите правильный ответ.",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "listening-choice",
+              "number": 1,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "是律师",
+                  "textRu": "он юрист"
+                },
+                {
+                  "label": "B",
+                  "textCn": "身体很好",
+                  "textRu": "он здоров"
+                },
+                {
+                  "label": "C",
+                  "textCn": "现在在医院",
+                  "textRu": "сейчас в больнице"
+                },
+                {
+                  "label": "D",
+                  "textCn": "休息一周了",
+                  "textRu": "отдыхает уже неделю"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "女：小刘，身体恢复得怎么样了？男：好多了，大夫说下周就可以出院了。问：关于小刘，可以知道什么？",
+              "explanationRu": "下周就可以出院了 — выпишут на следующей неделе, значит, сейчас он в больнице."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 2,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "车展会",
+                  "textRu": "на автосалон"
+                },
+                {
+                  "label": "B",
+                  "textCn": "图书馆",
+                  "textRu": "в библиотеку"
+                },
+                {
+                  "label": "C",
+                  "textCn": "博物馆",
+                  "textRu": "в музей"
+                },
+                {
+                  "label": "D",
+                  "textCn": "动物园",
+                  "textRu": "в зоопарк"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "男：明天下午有个车展，我们去看，你呢？女：我还在犹豫，下午有个讲座，我很想去听听。问：男的明天要去哪儿？",
+              "explanationRu": "有个车展，我们去看 — он идёт на автосалон; на лекцию хочет она."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 3,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "健康",
+                  "textRu": "здоровье"
+                },
+                {
+                  "label": "B",
+                  "textCn": "服装",
+                  "textRu": "одежда"
+                },
+                {
+                  "label": "C",
+                  "textCn": "计算机",
+                  "textRu": "компьютер"
+                },
+                {
+                  "label": "D",
+                  "textCn": "传染病",
+                  "textRu": "инфекционная болезнь"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "女：我的电脑速度特别慢，是不是中病毒了？男：有可能，我检查一下看看。问：他们在谈什么？",
+              "explanationRu": "Речь о медленном компьютере и вирусе — компьютерном, а не о болезни."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 4,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "演员",
+                  "textRu": "актёр"
+                },
+                {
+                  "label": "B",
+                  "textCn": "作家",
+                  "textRu": "писатель"
+                },
+                {
+                  "label": "C",
+                  "textCn": "班主任",
+                  "textRu": "классный руководитель"
+                },
+                {
+                  "label": "D",
+                  "textCn": "主持人",
+                  "textRu": "ведущий"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "男：观众朋友们，让我们以热烈的掌声欢迎今天的嘉宾张阳女士。女：大家好！很荣幸能够参加《有话好好说》这个节目。问：男的是做什么工作的？",
+              "explanationRu": "Он приветствует зрителей и представляет гостью программы — это ведущий."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 5,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "感冒了",
+                  "textRu": "простудился"
+                },
+                {
+                  "label": "B",
+                  "textCn": "鼻子过敏",
+                  "textRu": "аллергия, нос"
+                },
+                {
+                  "label": "C",
+                  "textCn": "刚做手术",
+                  "textRu": "только что прооперирован"
+                },
+                {
+                  "label": "D",
+                  "textCn": "嗓子不舒服",
+                  "textRu": "болит горло"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "女：你感冒了吗？怎么一直打喷嚏。男：没有，我鼻子有点儿过敏。问：男的怎么了？",
+              "explanationRu": "我鼻子有点儿过敏 — не простуда, а аллергия (насморк)."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 6,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "6点",
+                  "textRu": "в 6:00"
+                },
+                {
+                  "label": "B",
+                  "textCn": "6点半",
+                  "textRu": "в 6:30"
+                },
+                {
+                  "label": "C",
+                  "textCn": "7点",
+                  "textRu": "в 7:00"
+                },
+                {
+                  "label": "D",
+                  "textCn": "7点半",
+                  "textRu": "в 7:30"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "男：电影是晚上七点的，我开车去接你吧，大概六点到你们公司。女：行，我们就在楼下门口见。问：他们准备几点见面？",
+              "explanationRu": "Он подъедет к её офису около шести; в семь начинается фильм."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 7,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "要认真准备",
+                  "textRu": "надо тщательно готовиться"
+                },
+                {
+                  "label": "B",
+                  "textCn": "不用太紧张",
+                  "textRu": "не надо так волноваться"
+                },
+                {
+                  "label": "C",
+                  "textCn": "以后要多练习",
+                  "textRu": "потом нужно больше тренироваться"
+                },
+                {
+                  "label": "D",
+                  "textCn": "打算不参加会议了",
+                  "textRu": "решил не идти на собрание"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "女：明天要在总结会上发言，我还是觉得自己准备得不够。男：放松点儿，你又不是第一次发言。问：男的主要是什么意思？",
+              "explanationRu": "放松点儿 — расслабься: она выступает не впервые."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 8,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "读书",
+                  "textRu": "читать"
+                },
+                {
+                  "label": "B",
+                  "textCn": "养花",
+                  "textRu": "выращивать цветы"
+                },
+                {
+                  "label": "C",
+                  "textCn": "体育运动",
+                  "textRu": "спорт"
+                },
+                {
+                  "label": "D",
+                  "textCn": "文学艺术",
+                  "textRu": "литературу и искусство"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "男：奶奶，爷爷年轻时就喜欢钓鱼吗？女：他年轻时喜欢运动，爱打篮球，踢足球，现在年纪大了，才开始喜欢上钓鱼。问：爷爷年轻时喜欢什么？",
+              "explanationRu": "В молодости дед любил баскетбол и футбол; рыбалкой увлёкся уже в старости."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 9,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "买几盆花",
+                  "textRu": "купить цветы в горшках"
+                },
+                {
+                  "label": "B",
+                  "textCn": "挂几幅画",
+                  "textRu": "повесить картины"
+                },
+                {
+                  "label": "C",
+                  "textCn": "多买些书",
+                  "textRu": "купить побольше книг"
+                },
+                {
+                  "label": "D",
+                  "textCn": "房子该装修了",
+                  "textRu": "пора делать ремонт"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "女：你觉得在书房里挂几幅字画儿怎么样？男：我觉得买几盆花放这里比较好。问：男的是什么建议？",
+              "explanationRu": "买几盆花放这里比较好 — он предлагает поставить цветы; картины предлагала она."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 10,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "迷路了",
+                  "textRu": "заблудилась"
+                },
+                {
+                  "label": "B",
+                  "textCn": "迟到了",
+                  "textRu": "опоздала"
+                },
+                {
+                  "label": "C",
+                  "textCn": "交通拥挤",
+                  "textRu": "пробки"
+                },
+                {
+                  "label": "D",
+                  "textCn": "飞机没按时起飞",
+                  "textRu": "самолёт не вылетел вовремя"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "男：已经一个多小时了，我们还要等多久？女：因为有大雾，所有航班目前都不能起飞。耽误了您宝贵的时间，非常抱歉！问：女的为什么要表示抱歉？",
+              "explanationRu": "Из-за тумана рейсы не вылетают — самолёт не взлетел вовремя."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 11,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "司机",
+                  "textRu": "водитель"
+                },
+                {
+                  "label": "B",
+                  "textCn": "记者",
+                  "textRu": "журналист"
+                },
+                {
+                  "label": "C",
+                  "textCn": "医生",
+                  "textRu": "врач"
+                },
+                {
+                  "label": "D",
+                  "textCn": "售票员",
+                  "textRu": "кассир"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "女：一年中你有五六个月在外地跑，真是太辛苦了。男：还行，可以接触、采访各种各样的人，也挺有意思的。问：男的最可能是做什么的？",
+              "explanationRu": "采访各种各样的人 — он берёт интервью у разных людей: журналист."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 12,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "房东",
+                  "textRu": "хозяина квартиры"
+                },
+                {
+                  "label": "B",
+                  "textCn": "公司秘书",
+                  "textRu": "секретаря компании"
+                },
+                {
+                  "label": "C",
+                  "textCn": "接受采访的人",
+                  "textRu": "того, у кого брали интервью"
+                },
+                {
+                  "label": "D",
+                  "textCn": "要买房子的人",
+                  "textRu": "покупателя квартиры"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "男：我觉得今天看的那个房子条件还可以，你说呢？女：还行吧。那明天你再联系一下他，咱们租下来吧。问：他们打算联系谁？",
+              "explanationRu": "咱们租下来吧 — они хотят снять квартиру, значит, свяжутся с хозяином."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 13,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "取消了",
+                  "textRu": "отменили"
+                },
+                {
+                  "label": "B",
+                  "textCn": "推迟了",
+                  "textRu": "перенесли"
+                },
+                {
+                  "label": "C",
+                  "textCn": "换别的地方了",
+                  "textRu": "перенесли в другое место"
+                },
+                {
+                  "label": "D",
+                  "textCn": "还没定具体日期",
+                  "textRu": "точная дата ещё не назначена"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "女：经理，今年公司什么时候组织集体体检呢？男：可能安排在九月了，只是还没确定具体哪天。问：体检的事怎么样了？",
+              "explanationRu": "还没确定具体哪天 — скорее всего в сентябре, но точный день ещё не назначен."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 14,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "春季",
+                  "textRu": "весна"
+                },
+                {
+                  "label": "B",
+                  "textCn": "夏季",
+                  "textRu": "лето"
+                },
+                {
+                  "label": "C",
+                  "textCn": "秋季",
+                  "textRu": "осень"
+                },
+                {
+                  "label": "D",
+                  "textCn": "冬季",
+                  "textRu": "зима"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "男：今年的天气不太正常，都春天了，怎么还下雪？女：刚看电视上天气预报说，最近还有一股冷空气要来。问：现在是哪个季节？",
+              "explanationRu": "都春天了，怎么还下雪 — уже весна, а идёт снег."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 15,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "取钱",
+                  "textRu": "снимает деньги"
+                },
+                {
+                  "label": "B",
+                  "textCn": "买东西",
+                  "textRu": "делает покупки"
+                },
+                {
+                  "label": "C",
+                  "textCn": "修理机器",
+                  "textRu": "чинит аппарат"
+                },
+                {
+                  "label": "D",
+                  "textCn": "办信用卡",
+                  "textRu": "оформляет кредитку"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "女：这个柜台的机器坏了，请您到旁边柜台结账，实在对不起。男：没关系，这边可以用信用卡吗？问：男的正在做什么？",
+              "explanationRu": "Его просят оплатить на соседней кассе — он делает покупки. Кредитку он только хочет использовать."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 16,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "赞成",
+                  "textRu": "одобряет"
+                },
+                {
+                  "label": "B",
+                  "textCn": "反对",
+                  "textRu": "против"
+                },
+                {
+                  "label": "C",
+                  "textCn": "无所谓",
+                  "textRu": "всё равно"
+                },
+                {
+                  "label": "D",
+                  "textCn": "再考虑考虑",
+                  "textRu": "надо ещё подумать"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "男：我想拿几万块钱投资股市，你知道哪支股票好吗？女：我不建议你买股票，股市风险很大。问：女的是什么态度？",
+              "explanationRu": "我不建议你买股票 — она против: рынок слишком рискованный."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 17,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "文件很大",
+                  "textRu": "файлы большие"
+                },
+                {
+                  "label": "B",
+                  "textCn": "光盘有问题",
+                  "textRu": "с диском проблема"
+                },
+                {
+                  "label": "C",
+                  "textCn": "需要别人帮忙",
+                  "textRu": "нужна чужая помощь"
+                },
+                {
+                  "label": "D",
+                  "textCn": "现在不能下载",
+                  "textRu": "сейчас нельзя скачать"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "女：你把资料都复制到光盘上了吗？男：正在复制呢，文件太大了，可能还得再等几分钟。问：为什么还要再等几分钟？",
+              "explanationRu": "文件太大了 — файлы слишком большие, копируются долго."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 18,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "后天发货",
+                  "textRu": "отправят послезавтра"
+                },
+                {
+                  "label": "B",
+                  "textCn": "还没签字",
+                  "textRu": "ещё не подписали"
+                },
+                {
+                  "label": "C",
+                  "textCn": "刚拿到合同",
+                  "textRu": "только получили договор"
+                },
+                {
+                  "label": "D",
+                  "textCn": "货会按时到",
+                  "textRu": "товар придёт вовремя"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "男：我想确认一下，那批货后天可以送到吧？女：是的，我们已经按照合同上要求的日期发货了，您放心，后天肯定能到。问：女的是什么意思？",
+              "explanationRu": "Товар уже отправлен в срок по договору — послезавтра он точно придёт."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 19,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "还在修改",
+                  "textRu": "ещё дорабатывает"
+                },
+                {
+                  "label": "B",
+                  "textCn": "已经交了",
+                  "textRu": "уже сдал"
+                },
+                {
+                  "label": "C",
+                  "textCn": "刚完成一半",
+                  "textRu": "сделал только половину"
+                },
+                {
+                  "label": "D",
+                  "textCn": "已经发表了",
+                  "textRu": "уже опубликовал"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "女：我上午把毕业论文交上去了，你呢？男：我还没修改完，后天估计差不多。最晚什么时候交？问：男的的论文怎么样了？",
+              "explanationRu": "我还没修改完 — он ещё дорабатывает диплом; сдала его она."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 20,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "购物",
+                  "textRu": "за покупками"
+                },
+                {
+                  "label": "B",
+                  "textCn": "参加研讨会",
+                  "textRu": "на семинар"
+                },
+                {
+                  "label": "C",
+                  "textCn": "看京剧表演",
+                  "textRu": "смотреть пекинскую оперу"
+                },
+                {
+                  "label": "D",
+                  "textCn": "送客户去机场",
+                  "textRu": "везти клиента в аэропорт"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "男：我听听你的意见，你说我晚上还系领带吗？女：你只是陪客户去看京剧表演，穿休闲点儿，不用系。问：男的晚上要做什么？",
+              "explanationRu": "陪客户去看京剧表演 — вечером он идёт с клиентом на пекинскую оперу."
+            }
+          ]
+        },
+        {
+          "ind": 1,
+          "instructionCn": "第二部分：第21-30题。请选出正确答案。",
+          "instructionRu": "Прослушайте диалог (4–5 реплик) и вопрос, выберите правильный ответ.",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "listening-choice",
+              "number": 21,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "上大学",
+                  "textRu": "поступить в университет"
+                },
+                {
+                  "label": "B",
+                  "textCn": "考研究生",
+                  "textRu": "в магистратуру"
+                },
+                {
+                  "label": "C",
+                  "textCn": "出国留学",
+                  "textRu": "учиться за границей"
+                },
+                {
+                  "label": "D",
+                  "textCn": "参加工作",
+                  "textRu": "пойти работать"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "女：爸，我不想读研究生了。男：怎么了？你不是考得很好吗？想参加工作了？女：我想出国留学，您会反对吗？男：正好相反，我会尊重你的选择。问：女的有什么打算？",
+              "explanationRu": "我想出国留学 — она хочет учиться за границей, а не в магистратуре и не работать."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 22,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "坏了",
+                  "textRu": "сломался"
+                },
+                {
+                  "label": "B",
+                  "textCn": "丢了",
+                  "textRu": "потерялся"
+                },
+                {
+                  "label": "C",
+                  "textCn": "掉水里了",
+                  "textRu": "упал в воду"
+                },
+                {
+                  "label": "D",
+                  "textCn": "快没电了",
+                  "textRu": "садится батарея"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "男：这照相机怎么坏了？打开就自动关机。女：不会。是快没电了，一会儿回房间充上电就好了。男：充电器带了吗？女：当然带了，不然这几天我们怎么拍照？问：照相机怎么了？",
+              "explanationRu": "是快没电了 — фотоаппарат не сломан, просто садится батарея."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 23,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "公司",
+                  "textRu": "в офисе"
+                },
+                {
+                  "label": "B",
+                  "textCn": "家里",
+                  "textRu": "дома"
+                },
+                {
+                  "label": "C",
+                  "textCn": "出租车上",
+                  "textRu": "в такси"
+                },
+                {
+                  "label": "D",
+                  "textCn": "公共汽车上",
+                  "textRu": "в автобусе"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "女：喂？你帮我看一下，我昨天带回家的那份文件是不是在桌子上？男：我看一下，在，怎么了？女：太好了。刚才吓死我了，我以为把它丢在出租车上了。男：你能不能小心点儿啊！要我帮你送过去吗？女：不用了，我中午回去取吧。问：那份文件现在在哪儿？",
+              "explanationRu": "Документ лежит дома на столе; оставить его в такси она только боялась."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 24,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "人事",
+                  "textRu": "отдел кадров"
+                },
+                {
+                  "label": "B",
+                  "textCn": "销售",
+                  "textRu": "продажи"
+                },
+                {
+                  "label": "C",
+                  "textCn": "研发",
+                  "textRu": "исследования и разработки"
+                },
+                {
+                  "label": "D",
+                  "textCn": "法律",
+                  "textRu": "юридический отдел"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "男：小姐，你好，我是来应聘的。女：请问你叫什么名字，应聘哪个部门？男：我叫李明，应聘销售经理。是王小姐让我下午两点半来面试的。女：好，我带你过去。请这边走。问：男的要应聘哪个部门？",
+              "explanationRu": "应聘销售经理 — он претендует на должность менеджера по продажам."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 25,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "10天后",
+                  "textRu": "через 10 дней"
+                },
+                {
+                  "label": "B",
+                  "textCn": "这个月中旬",
+                  "textRu": "в середине этого месяца"
+                },
+                {
+                  "label": "C",
+                  "textCn": "下个月中旬",
+                  "textRu": "в середине следующего месяца"
+                },
+                {
+                  "label": "D",
+                  "textCn": "下个月底",
+                  "textRu": "в конце следующего месяца"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "女：成立公司的事办得怎么样了？男：别提了，办理营业执照的手续比我想的复杂。女：那估计什么时候能办下来？男：本来以为这个月底可以，现在看要等到下月中旬了。问：营业执照什么时候能办下来？",
+              "explanationRu": "要等到下月中旬了 — лицензию дадут только к середине следующего месяца."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 26,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "有营养",
+                  "textRu": "питательные"
+                },
+                {
+                  "label": "B",
+                  "textCn": "不好闻",
+                  "textRu": "плохо пахнут"
+                },
+                {
+                  "label": "C",
+                  "textCn": "是垃圾食品",
+                  "textRu": "вредная еда"
+                },
+                {
+                  "label": "D",
+                  "textCn": "味道非常好",
+                  "textRu": "очень вкусные"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "男：今天中午我吃炸鸡腿儿了，真好吃。女：少吃油炸食品，那是垃圾食品，对健康没什么好处。男：我知道，可还是忍不住，中午闻到那个香味儿就要流口水。女：以后还是少吃吧。问：女的觉得炸鸡腿儿怎么样？",
+              "explanationRu": "那是垃圾食品 — по её мнению, это вредный фастфуд; вкусным его считает он."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 27,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "结婚",
+                  "textRu": "свадьбой"
+                },
+                {
+                  "label": "B",
+                  "textCn": "搬家",
+                  "textRu": "переездом"
+                },
+                {
+                  "label": "C",
+                  "textCn": "买汽车",
+                  "textRu": "покупкой машины"
+                },
+                {
+                  "label": "D",
+                  "textCn": "装修房子",
+                  "textRu": "ремонтом квартиры"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "女：房子装修好了吗？男：快好了，这几天准备去买家具。女：窗帘选好了吗？我知道有一家店的窗帘做得很不错，你去看看？男：谢谢您，一会儿您把地址给我，我周末去看看。问：男的最近在忙什么？",
+              "explanationRu": "Ремонт почти закончен, он выбирает мебель и шторы — занят ремонтом квартиры."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 28,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "父亲过生日",
+                  "textRu": "у отца день рождения"
+                },
+                {
+                  "label": "B",
+                  "textCn": "要过春节了",
+                  "textRu": "скоро Праздник Весны"
+                },
+                {
+                  "label": "C",
+                  "textCn": "单位放假了",
+                  "textRu": "на работе каникулы"
+                },
+                {
+                  "label": "D",
+                  "textCn": "要去接孩子",
+                  "textRu": "надо забрать ребёнка"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "男：我打算下周五回一趟家，我爸爸过生日。女：你买票了吗？马上要到春节了，票可不好买。男：我开车回，走高速公路，三个小时就到家了。女：要注意安全。问：男的为什么要回家？",
+              "explanationRu": "我爸爸过生日 — у отца день рождения. Праздник Весны упомянут лишь из-за билетов."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 29,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "待遇比较低",
+                  "textRu": "у неё низкая зарплата"
+                },
+                {
+                  "label": "B",
+                  "textCn": "最近刚辞职",
+                  "textRu": "недавно уволилась"
+                },
+                {
+                  "label": "C",
+                  "textCn": "新开了一家公司",
+                  "textRu": "открыла новую компанию"
+                },
+                {
+                  "label": "D",
+                  "textCn": "需要计算机方面的人才",
+                  "textRu": "нужен специалист по компьютерам"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "女：你身边有计算机方面的人才吗？男：怎么了？你们公司的小刘不是很厉害吗？女：他上个星期辞职了，可能是自己也开公司了。男：我帮你问问，我有一个朋友是计算机系毕业的，正在找工作。问：关于女的，下列哪项正确？",
+              "explanationRu": "Ей нужен специалист по компьютерам. Уволился и, возможно, открыл свою компанию Сяо Лю, а не она."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 30,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "医院",
+                  "textRu": "больница"
+                },
+                {
+                  "label": "B",
+                  "textCn": "宾馆",
+                  "textRu": "гостиница"
+                },
+                {
+                  "label": "C",
+                  "textCn": "火车站",
+                  "textRu": "вокзал"
+                },
+                {
+                  "label": "D",
+                  "textCn": "游泳馆",
+                  "textRu": "бассейн"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "男：你好，我前天订了一个标准间，我姓王。女：您稍等，我查一下。王先生，您是从北京来的？男：对。女：请出示一下您的身份证，我给您办理入住手续。问：说话人现在在哪里？",
+              "explanationRu": "Стандартный номер, паспорт, заселение (入住手续) — это гостиница."
+            }
+          ]
+        },
+        {
+          "ind": 2,
+          "instructionCn": "第二部分：第31-45题。请选出正确答案。",
+          "instructionRu": "Прослушайте рассказ — к каждому три вопроса (31–33, 34–36, 37–39, 40–42, 43–45) — и выберите правильный ответ.",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "listening-choice",
+              "number": 31,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "饿死的",
+                  "textRu": "умер от голода"
+                },
+                {
+                  "label": "B",
+                  "textCn": "撞死的",
+                  "textRu": "разбился"
+                },
+                {
+                  "label": "C",
+                  "textCn": "摔死的",
+                  "textRu": "упал и разбился"
+                },
+                {
+                  "label": "D",
+                  "textCn": "被农民打死的",
+                  "textRu": "его убил крестьянин"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "古时候，有个农民正在田里劳动。突然，他看见一只兔子从旁边的草丛里慌慌张张地跑出来，一头撞在田边的大树上，便倒在那儿一动也不动了。农民走过去一看：兔子死了。因为它奔跑的速度太快，把脖子都撞断了。农民高兴极了，他一点力气没花，就白捡了一只又肥又大的兔子。他心想：要是天天都能捡到兔子，那日子就好过了。从此，他再也不肯出力气劳动了。每天他吃完饭就躺在大树底下，等待着第二只、第三只兔子自己撞到树上来。世上哪有那么多便宜的事啊。这个农民当然再也没有捡到撞死的兔子，而他的田里也没有收获任何粮食，农民只好饿着肚子过年了。问：兔子是怎么死的？",
+              "explanationRu": "一头撞在田边的大树上…把脖子都撞断了 — заяц разбился о дерево."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 32,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "他受伤了",
+                  "textRu": "он поранился"
+                },
+                {
+                  "label": "B",
+                  "textCn": "冬天来了",
+                  "textRu": "наступила зима"
+                },
+                {
+                  "label": "C",
+                  "textCn": "他养了很多兔子",
+                  "textRu": "он развёл много кроликов"
+                },
+                {
+                  "label": "D",
+                  "textCn": "以为还可以捡到兔子",
+                  "textRu": "думал, что ещё подберёт зайцев"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "古时候，有个农民正在田里劳动。突然，他看见一只兔子从旁边的草丛里慌慌张张地跑出来，一头撞在田边的大树上，便倒在那儿一动也不动了。农民走过去一看：兔子死了。因为它奔跑的速度太快，把脖子都撞断了。农民高兴极了，他一点力气没花，就白捡了一只又肥又大的兔子。他心想：要是天天都能捡到兔子，那日子就好过了。从此，他再也不肯出力气劳动了。每天他吃完饭就躺在大树底下，等待着第二只、第三只兔子自己撞到树上来。世上哪有那么多便宜的事啊。这个农民当然再也没有捡到撞死的兔子，而他的田里也没有收获任何粮食，农民只好饿着肚子过年了。问：农民为什么不去田里劳动了？",
+              "explanationRu": "要是天天都能捡到兔子 — он решил, что и дальше будет даром подбирать зайцев."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 33,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "要注意观察",
+                  "textRu": "надо быть наблюдательным"
+                },
+                {
+                  "label": "B",
+                  "textCn": "运气很重要",
+                  "textRu": "удача очень важна"
+                },
+                {
+                  "label": "C",
+                  "textCn": "坚持才能得胜利",
+                  "textRu": "побеждает упорный"
+                },
+                {
+                  "label": "D",
+                  "textCn": "世上没有免费的午餐",
+                  "textRu": "бесплатных обедов не бывает"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "古时候，有个农民正在田里劳动。突然，他看见一只兔子从旁边的草丛里慌慌张张地跑出来，一头撞在田边的大树上，便倒在那儿一动也不动了。农民走过去一看：兔子死了。因为它奔跑的速度太快，把脖子都撞断了。农民高兴极了，他一点力气没花，就白捡了一只又肥又大的兔子。他心想：要是天天都能捡到兔子，那日子就好过了。从此，他再也不肯出力气劳动了。每天他吃完饭就躺在大树底下，等待着第二只、第三只兔子自己撞到树上来。世上哪有那么多便宜的事啊。这个农民当然再也没有捡到撞死的兔子，而他的田里也没有收获任何粮食，农民只好饿着肚子过年了。问：这个故事主要想告诉我们什么？",
+              "explanationRu": "世上哪有那么多便宜的事 — даром ничего не бывает: «бесплатных обедов не бывает»."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 34,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "70多年",
+                  "textRu": "больше 70 лет"
+                },
+                {
+                  "label": "B",
+                  "textCn": "90多年",
+                  "textRu": "больше 90 лет"
+                },
+                {
+                  "label": "C",
+                  "textCn": "100多年",
+                  "textRu": "больше 100 лет"
+                },
+                {
+                  "label": "D",
+                  "textCn": "300多年",
+                  "textRu": "больше 300 лет"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "说起乒乓球，很多人都会想到中国。的确，长期以来，中国的乒乓球水平在国际上是属于最好的，而且中国是世界上“乒乓人口”最多的国家。因此，很多人认为乒乓球运动是中国人最早开始的，但事实上乒乓球运动在中国只有七十多年的历史。最初的乒乓球其实是英国人发明的一项饭后运动。十九世纪末，英国上层社会的人们吃完饭之后需要适当的运动来消化一下，于是他们就发明了一种在饭桌上进行的和网球相似的运动，称为桌上网球，这就是乒乓球最早的形式。问：乒乓球在中国有多少年的历史？",
+              "explanationRu": "在中国只有七十多年的历史 — в Китае настольному теннису чуть больше 70 лет."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 35,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "英国人",
+                  "textRu": "англичане"
+                },
+                {
+                  "label": "B",
+                  "textCn": "法国人",
+                  "textRu": "французы"
+                },
+                {
+                  "label": "C",
+                  "textCn": "美国人",
+                  "textRu": "американцы"
+                },
+                {
+                  "label": "D",
+                  "textCn": "中国人",
+                  "textRu": "китайцы"
+                }
+              ],
+              "correctAnswer": "A",
+              "audioStartSec": null,
+              "ttsText": "说起乒乓球，很多人都会想到中国。的确，长期以来，中国的乒乓球水平在国际上是属于最好的，而且中国是世界上“乒乓人口”最多的国家。因此，很多人认为乒乓球运动是中国人最早开始的，但事实上乒乓球运动在中国只有七十多年的历史。最初的乒乓球其实是英国人发明的一项饭后运动。十九世纪末，英国上层社会的人们吃完饭之后需要适当的运动来消化一下，于是他们就发明了一种在饭桌上进行的和网球相似的运动，称为桌上网球，这就是乒乓球最早的形式。问：乒乓球运动是谁发明的？",
+              "explanationRu": "最初的乒乓球其实是英国人发明的 — его придумали англичане."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 36,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "工厂",
+                  "textRu": "на фабрике"
+                },
+                {
+                  "label": "B",
+                  "textCn": "饭桌上",
+                  "textRu": "на обеденном столе"
+                },
+                {
+                  "label": "C",
+                  "textCn": "网球场",
+                  "textRu": "на теннисном корте"
+                },
+                {
+                  "label": "D",
+                  "textCn": "办公室",
+                  "textRu": "в офисе"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "说起乒乓球，很多人都会想到中国。的确，长期以来，中国的乒乓球水平在国际上是属于最好的，而且中国是世界上“乒乓人口”最多的国家。因此，很多人认为乒乓球运动是中国人最早开始的，但事实上乒乓球运动在中国只有七十多年的历史。最初的乒乓球其实是英国人发明的一项饭后运动。十九世纪末，英国上层社会的人们吃完饭之后需要适当的运动来消化一下，于是他们就发明了一种在饭桌上进行的和网球相似的运动，称为桌上网球，这就是乒乓球最早的形式。问：最初人们在哪儿打乒乓球？",
+              "explanationRu": "在饭桌上进行的和网球相似的运动 — сначала играли прямо на обеденном столе."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 37,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "很生气",
+                  "textRu": "очень сердит"
+                },
+                {
+                  "label": "B",
+                  "textCn": "很开心",
+                  "textRu": "очень весел"
+                },
+                {
+                  "label": "C",
+                  "textCn": "服务热情",
+                  "textRu": "обслуживает радушно"
+                },
+                {
+                  "label": "D",
+                  "textCn": "服务态度不好",
+                  "textRu": "плохо обслуживает"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "一天，一位画家带着朋友去自己家附近的商店买东西，付款的时候，他礼貌地对售货员说了声：“谢谢。”但售货员却一直不开心，没有理画家。他们走出商店时，朋友说：“那个售货员的服务态度真差劲。”画家对朋友说：“他每天都是这样。”朋友说：“既然他都每天这样，那你为什么还对他那么有礼貌呢？”画家回答：“我为什么要让他的态度来决定我的行为呢？”问：关于售货员，可以知道什么？",
+              "explanationRu": "服务态度真差劲 — продавец обслуживает плохо, на «спасибо» не ответил."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 38,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "没有买东西",
+                  "textRu": "ничего не купил"
+                },
+                {
+                  "label": "B",
+                  "textCn": "批评了售货员",
+                  "textRu": "отчитал продавца"
+                },
+                {
+                  "label": "C",
+                  "textCn": "没有理售货员",
+                  "textRu": "не обратил внимания на продавца"
+                },
+                {
+                  "label": "D",
+                  "textCn": "对售货员很礼貌",
+                  "textRu": "был вежлив с продавцом"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "一天，一位画家带着朋友去自己家附近的商店买东西，付款的时候，他礼貌地对售货员说了声：“谢谢。”但售货员却一直不开心，没有理画家。他们走出商店时，朋友说：“那个售货员的服务态度真差劲。”画家对朋友说：“他每天都是这样。”朋友说：“既然他都每天这样，那你为什么还对他那么有礼貌呢？”画家回答：“我为什么要让他的态度来决定我的行为呢？”问：画家是怎么做的？",
+              "explanationRu": "他礼貌地对售货员说了声：“谢谢。” — художник был с продавцом вежлив."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 39,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "要乐于助人",
+                  "textRu": "надо охотно помогать"
+                },
+                {
+                  "label": "B",
+                  "textCn": "要体谅别人",
+                  "textRu": "надо входить в чужое положение"
+                },
+                {
+                  "label": "C",
+                  "textCn": "细节决定成败",
+                  "textRu": "всё решают мелочи"
+                },
+                {
+                  "label": "D",
+                  "textCn": "坚持自己的行为方式",
+                  "textRu": "держаться своей манеры поведения"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "一天，一位画家带着朋友去自己家附近的商店买东西，付款的时候，他礼貌地对售货员说了声：“谢谢。”但售货员却一直不开心，没有理画家。他们走出商店时，朋友说：“那个售货员的服务态度真差劲。”画家对朋友说：“他每天都是这样。”朋友说：“既然他都每天这样，那你为什么还对他那么有礼貌呢？”画家回答：“我为什么要让他的态度来决定我的行为呢？”问：画家的主要观点是什么？",
+              "explanationRu": "我为什么要让他的态度来决定我的行为呢？ — он не позволяет чужому поведению менять своё."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 40,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "公开、公平",
+                  "textRu": "открытость и честность"
+                },
+                {
+                  "label": "B",
+                  "textCn": "青春、时尚",
+                  "textRu": "молодость и мода"
+                },
+                {
+                  "label": "C",
+                  "textCn": "自由、快乐",
+                  "textRu": "свобода и радость"
+                },
+                {
+                  "label": "D",
+                  "textCn": "精彩、浪漫",
+                  "textRu": "яркость и романтика"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "本次时装设计大赛的主题是青春、时尚，参加比赛的设计师要求年龄在二十五岁以下，设计师可以充分自由发挥自己的想象力和创造力，体现自己的个性。整个大赛本着公开、公平的原则进行，所有设计师的作品将被放在网上，由网友打分，评选出最佳设计奖，评选结果于四月十五日公布。具体的比赛规则和报名方法见网上的“报名须知”。问：本次大赛的主题是什么？",
+              "explanationRu": "主题是青春、时尚 — тема: молодость и мода. «Открытость и честность» — это принцип конкурса."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 41,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "导演",
+                  "textRu": "режиссёры"
+                },
+                {
+                  "label": "B",
+                  "textCn": "网友",
+                  "textRu": "пользователи интернета"
+                },
+                {
+                  "label": "C",
+                  "textCn": "设计师",
+                  "textRu": "дизайнеры"
+                },
+                {
+                  "label": "D",
+                  "textCn": "大学生",
+                  "textRu": "студенты"
+                }
+              ],
+              "correctAnswer": "B",
+              "audioStartSec": null,
+              "ttsText": "本次时装设计大赛的主题是青春、时尚，参加比赛的设计师要求年龄在二十五岁以下，设计师可以充分自由发挥自己的想象力和创造力，体现自己的个性。整个大赛本着公开、公平的原则进行，所有设计师的作品将被放在网上，由网友打分，评选出最佳设计奖，评选结果于四月十五日公布。具体的比赛规则和报名方法见网上的“报名须知”。问：参赛作品由谁来评分？",
+              "explanationRu": "由网友打分 — работы оценивают интернет-пользователи."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 42,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "刚刚结束",
+                  "textRu": "только что закончился"
+                },
+                {
+                  "label": "B",
+                  "textCn": "是体育比赛",
+                  "textRu": "это спортивное соревнование"
+                },
+                {
+                  "label": "C",
+                  "textCn": "4月公布结果",
+                  "textRu": "итоги объявят в апреле"
+                },
+                {
+                  "label": "D",
+                  "textCn": "主要面向中老年人",
+                  "textRu": "рассчитан на людей постарше"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "本次时装设计大赛的主题是青春、时尚，参加比赛的设计师要求年龄在二十五岁以下，设计师可以充分自由发挥自己的想象力和创造力，体现自己的个性。整个大赛本着公开、公平的原则进行，所有设计师的作品将被放在网上，由网友打分，评选出最佳设计奖，评选结果于四月十五日公布。具体的比赛规则和报名方法见网上的“报名须知”。问：关于这次比赛，可以知道什么？",
+              "explanationRu": "评选结果于四月十五日公布 — итоги объявят 15 апреля. Участникам должно быть меньше 25 лет."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 43,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "饮食",
+                  "textRu": "питание"
+                },
+                {
+                  "label": "B",
+                  "textCn": "运动量",
+                  "textRu": "нагрузку"
+                },
+                {
+                  "label": "C",
+                  "textCn": "费用标准",
+                  "textRu": "стоимость"
+                },
+                {
+                  "label": "D",
+                  "textCn": "个人爱好",
+                  "textRu": "личные предпочтения"
+                }
+              ],
+              "correctAnswer": "D",
+              "audioStartSec": null,
+              "ttsText": "在制定个人健身计划时，一定要包含自己喜欢的、或者觉得有趣的、或者至少不讨厌的运动。如果你不喜欢慢跑，总觉得慢跑过程很无聊，但为了减肥不得不制定慢跑运动计划，那样的话，我敢打赌你肯定坚持不下去。所以，对于健身新手来说，最好以自己喜欢的运动为中心，再逐步增加其他必要的健身项目，这样的健身计划才更容易实行。问：根据这段话，制定健身计划时要注意什么？",
+              "explanationRu": "一定要包含自己喜欢的…运动 — нужно учитывать, что тебе нравится."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 44,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "减肥有害健康",
+                  "textRu": "худеть вредно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "饭前不要运动",
+                  "textRu": "нельзя заниматься перед едой"
+                },
+                {
+                  "label": "C",
+                  "textCn": "做自己喜欢的运动",
+                  "textRu": "заниматься любимым видом спорта"
+                },
+                {
+                  "label": "D",
+                  "textCn": "很多人不喜欢慢跑",
+                  "textRu": "многие не любят бег"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "在制定个人健身计划时，一定要包含自己喜欢的、或者觉得有趣的、或者至少不讨厌的运动。如果你不喜欢慢跑，总觉得慢跑过程很无聊，但为了减肥不得不制定慢跑运动计划，那样的话，我敢打赌你肯定坚持不下去。所以，对于健身新手来说，最好以自己喜欢的运动为中心，再逐步增加其他必要的健身项目，这样的健身计划才更容易实行。问：根据这段话，下列哪项正确？",
+              "explanationRu": "最好以自己喜欢的运动为中心 — лучше всего заниматься тем, что нравится."
+            },
+            {
+              "questionType": "listening-choice",
+              "number": 45,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "慢跑的作用",
+                  "textRu": "польза бега"
+                },
+                {
+                  "label": "B",
+                  "textCn": "减肥的方法",
+                  "textRu": "способы похудеть"
+                },
+                {
+                  "label": "C",
+                  "textCn": "怎样制定健身计划",
+                  "textRu": "как составить план тренировок"
+                },
+                {
+                  "label": "D",
+                  "textCn": "如何缓解工作压力",
+                  "textRu": "как снять рабочий стресс"
+                }
+              ],
+              "correctAnswer": "C",
+              "audioStartSec": null,
+              "ttsText": "在制定个人健身计划时，一定要包含自己喜欢的、或者觉得有趣的、或者至少不讨厌的运动。如果你不喜欢慢跑，总觉得慢跑过程很无聊，但为了减肥不得不制定慢跑运动计划，那样的话，我敢打赌你肯定坚持不下去。所以，对于健身新手来说，最好以自己喜欢的运动为中心，再逐步增加其他必要的健身项目，这样的健身计划才更容易实行。问：这段话主要谈什么？",
+              "explanationRu": "Весь текст о том, как составить план тренировок, которого получится придерживаться."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "reading",
+      "titleCn": "二、阅读",
+      "titleRu": "Чтение",
+      "durationMinutes": 45,
+      "parts": [
+        {
+          "ind": 0,
+          "instructionCn": "第一部分：第46-48题。请选出正确答案。",
+          "instructionRu": "Прочитайте текст и выберите подходящий вариант для каждого пропуска.",
+          "passageCn": "医生为了说明饮酒的坏处，把两条一样的小虫___46___放进装酒和装水的瓶子里。放在酒里的那条小虫很快就死了，而放在水里的那条一点儿事也没有。医生对周围的病人说：“看见了吧，你们从这个___47___中明白了什么？”这时，一个病人站起来，认真回答说：“喝酒的人的___48___里绝对不会有这种虫子。”",
+          "passageRu": "Чтобы показать вред алкоголя, врач положил двух одинаковых червячков по отдельности в бутылку с вином и в бутылку с водой. Червячок в вине быстро умер, а тому, что в воде, ничего не сделалось. Врач спросил пациентов: «Видели? Что вы поняли из этого явления?» Тут один пациент встал и серьёзно ответил: «В животе у пьющих таких червяков точно не будет».",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "reading-choice",
+              "number": 46,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "反复",
+                  "textRu": "многократно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "分别",
+                  "textRu": "по отдельности"
+                },
+                {
+                  "label": "C",
+                  "textCn": "互相",
+                  "textRu": "взаимно"
+                },
+                {
+                  "label": "D",
+                  "textCn": "仍然",
+                  "textRu": "по-прежнему"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "分别放进 — «положил по отдельности»: одного в вино, другого в воду."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 47,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "现象",
+                  "textRu": "явление"
+                },
+                {
+                  "label": "B",
+                  "textCn": "规则",
+                  "textRu": "правило"
+                },
+                {
+                  "label": "C",
+                  "textCn": "道理",
+                  "textRu": "смысл, логика"
+                },
+                {
+                  "label": "D",
+                  "textCn": "项目",
+                  "textRu": "проект, пункт"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "Пациенты видели явление (现象) — смерть червячка в вине."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 48,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "肚子",
+                  "textRu": "живот"
+                },
+                {
+                  "label": "B",
+                  "textCn": "抽屉",
+                  "textRu": "ящик стола"
+                },
+                {
+                  "label": "C",
+                  "textCn": "物质",
+                  "textRu": "вещество"
+                },
+                {
+                  "label": "D",
+                  "textCn": "粮食",
+                  "textRu": "зерно"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "Пациент шутит: в животе (肚子) у пьющих червей не будет."
+            }
+          ]
+        },
+        {
+          "ind": 1,
+          "instructionCn": "第一部分：第49-52题。请选出正确答案。",
+          "instructionRu": "Прочитайте текст и выберите подходящий вариант для каждого пропуска.",
+          "passageCn": "人为什么会做梦，梦有什么意义，人类___49___了近千年也还没有找到答案。但是人们相信一些常见的梦___50___着特别的意义。例如，我们梦见要出门远行，要乘坐飞机、火车或者其他交通工具，但是却晚了一点儿，没有赶上。这种梦代表你错过了人生的一次机会，当人们面对重要的选择而犹豫的时候，常做这种梦。再有，___51___，可是却发现自己根本读不懂考试的题目。这种梦说明你正___52___挑战，但是你还没有做好准备。",
+          "passageRu": "Почему людям снятся сны и что они значат, человечество размышляет почти тысячу лет и до сих пор не нашло ответа. Но люди верят, что некоторые частые сны содержат особый смысл. Например, снится, что надо ехать далеко — самолётом, поездом или чем-то ещё, — но вы чуть опоздали и не успели. Такой сон означает упущенный шанс; он часто снится, когда человек колеблется перед важным выбором. Или иногда снится экзамен, а вы вдруг понимаете, что вообще не можете прочитать задания. Такой сон говорит, что перед вами вызов, а вы к нему ещё не готовы.",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "reading-choice",
+              "number": 49,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "想像",
+                  "textRu": "воображать"
+                },
+                {
+                  "label": "B",
+                  "textCn": "观察",
+                  "textRu": "наблюдать"
+                },
+                {
+                  "label": "C",
+                  "textCn": "思考",
+                  "textRu": "размышлять"
+                },
+                {
+                  "label": "D",
+                  "textCn": "幻想",
+                  "textRu": "фантазировать"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "思考了近千年 — «размышляют почти тысячу лет»."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 50,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "表现",
+                  "textRu": "проявлять"
+                },
+                {
+                  "label": "B",
+                  "textCn": "包含",
+                  "textRu": "содержать"
+                },
+                {
+                  "label": "C",
+                  "textCn": "保持",
+                  "textRu": "сохранять"
+                },
+                {
+                  "label": "D",
+                  "textCn": "采取",
+                  "textRu": "принимать (меры)"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "包含着特别的意义 — «содержат особый смысл»."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 51,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "当你加班的时候",
+                  "textRu": "когда вы задерживаетесь на работе"
+                },
+                {
+                  "label": "B",
+                  "textCn": "一次重要的考试结束后",
+                  "textRu": "после важного экзамена"
+                },
+                {
+                  "label": "C",
+                  "textCn": "有时候我们会梦见参加考试",
+                  "textRu": "иногда нам снится экзамен"
+                },
+                {
+                  "label": "D",
+                  "textCn": "如果你梦到和朋友去郊区旅游",
+                  "textRu": "если снится поездка с друзьями за город"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "Дальше говорится про задания экзамена — значит, снится экзамен."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 52,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "面临",
+                  "textRu": "стоять перед"
+                },
+                {
+                  "label": "B",
+                  "textCn": "逃避",
+                  "textRu": "уклоняться"
+                },
+                {
+                  "label": "C",
+                  "textCn": "参考",
+                  "textRu": "справляться, сверяться"
+                },
+                {
+                  "label": "D",
+                  "textCn": "承担",
+                  "textRu": "брать на себя"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "面临挑战 — «стоять перед вызовом»."
+            }
+          ]
+        },
+        {
+          "ind": 2,
+          "instructionCn": "第一部分：第53-56题。请选出正确答案。",
+          "instructionRu": "Прочитайте текст и выберите подходящий вариант для каждого пропуска.",
+          "passageCn": "有一个孩子跑到山上，对着山谷喊了一声：“喂……”声音刚落，从四面八方传来了阵阵“喂……”的回声。大山答应了，孩子很惊讶，又喊了一声：“你是谁？”大山也问：“你是谁？”孩子喊：“为什么不告诉我？”大山也喊：“为什么不告诉我？”孩子___53___生气了，喊道：“我恨你！”他哪里知道这一喊不得了，___54___世界传来的声音都是：“我恨你，我恨你……”孩子哭着跑回家，告诉了妈妈。妈妈说：“孩子，你回去对着大山喊‘我爱你’，试试看结果会怎样，好吗？”孩子又跑到山上。果然，这次孩子被包围在“我爱你，我爱你”的回声中。孩子笑了，群山笑了。\n有时候，我们总是在怪别人的态度太冷漠、自己的___55___太不好，却不知你是对方一面最好的镜子。如遇到这样的情况，不妨问问自己做了什么。___56___，你得先去爱别人。",
+          "passageRu": "Мальчик взбежал на гору и крикнул в долину: «Эй!..» Едва звук стих, со всех сторон донеслось эхо: «Эй!..» Гора ответила! Мальчик удивился и крикнул: «Ты кто?» Гора тоже спросила: «Ты кто?» «Почему не говоришь?» — «Почему не говоришь?» Мальчик не выдержал и рассердился: «Я тебя ненавижу!» И тут весь мир откликнулся: «Я тебя ненавижу, ненавижу…» Он в слезах прибежал домой к маме. Мама сказала: «Вернись и крикни горе „Я тебя люблю“ — посмотрим, что будет». Мальчик снова побежал на гору, и на этот раз его окружило эхо: «Я тебя люблю, люблю…» Мальчик улыбнулся, улыбнулись и горы.\nИногда мы вечно виним других в холодности, жалуемся на плохое настроение и не понимаем, что мы — лучшее зеркало для другого. В такой ситуации стоит спросить себя, что сделал ты сам. Хочешь, чтобы тебя любили, — сначала полюби других.",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "reading-choice",
+              "number": 53,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "忍不住",
+                  "textRu": "не сдержаться"
+                },
+                {
+                  "label": "B",
+                  "textCn": "怪不得",
+                  "textRu": "неудивительно"
+                },
+                {
+                  "label": "C",
+                  "textCn": "舍不得",
+                  "textRu": "жалко расставаться"
+                },
+                {
+                  "label": "D",
+                  "textCn": "说不定",
+                  "textRu": "может быть"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "忍不住生气了 — «не сдержался и рассердился»."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 54,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "总共",
+                  "textRu": "всего, в сумме"
+                },
+                {
+                  "label": "B",
+                  "textCn": "全面",
+                  "textRu": "всесторонний"
+                },
+                {
+                  "label": "C",
+                  "textCn": "整个",
+                  "textRu": "весь, целый"
+                },
+                {
+                  "label": "D",
+                  "textCn": "完整",
+                  "textRu": "целостный"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "整个世界 — «весь мир»; 整个 ставится перед существительным."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 55,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "愿望",
+                  "textRu": "желание"
+                },
+                {
+                  "label": "B",
+                  "textCn": "情绪",
+                  "textRu": "настроение"
+                },
+                {
+                  "label": "C",
+                  "textCn": "运气",
+                  "textRu": "удача"
+                },
+                {
+                  "label": "D",
+                  "textCn": "原则",
+                  "textRu": "принцип"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "Жалуемся на собственное плохое настроение — 自己的情绪太不好."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 56,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "想让别人爱你",
+                  "textRu": "хочешь, чтобы тебя любили"
+                },
+                {
+                  "label": "B",
+                  "textCn": "每个人都需要快乐",
+                  "textRu": "каждому нужна радость"
+                },
+                {
+                  "label": "C",
+                  "textCn": "尊重别人就是尊重自己",
+                  "textRu": "уважать других — значит уважать себя"
+                },
+                {
+                  "label": "D",
+                  "textCn": "不管别人喜欢不喜欢你",
+                  "textRu": "нравишься ты другим или нет"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "Мораль притчи с эхом: хочешь любви — сначала люби сам."
+            }
+          ]
+        },
+        {
+          "ind": 3,
+          "instructionCn": "第一部分：第57-60题。请选出正确答案。",
+          "instructionRu": "Прочитайте текст и выберите подходящий вариант для каждого пропуска.",
+          "passageCn": "警察站在一个新的路口，准备___57___第一辆通过的汽车。市政府规定，第一辆汽车的驾驶者，可获得1000元的奖金。\n一辆汽车飞快地开到这里，警察向驾驶者宣布了这个决定后，顺便问了一句：“先生，您得到了这笔钱，___58___？”\n驾驶者不假思索地答道：“首先，我要去领一个驾驶___59___。”坐在旁边的妻子一听，连忙向警察解释说：“警官先生，我丈夫今天酒喝多了，说话总是语无伦次的。”坐在后座上的、耳朵有问题的妈妈生气地补充道：“你看，我早就知道，你偷了汽车是___60___不了多远的……”",
+          "passageRu": "Полицейский стоял на новом перекрёстке, чтобы встретить первую проехавшую машину: по решению мэрии её водитель получал премию в 1000 юаней.\nПодлетела машина, полицейский объявил водителю о решении и между делом спросил: «Сэр, на что вы потратите эти деньги?»\nВодитель не задумываясь ответил: «Первым делом получу водительские права». Сидевшая рядом жена поспешила объяснить: «Господин полицейский, муж сегодня перебрал и несёт чепуху». А тугоухая мама с заднего сиденья сердито добавила: «Ну вот, я же говорила: на угнанной машине далеко не уедешь…»",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "reading-choice",
+              "number": 57,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "掌握",
+                  "textRu": "овладеть"
+                },
+                {
+                  "label": "B",
+                  "textCn": "阻止",
+                  "textRu": "остановить, помешать"
+                },
+                {
+                  "label": "C",
+                  "textCn": "迎接",
+                  "textRu": "встречать"
+                },
+                {
+                  "label": "D",
+                  "textCn": "控制",
+                  "textRu": "контролировать"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "迎接第一辆汽车 — «встретить первую машину» (чтобы вручить премию)."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 58,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "最想感谢谁",
+                  "textRu": "кого хотите поблагодарить?"
+                },
+                {
+                  "label": "B",
+                  "textCn": "一定十分激动吧",
+                  "textRu": "наверное, очень взволнованы?"
+                },
+                {
+                  "label": "C",
+                  "textCn": "准备用它来做什么",
+                  "textRu": "на что вы их потратите?"
+                },
+                {
+                  "label": "D",
+                  "textCn": "是否考虑换一辆车",
+                  "textRu": "не думаете сменить машину?"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "Водитель отвечает, что сделает «первым делом» — его спросили, на что он потратит деньги."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 59,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "执照",
+                  "textRu": "лицензия, права"
+                },
+                {
+                  "label": "B",
+                  "textCn": "文件",
+                  "textRu": "документ"
+                },
+                {
+                  "label": "C",
+                  "textCn": "支票",
+                  "textRu": "чек"
+                },
+                {
+                  "label": "D",
+                  "textCn": "合同",
+                  "textRu": "договор"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "驾驶执照 — водительские права: прав у водителя, оказывается, нет."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 60,
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "抢",
+                  "textRu": "отнимать"
+                },
+                {
+                  "label": "B",
+                  "textCn": "逃",
+                  "textRu": "убегать"
+                },
+                {
+                  "label": "C",
+                  "textCn": "瞧",
+                  "textRu": "смотреть"
+                },
+                {
+                  "label": "D",
+                  "textCn": "滚",
+                  "textRu": "катиться"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "逃不了多远 — «далеко не убежишь» на угнанной машине."
+            }
+          ]
+        },
+        {
+          "ind": 4,
+          "instructionCn": "第二部分：第61-70题。请选出与试题内容一致的一项。",
+          "instructionRu": "Прочитайте текст и выберите утверждение, которое ему соответствует.",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "reading-choice",
+              "number": 61,
+              "promptCn": "很多父母在教育孩子时往往都有自己的许多主张，而且都非常有道理。但是在实际生活中，他们又往往不能按照那些主张去做，他们的理由很简单：工作太忙，实在没有时间。",
+              "promptRu": "У многих родителей есть множество разумных идей о воспитании детей. Но в жизни они часто не могут им следовать, и причина простая: слишком много работы, совсем нет времени.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "小孩子有很多想法",
+                  "textRu": "у детей много идей"
+                },
+                {
+                  "label": "B",
+                  "textCn": "教育孩子其实很简单",
+                  "textRu": "воспитывать детей просто"
+                },
+                {
+                  "label": "C",
+                  "textCn": "许多家长没时间教育孩子",
+                  "textRu": "многим родителям некогда воспитывать детей"
+                },
+                {
+                  "label": "D",
+                  "textCn": "许多父母不知道该怎么教育孩子",
+                  "textRu": "многие не знают, как воспитывать"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "工作太忙，实在没有时间 — многим родителям некогда заниматься воспитанием. Идей у них как раз много."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 62,
+              "promptCn": "甲骨文大约产生于商周之际，是目前发现的中国最为古老的文字，它记录了公元前3000多年以前中国人祖先的活动。但由于甲骨文是比较成熟的文字，所以专家们认为，中国文字产生的年代实际应该要更久远一些。",
+              "promptRu": "Цзягувэнь (надписи на костях и панцирях) появилась примерно на рубеже эпох Шан и Чжоу; это древнейшая из найденных китайских письменностей, она фиксирует жизнь предков китайцев более 3000 лет до н. э. Но поскольку это уже довольно зрелое письмо, учёные считают, что китайская письменность на самом деле ещё древнее.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "中国人创造了甲骨文",
+                  "textRu": "цзягувэнь создали китайцы"
+                },
+                {
+                  "label": "B",
+                  "textCn": "甲骨文产生于商周之前",
+                  "textRu": "цзягувэнь появилась до Шан и Чжоу"
+                },
+                {
+                  "label": "C",
+                  "textCn": "甲骨文有3000多年的历史",
+                  "textRu": "цзягувэнь более 3000 лет"
+                },
+                {
+                  "label": "D",
+                  "textCn": "甲骨文不是真正意义上的文字",
+                  "textRu": "цзягувэнь — не настоящая письменность"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "Это древнейшая китайская письменность, ею записаны дела предков китайцев — создали её китайцы. Появилась она на рубеже Шан и Чжоу, а не до них, и это уже зрелое письмо."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 63,
+              "promptCn": "按照饮食特点分，中国主要有四大菜系，即川菜、鲁菜、淮菜和粤菜。当然，其中最有名的，还是大家熟悉的川菜。川菜的突出特点是麻和辣，最正宗的川菜是成都和重庆两地的菜肴。如今川菜馆早已遍布世界各地，受到了人们的广泛欢迎。",
+              "promptRu": "В Китае четыре главные кухни: сычуаньская, шаньдунская, хуайянская и кантонская. Самая известная — сычуаньская. Её отличает жгучий и острый вкус, а самая настоящая сычуаньская кухня — в Чэнду и Чунцине. Сейчас сычуаньские рестораны есть по всему миру, и их везде любят.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "川菜口味清淡",
+                  "textRu": "сычуаньская кухня пресная"
+                },
+                {
+                  "label": "B",
+                  "textCn": "重庆菜属于川菜",
+                  "textRu": "чунцинская кухня — часть сычуаньской"
+                },
+                {
+                  "label": "C",
+                  "textCn": "中国菜的特点是麻和辣",
+                  "textRu": "вся китайская кухня острая"
+                },
+                {
+                  "label": "D",
+                  "textCn": "成都和重庆两地才有川菜",
+                  "textRu": "сычуаньская кухня только в Чэнду и Чунцине"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "Самая настоящая сычуаньская кухня — блюда Чэнду и Чунцина, значит, чунцинская кухня — сычуаньская."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 64,
+              "promptCn": "古时候，某人想向一个财主借牛，于是派人给财主送去一封借牛的信。财主正陪着客人聊天，他怕客人知道自己不识字，便假装在看信。他一边看，一边不住地点头，然后抬头对来人说：“知道了，过一会儿我自己去好了。”",
+              "promptRu": "В старину один человек хотел одолжить у богача быка и отправил к нему посыльного с письмом. Богач как раз беседовал с гостем и, боясь, что тот узнает, что он неграмотен, сделал вид, что читает. Читая, он всё кивал, а потом сказал посыльному: «Понял, я сам потом приду».",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "财主家没牛",
+                  "textRu": "у богача нет быка"
+                },
+                {
+                  "label": "B",
+                  "textCn": "财主没看懂信",
+                  "textRu": "богач не понял письма"
+                },
+                {
+                  "label": "C",
+                  "textCn": "信写得很简单",
+                  "textRu": "письмо было простым"
+                },
+                {
+                  "label": "D",
+                  "textCn": "财主亲自把牛给送去了",
+                  "textRu": "богач сам отвёл быка"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "Богач неграмотен и лишь делал вид, что читает, — поэтому и ответил невпопад «приду сам»."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 65,
+              "promptCn": "赛龙舟是中国民间传统的水上体育娱乐项目，已流传两千多年，多是在喜庆节日举行，是多人集体划桨竞赛。中国各民族的龙舟赛略有不同，龙舟的大小也因地而异。汉族多在每年“端午节”举行比赛，船长一般为20到30米，每艘船上约30名水手。",
+              "promptRu": "Гонки на лодках-драконах — традиционное народное водное развлечение в Китае, им больше двух тысяч лет. Их обычно проводят в праздники, это командная гребля. У разных народов Китая гонки немного отличаются, размер лодок зависит от местности. Ханьцы обычно соревнуются в Праздник драконьих лодок; длина лодки — 20–30 м, в ней около 30 гребцов.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "端午节才会赛龙舟",
+                  "textRu": "гонки бывают только в Праздник драконьих лодок"
+                },
+                {
+                  "label": "B",
+                  "textCn": "赛龙舟是双人比赛",
+                  "textRu": "это парная гонка"
+                },
+                {
+                  "label": "C",
+                  "textCn": "赛龙舟属于集体项目",
+                  "textRu": "это командный вид"
+                },
+                {
+                  "label": "D",
+                  "textCn": "赛龙舟是汉族特有的",
+                  "textRu": "гонки есть только у ханьцев"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "多人集体划桨竞赛 — это командное состязание. Проводят их в разные праздники и у разных народов."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 66,
+              "promptCn": "现在，如果要问人们选择职业时主要考虑的是什么，有相当一部分人会以收入多少作为标准。当然，也有人主要看自己是否喜欢这份工作。也许，最理想的情况是能找到一份既让人喜欢又有较多收入的职业。可惜的是，这种情况在生活中并不能经常遇到。",
+              "promptRu": "Если спросить, что главное при выборе профессии, многие назовут доход. Другие смотрят прежде всего, нравится ли им работа. Идеально, наверное, найти работу, которая и нравится, и хорошо оплачивается. Жаль, что в жизни так бывает нечасто.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "现在人们经常换工作",
+                  "textRu": "сейчас часто меняют работу"
+                },
+                {
+                  "label": "B",
+                  "textCn": "人们找工作的标准不同",
+                  "textRu": "у людей разные критерии выбора работы"
+                },
+                {
+                  "label": "C",
+                  "textCn": "喜欢的才是最好的工作",
+                  "textRu": "лучшая работа — любимая"
+                },
+                {
+                  "label": "D",
+                  "textCn": "找一份满意的工作并不难",
+                  "textRu": "найти хорошую работу нетрудно"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "Одни ориентируются на доход, другие — на интерес: критерии у людей разные."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 67,
+              "promptCn": "世界上最早的地图是1973年12月在湖南长沙马王堆出土的，那是三幅汉代的彩色帛绘地图，距今2100多年。图上绘制着今天湖南、广东、广西三省的交界地区。令人惊奇的是，图中绘有大小河流、山脉、城镇30余处，与今天的地图基本相同。",
+              "promptRu": "Древнейшие в мире карты нашли в декабре 1973 года в Мавандуе (Чанша, Хунань): три цветные карты на шёлке эпохи Хань, им более 2100 лет. На них стык нынешних провинций Хунань, Гуандун и Гуанси. Удивительно, что на них больше 30 рек, гор и городов, и они почти совпадают с современными картами.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "那些地图用于军事",
+                  "textRu": "карты были военными"
+                },
+                {
+                  "label": "B",
+                  "textCn": "最早的地图是黑白的",
+                  "textRu": "древнейшие карты чёрно-белые"
+                },
+                {
+                  "label": "C",
+                  "textCn": "那三幅地图是汉朝的",
+                  "textRu": "эти три карты — эпохи Хань"
+                },
+                {
+                  "label": "D",
+                  "textCn": "地图的内容已经模糊",
+                  "textRu": "изображение уже стёрлось"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "三幅汉代的…地图 — карты эпохи Хань. Они цветные, а изображение почти совпадает с современным."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 68,
+              "promptCn": "早在一个多世纪以前的小说里，人类就开始在火星上散步了，然而直到今天，这还只是个设想。但许多人坚信，问题不是人类能不能登上火星，而是在什么时候、通过什么方式到达那里。就目前的情况看，火星是最有可能成为人类第二家园的地方。因为在所有太阳系的行星中，火星的环境与地球最相像。",
+              "promptRu": "Ещё в романах более века назад люди гуляли по Марсу, но до сих пор это лишь мечта. Многие убеждены: вопрос не в том, сможет ли человек высадиться на Марс, а в том, когда и как. Сейчас Марс — самый вероятный второй дом человечества, ведь из всех планет Солнечной системы его условия больше всего похожи на земные.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "登上火星的办法很多",
+                  "textRu": "способов попасть на Марс много"
+                },
+                {
+                  "label": "B",
+                  "textCn": "人类对火星的兴趣不大",
+                  "textRu": "Марс людям малоинтересен"
+                },
+                {
+                  "label": "C",
+                  "textCn": "人们对登上火星缺乏信心",
+                  "textRu": "люди не верят в полёт на Марс"
+                },
+                {
+                  "label": "D",
+                  "textCn": "人类未来有可能居住在火星上",
+                  "textRu": "в будущем люди могут жить на Марсе"
+                }
+              ],
+              "correctAnswer": "D",
+              "explanationRu": "火星是最有可能成为人类第二家园的地方 — в будущем люди могут поселиться на Марсе."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 69,
+              "promptCn": "国画，又称“中国画”，是中国传统绘画。工具和材料有毛笔、墨、国画颜料、绢等，题材可分人物、山水、花鸟等。人物画所表现的是人类社会，人与人的关系；山水画所表现的是人与自然的关系，将人与自然融为一体；花鸟画则是表现大自然的各种生命，与人和谐相处。",
+              "promptRu": "Гохуа, или «китайская живопись», — традиционная живопись Китая. Её инструменты и материалы — кисть, тушь, особые краски, шёлк. Жанры — люди, горы и воды, цветы и птицы. Портреты показывают общество и отношения людей; «горы и воды» — отношения человека и природы, их единство; «цветы и птицы» — живую природу в гармонии с человеком.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "中国画关注自然",
+                  "textRu": "китайская живопись внимательна к природе"
+                },
+                {
+                  "label": "B",
+                  "textCn": "国画的表现手法夸张",
+                  "textRu": "гохуа склонна к преувеличению"
+                },
+                {
+                  "label": "C",
+                  "textCn": "国画是传统与现代的结合",
+                  "textRu": "гохуа соединяет традицию и современность"
+                },
+                {
+                  "label": "D",
+                  "textCn": "山水画表现人与人的关系",
+                  "textRu": "пейзаж показывает отношения людей"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "Два из трёх жанров («горы и воды», «цветы и птицы») посвящены природе. Отношения людей — тема портретов, а не пейзажей."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 70,
+              "promptCn": "一位著名的作家在外旅游，来到一座城市，决定去参观这个城市最大的书店。听到这个消息，书店的老板想做点让这位作家高兴的事情。于是，他在所有的书架上全摆满了这位作家的著作。作家走进书店，见书架上全是自己的书，很吃惊。“其他人的书呢？”他迷惑不解地问。“其他人的书？”书店老板一时不知所措，信口说道：“全……全都卖完了。”",
+              "promptRu": "Известный писатель путешествовал и решил посетить самый большой книжный магазин города. Узнав об этом, владелец захотел его порадовать и заставил все полки книгами этого писателя. Писатель вошёл, увидел на полках только свои книги и удивился: «А где книги других авторов?» Владелец растерялся и ляпнул: «Все… все распроданы».",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "书店老板很幽默",
+                  "textRu": "владелец с юмором"
+                },
+                {
+                  "label": "B",
+                  "textCn": "作家的书被卖光了",
+                  "textRu": "книги писателя распроданы"
+                },
+                {
+                  "label": "C",
+                  "textCn": "这家书店规模不大",
+                  "textRu": "магазин небольшой"
+                },
+                {
+                  "label": "D",
+                  "textCn": "书店老板闹了个笑话",
+                  "textRu": "владелец попал впросак"
+                }
+              ],
+              "correctAnswer": "D",
+              "explanationRu": "Растерявшись, владелец ляпнул, что чужие книги раскуплены, — вышло так, будто книги писателя никто не берёт. Он оконфузился, а не шутил."
+            }
+          ]
+        },
+        {
+          "ind": 5,
+          "instructionCn": "第三部分：第71-74题。请选出正确答案。",
+          "instructionRu": "Прочитайте текст и ответьте на вопросы к нему.",
+          "passageCn": "一直以来，“80后”这个词儿都含有年轻的味道。随着时间的流逝，我们突然发现，第一批“80后”——1980年出生的人，已经步入而立之年了。\n三十而立的“80后”月收入情况如何？调查显示，就全国范围来看，“1980”们月收入主要集中在3000-5000元，比例为31.2%。其次是集中在1500-3000元，比例也近三成。调查还显示，“1980”们将近五成无房无车，比例为47.9%。\n房子、车子的压力对于“80后”的影响越来越明显。前两年，很少有“80后”会为了公司的薪水、福利等斤斤计较，他们关注工作环境更多。但现在，不少“80后”在办公室里的话题就是围着“钱”打转转。\n专家认为，如果30岁的“80后”现在在职场上还无法收获满足感，他们会对未来失去信心，并因此害怕承担家庭责任。",
+          "passageRu": "Слово «поколение 80-х» всегда звучало молодо. Но время идёт, и вдруг оказывается, что первые «восьмидесятники» — рождённые в 1980 году — уже вступили в тридцатилетний возраст.\nКаков месячный доход тридцатилетних? Опрос показал: по стране у «1980-х» он в основном 3000–5000 юаней (31,2%), на втором месте 1500–3000 юаней — тоже почти 30%. Почти половина (47,9%) не имеет ни квартиры, ни машины.\nДавление жилья и машины ощущается всё сильнее. Ещё пару лет назад мало кто из них торговался из-за зарплаты и льгот — больше думали о рабочей обстановке. А сейчас многие в офисе говорят только о деньгах.\nЭксперты считают: если к 30 годам они не найдут удовлетворения в работе, то потеряют веру в будущее и будут бояться брать на себя ответственность за семью.",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "reading-choice",
+              "number": 71,
+              "promptCn": "“80后”指的是哪些人？",
+              "promptRu": "Кто такие «восьмидесятники» (80后)?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "年轻人",
+                  "textRu": "молодёжь"
+                },
+                {
+                  "label": "B",
+                  "textCn": "30岁以上的人",
+                  "textRu": "люди старше 30"
+                },
+                {
+                  "label": "C",
+                  "textCn": "80年代出生的人",
+                  "textRu": "родившиеся в 80-е"
+                },
+                {
+                  "label": "D",
+                  "textCn": "80年代参加工作的人",
+                  "textRu": "начавшие работать в 80-е"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "Первые «80后» — рождённые в 1980 году: так называют родившихся в 80-е."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 72,
+              "promptCn": "“1980”们无房无车的比例为：",
+              "promptRu": "Доля «1980-х» без квартиры и машины:",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "30%",
+                  "textRu": "30%"
+                },
+                {
+                  "label": "B",
+                  "textCn": "31.2%",
+                  "textRu": "31,2%"
+                },
+                {
+                  "label": "C",
+                  "textCn": "47.9%",
+                  "textRu": "47,9%"
+                },
+                {
+                  "label": "D",
+                  "textCn": "50%",
+                  "textRu": "50%"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "无房无车，比例为47.9% — 47,9%. 31,2% — это доля с доходом 3000–5000 юаней."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 73,
+              "promptCn": "“80后”的压力主要来自哪里？",
+              "promptRu": "Откуда в основном давление на «80后»?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "收入",
+                  "textRu": "доход"
+                },
+                {
+                  "label": "B",
+                  "textCn": "婚姻",
+                  "textRu": "брак"
+                },
+                {
+                  "label": "C",
+                  "textCn": "年龄",
+                  "textRu": "возраст"
+                },
+                {
+                  "label": "D",
+                  "textCn": "情感",
+                  "textRu": "чувства"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "Давят жильё и машина, а разговоры в офисе — о деньгах: давление связано с доходом."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 74,
+              "promptCn": "下列哪项最适合做上文的标题？",
+              "promptRu": "Какое название лучше всего подходит к тексту?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "年轻的“80后”",
+                  "textRu": "Молодые «80后»"
+                },
+                {
+                  "label": "B",
+                  "textCn": "“80后”的无奈",
+                  "textRu": "Безысходность «80后»"
+                },
+                {
+                  "label": "C",
+                  "textCn": "失去信心的“80后”",
+                  "textRu": "«80后», потерявшие веру"
+                },
+                {
+                  "label": "D",
+                  "textCn": "“80后”的幸福生活",
+                  "textRu": "Счастливая жизнь «80后»"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "Текст о деньгах, жилье и давлении на тридцатилетних — их безысходность (无奈). Веру они только могут потерять."
+            }
+          ]
+        },
+        {
+          "ind": 6,
+          "instructionCn": "第三部分：第75-78题。请选出正确答案。",
+          "instructionRu": "Прочитайте текст и ответьте на вопросы к нему.",
+          "passageCn": "这几年公司发展得很不错，每年春节前都会发给工人两个月的奖金，但是今年公司却没挣到多少钱。经理很担心工人们会伤心、失望。\n这天，他突然想起小时候去买糖：别的服务员都是先抓一大把，拿去称，再一颗一颗减少；只有一个服务员，每次都抓不够重量，然后一颗一颗往上加。虽然拿到的糖是一样的，但人们都喜欢后者。经理想到了办法。\n过了两天，传来一个消息——今年公司发展不好，有些人可能得离开公司。工人们听了之后都开始担心，以为要离开的是自己。\n后来经理宣布了一个消息：大家都是一家人，虽然公司有困难，但不能丢掉任何人，只是没有奖金了。\n这个消息使所有的人都放下了心：奖金不重要，有工作就好。\n春节快到了，工人们都做了过个穷年的打算。这时经理通知开会，工人们又担心：“会有什么变化吗？”谁知参加会议的人回来兴奋地喊道：“有！有！还是有奖金的！一个月的！”工人们听了，发出一片热烈的欢呼声。",
+          "passageRu": "Последние годы дела у компании шли хорошо, и перед Новым годом рабочие всегда получали премию в два оклада. Но в этом году компания почти ничего не заработала, и директор боялся, что люди расстроятся.\nОднажды он вспомнил, как в детстве покупал конфеты: все продавцы набирали большую горсть, взвешивали и убирали по одной, и только одна продавщица набирала меньше и добавляла по одной. Конфет выходило столько же, но людям нравилась именно она. Директора осенило.\nЧерез пару дней пошёл слух: дела плохи, кому-то придётся уйти. Рабочие встревожились — каждый думал, что уволят его.\nПотом директор объявил: мы одна семья, несмотря на трудности, никого не уволим, просто премии не будет.\nВсе вздохнули с облегчением: премия неважна, главное — работа есть.\nБлизился Новый год, все приготовились встретить его скромно. Тут директор созвал собрание, и рабочие снова забеспокоились: «Что-то изменилось?» А вернувшиеся с собрания радостно закричали: «Есть! Премия всё-таки есть! Месячная!» В ответ раздались горячие возгласы радости.",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "reading-choice",
+              "number": 75,
+              "promptCn": "今年公司怎么样？",
+              "promptRu": "Как дела у компании в этом году?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "发展得不错",
+                  "textRu": "развивается хорошо"
+                },
+                {
+                  "label": "B",
+                  "textCn": "挣的钱不多",
+                  "textRu": "заработала немного"
+                },
+                {
+                  "label": "C",
+                  "textCn": "要给工人发糖",
+                  "textRu": "раздаст рабочим конфеты"
+                },
+                {
+                  "label": "D",
+                  "textCn": "要发两个月的奖金",
+                  "textRu": "выплатит премию в два оклада"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "今年公司却没挣到多少钱 — в этом году заработали немного."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 76,
+              "promptCn": "根据经理小时候买糖的情况，可以知道：",
+              "promptRu": "Из истории с покупкой конфет в детстве директора следует:",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "服务员给的重量不够",
+                  "textRu": "продавцы недовешивали"
+                },
+                {
+                  "label": "B",
+                  "textCn": "服务员一块儿一块儿地卖",
+                  "textRu": "продавцы продавали поштучно"
+                },
+                {
+                  "label": "C",
+                  "textCn": "服务员卖糖的方式都一样",
+                  "textRu": "все продавцы продавали одинаково"
+                },
+                {
+                  "label": "D",
+                  "textCn": "不同的卖糖方法影响人的心情",
+                  "textRu": "способ продажи влияет на настроение"
+                }
+              ],
+              "correctAnswer": "D",
+              "explanationRu": "Конфет одинаково, но людям нравится тот, кто добавляет, — от способа зависит настроение."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 77,
+              "promptCn": "今年公司的工人：",
+              "promptRu": "Рабочие компании в этом году:",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "有人要离开",
+                  "textRu": "кто-то уходит"
+                },
+                {
+                  "label": "B",
+                  "textCn": "得不到奖金",
+                  "textRu": "не получат премию"
+                },
+                {
+                  "label": "C",
+                  "textCn": "都参加了会议",
+                  "textRu": "все были на собрании"
+                },
+                {
+                  "label": "D",
+                  "textCn": "得到了一个月的奖金",
+                  "textRu": "получили месячную премию"
+                }
+              ],
+              "correctAnswer": "D",
+              "explanationRu": "还是有奖金的！一个月的！ — им всё-таки дали месячную премию; никого не уволили."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 78,
+              "promptCn": "关于经理的办法，正确的是：",
+              "promptRu": "О способе директора верно:",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "让工人都很难过",
+                  "textRu": "всех огорчил"
+                },
+                {
+                  "label": "B",
+                  "textCn": "增加了公司的收入",
+                  "textRu": "увеличил доход компании"
+                },
+                {
+                  "label": "C",
+                  "textCn": "使工人得到了安慰",
+                  "textRu": "утешил рабочих"
+                },
+                {
+                  "label": "D",
+                  "textCn": "使一部分人丢了工作",
+                  "textRu": "часть людей лишилась работы"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "Сначала он снизил ожидания, а месячную премию все встретили с радостью — рабочие утешены."
+            }
+          ]
+        },
+        {
+          "ind": 7,
+          "instructionCn": "第三部分：第79-82题。请选出正确答案。",
+          "instructionRu": "Прочитайте текст и ответьте на вопросы к нему.",
+          "passageCn": "一个青年大学毕业后，曾为自己树立了许多目标，可是几年下来，依然一事无成，他决定去找一位智者。\n他找到智者时，智者正在屋里读书。他向智者倾诉，智者听后微笑着对他说：“来，你先帮我烧壶开水。”\n青年看见墙角放着一把很大的水壶，旁边是一个小火灶，可是没发现柴火，于是便出去找。他在外面拾了一些枯枝回来，装满一壶水，放在灶台上，在灶内放了一些柴便烧了起来，可是由于壶太大，那些柴烧尽了，水也没开。于是他跑出去继续找柴，回来的时候那壶水已经凉得差不多了。这回他学聪明了，没有急于点火，而是再次出去找了些柴，由于柴准备充足，水不一会儿就烧开了。\n智者问他：“如果没有足够的柴，你该怎样把水烧开？”\n青年想了一会儿，摇了摇头。\n智者说：“如果那样，就把水壶里的水倒掉一些。”\n青年若有所思地点了点头。\n智者接着说：“你一开始树立了太多的目标，就像这个大水壶装了太多水一样，而你又没有足够的柴，所以不能把水烧开，要想把水烧开，你应该或者倒出一些水，或者先去准备柴。”\n青年恍然大悟。回去后，他把计划中所列的目标去掉了许多，只留下最近的几个，同时利用业余时间学习各种专业知识。几年后，他的目标基本上都实现了。\n只有删繁就简，从最近的目标开始，才会一步步走向成功。万事挂怀，只会半途而废。另外，我们只有不断地捡拾“柴”，才能使人生不断加温，最终让生命沸腾起来。",
+          "passageRu": "Окончив университет, юноша поставил себе много целей, но прошло несколько лет, а он так ничего и не добился. Он решил пойти к мудрецу.\nМудрец читал у себя дома. Юноша излил ему душу, а мудрец, выслушав, улыбнулся: «Вскипяти-ка мне сначала чайник».\nВ углу стоял огромный чайник, рядом маленький очаг, но дров не было, и юноша пошёл их искать. Набрал сухих веток, налил полный чайник, поставил на очаг и разжёг огонь. Но чайник был слишком большим: дрова прогорели, а вода не закипела. Он снова побежал за дровами, а когда вернулся, вода почти остыла. На этот раз он поумнел: не стал сразу разжигать огонь, а сначала набрал ещё дров — и с хорошим запасом вода быстро вскипела.\nМудрец спросил: «А если дров не хватает, как вскипятить воду?»\nЮноша подумал и покачал головой.\nМудрец сказал: «Тогда отлей часть воды».\nЮноша задумчиво кивнул.\nМудрец продолжил: «Ты поставил слишком много целей — как в этот большой чайник налито слишком много воды, — а дров у тебя мало, вот вода и не закипает. Чтобы она закипела, нужно либо отлить воды, либо сначала запастись дровами».\nЮношу осенило. Вернувшись, он вычеркнул из плана многие цели, оставив только ближайшие, а в свободное время изучал разные профессиональные знания. Через несколько лет почти все его цели были достигнуты.\nТолько отбросив лишнее и начав с ближайших целей, шаг за шагом придёшь к успеху. Кто берётся за всё сразу, бросает на полпути. А ещё нужно постоянно собирать «дрова», чтобы жизнь всё сильнее разогревалась и наконец закипела.",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "reading-choice",
+              "number": 79,
+              "promptCn": "第2段中画线词语“倾诉”的意思最可能是：",
+              "promptRu": "Что, скорее всего, значит подчёркнутое слово 倾诉 во 2-м абзаце?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "祝贺",
+                  "textRu": "поздравить"
+                },
+                {
+                  "label": "B",
+                  "textCn": "借钱",
+                  "textRu": "занять денег"
+                },
+                {
+                  "label": "C",
+                  "textCn": "要水喝",
+                  "textRu": "попросить воды"
+                },
+                {
+                  "label": "D",
+                  "textCn": "说出心里话",
+                  "textRu": "высказать, что на душе"
+                }
+              ],
+              "correctAnswer": "D",
+              "explanationRu": "Юноша пришёл рассказать мудрецу о своих неудачах — 倾诉 «излить душу»."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 80,
+              "promptCn": "柴不够时，智者建议怎样把水烧开？",
+              "promptRu": "Как, по совету мудреца, вскипятить воду, если дров мало?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "请人帮忙",
+                  "textRu": "попросить помощи"
+                },
+                {
+                  "label": "B",
+                  "textCn": "倒掉一些水",
+                  "textRu": "отлить часть воды"
+                },
+                {
+                  "label": "C",
+                  "textCn": "换一个小壶",
+                  "textRu": "взять чайник поменьше"
+                },
+                {
+                  "label": "D",
+                  "textCn": "分几次来烧",
+                  "textRu": "кипятить в несколько заходов"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "就把水壶里的水倒掉一些 — отлить часть воды."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 81,
+              "promptCn": "关于那个青年，可以知道什么？",
+              "promptRu": "Что известно о юноше?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "缺少目标",
+                  "textRu": "у него нет целей"
+                },
+                {
+                  "label": "B",
+                  "textCn": "大学刚毕业",
+                  "textRu": "только что окончил университет"
+                },
+                {
+                  "label": "C",
+                  "textCn": "什么事都不会做",
+                  "textRu": "ничего не умеет"
+                },
+                {
+                  "label": "D",
+                  "textCn": "改变了过去的做法",
+                  "textRu": "изменил прежний подход"
+                }
+              ],
+              "correctAnswer": "D",
+              "explanationRu": "Он сократил список целей и стал учиться — изменил прежний подход. Целей у него было, наоборот, слишком много."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 82,
+              "promptCn": "上文主要想告诉我们什么？",
+              "promptRu": "Какова главная мысль текста?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "目标要实际",
+                  "textRu": "цели должны быть реалистичными"
+                },
+                {
+                  "label": "B",
+                  "textCn": "应多听意见",
+                  "textRu": "нужно больше слушать советов"
+                },
+                {
+                  "label": "C",
+                  "textCn": "要敢于挑战",
+                  "textRu": "нужно не бояться трудностей"
+                },
+                {
+                  "label": "D",
+                  "textCn": "要珍惜时间",
+                  "textRu": "нужно ценить время"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "删繁就简，从最近的目标开始 — цели должны быть реалистичными, начинать надо с ближайших."
+            }
+          ]
+        },
+        {
+          "ind": 8,
+          "instructionCn": "第三部分：第83-86题。请选出正确答案。",
+          "instructionRu": "Прочитайте текст и ответьте на вопросы к нему.",
+          "passageCn": "电视带给我们许多快乐，使我们学到了很多知识，丰富了我们的文化生活，但电视也给我们带来了很多坏处。\n第一，电视使我们的家庭缺少了感情，在家里，我们过多地看电视，忽视了家庭成员之间的交流，使家庭缺少了大家在一起聊天、欢乐的时间。第二，电视使我们花去了很多可以用来看书、学习的时间，那些特别喜欢看电视的孩子，会对学习失去兴趣，导致学习成绩下降。第三，电视会伤害我们的身体，许多人看电视看到很晚，每天睡眠时间严重不足，不但影响工作，而且影响身体健康，长时间地看电视还会对眼睛产生影响，很多人因为看电视而戴上了眼镜。第四，看电视使我们减少了社会活动，有了电视，我们不再喜欢到朋友那里去，很多人靠呆在家里安安稳稳地看电视来度过时间。\n总之，电视带给我们知识和娱乐，它带给我们的快乐是主要的。但同时它也带来了一定的危害，重要的是我们怎样来充分利用电视，怎样来看电视。",
+          "passageRu": "Телевизор приносит нам много радости, даёт знания и обогащает культурную жизнь, но от него и немало вреда.\nВо-первых, в семье становится меньше тепла: мы слишком много смотрим телевизор и забываем общаться, остаётся мало времени поболтать и повеселиться вместе. Во-вторых, он отнимает время, которое можно потратить на чтение и учёбу; дети, которые очень любят телевизор, теряют интерес к учёбе, и успеваемость падает. В-третьих, он вредит здоровью: многие засиживаются у экрана допоздна и хронически недосыпают, а это сказывается и на работе, и на здоровье; долгий просмотр портит зрение, и многие из-за этого носят очки. В-четвёртых, мы меньше общаемся с людьми: с телевизором нам уже не хочется ходить к друзьям, многие проводят время, спокойно сидя дома у экрана.\nСловом, телевизор даёт знания и развлечения, и радости от него больше. Но и вред от него есть, поэтому важно, как мы им пользуемся и как смотрим.",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "reading-choice",
+              "number": 83,
+              "promptCn": "为什么看电视会影响家庭感情？",
+              "promptRu": "Почему телевизор вредит отношениям в семье?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "交流减少",
+                  "textRu": "меньше общения"
+                },
+                {
+                  "label": "B",
+                  "textCn": "睡眠减少",
+                  "textRu": "меньше сна"
+                },
+                {
+                  "label": "C",
+                  "textCn": "引起许多争论",
+                  "textRu": "вызывает много споров"
+                },
+                {
+                  "label": "D",
+                  "textCn": "占用了读书时间",
+                  "textRu": "отнимает время на чтение"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "忽视了家庭成员之间的交流 — члены семьи меньше общаются."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 84,
+              "promptCn": "根据上文，下列哪项正确？",
+              "promptRu": "Какое утверждение верно по тексту?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "电视广告危害很大",
+                  "textRu": "реклама по телевизору очень вредна"
+                },
+                {
+                  "label": "B",
+                  "textCn": "许多人反对看电视",
+                  "textRu": "многие против телевизора"
+                },
+                {
+                  "label": "C",
+                  "textCn": "看电视可以培养感情",
+                  "textRu": "телевизор сближает людей"
+                },
+                {
+                  "label": "D",
+                  "textCn": "电视给人们带来了快乐",
+                  "textRu": "телевизор приносит людям радость"
+                }
+              ],
+              "correctAnswer": "D",
+              "explanationRu": "电视带给我们许多快乐 — телевизор приносит радость, и её даже больше, чем вреда."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 85,
+              "promptCn": "关于看电视，作者认为：",
+              "promptRu": "Автор считает, что телевизор",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "能提高学习成绩",
+                  "textRu": "повышает успеваемость"
+                },
+                {
+                  "label": "B",
+                  "textCn": "小孩子不适合看电视",
+                  "textRu": "детям смотреть его нельзя"
+                },
+                {
+                  "label": "C",
+                  "textCn": "可以改善人们的情绪",
+                  "textRu": "улучшает настроение"
+                },
+                {
+                  "label": "D",
+                  "textCn": "可以丰富人们的知识",
+                  "textRu": "обогащает знания"
+                }
+              ],
+              "correctAnswer": "D",
+              "explanationRu": "使我们学到了很多知识 — он обогащает знания. Успеваемость он, наоборот, снижает."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 86,
+              "promptCn": "上文主要介绍的是：",
+              "promptRu": "О чём в основном текст?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "电视带来的问题",
+                  "textRu": "проблемы от телевизора"
+                },
+                {
+                  "label": "B",
+                  "textCn": "电视的娱乐价值",
+                  "textRu": "развлекательная ценность телевизора"
+                },
+                {
+                  "label": "C",
+                  "textCn": "如何充分利用电视",
+                  "textRu": "как с пользой смотреть телевизор"
+                },
+                {
+                  "label": "D",
+                  "textCn": "电视对身体造成的损害",
+                  "textRu": "вред телевизора для здоровья"
+                }
+              ],
+              "correctAnswer": "A",
+              "explanationRu": "Основная часть — четыре пункта о вреде телевизора: проблемы, которые он приносит."
+            }
+          ]
+        },
+        {
+          "ind": 9,
+          "instructionCn": "第三部分：第87-90题。请选出正确答案。",
+          "instructionRu": "Прочитайте текст и ответьте на вопросы к нему.",
+          "passageCn": "每天上午11点，都会有一辆高级小汽车穿过市中心公园。车里除了司机，还有一位主人——无人不知的百万富翁。\n这位百万富翁发现：每天上午都有一位衣着破烂的人坐在公园的凳子上，一动不动地看着他住的酒店。有一天，百万富翁对这个人产生了兴趣，他让司机停下车，走到那人面前说：“请原谅，我不明白你为什么每天上午都在这儿看我住的酒店。”\n“先生，”穷人说，“我没钱，没家，没住宅，只得睡在这条长凳上，不过，每天晚上我都梦到住进了这家酒店。”\n百万富翁觉得很有趣，于是对那人说：“今天晚上我就让你如愿以偿。我为你在酒店订一间最好的房间，并支付一个月房费。”\n几天后，百万富翁想去问那人是否觉得满意。然而，他发现那人已搬出了酒店，重新回到公园的凳子上了。\n百万富翁来到公园，问穷人为什么要这样做，穷人回答道：“一旦我睡在凳子上，我就梦见自己睡在那座豪华的酒店里，真是妙不可言；可一旦我睡在酒店里，我就梦见自己又回到了冷冰冰的凳子上，这梦真是可怕极了，以致完全影响了我的睡眠！”",
+          "passageRu": "Каждый день в 11 утра через центральный парк проезжает роскошная машина. В ней, кроме водителя, хозяин — всем известный миллионер.\nМиллионер заметил, что каждое утро на скамейке в парке сидит оборванный человек и неподвижно смотрит на отель, где он живёт. Однажды миллионеру стало интересно, он велел остановить машину, подошёл к нему и сказал: «Простите, не понимаю, почему вы каждое утро смотрите на мой отель».\n«Сэр, — ответил бедняк, — у меня нет ни денег, ни дома, ни жилья, я сплю на этой скамейке. Но каждую ночь мне снится, что я живу в этом отеле».\nМиллионеру это показалось забавным: «Сегодня же ваша мечта сбудется. Я сниму вам лучший номер и оплачу месяц».\nЧерез несколько дней миллионер решил спросить, доволен ли тот. Но оказалось, что бедняк уже съехал из отеля и снова сидит на скамейке в парке.\nМиллионер пришёл в парк и спросил, почему. Бедняк ответил: «Когда я сплю на скамейке, мне снится, что я сплю в роскошном отеле, — это непередаваемо! А когда сплю в отеле, мне снится, что я опять на холодной скамейке. Это такой кошмар, что я совсем не мог спать!»",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "reading-choice",
+              "number": 87,
+              "promptCn": "百万富翁为什么对那个穷人感兴趣？",
+              "promptRu": "Почему бедняк заинтересовал миллионера?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "穿着很奇怪",
+                  "textRu": "странно одет"
+                },
+                {
+                  "label": "B",
+                  "textCn": "每天睡在长凳上",
+                  "textRu": "каждую ночь спит на скамейке"
+                },
+                {
+                  "label": "C",
+                  "textCn": "每天看着那个酒店",
+                  "textRu": "каждый день смотрит на тот отель"
+                },
+                {
+                  "label": "D",
+                  "textCn": "和一个朋友长得像",
+                  "textRu": "похож на его друга"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "一动不动地看着他住的酒店 — тот каждое утро смотрел на его отель."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 88,
+              "promptCn": "富翁为那个穷人做什么了？",
+              "promptRu": "Что миллионер сделал для бедняка?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "买了一座房子",
+                  "textRu": "купил дом"
+                },
+                {
+                  "label": "B",
+                  "textCn": "雇了一个司机",
+                  "textRu": "нанял водителя"
+                },
+                {
+                  "label": "C",
+                  "textCn": "送给他一辆车",
+                  "textRu": "подарил машину"
+                },
+                {
+                  "label": "D",
+                  "textCn": "付了一个月房费",
+                  "textRu": "оплатил месяц в отеле"
+                }
+              ],
+              "correctAnswer": "D",
+              "explanationRu": "订一间最好的房间，并支付一个月房费 — снял номер и оплатил месяц проживания."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 89,
+              "promptCn": "穷人觉得住酒店怎么样？",
+              "promptRu": "Каково бедняку было жить в отеле?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "晚上太吵了",
+                  "textRu": "ночью слишком шумно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "比想像的好",
+                  "textRu": "лучше, чем он думал"
+                },
+                {
+                  "label": "C",
+                  "textCn": "不如睡长凳",
+                  "textRu": "хуже, чем спать на скамейке"
+                },
+                {
+                  "label": "D",
+                  "textCn": "和其他地方差不多",
+                  "textRu": "как везде"
+                }
+              ],
+              "correctAnswer": "C",
+              "explanationRu": "В отеле ему снилась холодная скамейка, а на скамейке — отель: по его мнению, скамейка лучше."
+            },
+            {
+              "questionType": "reading-choice",
+              "number": 90,
+              "promptCn": "穷人离开了酒店，是因为：",
+              "promptRu": "Бедняк ушёл из отеля, потому что",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "太冷",
+                  "textRu": "было холодно"
+                },
+                {
+                  "label": "B",
+                  "textCn": "睡眠不好",
+                  "textRu": "плохо спал"
+                },
+                {
+                  "label": "C",
+                  "textCn": "酒店限制太多",
+                  "textRu": "в отеле слишком много правил"
+                },
+                {
+                  "label": "D",
+                  "textCn": "一个月到期了",
+                  "textRu": "закончился оплаченный месяц"
+                }
+              ],
+              "correctAnswer": "B",
+              "explanationRu": "以致完全影响了我的睡眠 — кошмары не давали ему спать. Месяц ещё не истёк — прошло несколько дней."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "writing",
+      "titleCn": "三、书写",
+      "titleRu": "Письмо",
+      "durationMinutes": 40,
+      "parts": [
+        {
+          "ind": 0,
+          "instructionCn": "第一部分：第91-98题。完成句子。",
+          "instructionRu": "Составьте предложение из данных слов: нажимайте на слова по порядку или перетаскивайте их. Нажатие на уже поставленное слово возвращает его обратно.",
+          "exampleRu": "Например: 发表 这篇论文 什么时候 是 的 → 这篇论文是什么时候发表的？ (Когда была опубликована эта статья?)",
+          "examples": [
+            {
+              "questionType": "writing-sentence-order",
+              "promptRu": "Когда была опубликована эта статья?",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "发表"
+                },
+                {
+                  "label": "B",
+                  "textCn": "这篇论文"
+                },
+                {
+                  "label": "C",
+                  "textCn": "什么时候"
+                },
+                {
+                  "label": "D",
+                  "textCn": "是"
+                },
+                {
+                  "label": "E",
+                  "textCn": "的"
+                }
+              ],
+              "correctAnswer": "这篇论文是什么时候发表的？"
+            }
+          ],
+          "questions": [
+            {
+              "questionType": "writing-sentence-order",
+              "number": 91,
+              "promptRu": "Великая Китайская стена — одно из семи чудес света.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "七大奇迹"
+                },
+                {
+                  "label": "B",
+                  "textCn": "长城"
+                },
+                {
+                  "label": "C",
+                  "textCn": "是"
+                },
+                {
+                  "label": "D",
+                  "textCn": "世界"
+                },
+                {
+                  "label": "E",
+                  "textCn": "之一"
+                }
+              ],
+              "correctAnswer": "长城是世界七大奇迹之一。"
+            },
+            {
+              "questionType": "writing-sentence-order",
+              "number": 92,
+              "promptRu": "Домашний телефон классного руководителя всё время занят.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "一直"
+                },
+                {
+                  "label": "B",
+                  "textCn": "班主任家的"
+                },
+                {
+                  "label": "C",
+                  "textCn": "占线"
+                },
+                {
+                  "label": "D",
+                  "textCn": "电话"
+                }
+              ],
+              "correctAnswer": "班主任家的电话一直占线。"
+            },
+            {
+              "questionType": "writing-sentence-order",
+              "number": 93,
+              "promptRu": "Этот продукт рассчитан в основном на покупателей среднего и старшего возраста.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "中老年消费者"
+                },
+                {
+                  "label": "B",
+                  "textCn": "这种产品"
+                },
+                {
+                  "label": "C",
+                  "textCn": "针对"
+                },
+                {
+                  "label": "D",
+                  "textCn": "主要"
+                }
+              ],
+              "correctAnswer": "这种产品主要针对中老年消费者。"
+            },
+            {
+              "questionType": "writing-sentence-order",
+              "number": 94,
+              "promptRu": "Она собирается пригласить экспертов на эту научную конференцию.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "要"
+                },
+                {
+                  "label": "B",
+                  "textCn": "她"
+                },
+                {
+                  "label": "C",
+                  "textCn": "出席此次"
+                },
+                {
+                  "label": "D",
+                  "textCn": "学术讨论会"
+                },
+                {
+                  "label": "E",
+                  "textCn": "邀请专家"
+                }
+              ],
+              "correctAnswer": "她要邀请专家出席此次学术讨论会。"
+            },
+            {
+              "questionType": "writing-sentence-order",
+              "number": 95,
+              "promptRu": "Он распределил еду между всеми солдатами.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "他"
+                },
+                {
+                  "label": "B",
+                  "textCn": "食物"
+                },
+                {
+                  "label": "C",
+                  "textCn": "分配给了"
+                },
+                {
+                  "label": "D",
+                  "textCn": "把"
+                },
+                {
+                  "label": "E",
+                  "textCn": "每个士兵"
+                }
+              ],
+              "correctAnswer": "他把食物分配给了每个士兵。"
+            },
+            {
+              "questionType": "writing-sentence-order",
+              "number": 96,
+              "promptRu": "Я восхищаюсь его смелостью.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "他的"
+                },
+                {
+                  "label": "B",
+                  "textCn": "佩服"
+                },
+                {
+                  "label": "C",
+                  "textCn": "勇气"
+                },
+                {
+                  "label": "D",
+                  "textCn": "很让我"
+                }
+              ],
+              "correctAnswer": "他的勇气很让我佩服。"
+            },
+            {
+              "questionType": "writing-sentence-order",
+              "number": 97,
+              "promptRu": "Столик №3 уже кто-то забронировал.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "预订"
+                },
+                {
+                  "label": "B",
+                  "textCn": "3号桌"
+                },
+                {
+                  "label": "C",
+                  "textCn": "已经"
+                },
+                {
+                  "label": "D",
+                  "textCn": "了"
+                },
+                {
+                  "label": "E",
+                  "textCn": "被"
+                },
+                {
+                  "label": "F",
+                  "textCn": "别人"
+                }
+              ],
+              "correctAnswer": "3号桌已经被别人预订了。"
+            },
+            {
+              "questionType": "writing-sentence-order",
+              "number": 98,
+              "promptRu": "Пожалуйста, введите пароль ещё раз.",
+              "options": [
+                {
+                  "label": "A",
+                  "textCn": "请"
+                },
+                {
+                  "label": "B",
+                  "textCn": "重新"
+                },
+                {
+                  "label": "C",
+                  "textCn": "您的密码"
+                },
+                {
+                  "label": "D",
+                  "textCn": "输入"
+                }
+              ],
+              "correctAnswer": "请重新输入您的密码。"
+            }
+          ]
+        },
+        {
+          "ind": 1,
+          "instructionCn": "第二部分：第99-100题。写短文。",
+          "instructionRu": "Напишите короткий текст примерно из 80 иероглифов. Сочинения здесь не проверяются — задание показано, чтобы познакомиться с форматом экзамена; после проверки появится пример ответа.",
+          "examples": [],
+          "questions": [
+            {
+              "questionType": "writing-essay",
+              "number": 99,
+              "promptCn": "请结合下列词语（要全部使用），写一篇80字左右的短文。\n宿舍、理解、开心、坦率、帮助",
+              "promptRu": "Напишите текст примерно из 80 иероглифов, использовав все слова: 宿舍 (общежитие), 理解 (понимать), 开心 (радостный), 坦率 (откровенный, прямой), 帮助 (помогать).",
+              "correctAnswer": "刚上大学的时候，我和三个同学住在一个宿舍。一开始，因为生活习惯不同，我们之间常常有些小矛盾。后来，我们决定有什么问题就坦率地说出来。慢慢地，大家开始互相理解，互相帮助。现在，我们像一家人一样，每天都过得很开心。"
+            },
+            {
+              "questionType": "writing-essay",
+              "number": 100,
+              "promptCn": "请结合这张图片写一篇80字左右的短文。",
+              "promptRu": "Напишите по картинке текст примерно из 80 иероглифов.",
+              "hasImage": true,
+              "imagePrompt": "A smiling young woman with long dark hair holding a mobile phone to her ear, happily talking. Head-and-shoulders shot. Clean studio photograph on a plain white background, single clear subject, no text, no letters, no Chinese characters, natural lighting, textbook illustration style.",
+              "correctAnswer": "小丽在外地上大学，已经半年没回家了。今天是她的生日，她刚下课，就接到了妈妈的电话。妈妈祝她生日快乐，还告诉她给她寄了一个礼物。小丽听了特别开心，一边笑一边说：“谢谢妈妈，我也很想你们！”挂了电话，她觉得这个生日虽然不在家过，也一样很幸福。"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

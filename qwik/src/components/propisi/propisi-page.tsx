@@ -20,12 +20,13 @@ import { getGlyphs } from '~/misc/actions/propisi/get-glyphs';
 import {
   type FaqItem,
   type HskSheetVersion,
+  type SheetDir,
   type SheetGrid,
   type SheetFont,
   type SheetOptions,
   HSK_SHEET_LEVELS,
   SHEET_FONTS,
-  defaultOrder,
+  hasStrokes,
   MAX_CHARS,
   MAX_COLS,
   MIN_COLS,
@@ -59,6 +60,11 @@ const GRIDS: { val: SheetGrid; text: string }[] = [
   { val: 'tian', text: '田字格' },
   { val: 'mi', text: '米字格' },
   { val: 'kou', text: 'Без линий' },
+];
+
+const DIRS: { val: SheetDir; text: string }[] = [
+  { val: 'h', text: 'Горизонтально' },
+  { val: 'v', text: 'Вертикально' },
 ];
 
 // the size slider's left end is the smallest cell (most columns)
@@ -297,7 +303,7 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
                   value={opts.font}
                   onChange$={(e) => {
                     const font = (e.target as HTMLSelectElement).value as SheetFont;
-                    setOptions({ font, order: defaultOrder(font) });
+                    setOptions({ font });
                   }}
                 >
                   {SHEET_FONTS.map(({ id, name }) => (
@@ -317,6 +323,17 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
                   </span>
                 )}
               </label>
+              <div class="btn-group">
+                {DIRS.map(({ val, text }) => (
+                  <button
+                    key={val}
+                    class={`btn btn-sm ${opts.dir === val ? 'btn-active' : ''}`}
+                    onClick$={() => setOptions({ dir: val })}
+                  >
+                    {text}
+                  </button>
+                ))}
+              </div>
               <div class="btn-group">
                 {GRIDS.map(({ val, text }) => (
                   <button
@@ -349,7 +366,7 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
                 </span>
               </label>
               <label class="flex items-center gap-2">
-                Строк на иероглиф
+                {opts.dir === 'v' ? 'Столбцов на иероглиф' : 'Строк на иероглиф'}
                 <select
                   class="select select-bordered select-sm"
                   value={String(opts.rows)}
@@ -382,25 +399,29 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
               </label>
               {(
                 [
-                  ['py', 'Пиньинь'],
-                  ['ru', 'Перевод'],
-                  ['order', 'Порядок черт'],
+                  ['py', 'Пиньинь', true],
+                  ['ru', 'Перевод', opts.dir === 'h'],
+                  ['count', 'Кол-во черт', opts.dir === 'h' && hasStrokes(opts.font)],
+                  ['order', 'Порядок черт', hasStrokes(opts.font)],
                 ] as const
-              ).map(([key, text]) => (
-                <label key={key} class="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    class="checkbox checkbox-sm"
-                    checked={opts[key]}
-                    onChange$={(e) =>
-                      setOptions({
-                        [key]: (e.target as HTMLInputElement).checked,
-                      } as Partial<SheetOptions>)
-                    }
-                  />
-                  {text}
-                </label>
-              ))}
+              )
+                // vertical: only pinyin and stroke order; 行书: no stroke count and order
+                .filter(([, , shown]) => shown)
+                .map(([key, text]) => (
+                  <label key={key} class="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      class="checkbox checkbox-sm"
+                      checked={opts[key]}
+                      onChange$={(e) =>
+                        setOptions({
+                          [key]: (e.target as HTMLInputElement).checked,
+                        } as Partial<SheetOptions>)
+                      }
+                    />
+                    {text}
+                  </label>
+                ))}
             </div>
 
             <div class="flex flex-wrap gap-2">
@@ -502,7 +523,10 @@ export const PropisiPage = component$(({ seo, faq }: PropisiPageProps) => {
             硬笔行书, сетку (田字格, 米字格 или без линий) и размер клеток — от 1 до 6 см.
           </li>
           <li>
-            Укажите, сколько строк дать на каждый иероглиф и сколько серых знаков для обводки.
+            Выберите направление: горизонтально — строки с пиньинем, переводом и порядком черт,
+            вертикально — у каждого иероглифа свой столбец с образцом, пиньинем и порядком черт
+            сбоку. Укажите, сколько строк или столбцов дать на каждый иероглиф и сколько серых
+            знаков для обводки.
           </li>
           <li>
             Нажмите «Скачать PDF / Распечатать» и сохраните лист или отправьте его на принтер.

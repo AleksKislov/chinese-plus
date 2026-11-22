@@ -1,5 +1,7 @@
 import { component$, useContext } from '@builder.io/qwik';
-import { Link, type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
+import { type DocumentHead, routeLoader$ } from '@builder.io/qwik-city';
+import { DictionarySearch } from '~/components/search/dictionary-search';
+import { Alerts } from '~/components/common/alerts/alerts';
 import { FlexRow } from '~/components/common/layout/flex-row';
 import { Features } from '~/components/home/features';
 import { LandingVideo } from '~/components/home/landing-video';
@@ -58,7 +60,7 @@ export default component$(() => {
           <h1>
             Клуб Chinese<span class="text-secondary font-extrabold text-5xl">+</span>
           </h1>
-          <p class="font-semibold -mt-6 mb-5">
+          <p class="font-semibold -mt-6 mb-3">
             Бесплатный сайт для изучения китайского языка: тексты и видео с переводом, слова и
             грамматика HSK, словарь и прописи
           </p>
@@ -66,17 +68,12 @@ export default component$(() => {
       </div>
 
       {!loggedIn && (
-        <FlexRow>
-          <div class="flex flex-col items-center w-full mb-3">
-            <Link prefetch="js" href="/read/texts" class="btn btn-accent mb-2">
-              Учиться бесплатно
-            </Link>
-            <p class="text-xs opacity-60 mb-3">
-              Сайт бесплатный — зарегистрированным пользователям доступно больше возможностей
-            </p>
-          </div>
-        </FlexRow>
+        <p class="text-xs opacity-60 mb-3 text-center">
+          Сайт бесплатный — зарегистрированным пользователям доступно больше возможностей
+        </p>
       )}
+      <DictionarySearch class="w-full max-w-md mx-auto mb-3" />
+      <Alerts />
 
       <Features />
 
