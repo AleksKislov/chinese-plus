@@ -1,6 +1,7 @@
 import { component$, type QRL, useSignal } from '@builder.io/qwik';
 import { fetchTutorTexts } from '~/misc/actions/tutor/tutor-api';
 import { TEXT_LEVEL_LABELS, type TutorLessonStart, type TutorTextSuggestion } from './types';
+import { TutorVocabPicker } from './tutor-vocab-picker';
 
 type TutorLessonPickerProps = {
   level: number;
@@ -13,6 +14,7 @@ type TutorLessonPickerProps = {
 export const TutorLessonPicker = component$(
   ({ level, disabled, onStart$, onFreeChat$ }: TutorLessonPickerProps) => {
     const showTexts = useSignal(false);
+    const showVocab = useSignal(false);
     const texts = useSignal<TutorTextSuggestion[] | null>(null);
     const loading = useSignal(false);
     const error = useSignal('');
@@ -35,6 +37,7 @@ export const TutorLessonPicker = component$(
             disabled={disabled}
             onClick$={async () => {
               showTexts.value = !showTexts.value;
+              showVocab.value = false;
               if (!showTexts.value || texts.value) return;
               loading.value = true;
               error.value = '';
@@ -49,13 +52,18 @@ export const TutorLessonPicker = component$(
           </button>
           <button
             type="button"
-            class="btn btn-sm btn-outline normal-case"
+            class={`btn btn-sm btn-outline normal-case ${showVocab.value ? 'btn-active' : ''}`}
             disabled={disabled}
-            onClick$={() => onStart$({ kind: 'vocab' })}
+            onClick$={() => {
+              showVocab.value = !showVocab.value;
+              showTexts.value = false;
+            }}
           >
             Повторить мои слова
           </button>
         </div>
+
+        {showVocab.value && <TutorVocabPicker disabled={disabled} onStart$={onStart$} />}
 
         {showTexts.value && (
           <div class="mt-3 flex flex-col gap-1">

@@ -21,7 +21,7 @@ export const Alerts = component$(() => {
   return (
     <div class="toast toast-bottom fixed z-10 bottom-14">
       {alertsState.map((alert, ind) => (
-        <SingleAlert alert={alert} key={ind} />
+        <SingleAlert alert={alert} key={ind} onClose$={() => alertsState.splice(ind, 1)} />
       ))}
     </div>
   );

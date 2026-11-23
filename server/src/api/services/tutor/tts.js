@@ -6,11 +6,19 @@ const TutorProfile = require('../../../models/TutorProfile');
 const TutorAudio = require('../../../models/TutorAudio');
 const { s3 } = require('../_misc/s3-client');
 const { synthesizeSpeech, ttsConfig } = require('../_misc/minimax-tts');
+const { synthesizeQwenSpeech, qwenTtsConfig } = require('../_misc/qwen-tts');
 const { getUserPrivileges } = require('../_misc/get-user-privileges');
 const { ttsInFlight, takeTtsQuota } = require('./limits');
 const { recordTts } = require('./usage');
 const { tutorTts } = require('../../../metrics');
-const { TUTOR, TTS_VOICES, TTS_SPEEDS, DEFAULT_TTS, TTS_SAMPLE_TEXT } = require('./consts');
+const {
+  TUTOR,
+  TTS_VOICES,
+  TTS_SPEEDS,
+  DEFAULT_TTS,
+  TTS_SAMPLE_TEXT,
+  TUTOR_DIALECTS,
+} = require('./consts');
 
 // the site plays audio from {bucket}/audio/… (CONST_URLS.myAudioURL)
 const bucketKey = (audioPath) => `audio/${audioPath}`;
@@ -24,20 +32,57 @@ class TtsError extends Error {
   }
 }
 
-// stored settings (keys) -> { voice, speed } keys that exist + MiniMax options
-function resolveTts(tts = {}) {
+const dialectOf = (key) =>
+  typeof key === 'string' && Object.hasOwn(TUTOR_DIALECTS, key) ? TUTOR_DIALECTS[key] : null;
+// can be chosen now (hidden ones only voice their old replies)
+const isOfferedDialect = (key) => Boolean(dialectOf(key) && !dialectOf(key).hidden);
+
+// stored settings (keys) -> { voice, speed, dialect } keys that exist + MiniMax options
+// (Putonghua). The dialect only decides how NEW replies are written and voiced.
+function resolveTts(stored) {
+  const tts = stored || {};
   const voice = TTS_VOICES[tts.voice] ? tts.voice : DEFAULT_TTS.voice;
   const speed = TTS_SPEEDS[tts.speed] ? tts.speed : DEFAULT_TTS.speed;
-  return { voice, speed, options: { voice: TTS_VOICES[voice].id, speed: TTS_SPEEDS[speed] } };
+  const dialect = isOfferedDialect(tts.dialect) ? tts.dialect : DEFAULT_TTS.dialect;
+  return {
+    voice,
+    speed,
+    dialect,
+    options: { voice: TTS_VOICES[voice].id, speed: TTS_SPEEDS[speed] },
+  };
 }
 
-// keyed by model + voice + speed + sentence: the same phrase with the same settings is
-// generated once for all users; other settings give another file
+// how to voice text written in `dialect` (a reply's message.dialect): '' / none = Putonghua
+// with the user's MiniMax voice + speed; a dialect = its Qwen voice, the same for everyone.
+// null = a dialect key that no longer exists: not voiced at all, so dialect text is never
+// read by a Putonghua (or another dialect's) voice.
+const voiceOptions = (dialect, tts) => {
+  if (!dialect) return resolveTts(tts).options;
+  const entry = dialectOf(dialect);
+  return entry ? { provider: 'qwen', voice: entry.voice } : null;
+};
+
+// keyed by model + voice (+ speed) + sentence: the same phrase with the same settings is
+// generated once for all users; other settings give another file. MiniMax: mp3, Qwen: wav.
+// (The MiniMax key format is unchanged, so clips made before dialects still match.)
 const audioPathOf = (text, options) => {
+  if (options.provider === 'qwen') {
+    const { model, voice } = qwenTtsConfig(options);
+    const hash = crypto.createHash('sha1').update(`qwen|${model}|${voice}|${text}`).digest('hex');
+    return `tutor/${hash.slice(0, 16)}.wav`;
+  }
   const { model, voice, speed } = ttsConfig(options);
   const hash = crypto.createHash('sha1').update(`${model}|${voice}|${speed}|${text}`).digest('hex');
   return `tutor/${hash.slice(0, 16)}.mp3`;
 };
+
+const contentTypeOf = (audioPath) => (audioPath.endsWith('.wav') ? 'audio/wav' : 'audio/mpeg');
+
+// -> { audio: Buffer, chars } from the provider of these options
+const synthesize = (text, options) =>
+  options.provider === 'qwen'
+    ? synthesizeQwenSpeech(text, options)
+    : synthesizeSpeech(text, options).then(({ mp3, chars }) => ({ audio: mp3, chars }));
 
 // background: the index must never break or slow down playing
 const indexAudio = (path, log) =>
@@ -45,12 +90,21 @@ const indexAudio = (path, log) =>
     log.error({ err }, 'tutor: audio not indexed'),
   );
 
-// sets `audio` on the 'cn' blocks whose clip for these settings already exists (stored on the
-// block or in the TutorAudio index) and removes it from the rest, so the client can show which
-// sentences play instantly. Mutates and returns messages (lean / toObject()).
-async function markAvailableAudio(messages, options) {
-  const blocks = messages.flatMap((m) => (m.blocks || []).filter((b) => b.kind === 'cn'));
-  const expected = new Map(blocks.map((b) => [b, audioPathOf(b.text, options)]));
+// sets `audio` on the 'cn' blocks whose clip already exists (stored on the block or in the
+// TutorAudio index) and removes it from the rest, so the client can show which sentences play
+// instantly. A reply's clip depends on its dialect (message.dialect) and, for Putonghua, on the
+// viewer's settings `tts` (TutorProfile.tts). Mutates and returns messages (lean / toObject()).
+async function markAvailableAudio(messages, tts) {
+  const expected = new Map();
+  messages.forEach((m) => {
+    const options = voiceOptions(m.dialect, tts);
+    // a removed dialect: clips already stored on its blocks (right voice) stay, nothing new
+    if (!options) return;
+    (m.blocks || [])
+      .filter((b) => b.kind === 'cn')
+      .forEach((b) => expected.set(b, audioPathOf(b.text, options)));
+  });
+  const blocks = [...expected.keys()];
   const unknown = [
     ...new Set(blocks.filter((b) => b.audio !== expected.get(b)).map((b) => expected.get(b))),
   ];
@@ -74,14 +128,14 @@ async function markAvailableAudio(messages, options) {
 
 // upload -> index; resolves true once the clip can be served from the bucket. Only then is it
 // recorded anywhere, so nobody gets a path to a file that isn't there yet.
-async function storeAudio({ audio, mp3, log }) {
+async function storeAudio({ audio, file, log }) {
   try {
     await s3.send(
       new PutObjectCommand({
         Bucket: process.env.YA_S3_BUCKET,
         Key: bucketKey(audio),
-        Body: mp3,
-        ContentType: 'audio/mpeg',
+        Body: file,
+        ContentType: contentTypeOf(audio),
         // the key changes with the text or the settings, so the file never changes
         CacheControl: 'public, max-age=31536000, immutable',
         ACL: 'public-read',
@@ -95,8 +149,8 @@ async function storeAudio({ audio, mp3, log }) {
   }
 }
 
-// -> { audio, mp3? } for the text with these settings. Existing clips (TutorAudio index) are
-// returned by path. A new one is generated (and counted) and returned as mp3 too, so the client
+// -> { audio, file? } for the text with these settings. Existing clips (TutorAudio index) are
+// returned by path. A new one is generated (and counted) and returned as a file too, so the client
 // plays it at once; the upload runs in the background, then onStored() (e.g. remember it on the
 // message). Clips from before the index are generated again once.
 async function ensureAudio({ text, options, userId, log, onStored }) {
@@ -120,27 +174,34 @@ async function ensureAudio({ text, options, userId, log, onStored }) {
       );
     }
     const started = Date.now();
-    let mp3;
+    let file;
     let chars;
     try {
-      ({ mp3, chars } = await synthesizeSpeech(text, options));
+      ({ audio: file, chars } = await synthesize(text, options));
     } catch (err) {
       tutorTts.inc({ status: 'error' });
-      log.error({ err }, 'tutor: tts failed');
+      log.error({ err, provider: options.provider || 'minimax' }, 'tutor: tts failed');
       throw new TtsError(502, 'Не удалось озвучить, попробуйте ещё раз');
     }
-    recordTts({ userId, chars, seconds: (Date.now() - started) / 1000, log });
+    recordTts({
+      userId,
+      provider: options.provider || 'minimax',
+      chars,
+      seconds: (Date.now() - started) / 1000,
+      log,
+    });
 
-    storeAudio({ audio, mp3, log }).then((stored) => stored && onStored?.());
-    return { audio, mp3 };
+    storeAudio({ audio, file, log }).then((stored) => stored && onStored?.());
+    return { audio, file };
   } finally {
     ttsInFlight.delete(userId);
   }
 }
 
-// the clip as JSON: its path, plus the mp3 itself when it was just generated
-const audioResponse = ({ audio, mp3 }) =>
-  mp3 ? { audio, data: mp3.toString('base64') } : { audio };
+// the clip as JSON: its path, plus the file itself (base64 mp3 / wav, see the extension of
+// `audio`) when it was just generated
+const audioResponse = ({ audio, file }) =>
+  file ? { audio, data: file.toString('base64') } : { audio };
 
 const sendTtsError = (res, err) => {
   if (err instanceof TtsError) return res.status(err.status).json({ msg: err.message });
@@ -148,12 +209,12 @@ const sendTtsError = (res, err) => {
 };
 
 const userTts = async (userId) =>
-  resolveTts((await TutorProfile.findOne({ user: userId }).select('tts').lean())?.tts);
+  (await TutorProfile.findOne({ user: userId }).select('tts').lean())?.tts;
 
-// body: { chatId, messageId, block } -> { audio, data? } (path under the audio bucket; base64 mp3
-// when just generated), with the
-// user's voice and speed. Only Chinese ("cn") blocks of the tutor's replies: the text comes
-// from the DB, never from the client, so this can't be used to voice arbitrary text.
+// body: { chatId, messageId, block } -> { audio, data? } (path under the audio bucket; base64
+// file when just generated): a reply in a dialect with that dialect's voice, a Putonghua one
+// with the user's voice and speed. Only Chinese ("cn") blocks of the tutor's replies: the text
+// comes from the DB, never from the client, so this can't be used to voice arbitrary text.
 async function getBlockAudio(req, res) {
   const userId = req.user.id;
   const { chatId, messageId } = req.body || {};
@@ -169,7 +230,7 @@ async function getBlockAudio(req, res) {
   }
 
   // only the requested message ($ projection), in parallel with the user's settings
-  const [chat, { options }] = await Promise.all([
+  const [chat, tts] = await Promise.all([
     TutorChat.findOne(
       { _id: chatId, 'messages._id': messageId },
       { user: 1, 'messages.$': 1 },
@@ -185,6 +246,8 @@ async function getBlockAudio(req, res) {
   const block = message?.role === 'assistant' && message.blocks?.[blockInd];
   if (!block || block.kind !== 'cn') return res.status(404).json({ msg: NOT_FOUND });
 
+  const options = voiceOptions(message.dialect, tts);
+  if (!options) return res.status(404).json({ msg: 'Озвучка этого диалекта недоступна' });
   const path = audioPathOf(block.text, options);
   if (block.audio === path) {
     tutorTts.inc({ status: 'cached' });
@@ -210,19 +273,23 @@ async function getBlockAudio(req, res) {
   } catch (err) {
     return sendTtsError(res, err);
   }
-  if (!audio.mp3) rememberOnBlock(); // already in the bucket
+  if (!audio.file) rememberOnBlock(); // already in the bucket
   res.json(audioResponse(audio));
 }
 
-// body: { voice, speed } (keys) -> { audio } of TTS_SAMPLE_TEXT, to try a voice before saving it
-async function getSampleAudio(req, res) {
-  const { voice, speed } = req.body || {};
-  if (!TTS_VOICES[voice] || !TTS_SPEEDS[speed]) return res.status(400).json({ msg: NOT_FOUND });
+const validSettings = ({ voice, speed, dialect = '' } = {}) =>
+  Boolean(TTS_VOICES[voice] && TTS_SPEEDS[speed] && (dialect === '' || isOfferedDialect(dialect)));
 
-  const { options } = resolveTts({ voice, speed });
+// body: { voice, speed, dialect? } (keys) -> { audio, data? } of a fixed sample phrase, to try
+// the settings before saving them: the dialect's voice, or (Putonghua) the voice + speed
+async function getSampleAudio(req, res) {
+  const { voice, speed, dialect = '' } = req.body || {};
+  if (!validSettings({ voice, speed, dialect })) return res.status(400).json({ msg: NOT_FOUND });
+
+  const options = voiceOptions(dialect, { voice, speed });
   try {
     const audio = await ensureAudio({
-      text: TTS_SAMPLE_TEXT,
+      text: dialectOf(dialect)?.sample || TTS_SAMPLE_TEXT,
       options,
       userId: req.user.id,
       log: req.log,
@@ -233,24 +300,31 @@ async function getSampleAudio(req, res) {
   }
 }
 
-// body: { voice, speed } (keys) -> saved settings
+// body: { voice, speed, dialect? } (keys; dialect '' = Putonghua) -> saved settings
 async function updateTtsSettings(req, res) {
-  const { voice, speed } = req.body || {};
-  if (!TTS_VOICES[voice] || !TTS_SPEEDS[speed]) {
-    return res.status(400).json({ msg: 'Неизвестный голос или скорость' });
+  const { voice, speed, dialect = '' } = req.body || {};
+  if (!validSettings({ voice, speed, dialect })) {
+    return res.status(400).json({ msg: 'Неизвестный голос, скорость или диалект' });
   }
   await TutorProfile.updateOne(
     { user: req.user.id },
-    { $set: { tts: { voice, speed } } },
+    { $set: { tts: { voice, speed, dialect } } },
     { upsert: true },
   );
-  res.json({ tts: { voice, speed } });
+  res.json({ tts: { voice, speed, dialect } });
 }
 
-// for the client: choices without MiniMax ids
+// for the client: choices without MiniMax / Qwen voice ids
 const ttsChoices = () => ({
   voices: Object.entries(TTS_VOICES).map(([key, { label }]) => ({ key, label })),
   speeds: Object.keys(TTS_SPEEDS),
+  // all of them (badges of old replies); `hidden` ones are not offered in the select
+  dialects: Object.entries(TUTOR_DIALECTS).map(([key, { label, short, hidden }]) => ({
+    key,
+    label,
+    short,
+    ...(hidden && { hidden: true }),
+  })),
 });
 
 module.exports = {

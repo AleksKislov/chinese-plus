@@ -17,3 +17,8 @@
   /* 150ms delay: fast navigations don't flash the bar */
   animation: nav-progress 5s cubic-bezier(0.1, 0.7, 0.3, 1) 150ms both;
 }
+
+/* daisyUI tooltips on buttons inherit the button's uppercase: keep the tip text as written */
+.tooltip::before {
+  text-transform: none;
+}

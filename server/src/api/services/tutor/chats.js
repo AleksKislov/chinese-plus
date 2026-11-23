@@ -4,7 +4,7 @@ const TutorProfile = require('../../../models/TutorProfile');
 const { attachTooltips } = require('./segment');
 const { usageOf } = require('./limits');
 const { TUTOR, HSK_LEVELS } = require('./consts');
-const { suggestTexts } = require('./lesson-focus');
+const { suggestTexts, listVocab, lessonInfo, VOCAB_SOURCES } = require('./lesson-focus');
 const { resolveTts, markAvailableAudio, ttsChoices } = require('./tts');
 const { getUserPrivileges } = require('../_misc/get-user-privileges');
 
@@ -34,7 +34,7 @@ async function getChats(req, res) {
     level: profile?.level || 1,
     usage: usageOf(profile),
     isAdmin,
-    tts: { voice: tts.voice, speed: tts.speed },
+    tts: { voice: tts.voice, speed: tts.speed, dialect: tts.dialect },
     listenMode: Boolean(profile?.listenMode),
     ttsChoices: ttsChoices(),
   });
@@ -45,7 +45,7 @@ async function getChat(req, res) {
     return res.status(404).json({ msg: 'Чат не найден' });
 
   const chat = await TutorChat.findById(req.params.id)
-    .select(`user messages ${CHAT_LIST_FIELDS}`)
+    .select(`user messages ${CHAT_LIST_FIELDS} focus.words focus.practiced`)
     .populate('user', 'name')
     .lean();
   if (!chat) return res.status(404).json({ msg: 'Чат не найден' });
@@ -57,10 +57,11 @@ async function getChat(req, res) {
   }
 
   await attachTooltips(chat.messages);
-  // `audio` only where the clip for the viewer's voice + speed exists (plays instantly)
+  // `audio` only where the clip exists (reply's dialect, else the viewer's voice + speed)
   const viewer = await TutorProfile.findOne({ user: req.user.id }).select('tts').lean();
-  await markAvailableAudio(chat.messages, resolveTts(viewer?.tts).options);
+  await markAvailableAudio(chat.messages, viewer?.tts);
   const { user, ...rest } = chat;
+  rest.focus = lessonInfo(chat.focus); // counts only, not the word lists
   res.json(
     isOwner ? rest : { ...rest, readOnly: true, owner: { _id: user?._id, name: user?.name } },
   );
@@ -117,6 +118,14 @@ async function getTextSuggestions(req, res) {
   res.json(await suggestTexts(req.user.id, level));
 }
 
+// "Повторить мои слова": the user's words of one list (?source=own|hsk3), to pick by hand
+async function getVocab(req, res) {
+  const { source } = req.query;
+  if (!VOCAB_SOURCES.includes(source)) return res.status(400).json({ msg: 'Неизвестный словарик' });
+  const words = await listVocab(req.user.id, source);
+  res.json(words.map(({ id, cn, py }) => ({ id, cn, py })));
+}
+
 module.exports = {
   getChats,
   getChat,
@@ -125,4 +134,5 @@ module.exports = {
   clearMemory,
   setListenMode,
   getTextSuggestions,
+  getVocab,
 };

@@ -6,6 +6,9 @@ import {
   type SendTutorMessageResult,
   TUTOR_MAX_LEN,
   type TutorTextSuggestion,
+  TUTOR_VOCAB_MAX,
+  type TutorVocabSource,
+  type TutorVocabWord,
   type TutorTts,
 } from '~/components/tutor/types';
 
@@ -47,6 +50,7 @@ const objectId = z.string().regex(OBJECT_ID_RE);
 const ttsSchema = z.object({
   voice: z.string().regex(/^[a-zA-Z]{1,20}$/), // checked against TTS_VOICES on the BE
   speed: z.enum(['novice', 'normal', 'advanced']),
+  dialect: z.string().regex(/^[a-zA-Z]{0,20}$/), // '' = Putonghua; checked on the BE
 });
 
 const sendSchema = z.object({
@@ -59,6 +63,12 @@ const sendSchema = z.object({
       kind: z.enum(['chat', 'vocab', 'text']),
       textId: objectId.optional(),
       textUrl: z.string().max(500).optional(), // only the text id is taken from it, on the BE
+      vocab: z
+        .object({
+          sources: z.array(z.enum(['own', 'hsk3'])).max(2),
+          wordIds: z.array(objectId).max(TUTOR_VOCAB_MAX).optional(), // checked against the user's lists on the BE
+        })
+        .optional(),
     })
     .optional(),
 });
@@ -135,4 +145,14 @@ export const fetchTutorTexts = server$(async function (
   const token = getTokenFromCookie(this.cookie);
   if (!token) return { error: LOGIN };
   return tutorFetch(token, 'GET', `/texts?level=${level}`, null, 'Не удалось загрузить тексты');
+});
+
+// "Повторить мои слова": the user's words of one list, to pick from
+export const fetchTutorVocab = server$(async function (
+  source: TutorVocabSource,
+): Promise<TutorVocabWord[] | Failure> {
+  if (source !== 'own' && source !== 'hsk3') return { error: 'Неизвестный словарик' };
+  const token = getTokenFromCookie(this.cookie);
+  if (!token) return { error: LOGIN };
+  return tutorFetch(token, 'GET', `/vocab?source=${source}`, null, 'Не удалось загрузить слова');
 });

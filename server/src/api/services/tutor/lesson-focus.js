@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Text = require('../../../models/Text');
 const User = require('../../../models/User');
 const UserWord = require('../../../models/UserWord');
-const OldHskUserWord = require('../../../models/Word');
+const UserHsk3Word = require('../../../models/UserHsk3Word');
 const { TUTOR } = require('./consts');
 
 // Content of the lesson types (TutorChat.focus): the server picks it, the client only sends a
@@ -20,22 +20,59 @@ const shuffle = (arr) => {
   return a;
 };
 
-// 'Мой словарик' + 'Мой словарик HSK' -> up to VOCAB_WORDS Chinese words: the newest ones (what
-// the student is learning now) + random older ones. No translations: the model knows them.
-async function pickVocabWords(userId) {
-  const [own, hsk] = await Promise.all([
-    UserWord.find({ user: userId }).select('date wordId').populate('wordId', 'chinese').lean(),
-    OldHskUserWord.find({ user: userId })
-      .select('date wordId')
-      .populate('wordId', 'chinese')
-      .lean(),
-  ]);
-  const byDate = [...own, ...hsk]
-    .filter((w) => w.wordId?.chinese)
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .map((w) => w.wordId.chinese.trim());
-  const unique = [...new Set(byDate)];
+// vocabulary lists a 'vocab' lesson can use: «Мой словарик» (userwords -> dictionary) and
+// «Мой словарик HSK 3.0» (userhsk3words -> hskword2025). Not the old HSK 2.0 list.
+const VOCAB_SOURCES = ['own', 'hsk3'];
+const VOCAB_LIST_MAX = 1000; // safety cap for one list
 
+// the user's words of one list, newest first: [{ id, cn, py, date }]; id = the word's id
+async function listVocab(userId, source) {
+  if (source === 'hsk3') {
+    const rows = await UserHsk3Word.find({ user: userId })
+      .sort({ date: -1 })
+      .limit(VOCAB_LIST_MAX)
+      .select('wordId date')
+      .populate('wordId', 'cn py')
+      .lean();
+    return rows
+      .filter((r) => r.wordId?.cn)
+      .map((r) => ({
+        id: String(r.wordId._id),
+        cn: r.wordId.cn.trim(),
+        py: r.wordId.py,
+        date: r.date,
+      }));
+  }
+  const rows = await UserWord.find({ user: userId })
+    .sort({ date: -1 })
+    .limit(VOCAB_LIST_MAX)
+    .select('wordId date')
+    .populate('wordId', 'chinese pinyin')
+    .lean();
+  return rows
+    .filter((r) => r.wordId?.chinese)
+    .map((r) => ({
+      id: String(r.wordId._id),
+      cn: r.wordId.chinese.trim(),
+      py: r.wordId.pinyin,
+      date: r.date,
+    }));
+}
+
+// -> up to VOCAB_WORDS Chinese words (no translations: the model knows them).
+// wordIds: picked by the user; only ids from the user's own chosen lists count.
+// Without them: the newest words (what the student is learning now) + random older ones.
+async function pickVocabWords(userId, { sources, wordIds } = {}) {
+  const chosen = VOCAB_SOURCES.filter((src) => !sources?.length || sources.includes(src));
+  const words = (await Promise.all(chosen.map((src) => listVocab(userId, src)))).flat();
+
+  if (Array.isArray(wordIds) && wordIds.length) {
+    const picked = new Set(wordIds.slice(0, TUTOR.VOCAB_WORDS).map(String));
+    return shuffle([...new Set(words.filter((w) => picked.has(w.id)).map((w) => w.cn))]);
+  }
+
+  const byDate = words.sort((a, b) => new Date(b.date) - new Date(a.date)).map((w) => w.cn);
+  const unique = [...new Set(byDate)];
   const newest = unique.slice(0, TUTOR.VOCAB_NEWEST);
   const rest = shuffle(unique.slice(TUTOR.VOCAB_NEWEST)).slice(
     0,
@@ -112,9 +149,13 @@ async function suggestTexts(userId, hskLevel) {
 // lesson type -> TutorChat.focus + title. kind: 'chat' | 'vocab' | 'text'
 async function buildFocus(userId, lesson = {}) {
   if (lesson.kind === 'vocab') {
-    const words = await pickVocabWords(userId);
+    const words = await pickVocabWords(userId, lesson.vocab);
     if (!words.length) {
-      throw new LessonError('В «Моём словарике» пока нет слов — добавьте их со страниц сайта');
+      throw new LessonError(
+        lesson.vocab?.wordIds?.length
+          ? 'Выбранные слова не найдены в ваших словариках'
+          : 'В выбранных словариках пока нет слов — добавьте их со страниц сайта',
+      );
     }
     return { focus: { kind: 'vocab', words }, title: 'Повторение моих слов' };
   }
@@ -128,4 +169,41 @@ async function buildFocus(userId, lesson = {}) {
   return { focus: { kind: 'chat' }, title: null };
 }
 
-module.exports = { buildFocus, suggestTexts, LessonError };
+// 'vocab' lesson: the words the model reported in its "vocab" block (already checked to be
+// lesson words). A word answered right moves to practiced, one answered wrong to missed.
+function applyVocabProgress(focus, { practiced, missed }) {
+  const done = new Set(focus.practiced || []);
+  const wrong = new Set(focus.missed || []);
+  practiced.forEach((w) => {
+    done.add(w);
+    wrong.delete(w);
+  });
+  missed.forEach((w) => {
+    wrong.add(w);
+    done.delete(w);
+  });
+  focus.practiced = [...done];
+  focus.missed = [...wrong];
+}
+
+// for the client: the lesson type without the words / text sent to the model;
+// a 'vocab' lesson with its progress (words practised of all)
+const lessonInfo = (focus) => ({
+  kind: focus?.kind || 'chat',
+  ...(focus?.textId && { textId: focus.textId, textTitle: focus.textTitle }),
+  ...(focus?.kind === 'vocab' &&
+    focus.words && {
+      vocabTotal: focus.words.length,
+      vocabDone: (focus.practiced || []).length,
+    }),
+});
+
+module.exports = {
+  buildFocus,
+  suggestTexts,
+  listVocab,
+  applyVocabProgress,
+  lessonInfo,
+  VOCAB_SOURCES,
+  LessonError,
+};

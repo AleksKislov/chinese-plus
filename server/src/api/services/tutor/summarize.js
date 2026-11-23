@@ -19,7 +19,10 @@ async function summarizeChat(chatId, log) {
     .map((m) =>
       m.role === 'user'
         ? `Ученик: ${m.text}`
-        : `Учитель: ${m.blocks.map((b) => (b.ru ? `${b.text} (${b.ru})` : b.text)).join(' ')}`,
+        : `Учитель: ${m.blocks
+            .filter((b) => b.kind !== 'hints')
+            .map((b) => (b.ru ? `${b.text} (${b.ru})` : b.text))
+            .join(' ')}`,
     )
     .join('\n')
     .slice(-MAX_TRANSCRIPT_LEN);

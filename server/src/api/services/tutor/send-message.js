@@ -10,13 +10,13 @@ const {
   parseReply,
   toModelMessage,
 } = require('./prompts');
-const { buildFocus, LessonError } = require('./lesson-focus');
+const { buildFocus, applyVocabProgress, lessonInfo, LessonError } = require('./lesson-focus');
 const { segmentText, attachTooltips } = require('./segment');
 const { inFlight, takeGlobalQuota, takeUserQuota, refundQuota, usageOf } = require('./limits');
 const { summarizeInBackground } = require('./summarize');
 const { getGrammarCatalog } = require('./grammar-catalog');
 const { resolveTts, markAvailableAudio } = require('./tts');
-const { TUTOR, HSK_LEVELS } = require('./consts');
+const { TUTOR, HSK_LEVELS, TUTOR_DIALECTS } = require('./consts');
 
 // body: { text, level, chatId?, lesson? }. No chatId starts a new lesson; lesson
 // { kind: 'chat' | 'vocab' | 'text', textId?, textUrl? } sets its type. A new 'vocab' / 'text'
@@ -99,8 +99,11 @@ async function sendMessage(req, res) {
       ).lean(),
       getGrammarCatalog(level),
     ]);
+    // the user's dialect setting at the time of this reply ('' = Putonghua)
+    const { dialect } = resolveTts(profile?.tts);
 
     let blocks;
+    let progress;
     try {
       const { content } = await tutorCompletion({
         userId,
@@ -116,14 +119,20 @@ async function sendMessage(req, res) {
               memory: profile?.memory,
               grammarTopics: grammar.topics,
               focus: chat.focus,
+              dialect: TUTOR_DIALECTS[dialect]?.name,
             }),
           },
           ...historyFor(chat),
           { role: 'user', content: text || kickoff },
         ],
       });
-      blocks = parseReply(content, grammar.bySlug);
-      if (!blocks.length) throw new Error(`Empty tutor reply: ${content.slice(0, 200)}`);
+      ({ blocks, progress } = parseReply(
+        content,
+        grammar.bySlug,
+        chat.focus?.kind === 'vocab' ? chat.focus.words : null,
+      ));
+      if (!blocks.some((b) => b.kind !== 'hints'))
+        throw new Error(`Empty tutor reply: ${content.slice(0, 200)}`);
     } catch (err) {
       req.log.error({ err }, 'tutor: reply failed');
       await refundQuota(userId);
@@ -134,13 +143,15 @@ async function sendMessage(req, res) {
       ...(text ? [{ role: 'user', text }] : []), // a kickoff is not shown or stored
       {
         role: 'assistant',
+        dialect, // fixed for this reply: its text is written and voiced in it
         // grammar links show the lesson title as is
         blocks: blocks.map((b) => ({
           ...b,
-          words: b.kind === 'grammar' ? [] : segmentText(b.text),
+          words: b.kind === 'cn' || b.kind === 'note' ? segmentText(b.text) : [],
         })),
       },
     );
+    if (progress) applyVocabProgress(chat.focus, progress);
     chat.updatedAt = new Date();
     await chat.save();
 
@@ -150,10 +161,7 @@ async function sendMessage(req, res) {
 
     const messages = chat.messages.slice(text ? -2 : -1).map((m) => m.toObject());
     // common phrases (你好！…) may already have audio from other lessons
-    await Promise.all([
-      attachTooltips(messages),
-      markAvailableAudio(messages, resolveTts(profile?.tts).options),
-    ]);
+    await Promise.all([attachTooltips(messages), markAvailableAudio(messages, profile?.tts)]);
     res.json({
       chat: {
         _id: chat._id,
@@ -182,10 +190,4 @@ function historyFor(chat) {
   return history;
 }
 
-// for the client: the lesson type without the words / text sent to the model
-const lessonInfo = (focus) => ({
-  kind: focus?.kind || 'chat',
-  ...(focus?.textId && { textId: focus.textId, textTitle: focus.textTitle }),
-});
-
-module.exports = { sendMessage, lessonInfo };
+module.exports = { sendMessage };

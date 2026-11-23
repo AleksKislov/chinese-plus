@@ -17,6 +17,7 @@ import { SEGMENTER_ENUM, type SEGMENTER_VERSION } from '../dictionary';
 import { Breadcrumbs } from '~/components/common/layout/breadcrumbs';
 import { JsonLd } from '~/components/common/seo/json-ld';
 import CONST_URLS from '~/misc/consts/urls';
+import { PINYIN_TIP } from '~/components/common/read/text-head-btns';
 
 const segmentOgImage = '/img/og/segment.png';
 
@@ -169,7 +170,11 @@ export default component$(() => {
               </button>
               {tooltipTxt.value.length > 0 && (
                 <button
-                  class={`btn btn-sm btn-outline btn-info ${showPinyin.value ? 'btn-active' : ''}`}
+                  class={`btn btn-sm btn-outline btn-info inline-flex tooltip tooltip-info tooltip-left normal-case ${
+                    showPinyin.value ? 'btn-active' : ''
+                  }`}
+                  data-tip={PINYIN_TIP}
+                  aria-label={PINYIN_TIP}
                   onClick$={() => (showPinyin.value = !showPinyin.value)}
                 >
                   pinyin

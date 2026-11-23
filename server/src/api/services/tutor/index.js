@@ -9,6 +9,7 @@ const {
   clearMemory,
   setListenMode,
   getTextSuggestions,
+  getVocab,
 } = require('./chats');
 
 // unlike apiDecorator, never sends the error text to the client
@@ -30,6 +31,7 @@ module.exports = {
   clearMemory: safe(clearMemory),
   setListenMode: safe(setListenMode),
   getTextSuggestions: safe(getTextSuggestions),
+  getVocab: safe(getVocab),
   getBlockAudio: safe(getBlockAudio),
   getSampleAudio: safe(getSampleAudio),
   updateTtsSettings: safe(updateTtsSettings),

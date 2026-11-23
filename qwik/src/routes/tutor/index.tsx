@@ -11,6 +11,7 @@ import { MainContent } from '~/components/common/layout/main-content';
 import { TextHeadBtns } from '~/components/common/read/text-head-btns';
 import { FontSizeBtns } from '~/components/common/content-cards/content-page-card';
 import { GrammarWordModals } from '~/components/grammar/grammar-word-modals';
+import { sendSvg } from '~/components/common/media/svg';
 import {
   TutorMessageBubble,
   TutorTypingBubble,
@@ -35,7 +36,8 @@ import {
   type TutorOverview,
   tutorChatUrl,
   type TutorTts,
-  ttsKey,
+  DEFAULT_TUTOR_TTS,
+  messageTtsKey,
 } from '~/components/tutor/types';
 
 // for now admins only (the API refuses everyone else): others go to the home page.
@@ -50,7 +52,7 @@ export const useTutorOverview = routeLoader$(
       level: 1,
       usage: { used: 0, limit: 0 },
       isAdmin: false,
-      tts: { voice: 'teacher', speed: 'normal' },
+      tts: DEFAULT_TUTOR_TTS,
       listenMode: false,
       ttsChoices: { voices: [], speeds: [] },
     });
@@ -86,9 +88,11 @@ export default component$(() => {
   const chatId = useSignal<string | undefined>(chatData.value?._id);
   const messages = useSignal<TutorMessage[]>(chatData.value?.messages || []);
   const chats = useSignal(overview.value?.chats || []);
+  // lesson type and progress (vocab: words practised), updated after every reply
+  const lessonFocus = useSignal(chatData.value?.focus);
   const usage = useSignal(overview.value?.usage);
   const level = useSignal(chatData.value?.level || overview.value?.level || 1);
-  const tts = useSignal<TutorTts>(overview.value?.tts || { voice: 'teacher', speed: 'normal' });
+  const tts = useSignal<TutorTts>({ ...DEFAULT_TUTOR_TTS, ...overview.value?.tts });
   // listening practice: Chinese sentences hidden behind their audio buttons
   const listenMode = useSignal(Boolean(overview.value?.listenMode));
   const draft = useSignal('');
@@ -100,6 +104,14 @@ export default component$(() => {
   const showTranslation = useSignal(level.value < 4);
   const fontSizeSig = useSignal(FontSizeBtns.md);
   const inputRef = useSignal<HTMLTextAreaElement>();
+  // the input grows with the text up to ~6 lines, then scrolls; back to one line after sending
+  useTask$(({ track }) => {
+    track(draft);
+    const el = inputRef.value;
+    if (!isBrowser || !el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight + 2, 160)}px`;
+  });
 
   // another chat opened (or "new chat"). Every action (audio, settings…) re-runs the route
   // loaders, so chatData also changes for the same chat: keep the local state then.
@@ -108,6 +120,7 @@ export default component$(() => {
     if (chat?._id === chatId.value) return;
     chatId.value = chat?._id;
     messages.value = chat?.messages || [];
+    lessonFocus.value = chat?.focus;
     if (chat) level.value = chat.level;
     error.value = '';
   });
@@ -160,9 +173,14 @@ export default component$(() => {
     }
 
     const { chat } = result;
-    messages.value = [...withoutPending, ...result.messages];
+    // the new reply's audio is generated right away (TutorCnBlock)
+    messages.value = [
+      ...withoutPending,
+      ...result.messages.map((m) => (m.role === 'assistant' ? { ...m, autoAudio: true } : m)),
+    ];
     usage.value = result.usage;
     chats.value = [chat, ...chats.value.filter((c) => c._id !== chat._id)];
+    lessonFocus.value = chat.focus; // e.g. vocab progress after this reply
     if (!chatId.value) {
       chatId.value = chat._id;
       nav(tutorChatUrl(chat._id), { replaceState: true });
@@ -205,6 +223,7 @@ export default component$(() => {
   const limitReached = Boolean(usage.value?.limit && usage.value.used >= usage.value.limit);
   // an admin reading someone else's lesson: no input (the BE rejects it anyway)
   const readOnly = Boolean(chatData.value?.readOnly);
+  const lastReplyId = [...messages.value].reverse().find((m) => m.role === 'assistant')?._id;
 
   return (
     <>
@@ -222,28 +241,33 @@ export default component$(() => {
         <MainContent>
           {/* stays on screen: level, font size, pinyin and translation can be changed anytime */}
           <div class="sticky top-0 z-20 bg-base-100 flex flex-wrap items-center gap-2 py-2 mb-2 border-b border-base-300">
-            <select
-              class="select select-bordered select-sm"
-              aria-label="Уровень HSK"
-              disabled={readOnly}
-              value={String(level.value)}
-              onChange$={(_, el) => (level.value = Number(el.value))}
+            <div
+              class="tooltip tooltip-info tooltip-bottom"
+              data-tip="Уровень HSK: учитель подбирает под него слова и грамматику"
             >
-              {TUTOR_LEVELS.map((lvl) => (
-                <option key={lvl} value={String(lvl)} selected={lvl === level.value}>
-                  {`HSK ${lvl}`}
-                </option>
-              ))}
-            </select>
+              <select
+                class="select select-bordered select-sm"
+                aria-label="Уровень HSK"
+                disabled={readOnly}
+                value={String(level.value)}
+                onChange$={(_, el) => (level.value = Number(el.value))}
+              >
+                {TUTOR_LEVELS.map((lvl) => (
+                  <option key={lvl} value={String(lvl)} selected={lvl === level.value}>
+                    {`HSK ${lvl}`}
+                  </option>
+                ))}
+              </select>
+            </div>
             {overview.value.ttsChoices.voices.length > 0 && (
               <TutorVoiceSettings tts={tts} choices={overview.value.ttsChoices} />
             )}
             <button
               type="button"
-              class={`btn btn-sm btn-outline btn-info normal-case ${
+              class={`btn btn-sm btn-outline btn-info normal-case inline-flex tooltip tooltip-info tooltip-bottom ${
                 listenMode.value ? 'btn-active' : ''
               }`}
-              title="Скрыть китайский текст и тренировать восприятие на слух"
+              data-tip="Аудирование: китайский текст скрыт — сначала послушайте, потом откройте текст"
               onClick$={() => {
                 listenMode.value = !listenMode.value;
                 saveTutorListenMode(listenMode.value); // remembered for the user
@@ -264,7 +288,12 @@ export default component$(() => {
             <div class="text-sm opacity-70 mb-2">
               {chatData.value.num ? `Урок ${chatData.value.num} · ` : ''}начат{' '}
               {formatLessonDate(chatData.value.createdAt)}
-              {chatData.value.focus?.kind === 'vocab' && ' · повторение моих слов'}
+              {lessonFocus.value?.kind === 'vocab' &&
+                ` · повторение моих слов${
+                  lessonFocus.value.vocabTotal
+                    ? ` (${lessonFocus.value.vocabDone || 0}/${lessonFocus.value.vocabTotal})`
+                    : ''
+                }`}
               {chatData.value.focus?.textId && (
                 <>
                   {' · текст '}
@@ -300,13 +329,20 @@ export default component$(() => {
               <TutorMessageBubble
                 key={message._id}
                 message={message}
+                // hints only under the latest reply, while the student can answer it
+                showHints={!readOnly && !sending.value && message._id === lastReplyId}
+                onHint$={pickSuggestion}
+                hintsRuOnly={level.value >= 4}
                 currentWord={currentWord}
                 showPinyin={showPinyin.value}
                 showTranslation={showTranslation.value}
                 fontSize={fontSizeSig.value}
                 chatId={chatId.value}
-                ttsKey={ttsKey(tts.value)}
+                ttsKey={messageTtsKey(message, tts.value)}
                 listenMode={listenMode.value}
+                dialect={overview.value?.ttsChoices.dialects?.find(
+                  (d) => d.key === message.dialect,
+                )}
               />
             ))}
 
@@ -319,41 +355,52 @@ export default component$(() => {
                 <span>{error.value}</span>
               </div>
             )}
+            {/* messenger-style: one line that grows with the text, round icon button */}
             <div class="flex gap-2 items-end">
               <textarea
                 ref={inputRef}
-                class="textarea textarea-bordered textarea-primary flex-1 text-base leading-snug"
-                rows={2}
+                class="textarea textarea-bordered textarea-primary flex-1 min-h-0 rounded-3xl py-2 px-4 text-base leading-snug resize-none"
+                rows={1}
                 maxLength={TUTOR_MAX_LEN}
-                placeholder={
-                  limitReached
-                    ? 'Лимит сообщений на сегодня исчерпан'
-                    : 'Напишите учителю… (Enter — отправить, Shift+Enter — новая строка)'
-                }
+                placeholder={limitReached ? 'Лимит сообщений исчерпан' : 'Сообщение учителю…'}
                 disabled={limitReached}
                 bind:value={draft}
-                // Enter sends, Shift+Enter is a new line (sync$: preventDefault must run synchronously)
+                // Enter sends, Shift+Enter is a new line (sync$: preventDefault must run
+                // synchronously). On touch screens Enter is a new line, like in messengers.
                 onKeyDown$={[
                   sync$((ev: KeyboardEvent) => {
-                    if (ev.key === 'Enter' && !ev.shiftKey && !ev.isComposing) ev.preventDefault();
+                    if (
+                      ev.key === 'Enter' &&
+                      !ev.shiftKey &&
+                      !ev.isComposing &&
+                      !matchMedia('(pointer: coarse)').matches
+                    ) {
+                      ev.preventDefault();
+                    }
                   }),
                   $((ev: KeyboardEvent) => {
-                    if (ev.key === 'Enter' && !ev.shiftKey && !ev.isComposing) send();
+                    if (ev.defaultPrevented) send();
                   }),
                 ]}
               />
               <button
                 type="button"
-                class="btn btn-primary"
+                class="btn btn-primary btn-circle shrink-0"
+                aria-label="Отправить"
+                title="Отправить"
                 disabled={sending.value || limitReached || !draft.value.trim()}
                 onClick$={send}
               >
-                Отправить
+                {sendSvg}
               </button>
             </div>
             {usage.value && (
-              <div class="text-xs opacity-60 mt-1">
+              <div class="text-xs opacity-60 mt-1 px-1">
                 Сегодня: {usage.value.used} / {usage.value.limit} сообщений
+                <span class="hidden md:inline">
+                  {' '}
+                  · Enter — отправить, Shift+Enter — новая строка
+                </span>
               </div>
             )}
           </div>

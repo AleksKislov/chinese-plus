@@ -6,10 +6,13 @@ const TutorProfileSchema = new mongoose.Schema({
   memory: { type: String, default: '' }, // LLM-written summary of past chats
   memoryUpdatedAt: { type: Date },
   level: { type: Number, min: 1, max: 6, default: 1 }, // last HSK level chosen
-  // audio settings, keys of TTS_VOICES / TTS_SPEEDS (server/src/api/services/tutor/consts.js)
+  // audio settings, keys of TTS_VOICES / TTS_SPEEDS / TUTOR_DIALECTS
+  // (server/src/api/services/tutor/consts.js). voice + speed: Putonghua (MiniMax);
+  // dialect: new replies are written and voiced in it, '' = Putonghua
   tts: {
     voice: { type: String, default: 'teacher' },
     speed: { type: String, default: 'normal' },
+    dialect: { type: String, default: '' },
   },
   listenMode: { type: Boolean, default: false }, // "Аудирование": Chinese text hidden behind audio
   usage: {

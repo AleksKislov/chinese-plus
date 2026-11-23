@@ -10,9 +10,15 @@ const PRICES = {
   cached: price('TUTOR_PRICE_CACHED_PER_M', price('TUTOR_PRICE_INPUT_PER_M', 0.15)),
 };
 
-// USD per 1M TTS characters; defaults: MiniMax speech-2.8 hd $100, turbo $60
-const ttsPricePerM = () =>
-  price('TUTOR_PRICE_TTS_PER_M_CHARS', /-hd$/.test(process.env.MINIMAX_TTS_MODEL || '') ? 100 : 60);
+// USD per 1M TTS characters; defaults: MiniMax speech-2.8 hd $100, turbo $60;
+// Qwen (dialects) qwen3-tts-flash, international: $10 (check the Model Studio price list)
+const ttsPricePerM = (provider) =>
+  provider === 'qwen'
+    ? price('TUTOR_PRICE_QWEN_TTS_PER_M_CHARS', 10)
+    : price(
+        'TUTOR_PRICE_TTS_PER_M_CHARS',
+        /-hd$/.test(process.env.MINIMAX_TTS_MODEL || '') ? 100 : 60,
+      );
 
 // OpenAI-style or DeepSeek-style usage -> { prompt, completion, cached }
 const readUsage = (usage = {}) => ({
@@ -75,11 +81,12 @@ function saveUsage(userId, inc, log) {
   );
 }
 
-// a new audio clip was generated (cached clips cost nothing and are only counted in metrics)
-function recordTts({ userId, chars, seconds, log }) {
-  const costUsd = (chars * ttsPricePerM()) / 1e6;
+// a new audio clip was generated (cached clips cost nothing and are only counted in metrics).
+// provider: 'minimax' | 'qwen'
+function recordTts({ userId, provider, chars, seconds, log }) {
+  const costUsd = (chars * ttsPricePerM(provider)) / 1e6;
   log.info(
-    { tutor: { kind: 'tts', userId: String(userId), seconds, chars, costUsd } },
+    { tutor: { kind: 'tts', provider, userId: String(userId), seconds, chars, costUsd } },
     'tutor: tts call',
   );
   metrics.tutorTts.inc({ status: 'generated' });

@@ -14,22 +14,26 @@ description with login / register links).
 
 ## Services and env (`server/config/.env.dev` / `.env.prod`)
 
-| Env                                                           | Default                            | Notes                                                              |
-| ------------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------ |
-| `SILICONFLOW_API_KEY`                                         | —                                  | required, chat                                                     |
-| `SILICONFLOW_API_URL`                                         | `https://api.siliconflow.com/v1`   |                                                                    |
-| `SILICONFLOW_CHAT_MODEL`                                      | `deepseek-ai/DeepSeek-V4.1-Flash`  | check ids: `GET /v1/models`                                        |
-| `MINIMAX_API_KEY`                                             | —                                  | required, TTS                                                      |
-| `MINIMAX_API_URL`                                             | `https://api.minimax.io/v1`        |                                                                    |
-| `MINIMAX_TTS_MODEL`                                           | `speech-2.8-turbo`                 | or `speech-2.8-hd`                                                 |
-| `MINIMAX_TTS_VOICE`                                           | `Chinese (Mandarin)_Lyrical_Voice` | the "teacher" voice (default choice)                               |
-| `MINIMAX_TTS_SPEED`                                           | `0.9`                              | only when no speed is given; users pick novice / normal / advanced |
-| `TUTOR_USER_DAILY_LIMIT`                                      | 100                                | messages per user per day                                          |
-| `TUTOR_USER_DAILY_TTS`                                        | 200                                | new audio clips per user per day (existing clips are free)         |
-| `TUTOR_GLOBAL_DAILY_LIMIT`                                    | 5000                               | all users, per process: budget guard                               |
-| `TUTOR_PRICE_INPUT_PER_M` / `_OUTPUT_PER_M` / `_CACHED_PER_M` | 0.15 / 0.6 / = input               | USD per 1M tokens, for cost estimates                              |
-| `TUTOR_PRICE_TTS_PER_M_CHARS`                                 | 60 (100 if model ends with `-hd`)  | USD per 1M TTS characters (MiniMax speech-2.8)                     |
-| `METRICS_PORT`                                                | 9464                               | Prometheus metrics                                                 |
+| Env                                                           | Default                                      | Notes                                                               |
+| ------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------- |
+| `SILICONFLOW_API_KEY`                                         | —                                            | required, chat                                                      |
+| `SILICONFLOW_API_URL`                                         | `https://api.siliconflow.com/v1`             |                                                                     |
+| `SILICONFLOW_CHAT_MODEL`                                      | `deepseek-ai/DeepSeek-V4.1-Flash`            | check ids: `GET /v1/models`                                         |
+| `MINIMAX_API_KEY`                                             | —                                            | required, TTS                                                       |
+| `MINIMAX_API_URL`                                             | `https://api.minimax.io/v1`                  |                                                                     |
+| `MINIMAX_TTS_MODEL`                                           | `speech-2.8-turbo`                           | or `speech-2.8-hd`                                                  |
+| `MINIMAX_TTS_VOICE`                                           | `Chinese (Mandarin)_Lyrical_Voice`           | the "teacher" voice (default choice)                                |
+| `MINIMAX_TTS_SPEED`                                           | `0.9`                                        | only when no speed is given; users pick novice / normal / advanced  |
+| `DASHSCOPE_API_KEY`                                           | —                                            | dialect TTS (Qwen, Alibaba Model Studio); key of the API URL region |
+| `DASHSCOPE_API_URL`                                           | `https://dashscope-intl.aliyuncs.com/api/v1` | Singapore; Beijing region has its own URL and key                   |
+| `QWEN_TTS_MODEL`                                              | `qwen3-tts-flash`                            |                                                                     |
+| `TUTOR_PRICE_QWEN_TTS_PER_M_CHARS`                            | 10                                           | USD per 1M chars, Qwen TTS cost estimate (check the price list)     |
+| `TUTOR_USER_DAILY_LIMIT`                                      | 100                                          | messages per user per day                                           |
+| `TUTOR_USER_DAILY_TTS`                                        | 400                                          | new audio clips per user per day (existing clips are free)          |
+| `TUTOR_GLOBAL_DAILY_LIMIT`                                    | 5000                                         | all users, per process: budget guard                                |
+| `TUTOR_PRICE_INPUT_PER_M` / `_OUTPUT_PER_M` / `_CACHED_PER_M` | 0.15 / 0.6 / = input                         | USD per 1M tokens, for cost estimates                               |
+| `TUTOR_PRICE_TTS_PER_M_CHARS`                                 | 60 (100 if model ends with `-hd`)            | USD per 1M TTS characters (MiniMax speech-2.8)                      |
+| `METRICS_PORT`                                                | 9464                                         | Prometheus metrics                                                  |
 
 ## Files
 
@@ -48,7 +52,7 @@ Backend (`server/`):
   - `usage.js`: wraps every LLM / TTS call: log line, metrics, `TutorUsage`
   - `consts.js`: all limits
   - `index.js`: `safe()` wrapper, never sends error text to the client
-- `src/api/services/_misc/siliconflow-chat.js`, `_misc/minimax-tts.js`: API clients
+- `src/api/services/_misc/siliconflow-chat.js`, `_misc/minimax-tts.js`, `_misc/qwen-tts.js`: API clients
 - `src/models/TutorChat.js`, `TutorProfile.js`, `TutorUsage.js`
 - `src/metrics.js`: prom-client registry + metrics server
 
@@ -74,13 +78,13 @@ Frontend (`qwik/src/`):
 - `tutorchats`: one lesson. `user`, `num` (lesson number of the user), `title` (first message),
   `level` (HSK 1-6), `summarizedCount`, `createdAt`, `updatedAt`, `messages[]`:
   - user: `{ role: 'user', text }`, shown as typed
-  - assistant: `{ role: 'assistant', blocks[] }`, block = `{ kind, text, ru?, slug?, audio?, words[] }`
+  - assistant: `{ role: 'assistant', dialect?, blocks[] }` (`dialect`: see Dialects), block = `{ kind, text, ru?, slug?, audio?, words[] }`
     - `cn`: Chinese sentence(s) + Russian translation `ru`; may get `audio`
     - `note`: Russian explanation (one per paragraph), may quote Chinese words
     - `grammar`: link to a grammar lesson, `slug` checked against the DB, `text` = lesson title
     - `words`: segmented text; on read it is replaced by `segments` (dictionary objects with their
       trimmed parsed translation `senses`, or plain strings) for `WordTooltip`, like grammar examples
-- `tutorprofiles`: one per user. `tts { voice, speed }` (audio settings, keys), `memory` (summary of past lessons, ≤1500 chars), `level` (last
+- `tutorprofiles`: one per user. `tts { voice, speed, dialect }` (audio settings, keys), `memory` (summary of past lessons, ≤1500 chars), `level` (last
   chosen), `usage: { day, count, ttsCount }` (daily quotas, reset when `day` changes)
 - `tutorusages`: one per user per day. Requests, tokens (prompt / completion / cached), `costUsd`,
   `ttsRequests`, `ttsChars`, `ttsCostUsd`, `failedRequests` (`costUsd` = LLM only). Per-user cost lives here, not in metrics.
@@ -101,16 +105,35 @@ Frontend (`qwik/src/`):
    tooltips attached, response `{ chat, messages, usage }`.
 6. Every 20 new messages the chat is folded into `TutorProfile.memory` in the background.
 
+## Reply hints ("Подсказки?")
+
+Every reply ends with a hidden block `{"kind":"hints","items":[{"text","ru"}]}`: 2-3 short replies
+the student could send (Chinese at their level + Russian), ≤60 chars each, max 3. Stored as a
+`hints` block (`items`), never sent back to the model or into the memory summary. The FE shows a
+"Подсказки?" button only under the latest reply (not while sending, not read-only); a click
+reveals the chips, a chip click puts its text into the message field (doesn't send).
+At HSK 4+ (`hintsRuOnly`) only the Russian of each hint is shown, as plain badges under
+"Скажите по-китайски:" (no insert): the student writes the Chinese themselves.
+
 ## Lesson types (`lesson-focus.js`, `TutorChat.focus`)
 
 Chosen under the teacher's greeting of a new lesson (`tutor-lesson-picker.tsx`); fixed for the
 whole lesson. Typing a message without choosing = a normal chat.
 
 - `chat` "Свободный разговор": nothing extra.
-- `vocab` "Повторить мои слова": up to 50 words from «Мой словарик» (`userwords` → `Dictionary`)
-  - «Мой словарик HSK» (`words` → `Lexicon`): the 20 newest + random older ones, picked once at
-    the start and saved in `focus.words` (stable prompt → prompt cache). Chinese only, no
-    translations. The prompt asks for batches of 3-5 words with quizzes.
+- `vocab` "Повторить мои слова": words of «Мой словарик» (`userwords` → `Dictionary`) and/or
+  «Мой словарик HSK 3.0» (`userhsk3words` → `Hskword2025`); NOT the old HSK 2.0 list (`words`).
+  The picker (`tutor-vocab-picker.tsx`, data from `GET /api/tutor/vocab?source=own|hsk3`) lets the
+  user choose the list(s) and pick up to 50 words by hand, or "Случайные слова": the 20 newest +
+  random older ones. `lesson.vocab = { sources, wordIds? }`; picked ids only count if they are in
+  the user's own chosen lists. Words are fixed at the start in `focus.words` (stable prompt →
+  prompt cache). Chinese only, no translations. The prompt asks for batches of 3-5 words with
+  quizzes.
+  Progress: in a vocab lesson every reply carries a hidden block
+  `{"kind":"vocab","practiced":[…],"missed":[…]}` (only lesson words accepted). The server keeps
+  `focus.practiced` / `focus.missed` (`applyVocabProgress`), the prompt shows "not practised yet /
+  answered wrong / already practised" so the model gets through all words (its history is only
+  16 messages), and the lesson head shows "(done/total)" (`lessonInfo` → `vocabDone`, `vocabTotal`).
 - `text` "Обсудить текст": 3 suggestions (`GET /api/tutor/texts?level=`): bookmarks (Закладки =
   `User.finished_texts`) first, then random approved texts of the level (HSK 1-2 → text level 1,
   3-4 → 2, 5-6 → 3), or a link to a text page. The link is never opened: only the id is taken
@@ -130,6 +153,16 @@ whole lesson. Typing a message without choosing = a normal chat.
   student asks, clearly doesn't understand, or a nuance can't be explained simply.
 - Encouragement: earned and specific praise (correct sentence, new word used, mistake fixed), every few
   messages, short Chinese phrases (很好！你进步了！); progress vs. old mistakes from the memory.
+- Every reply ends with a Chinese follow-up (question, small task or next step), never with only
+  praise or an explanation, so the student always has something to answer.
+- Engagement (from a brainstorm, all prompt rules): exactly ONE question or task per reply,
+  shaped by level (HSK 1-2 either/or or an answer frame; 3-4 open questions; 5-6 opinions /
+  hypotheticals); small mistakes recast, at most one explained per reply; build on the student's
+  answer and profile; vary activities (translate, fill the gap, word order, role-play every 6-8
+  replies…); make it easier when the student is stuck; ~90% known words, ≤2 new ones; invite the
+  student's own questions; no lecturing, no invented facts.
+- Interesting facts: about once every 4-6 replies, one short fact that fits the topic (character
+  structure, word origin, 成语, customs, history, modern China), only if the model is sure it's true.
 - Short replies (~120 words, 2-6 blocks) unless the student asks for detail. No pinyin, no
   markdown (the site shows pinyin and translations).
 - FE defaults: pinyin on for HSK 1-2, translation hidden for HSK 4+.
@@ -150,7 +183,10 @@ whole lesson. Typing a message without choosing = a normal chat.
   query) and removes it from the rest.
 - FE: a filled ▶ (btn-info) = audio exists, plays at once; a faded ghost ▶ = generated on the
   first click. After a voice / speed change all buttons show "not generated" until clicked.
-- Generated on the first click, not in advance (pay only for what is listened to).
+- New replies: as soon as a reply arrives, the FE generates the audio of its `cn` blocks one by one
+  (`autoAudio` on the message, client-only; `loadTutorAudio` in `tutor-audio-btn.tsx` queues the
+  requests, the BE allows one clip at a time per user), so ▶ plays instantly. Old replies (opened
+  lessons) are generated on the first click (pay only for what is listened to).
 - Speed: a clip exists if it is in the `tutoraudios` index (no bucket request; clips from before
   the index are generated once more). A new clip is returned to the client right away as base64
   (`data`) and played from it; the upload, the index entry and the block's `audio` happen in the
@@ -168,6 +204,8 @@ whole lesson. Typing a message without choosing = a normal chat.
 ### Voice and speed (per user)
 
 - Toolbar dropdown (`tutor-voice-settings.tsx`): voice select, 3 speeds, "Прослушать" sample.
+- With a dialect chosen, the voice select and speed are disabled (they apply to Putonghua only);
+  the toolbar button shows the current dialect (普通话 / 粤语…).
 - Choices live in `server/src/api/services/tutor/consts.js`: `TTS_VOICES` (key → MiniMax id +
   Russian label; `teacher` = `MINIMAX_TTS_VOICE`) and `TTS_SPEEDS` (novice 0.75, normal 1,
   advanced 1.2). The client only sends keys; ids never leave the server.
@@ -177,6 +215,37 @@ whole lesson. Typing a message without choosing = a normal chat.
   any clip), so the user can try a voice.
 - On the FE, the audio state of a sentence (`playUrl`) lives in `TutorCnBlock`, not in
   `TutorAudioBtn` (re-created by "Показать текст"); a new `ttsKey(voice, speed)` drops it.
+
+### Dialects
+
+- "Диалект" select in the voice dropdown (`TutorProfile.tts.dialect`, saved with voice / speed via
+  `PUT /api/tutor/settings`; `''` = Putonghua, the default). Choices: `TUTOR_DIALECTS` in
+  `consts.js` (key → Russian label, dialect name for the prompt, Qwen voice, optional sample
+  phrase), sent as `ttsChoices.dialects`. The toolbar button shows the dialect (粤语…).
+- New replies: the system prompt gets a DIALECT section (`dialectSection` in `prompts.js`):
+  `cn` blocks written as a native speaker says them (simplified characters), Putonghua
+  equivalents of local words in a note (HSK 1-3) or in Chinese (HSK 4-6). The reply stores
+  `dialect` (the setting at that moment).
+- Voice: a reply with a dialect is ALWAYS voiced by that dialect's Qwen voice (`qwen3-tts-flash`,
+  the same for all users, no speed); `''` / no `dialect` (all replies from before) = MiniMax with
+  the user's voice + speed (`voiceOptions` in `tts.js`). Switching the setting never changes
+  existing replies, and dialect text is never read by another voice: a `dialect` key missing
+  from `TUTOR_DIALECTS` is not voiced at all (404; clips already stored stay). So entries are
+  never deleted or renamed: `hidden: true` stops offering one (not in the select, rejected by
+  `PUT /settings`) and keeps its voice and badge for old replies.
+- Badge: replies with a `dialect` show its `short` name (粤语…) next to 王老师, with a tooltip.
+  `ttsChoices.dialects` holds all entries (`{ key, label, short, hidden? }`). On the FE such a
+  reply's audio key is its dialect (`messageTtsKey`), so a voice / speed change doesn't reset it.
+- Qwen returns a 24h link to a WAV file: downloaded and stored as `audio/tutor/{hash}.wav`
+  (hash of `qwen|model|voice|text`); MiniMax clips stay `.mp3` with an unchanged key. The FE
+  picks the data-URL type by the extension. Text limit of the API: 600 chars per block.
+- Sample: `POST /tts/sample { voice, speed, dialect }` voices the dialect's `sample` (or
+  `TTS_SAMPLE_TEXT`) with its voice.
+- Voice ↔ dialect (Qwen docs): Kiki / Rocky Cantonese, Sunny / Eric Sichuan, Dylan Beijing,
+  Peter Tianjin, Jada Shanghai, Li Nanjing, Marcus Shaanxi, Roy Minnan. Check with "Прослушать".
+- Pinyin: replies with a `dialect` never show it (the readings come from the Mandarin
+  dictionary, `TutorMessageBubble`); word tooltips stay (meaning is still useful, readings may
+  be off). Shanghainese and Minnan have no standard writing: the LLM's text is less reliable there.
 
 ## Security model
 
@@ -217,6 +286,4 @@ whole lesson. Typing a message without choosing = a normal chat.
 - No streaming yet: the reply arrives in one piece (3-10 s).
 - Stage 3 (STT): see the table at the top. Learners' STT auto-corrects mistakes; real pronunciation
   feedback would need a pronunciation-assessment API (Azure Speech zh-CN, SpeechSuper).
-- Dialects: MiniMax has Cantonese (`language_boost: "Chinese,Yue"`), no Sichuanese.
-  CosyVoice (SiliconFlow) claims dialects via an instruction like "用四川话说"; untested via API.
 - DB lookups for the model (texts, dictionary) via function calling: designed above, not built.

@@ -14,6 +14,7 @@ const {
   updateTtsSettings,
   setListenMode,
   getTextSuggestions,
+  getVocab,
 } = require('../../src/api/services/tutor');
 const { getUserPrivileges } = require('../../src/api/services/_misc');
 
@@ -66,6 +67,14 @@ router.delete('/chats/:id', auth, deleteChat);
  * @access    Private
  */
 router.get('/texts', auth, getTextSuggestions);
+
+/**
+ * @route     GET api/tutor/vocab?source=own|hsk3
+ * @desc      The user's words of «Мой словарик» / «Мой словарик HSK 3.0», newest first,
+ *            to pick words for a "Повторить мои слова" lesson
+ * @access    Private
+ */
+router.get('/vocab', auth, getVocab);
 
 /**
  * @route     POST api/tutor/messages
